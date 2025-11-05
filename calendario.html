@@ -79,6 +79,53 @@
       flex-wrap: wrap;
     }
 
+    .stats-cards {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 100px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+
+    .stat-count {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .stat-card.audiencia {
+      border-left: 4px solid #0D6EFD;
+    }
+
+    .stat-card.gesel {
+      border-left: 4px solid #FD7E14;
+    }
+
+    .stat-card.vencimiento {
+      border-left: 4px solid #DC3545;
+    }
+
+    .stat-card.recurso {
+      border-left: 4px solid #6F42C1;
+    }
+
     .nav-controls {
       display: flex;
       gap: 8px;
@@ -491,6 +538,49 @@
       margin-top: 2px;
     }
 
+    /* Resumen del mes */
+    .month-stats {
+      background: var(--bg-content);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-top: 16px;
+    }
+
+    .month-stats h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .stats-table th,
+    .stats-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-table th {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .stats-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stats-count {
+      font-weight: 600;
+      text-align: right;
+    }
+
     /* Modal de detalles de causa */
     .modal {
       position: fixed;
@@ -556,7 +646,7 @@
         flex-direction: row;
         flex-wrap: wrap;
       }
-      .mini-calendar, .today-events {
+      .mini-calendar, .today-events, .month-stats {
         flex: 1;
         min-width: 280px;
       }
@@ -577,6 +667,15 @@
         margin-bottom: 10px;
         flex-wrap: wrap;
       }
+      .stats-cards {
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+      .stat-card {
+        flex: 1;
+        min-width: 80px;
+      }
       .week-header,
       .week-days,
       .month-grid {
@@ -592,6 +691,29 @@
       }
       .month-day {
         min-height: 80px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-cards {
+        gap: 8px;
+      }
+      .stat-card {
+        min-width: 70px;
+        padding: 8px 10px;
+      }
+      .stat-count {
+        font-size: 20px;
+      }
+      .stat-label {
+        font-size: 10px;
+      }
+      .month-stats {
+        padding: 12px;
+      }
+      .stats-table th,
+      .stats-table td {
+        padding: 6px 8px;
       }
     }
 
@@ -618,6 +740,26 @@
     <div class="main-panel">
       <div class="header">
         <div class="header-left">
+          <!-- Tarjetas de estadísticas -->
+          <div class="stats-cards">
+            <div class="stat-card audiencia">
+              <div class="stat-count" id="count-audiencia">0</div>
+              <div class="stat-label">Audiencias</div>
+            </div>
+            <div class="stat-card gesel">
+              <div class="stat-count" id="count-gesel">0</div>
+              <div class="stat-label">Cámara Gesell</div>
+            </div>
+            <div class="stat-card vencimiento">
+              <div class="stat-count" id="count-vencimiento">0</div>
+              <div class="stat-label">Vencimientos</div>
+            </div>
+            <div class="stat-card recurso">
+              <div class="stat-count" id="count-recurso">0</div>
+              <div class="stat-label">Recursos</div>
+            </div>
+          </div>
+          
           <div class="nav-controls">
             <button class="nav-btn" id="prevBtn">‹</button>
             <button class="nav-btn today" id="todayBtn">Hoy</button>
@@ -671,6 +813,37 @@
       <div class="today-events">
         <h3>Eventos de Hoy</h3>
         <div class="event-list" id="todayEventsList"></div>
+      </div>
+      
+      <!-- Nueva sección: Resumen del mes -->
+      <div class="month-stats">
+        <h3>Resumen del Mes</h3>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th class="stats-count">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Audiencias</td>
+              <td class="stats-count" id="month-audiencia">0</td>
+            </tr>
+            <tr>
+              <td>Cámara Gesell</td>
+              <td class="stats-count" id="month-gesel">0</td>
+            </tr>
+            <tr>
+              <td>Vencimientos</td>
+              <td class="stats-count" id="month-vencimiento">0</td>
+            </tr>
+            <tr>
+              <td>Recursos</td>
+              <td class="stats-count" id="month-recurso">0</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -737,6 +910,18 @@
     const closeModal = document.getElementById('closeModal');
     const btnPrintCausa = document.getElementById('btnPrintCausa');
     const btnPrintView = document.getElementById('btnPrintView');
+    
+    // Elementos para las tarjetas de estadísticas
+    const countAudiencia = document.getElementById('count-audiencia');
+    const countGesel = document.getElementById('count-gesel');
+    const countVencimiento = document.getElementById('count-vencimiento');
+    const countRecurso = document.getElementById('count-recurso');
+    
+    // Elementos para la tabla de resumen del mes
+    const monthAudiencia = document.getElementById('month-audiencia');
+    const monthGesel = document.getElementById('month-gesel');
+    const monthVencimiento = document.getElementById('month-vencimiento');
+    const monthRecurso = document.getElementById('month-recurso');
 
     // Inicializar
     document.addEventListener('DOMContentLoaded', () => {
@@ -814,6 +999,8 @@
           procesarFechas(data.vencimientoRecursos, "Vencimiento Recurso");
         });
         
+        updateStatsCards();
+        updateMonthStats();
         renderAll();
       }, (error) => {
         console.error("Error cargando causas:", error);
@@ -853,8 +1040,68 @@
             fechaCompleta: new Date(new Date().setDate(new Date().getDate() + 3))
           }
         ];
+        updateStatsCards();
+        updateMonthStats();
         renderAll();
       });
+    }
+
+    // Actualizar las tarjetas de estadísticas
+    function updateStatsCards() {
+      const counts = {
+        audiencia: 0,
+        gesel: 0,
+        vencimiento: 0,
+        recurso: 0
+      };
+      
+      events.forEach(event => {
+        if (counts.hasOwnProperty(event.type)) {
+          counts[event.type]++;
+        }
+      });
+      
+      countAudiencia.textContent = counts.audiencia;
+      countGesel.textContent = counts.gesel;
+      countVencimiento.textContent = counts.vencimiento;
+      countRecurso.textContent = counts.recurso;
+    }
+    
+    // Actualizar la tabla de resumen del mes
+    function updateMonthStats() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      // Obtener el primer y último día del mes actual
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      
+      // Inicializar contadores
+      const counts = {
+        audiencia: 0,
+        gesel: 0,
+        vencimiento: 0,
+        recurso: 0
+      };
+      
+      // Filtrar eventos del mes actual
+      const filtered = getFilteredEvents();
+      
+      filtered.forEach(event => {
+        const eventDate = parseDate(event.date);
+        // Verificar si el evento está en el mes actual
+        if (eventDate.getMonth() === month && eventDate.getFullYear() === year) {
+          if (counts.hasOwnProperty(event.type)) {
+            counts[event.type]++;
+          }
+        }
+      });
+      
+      // Actualizar la tabla
+      monthAudiencia.textContent = counts.audiencia;
+      monthGesel.textContent = counts.gesel;
+      monthVencimiento.textContent = counts.vencimiento;
+      monthRecurso.textContent = counts.recurso;
     }
 
     function setupEventListeners() {
@@ -1196,6 +1443,7 @@
       renderMainCalendar();
       renderMiniCalendar();
       renderTodayEvents();
+      updateMonthStats();
     }
 
     function renderMainCalendar() {
