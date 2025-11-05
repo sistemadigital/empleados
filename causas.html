@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión de Expedientes Judiciales</title>
     
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
@@ -71,7 +70,7 @@
             color: var(--text-primary);
             line-height: 1.5;
             min-height: 100vh;
-            overflow-x: hidden;
+            /* overflow-x: hidden; <-- ESTA LÍNEA FUE ELIMINADA */
         }
 
         /* Header */
@@ -298,7 +297,6 @@
         .table-wrap {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            width: 100%;
         }
 
         .data-table {
@@ -894,7 +892,7 @@
             .container {
                 padding: var(--spacing-xs);
                 width: 100%;
-                overflow-x: hidden;
+                /* overflow-x: hidden; <-- ESTA LÍNEA FUE ELIMINADA */
             }
             
             .kpi-cards {
@@ -943,26 +941,7 @@
                 padding: var(--spacing-s);
             }
             
-            /* MEJORAS ESPECÍFICAS PARA MÓVILES PEQUEÑOS */
-            .table-wrap {
-                margin: 0 -8px;
-                width: calc(100% + 16px);
-            }
-            
-            .data-table {
-                min-width: 100%;
-                font-size: 0.8rem;
-            }
-            
-            .data-table th, 
-            .data-table td {
-                padding: 6px 4px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 120px;
-            }
-            
+            /* Mejoras específicas para móviles pequeños */
             .filter-group {
                 width: 100%;
             }
@@ -975,6 +954,15 @@
             .tab-button {
                 padding: 8px 12px;
                 font-size: 0.8rem;
+            }
+            
+            .table-wrap {
+                margin: 0 -8px;
+                padding: 0 8px;
+            }
+            
+            .data-table {
+                min-width: 100%;
             }
             
             .prioridad-pill {
@@ -1022,9 +1010,8 @@
             
             .data-table th, 
             .data-table td {
-                padding: 4px 2px;
-                font-size: 0.75rem;
-                max-width: 100px;
+                padding: 6px;
+                font-size: 0.8rem;
             }
             
             .button {
@@ -1035,10 +1022,8 @@
     </style>
 </head>
 <body>
-    <!-- Alerta flotante -->
     <div class="floating-alert" id="floating-alert"></div>
 
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <button id="btnNuevo" class="button">
@@ -1047,11 +1032,9 @@
         </div>
     </header>
 
-    <!-- Contenido principal -->
     <main class="container">
         <div class="main-layout">
             <div class="main">
-                <!-- Tarjetas de resumen (KPIs) -->
                 <section class="kpi-section">
                     <h2 class="kpi-title">Resumen de Expedientes</h2>
                     <div class="kpi-cards" id="kpiCards">
@@ -1059,7 +1042,6 @@
                     </div>
                 </section>
 
-                <!-- Filtros -->
                 <section class="filters-section">
                     <h2 class="filters-title">Filtros de Búsqueda</h2>
                     <div class="filter-row">
@@ -1104,7 +1086,6 @@
                         </div>
                     </div>
                     
-                    <!-- Botones de impresión -->
                     <div class="action-buttons">
                         <button id="btnPrintListado" class="button button-success">
                             <i class="fas fa-print"></i> Imprimir Listado
@@ -1112,7 +1093,6 @@
                     </div>
                 </section>
 
-                <!-- Tabla de datos -->
                 <section class="table-section">
                     <h2 class="table-title">Expedientes Judiciales</h2>
                     <div class="table-wrap">
@@ -1139,11 +1119,9 @@
                     </div>
                 </section>
                 
-                <!-- Paginación -->
                 <div id="paginacion-container"></div>
             </div>
 
-            <!-- Sidebar -->
             <aside class="sidebar">
                 <h2>📅 Próximas Fechas (30 días)</h2>
                 <div class="group">
@@ -1169,9 +1147,6 @@
         </div>
     </main>
 
-    <!-- MODALES DE INDEX.HTML -->
-
-    <!-- Modal para nuevo/editar expediente -->
     <div id="modal">
         <div class="content">
             <div class="modal-header">
@@ -1300,7 +1275,6 @@
         </div>
     </div>
 
-    <!-- Modal para ver detalles -->
     <div id="modalVer">
         <div class="content">
             <div class="modal-header">
@@ -1327,7 +1301,6 @@
         </div>
     </div>
 
-    <!-- Modal de confirmación -->
     <div id="confirmModal">
         <div class="content">
             <h3 id="confirmModalTitle"></h3>
@@ -1339,7 +1312,6 @@
         </div>
     </div>
 
-    <!-- Modal de alerta -->
     <div id="alertModal">
         <div class="content">
             <h3 id="alertTitle"></h3>
