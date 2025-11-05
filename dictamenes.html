@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dictámenes Escritos Modelos</title>
+  <style>
+    /* Variables CSS inspiradas en causas.html */
+    :root {
+      --primary-blue: #007bff;
+      --primary-light-blue: #e7f4ff;
+      --primary-dark-blue: #0056b3;
+      --secondary-gray: #f8f9fa;
+      --secondary-light-gray: #e9ecef;
+      --secondary-dark-gray: #6c757d;
+      --status-success: #28a745;
+      --status-warning: #ffc107;
+      --status-danger: #dc3545;
+      --status-info: #17a2b8;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --text-link: #007bff;
+      --text-light: #ffffff;
+      --background-default: #ffffff;
+      --background-card: #ffffff;
+      --background-header: #ffffff;
+      --background-table-header: #f8f9fa;
+      --border-default: #dee2e6;
+      --font-family: 'Arial', 'Helvetica', sans-serif;
+      --display-size: 24px;
+      --h1-size: 20px;
+      --h2-size: 18px;
+      --body-large-size: 16px;
+      --body-regular-size: 14px;
+      --caption-size: 12px;
+      --font-weight-regular: 400;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+      --spacing-unit: 8px;
+      --spacing-xs: 4px;
+      --spacing-s: 8px;
+      --spacing-m: 16px;
+      --spacing-l: 24px;
+      --spacing-xl: 32px;
+      --spacing-gutter: 20px;
+      --border-radius-small: 2px;
+      --border-radius-default: 4px;
+      --border-radius-pill: 20px;
+      --shadow-none: none;
+      --shadow-subtle: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow: 0 4px 15px rgba(0,0,0,.08);
+    }
+
+    /* Estilos base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--secondary-gray);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background-color: var(--background-header);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--spacing-s) var(--spacing-m);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: var(--h1-size);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary-blue);
+    }
+
+    /* Contenedor principal */
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: var(--spacing-m) var(--spacing-gutter);
+    }
+
+    /* Header buttons */
+    .header-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--spacing-s);
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-m);
+    }
+
+    .header-btn {
+      background-color: var(--primary-blue);
+      color: var(--text-light);
+      padding: var(--spacing-s) var(--spacing-m);
+      border: none;
+      border-radius: var(--border-radius-default);
+      cursor: pointer;
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--body-regular-size);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .header-btn:hover {
+      background-color: var(--primary-dark-blue);
+    }
+
+    .header-title-btn {
+      font-size: var(--h1-size);
+      padding: var(--spacing-m) var(--spacing-l);
+    }
+
+    /* Panel de búsqueda y acciones */
+    .actions-panel {
+      background-color: var(--background-card);
+      padding: var(--spacing-m);
+      border-radius: var(--border-radius-default);
+      border: 1px solid var(--border-default);
+      margin-bottom: var(--spacing-xl);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .search-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-m);
+      align-items: center;
+      margin-bottom: var(--spacing-m);
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 300px;
+      padding: var(--spacing-s);
+      border: 1px solid var(--border-default);
+      border-radius: var(--border-radius-default);
+      font-size: var(--body-regular-size);
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: var(--spacing-s);
+      flex-wrap: wrap;
+    }
+
+    .button {
+      background-color: var(--primary-blue);
+      color: var(--text-light);
+      border: none;
+      border-radius: var(--border-radius-default);
+      padding: var(--spacing-s) var(--spacing-m);
+      font-size: var(--body-regular-size);
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .button:hover {
+      opacity: 0.9;
+    }
+
+    .button-success {
+      background-color: var(--status-success);
+    }
+
+    .button-secondary {
+      background-color: var(--secondary-dark-gray);
+    }
+
+    /* Secciones diferenciadas */
+    .section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-m);
+      padding-bottom: var(--spacing-s);
+      border-bottom: 2px solid var(--primary-blue);
+    }
+
+    .section-title {
+      font-size: var(--h1-size);
+      font-weight: var(--font-weight-semibold);
+      color: var(--primary-blue);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-s);
+    }
+
+    .section-count {
+      background-color: var(--primary-blue);
+      color: var(--text-light);
+      border-radius: var(--border-radius-pill);
+      padding: var(--spacing-xs) var(--spacing-s);
+      font-size: var(--caption-size);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .section-actions {
+      display: flex;
+      gap: var(--spacing-s);
+    }
+
+    /* Tabla de documentos */
+    .table-container {
+      background: var(--background-card);
+      border-radius: var(--border-radius-default);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-subtle);
+      overflow: hidden;
+    }
+
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .doc-table th {
+      background-color: var(--background-table-header);
+      font-weight: var(--font-weight-semibold);
+      text-align: left;
+      padding: var(--spacing-m);
+      color: var(--text-primary);
+      font-size: var(--caption-size);
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--border-default);
+    }
+
+    .doc-table td {
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--spacing-m);
+      color: var(--text-primary);
+      font-size: var(--body-regular-size);
+      vertical-align: top;
+    }
+
+    .doc-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .doc-table tr:hover td {
+      background-color: var(--secondary-gray);
+    }
+
+    .doc-name {
+      font-weight: var(--font-weight-semibold);
+      color: var(--primary-blue);
+    }
+
+    .doc-meta {
+      color: var(--text-secondary);
+      font-size: var(--caption-size);
+    }
+
+    .doc-theme {
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .doc-detail {
+      color: var(--text-secondary);
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: var(--spacing-s);
+    }
+
+    .doc-link {
+      color: var(--primary-blue);
+      text-decoration: none;
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--caption-size);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .doc-link:hover {
+      text-decoration: underline;
+    }
+
+    .edit-btn {
+      background: var(--status-success);
+      color: white;
+      padding: 6px 10px;
+      border-radius: var(--border-radius-default);
+      border: none;
+      cursor: pointer;
+      font-size: var(--caption-size);
+      font-weight: var(--font-weight-semibold);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .empty-state {
+      color: var(--text-secondary);
+      text-align: center;
+      padding: var(--spacing-l);
+      font-style: italic;
+    }
+
+    /* Ayuda */
+    .help-box {
+      background: var(--background-card);
+      border-left: 4px solid var(--primary-blue);
+      padding: var(--spacing-m) var(--spacing-l);
+      margin: var(--spacing-xl) auto;
+      border-radius: var(--border-radius-default);
+      max-width: 800px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .help-box h2 {
+      margin-top: 0;
+      color: var(--primary-blue);
+      font-size: var(--h1-size);
+      margin-bottom: var(--spacing-s);
+    }
+
+    .help-box ul {
+      margin: 0;
+      padding-left: var(--spacing-l);
+    }
+
+    .help-box li {
+      margin: var(--spacing-xs) 0;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      justify-content: center;
+      align-items: center;
+      padding: var(--spacing-m);
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: var(--background-card);
+      border-radius: var(--border-radius-default);
+      padding: var(--spacing-l);
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background: var(--primary-blue);
+      color: var(--text-light);
+      padding: var(--spacing-s) var(--spacing-m);
+      font-size: var(--h2-size);
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--border-radius-default) var(--border-radius-default) 0 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-s);
+    }
+
+    .modal-body {
+      padding: var(--spacing-m) 0;
+      overflow-y: auto;
+    }
+
+    .form-row {
+      margin-bottom: var(--spacing-m);
+    }
+
+    label {
+      display: block;
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--spacing-xs);
+      font-size: var(--body-regular-size);
+      color: var(--text-primary);
+    }
+
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: var(--spacing-s);
+      border-radius: var(--border-radius-default);
+      border: 1px solid var(--border-default);
+      font-size: var(--body-regular-size);
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-s);
+      margin-top: var(--spacing-m);
+      position: sticky;
+      bottom: 0;
+      background: var(--background-card);
+      padding-top: var(--spacing-m);
+    }
+
+    .preview-img {
+      max-width: 100%;
+      border-radius: var(--border-radius-default);
+      margin-top: var(--spacing-s);
+      border: 1px solid var(--border-default);
+    }
+
+    /* Progreso */
+    #progressWrap {
+      display: none;
+      margin: var(--spacing-m) 0;
+      text-align: center;
+    }
+
+    .progressBar {
+      height: 12px;
+      background: var(--secondary-light-gray);
+      border-radius: var(--border-radius-pill);
+      overflow: hidden;
+    }
+
+    .progressFill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--primary-blue), var(--primary-dark-blue));
+      transition: width 0.3s;
+    }
+
+    .small-note {
+      font-size: var(--caption-size);
+      color: var(--text-secondary);
+      margin-top: var(--spacing-xs);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .container {
+        max-width: 100%;
+        padding: var(--spacing-s);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-buttons {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+      }
+      
+      .header-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .header-title-btn {
+        font-size: var(--body-large-size);
+        padding: var(--spacing-s) var(--spacing-m);
+      }
+      
+      .search-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .search-input {
+        min-width: auto;
+      }
+      
+      .action-buttons {
+        justify-content: center;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-s);
+      }
+      
+      .section-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      
+      .table-container {
+        overflow-x: auto;
+      }
+      
+      .doc-table {
+        min-width: 800px;
+      }
+      
+      .modal-content {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+      
+      .modal-header,
+      .modal-body,
+      .modal-actions {
+        padding: var(--spacing-s);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .doc-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+      }
+      
+      .doc-table th,
+      .doc-table td {
+        padding: var(--spacing-s);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">Dictámenes y Escritos Modelos</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-buttons">
+      <a href="https://admindefensoria6.github.io/registro-dictamen/" class="header-btn">
+        <i class="fa-solid fa-book"></i> Libro de Dictamen
+      </a>
+      <a href="#" class="header-btn header-title-btn">
+        <i class="fa-solid fa-file-lines"></i> Dictámenes y Escritos Firmados
+      </a>
+      <a href="https://admindefensoria6.github.io/registro-oficios/" class="header-btn">
+        <i class="fa-solid fa-envelope"></i> Libro Oficios
+      </a>
+    </div>
+
+    <div class="actions-panel">
+      <div class="search-section">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por nombre, tema, detalle, dictamen o categoría" />
+        <div class="action-buttons">
+          <button class="button" id="openFileBtn">
+            <i class="fa-solid fa-upload"></i> Importar dictamen/escrito
+          </button>
+          <a href="https://defensorialocal-seis.github.io/modelosvarios/" class="button button-secondary">
+            <i class="fa-solid fa-folder-open"></i> Modelos Varios
+          </a>
+          <a href="https://defensorialocal-seis.github.io/ayuda-plazos" class="button button-secondary">
+            <i class="fa-solid fa-calendar-days"></i> Plazos procesales
+          </a>
+          <a href="https://defensorialocal-seis.github.io/ayuda-info/" class="button button-secondary">
+            <i class="fa-solid fa-circle-info"></i> Informacion Adicional
+          </a>
+        </div>
+        <input type="file" id="fileInput" style="display:none" accept=".pdf,application/pdf,image/*,.doc,.docx,.odt,.txt,.rtf" />
+      </div>
+    </div>
+
+    <div id="progressWrap">
+      <div class="small-note">Subida en progreso: <span id="progressPercent">0%</span></div>
+      <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+    </div>
+
+    <!-- Sección Civil -->
+    <section class="section" id="civilSection">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fa-solid fa-scale-balanced"></i> Civil
+          <span class="section-count" id="civilCount">0</span>
+        </h2>
+        <div class="section-actions">
+          <button class="button btn-small add-btn" data-cat="Civil">
+            <i class="fa-solid fa-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Temática</th>
+              <th>Detalle</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="civilDocuments">
+            <!-- Los documentos de Civil se cargarán aquí -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sección Familia -->
+    <section class="section" id="familiaSection">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fa-solid fa-people-roof"></i> Familia
+          <span class="section-count" id="familiaCount">0</span>
+        </h2>
+        <div class="section-actions">
+          <button class="button btn-small add-btn" data-cat="Familia">
+            <i class="fa-solid fa-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Temática</th>
+              <th>Detalle</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="familiaDocuments">
+            <!-- Los documentos de Familia se cargarán aquí -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sección Violencia Familiar -->
+    <section class="section" id="violenciaSection">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fa-solid fa-triangle-exclamation"></i> Violencia Familiar
+          <span class="section-count" id="violenciaCount">0</span>
+        </h2>
+        <div class="section-actions">
+          <button class="button btn-small add-btn" data-cat="Violencia Familiar">
+            <i class="fa-solid fa-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Temática</th>
+              <th>Detalle</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="violenciaDocuments">
+            <!-- Los documentos de Violencia Familiar se cargarán aquí -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sección Escritos -->
+    <section class="section" id="escritosSection">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fa-solid fa-pen-to-square"></i> Escritos
+          <span class="section-count" id="escritosCount">0</span>
+        </h2>
+        <div class="section-actions">
+          <button class="button btn-small add-btn" data-cat="Escritos">
+            <i class="fa-solid fa-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Temática</th>
+              <th>Detalle</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="escritosDocuments">
+            <!-- Los documentos de Escritos se cargarán aquí -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fa-solid fa-file-pen"></i>
+        <h2 id="modalTitle">Documento</h2>
+      </div>
+      <div class="modal-body">
+        <form id="docForm">
+          <input type="hidden" id="docId" />
+          <input type="hidden" id="docUrlHidden" />
+          <div class="form-row">
+            <label for="docName">Nombre</label>
+            <input id="docName" type="text" required />
+          </div>
+          <div class="form-row">
+            <label for="docCategory">Categoría</label>
+            <select id="docCategory" required>
+              <option value="Civil">Civil</option>
+              <option value="Familia">Familia</option>
+              <option value="Violencia Familiar">Violencia Familiar</option>
+              <option value="Escritos">Escritos</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="docTheme">Temática (opcional)</label>
+            <input id="docTheme" type="text" />
+          </div>
+          <div class="form-row">
+            <label for="docDetail">Detalle</label>
+            <textarea id="docDetail"></textarea>
+          </div>
+          <div class="form-row">
+            <label>URL del archivo</label>
+            <div id="fileUrlWrap"></div>
+          </div>
+          <div id="filePreviewWrap"></div>
+        </form>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="button button-secondary" id="cancelModal">
+          <i class="fa-solid fa-xmark"></i> Cancelar
+        </button>
+        <button type="submit" class="button button-success" form="docForm">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+  
+  <script>
+    /******** CONFIG CLOUDINARY ********/
+    const CLOUD_NAME = "dttsqsrmk";
+    const UPLOAD_PRESET = "DICTAMEN";
+    /***********************************/
+
+    /******** CONFIG FIREBASE ********/
+    const firebaseConfig = {
+      apiKey: "AIzaSyCuOFYjLBR-2azWbR6q-R5vd6HFhGyyQ-w",
+      authDomain: "dictamenes6.firebaseapp.com",
+      databaseURL: "https://dictamenes6-default-rtdb.firebaseio.com",
+      projectId: "dictamenes6",
+      storageBucket: "dictamenes6.firebasestorage.app",
+      messagingSenderId: "497353513668",
+      appId: "1:497353513668:web:83ae1af8fd794bb66ec791"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const documentsRef = database.ref('documents');
+    /***********************************/
+
+    let documents = [];
+    const currentUser = "Usuario Actual";
+    let targetCategory = null;
+
+    const categoryMap = {
+      "Civil": { 
+        container: "civilDocuments", 
+        count: "civilCount",
+        section: "civilSection"
+      },
+      "Familia": { 
+        container: "familiaDocuments", 
+        count: "familiaCount",
+        section: "familiaSection"
+      },
+      "Violencia Familiar": { 
+        container: "violenciaDocuments", 
+        count: "violenciaCount",
+        section: "violenciaSection"
+      },
+      "Escritos": { 
+        container: "escritosDocuments", 
+        count: "escritosCount",
+        section: "escritosSection"
+      }
+    };
+    
+    const openFileBtn = document.getElementById("openFileBtn");
+    const fileInput = document.getElementById("fileInput");
+    const modal = document.getElementById("modal");
+    const docForm = document.getElementById("docForm");
+    const cancelModal = document.getElementById("cancelModal");
+    const fileUrlWrap = document.getElementById("fileUrlWrap");
+    const filePreviewWrap = document.getElementById("filePreviewWrap");
+    const progressWrap = document.getElementById("progressWrap");
+    const progressFill = document.getElementById("progressFill");
+    const progressPercent = document.getElementById("progressPercent");
+    const searchInput = document.getElementById("searchInput");
+
+    // Escuchar cambios en la base de datos y renderizar
+    documentsRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      documents = [];
+      if (data) {
+        // Convertir el objeto de Firebase a un array y agregar el ID de la clave
+        Object.keys(data).forEach(key => {
+          documents.push({
+            id: key,
+            ...data[key]
+          });
+        });
+      }
+      renderDocuments(searchInput.value.toLowerCase());
+    });
+    
+    // Botón general
+    openFileBtn.addEventListener("click", ()=>{ targetCategory=null; fileInput.click(); });
+
+    // Botones + Agregar por categoría
+    document.querySelectorAll(".add-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        targetCategory = btn.dataset.cat;
+        fileInput.click();
+      });
+    });
+
+    fileInput.addEventListener("change", e=>{
+      const file = e.target.files[0];
+      if(file) uploadFile(file);
+    });
+
+    function uploadFile(file){
+      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", UPLOAD_PRESET);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url, true);
+
+      xhr.upload.onprogress = e=>{
+        if(e.lengthComputable){
+          const pct = Math.round((e.loaded/e.total)*100);
+          progressWrap.style.display="block";
+          progressFill.style.width=pct+"%";
+          progressPercent.textContent=pct+"%";
+        }
+      };
+      xhr.onload = ()=>{
+        progressWrap.style.display="none";
+        if(xhr.status>=200 && xhr.status<300){
+          const res = JSON.parse(xhr.responseText);
+          openModal(res.secure_url,res.original_filename,file.type);
+        } else {
+          alert("Error al subir archivo");
+        }
+      };
+      xhr.send(fd);
+    }
+
+    function openModal(url,name,type){
+      document.getElementById("docId").value="";
+      document.getElementById("docName").value=name;
+      document.getElementById("docCategory").value= targetCategory || "Civil";
+      document.getElementById("docTheme").value="";
+      document.getElementById("docDetail").value="";
+      document.getElementById("docUrlHidden").value=url;
+      fileUrlWrap.innerHTML=`<a href="${url}" target="_blank" class="doc-link"><i class="fa-solid fa-external-link-alt"></i> ${url}</a>`;
+      filePreviewWrap.innerHTML = type.startsWith("image/") ? `<img src="${url}" class="preview-img"/>` : "";
+      modal.style.display="flex";
+    }
+
+    cancelModal.addEventListener("click",()=> modal.style.display="none");
+    window.addEventListener("click",e=>{ if(e.target===modal) modal.style.display="none"; });
+
+    docForm.addEventListener("submit",e=>{
+      e.preventDefault();
+      const id=document.getElementById("docId").value;
+      const doc={
+        name: document.getElementById("docName").value,
+        category: document.getElementById("docCategory").value,
+        theme: document.getElementById("docTheme").value,
+        detail: document.getElementById("docDetail").value,
+        url: document.getElementById("docUrlHidden").value,
+        date: new Date().toLocaleDateString(),
+        user: currentUser
+      };
+
+      if(id){
+        documentsRef.child(id).update(doc)
+          .then(()=> console.log("Documento actualizado"))
+          .catch(error=> console.error("Error al actualizar:", error));
+      } else {
+        documentsRef.push(doc)
+          .then(()=> console.log("Documento agregado"))
+          .catch(error=> console.error("Error al agregar:", error));
+      }
+      modal.style.display="none";
+    });
+
+    // 🔍 Filtro de búsqueda global
+    searchInput.addEventListener("input", ()=>{
+      const filter = searchInput.value.toLowerCase();
+      renderDocuments(filter);
+      
+      // Mostrar/ocultar secciones según si tienen resultados
+      Object.keys(categoryMap).forEach(cat => {
+        const { section } = categoryMap[cat];
+        const sectionElement = document.getElementById(section);
+        const docs = documents.filter(d => 
+          d.category === cat && (
+            d.name.toLowerCase().includes(filter) ||
+            (d.theme||"").toLowerCase().includes(filter) ||
+            (d.detail||"").toLowerCase().includes(filter) ||
+            d.category.toLowerCase().includes(filter)
+          )
+        );
+        
+        sectionElement.style.display = docs.length > 0 ? "block" : "none";
+      });
+    });
+
+    function renderDocuments(filter=""){
+      Object.keys(categoryMap).forEach(cat=>{
+        const {container, count} = categoryMap[cat];
+        const tbody = document.getElementById(container);
+        const countElement = document.getElementById(count);
+        let docs = documents.filter(d=>d.category===cat);
+
+        // Aplicar filtro
+        if(filter){
+          docs = docs.filter(d=>
+            d.name.toLowerCase().includes(filter) ||
+            (d.theme||"").toLowerCase().includes(filter) ||
+            (d.detail||"").toLowerCase().includes(filter) ||
+            d.category.toLowerCase().includes(filter)
+          );
+        }
+        
+        countElement.textContent = docs.length;
+        
+        if (docs.length) {
+          tbody.innerHTML = docs.map(d => `
+            <tr>
+              <td>
+                <div class="doc-name">${d.name}</div>
+              </td>
+              <td>
+                <div class="doc-meta">${d.date}</div>
+              </td>
+              <td>
+                <div class="doc-meta">${d.user}</div>
+              </td>
+              <td>
+                <div class="doc-theme">${d.theme || ''}</div>
+              </td>
+              <td>
+                <div class="doc-detail" title="${d.detail || ''}">${d.detail || ''}</div>
+              </td>
+              <td>
+                <div class="doc-actions">
+                  <a href="${d.url}" target="_blank" class="doc-link"><i class="fa-solid fa-eye"></i> Ver</a>
+                  <button class="edit-btn" onclick="editDoc('${d.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+                </div>
+              </td>
+            </tr>
+          `).join("");
+        } else {
+          tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No hay documentos en esta categoría</td></tr>`;
+        }
+      });
+    }
+
+    window.editDoc=function(id){
+      const d=documents.find(x=>x.id===id);
+      if(!d) return;
+      document.getElementById("docId").value=d.id;
+      document.getElementById("docName").value=d.name;
+      document.getElementById("docCategory").value=d.category;
+      document.getElementById("docTheme").value=d.theme||"";
+      document.getElementById("docDetail").value=d.detail||"";
+      document.getElementById("docUrlHidden").value=d.url;
+      fileUrlWrap.innerHTML=`<a href="${d.url}" target="_blank" class="doc-link"><i class="fa-solid fa-external-link-alt"></i> ${d.url}</a>`;
+      filePreviewWrap.innerHTML = d.url.match(/\.(jpg|jpeg|png|gif)$/i) ? `<img src="${d.url}" class="preview-img"/>` : "";
+      modal.style.display="flex";
+    }
+  </script>
+</body>
+</html>

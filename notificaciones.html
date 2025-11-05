@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notificaciones Electrónicas</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+
+<style>
+    /* Variables CSS */
+    :root {
+        --primary-blue: #007bff;
+        --primary-light-blue: #e7f4ff;
+        --primary-dark-blue: #0056b3;
+        --secondary-gray: #f8f9fa;
+        --secondary-light-gray: #e9ecef;
+        --secondary-dark-gray: #6c757d;
+        --status-success: #28a745;
+        --status-warning: #ffc107;
+        --status-danger: #dc3545;
+        --status-info: #17a2b8;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --text-link: #007bff;
+        --text-light: #ffffff;
+        --background-default: #ffffff;
+        --background-card: #ffffff;
+        --background-header: #ffffff;
+        --background-table-header: #f8f9fa;
+        --border-default: #dee2e6;
+        --font-family: 'Arial', 'Helvetica', sans-serif;
+        --display-size: 24px;
+        --h1-size: 20px;
+        --h2-size: 18px;
+        --body-large-size: 16px;
+        --body-regular-size: 14px;
+        --caption-size: 12px;
+        --font-weight-regular: 400;
+        --font-weight-semibold: 600;
+        --font-weight-bold: 700;
+        --spacing-unit: 8px;
+        --spacing-xs: 4px;
+        --spacing-s: 8px;
+        --spacing-m: 16px;
+        --spacing-l: 24px;
+        --spacing-xl: 32px;
+        --spacing-gutter: 20px;
+        --border-radius-small: 2px;
+        --border-radius-default: 4px;
+        --border-radius-pill: 20px;
+        --shadow-none: none;
+        --shadow-subtle: 0 1px 3px rgba(0,0,0,0.1);
+        --radius: 12px;
+        --shadow: 0 4px 15px rgba(0,0,0,.08);
+    }
+
+    /* Estilos base */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: var(--font-family);
+        background-color: var(--background-default);
+        color: var(--text-primary);
+        line-height: 1.5;
+        min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+        background-color: var(--background-header);
+        border-bottom: 1px solid var(--border-default);
+        padding: var(--spacing-s) var(--spacing-m);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-subtle);
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        font-size: var(--h1-size);
+        font-weight: var(--font-weight-bold);
+        color: var(--primary-blue);
+    }
+
+    /* Contenedor principal */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-m) var(--spacing-gutter);
+    }
+
+    /* Filtros - EN UNA SOLA LÍNEA */
+    .filters-section {
+        background-color: var(--background-card);
+        padding: var(--spacing-m);
+        border-radius: var(--border-radius-default);
+        border: 1px solid var(--border-default);
+        margin-bottom: var(--spacing-xl);
+        box-shadow: var(--shadow-subtle);
+    }
+
+    .filters-title {
+        font-size: var(--h2-size);
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--spacing-m);
+    }
+
+    .filter-row {
+        display: flex;
+        gap: var(--spacing-m);
+        align-items: flex-end;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .filter-label {
+        display: block;
+        font-size: var(--body-regular-size);
+        margin-bottom: var(--spacing-xs);
+        font-weight: var(--font-weight-semibold);
+        white-space: nowrap;
+    }
+
+    .input, .dropdown {
+        border: 1px solid var(--border-default);
+        border-radius: var(--border-radius-default);
+        padding: var(--spacing-s);
+        background-color: var(--background-default);
+        color: var(--text-primary);
+        font-size: var(--body-regular-size);
+        width: 100%;
+        transition: border-color 0.2s;
+    }
+
+    .input:focus, .dropdown:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+    }
+
+    /* Botones de acción */
+    .action-buttons {
+        display: flex;
+        gap: var(--spacing-s);
+        margin-top: var(--spacing-m);
+        flex-wrap: wrap;
+    }
+
+    .button {
+        background-color: var(--primary-blue);
+        color: var(--text-light);
+        border: none;
+        border-radius: var(--border-radius-default);
+        padding: var(--spacing-s) var(--spacing-m);
+        font-size: var(--body-regular-size);
+        cursor: pointer;
+        transition: background-color 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+
+    .button:hover {
+        opacity: 0.9;
+    }
+
+    .button-success {
+        background-color: #1e7e34;
+    }
+
+    .button-secondary {
+        background-color: var(--secondary-dark-gray);
+    }
+
+    .button-danger {
+        background-color: var(--status-danger);
+    }
+
+    /* Tabla de datos - Estilo moderno */
+    .table-section {
+        background-color: var(--background-card);
+        border-radius: var(--border-radius-default);
+        border: 1px solid var(--border-default);
+        overflow: hidden;
+        box-shadow: var(--shadow-subtle);
+        margin-bottom: var(--spacing-m);
+    }
+
+    .table-title {
+        font-size: var(--h2-size);
+        font-weight: var(--font-weight-semibold);
+        padding: var(--spacing-m);
+        background-color: var(--background-table-header);
+        border-bottom: 1px solid var(--border-default);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+
+    .data-table th {
+        background-color: var(--primary-blue);
+        color: var(--text-light);
+        font-weight: var(--font-weight-semibold);
+        padding: var(--spacing-m);
+        font-size: var(--caption-size);
+        text-transform: uppercase;
+        text-align: left;
+        position: sticky;
+        top: 0;
+    }
+
+    .data-table td {
+        border-bottom: 1px solid var(--border-default);
+        padding: var(--spacing-m);
+        color: var(--text-primary);
+        font-size: var(--body-regular-size);
+        transition: background-color 0.2s;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tr:hover td {
+        background-color: var(--primary-light-blue);
+    }
+
+    .data-table tr:nth-child(even) {
+        background-color: var(--secondary-gray);
+    }
+
+    .data-table tr:nth-child(even):hover td {
+        background-color: var(--primary-light-blue);
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Badges para prioridades */
+    .badge {
+        padding: 6px 10px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        display: inline-block;
+        text-align: center;
+        min-width: 80px;
+    }
+    
+    .baja {
+        background-color: #7f8c8d;
+    }
+    
+    .media {
+        background-color: #e67e22;
+    }
+    
+    .alta {
+        background-color: #e74c3c;
+    }
+    
+    .urgente {
+        background-color: #8e44ad;
+    }
+
+    /* Paginación */
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-m);
+        margin-top: var(--spacing-m);
+        background: var(--background-card);
+        border-radius: var(--border-radius-default);
+        box-shadow: var(--shadow-subtle);
+    }
+
+    .pagination-container .page-info {
+        font-size: var(--body-regular-size);
+        color: var(--text-secondary);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .pagination-container .nav-buttons {
+        display: flex;
+        gap: var(--spacing-s);
+    }
+
+    .pagination-selector {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-s);
+    }
+
+    .pagination-selector select {
+        padding: var(--spacing-s);
+        border-radius: var(--border-radius-default);
+        border: 1px solid var(--border-default);
+    }
+
+    /* MODALES */
+    #modalRegistro {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.6);
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        z-index: 1000;
+    }
+    
+    #modalRegistro .content {
+        background: #fff;
+        border-radius: 16px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        animation: fadeIn .25s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+        position: sticky;
+        top: 0;
+        background: var(--primary-blue);
+        color: #fff;
+        padding: 12px 16px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 16px 16px 0 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+    }
+    
+    .modal-body {
+        padding: 16px;
+        overflow-y: auto;
+    }
+    
+    .controls-form {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        padding: 12px 16px;
+        border-top: 1px solid #eee;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+        z-index: 5;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        font-weight: 600;
+        color: var(--primary-blue);
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        display: block;
+    }
+    
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        background: #fafafa;
+        transition: .2s;
+    }
+    
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        background: #fff;
+    }
+    
+    .field.error input,
+    .field.error textarea,
+    .field.error select {
+        border-color: var(--status-danger);
+        background-color: #ffeef0;
+    }
+    
+    .field .error-message {
+        color: var(--status-danger);
+        font-size: 0.8rem;
+        margin-top: 4px;
+        display: none;
+    }
+    
+    .field.error .error-message {
+        display: block;
+    }
+
+    /* Botones de prioridad */
+    .prioridad-opciones {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .prioridad-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        opacity: 0.7;
+    }
+    
+    .prioridad-btn.activa {
+        opacity: 1;
+    }
+
+    /* ALERTA FLOTANTE */
+    .floating-alert {
+        position: fixed;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--status-danger);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        max-width: 400px;
+        text-align: center;
+        font-size: 1rem;
+    }
+    
+    .floating-alert.success {
+        background-color: var(--status-success);
+    }
+
+    .floating-alert.show {
+        opacity: 1;
+        visibility: visible;
+        top: 20px;
+    }
+
+    /* Estados vacíos */
+    .empty-state {
+        padding: 20px;
+        text-align: center;
+        font-weight: bold;
+        color: var(--text-secondary);
+        background: var(--secondary-light-gray);
+        border-radius: 6px;
+        margin: 10px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .container {
+            max-width: 100%;
+            padding: var(--spacing-s);
+        }
+        
+        .filter-row {
+            gap: var(--spacing-s);
+        }
+        
+        .filter-group {
+            min-width: 140px;
+        }
+
+        #modalRegistro .content {
+            max-width: 95%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: var(--spacing-s);
+            text-align: center;
+        }
+        
+        .filter-row {
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            min-width: calc(50% - 10px);
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .controls-form {
+            flex-direction: column;
+        }
+        
+        .pagination-container {
+            flex-direction: column;
+            gap: var(--spacing-m);
+            text-align: center;
+        }
+        
+        .prioridad-opciones {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding: var(--spacing-xs);
+        }
+        
+        .filters-section,
+        .table-section {
+            padding: var(--spacing-s);
+        }
+        
+        .filters-title,
+        .table-title {
+            font-size: var(--body-large-size);
+        }
+
+        #modalRegistro .content {
+            max-width: 100%;
+            max-height: 100vh;
+            border-radius: 0;
+        }
+
+        .modal-header,
+        .modal-body,
+        .controls-form {
+            padding: var(--spacing-s);
+        }
+        
+        .actions {
+            flex-direction: column;
+        }
+        
+        .data-table {
+            min-width: 600px;
+        }
+        
+        .filter-group {
+            min-width: 100%;
+        }
+    }
+
+    @media print {
+        body * { visibility: hidden; }
+        #admin, #admin * { visibility: visible; }
+        #admin { position: absolute; top: 0; left: 0; width: 100%; }
+        .filters-section, .pagination-container, .actions, .header button { display: none !important; }
+    }
+</style>
+</head>
+<body>
+    <!-- Alerta flotante -->
+    <div class="floating-alert" id="floating-alert"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Notificaciones Electrónicas</div>
+            <div>
+                <button class="button" id="btnNuevo">
+                    <i class="fas fa-plus"></i> Nuevo Registro
+                </button>
+                <button class="button button-success" id="btnImprimir">
+                    <i class="fas fa-print"></i> Imprimir Lista
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container">
+        <!-- Filtros - TODOS EN UNA LÍNEA -->
+        <section class="filters-section">
+            <h2 class="filters-title">Filtros de Búsqueda</h2>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label" for="filtroTexto">Buscar</label>
+                    <input type="text" id="filtroTexto" class="input" placeholder="Expediente o carátula">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="filtroFecha">Fecha</label>
+                    <input type="date" id="filtroFecha" class="input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="filtroResponsable">Responsable</label>
+                    <select id="filtroResponsable" class="dropdown"></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="filtroJuzgado">Juzgado</label>
+                    <select id="filtroJuzgado" class="dropdown"></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="filtroTipo">Tipo</label>
+                    <select id="filtroTipo" class="dropdown">
+                        <option value="">Todos</option>
+                        <option>Providencia</option>
+                        <option>Resolución</option>
+                        <option>Sentencia</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="filtroPrioridad">Prioridad</label>
+                    <select id="filtroPrioridad" class="dropdown">
+                        <option value="">Todas</option>
+                        <option>Baja</option>
+                        <option>Media</option>
+                        <option>Alta</option>
+                        <option>Urgente</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controles de paginación superiores -->
+        <div id="paginacion-superior" class="pagination-container">
+            <div class="page-info" id="pageInfoTop">Mostrando 0 de 0 registros</div>
+            <div class="pagination-selector">
+                <div class="nav-buttons">
+                    <button id="btnPrevPageTop" class="button" disabled>
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </button>
+                    <button id="btnNextPageTop" class="button" disabled>
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <select id="pageSelectTop" class="dropdown">
+                    <option value="1">Página 1</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabla de datos -->
+        <section class="table-section">
+            <div class="table-title">
+                <span>Listado de notificaciones electrónicas</span>
+                <span id="tableCount">Total: 0</span>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Expediente</th>
+                            <th>Carátula</th>
+                            <th>Juzgado</th>
+                            <th>Responsable</th>
+                            <th>Tipo</th>
+                            <th>Prioridad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCuerpo">
+                        <tr>
+                            <td colspan="8">Cargando datos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Controles de paginación inferiores -->
+        <div id="paginacion-inferior" class="pagination-container">
+            <div class="page-info" id="pageInfoBottom">Mostrando 0 de 0 registros</div>
+            <div class="pagination-selector">
+                <div class="nav-buttons">
+                    <button id="btnPrevPageBottom" class="button" disabled>
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </button>
+                    <button id="btnNextPageBottom" class="button" disabled>
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <select id="pageSelectBottom" class="dropdown">
+                    <option value="1">Página 1</option>
+                </select>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para nuevo/editar notificación -->
+    <div id="modalRegistro">
+        <div class="content">
+            <div class="modal-header">
+                <i class="fa-solid fa-file-alt"></i>
+                <h2 id="modalTitulo" style="margin:0;">Nuevo Registro</h2>
+            </div>
+            <div class="modal-body">
+                <form id="formRegistro">
+                    <div class="form-group">
+                        <label for="fechaNotificacion">Fecha de notificación *</label>
+                        <input type="date" id="fechaNotificacion" required>
+                        <span class="error-message">Este campo es obligatorio.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="expediente">Expediente *</label>
+                        <input type="text" id="expediente" required>
+                        <span class="error-message">Este campo es obligatorio.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="caratula">Carátula *</label>
+                        <textarea id="caratula" required></textarea>
+                        <span class="error-message">Este campo es obligatorio.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="juzgado">Juzgado *</label>
+                        <select id="juzgado" required></select>
+                        <span class="error-message">Este campo es obligatorio.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="responsable">Responsable *</label>
+                        <select id="responsable" required></select>
+                        <span class="error-message">Este campo es obligatorio.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoNotificacion">Tipo *</label>
+                        <select id="tipoNotificacion" required>
+                            <option value="">Seleccione...</option>
+                            <option>Providencia</option>
+                            <option>Resolución</option>
+                            <option>Sentencia</option>
+                        </select>
+                        <span class="error-message">Este campo es obligatorio.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="prioridadNotificacion">Prioridad *</label>
+                        <div class="prioridad-opciones" id="grupoPrioridad">
+                            <button type="button" class="prioridad-btn baja" style="background-color:#7f8c8d">Baja</button>
+                            <button type="button" class="prioridad-btn media" style="background-color:#e67e22">Media</button>
+                            <button type="button" class="prioridad-btn alta" style="background-color:#e74c3c">Alta</button>
+                            <button type="button" class="prioridad-btn urgente" style="background-color:#8e44ad">Urgente</button>
+                        </div>
+                        <input type="hidden" id="prioridadNotificacion" required>
+                        <span class="error-message">Este campo es obligatorio.</span>
+                    </div>
+                </form>
+            </div>
+            <div class="controls-form">
+                <button class="button button-success" type="button" id="btnGuardar">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+                <button class="button button-secondary" type="button" id="btnCancelar">
+                    <i class="fa fa-xmark"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== Configuración de Firebase =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrzUT1defyEUNA7apAlyP6mtivpNVrkqA",
+            authDomain: "notificaciones-electronicas6.firebaseapp.com",
+            projectId: "notificaciones-electronicas6",
+            storageBucket: "notificaciones-electronicas6.firebasestorage.app",
+            messagingSenderId: "518189859271",
+            appId: "1:518189859271:web:eecdd6b469f1611b2b99e2"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Datos estáticos
+        const responsables = [
+            "Bazante Nadia Romina", "Cardozo Maria Raquel", "Cedron Noelia Aurora", 
+            "Corrales Alicia Mariela", "Escobar Monica Graciela", "Fioravante Romulo",
+            "Gonzalez Alberto Misael", "Gonzalez Juan Jose", "Gudiño Natalia Esther",
+            "Magnani Enzo Luciano", "Pablos Patricia", "Palacios Ana Gabriela",
+            "Ramos Marcelo Gustavo", "Riveros Patricia Soledad", "Sosa Rita Cecilia"
+        ];
+
+        const juzgados = {
+            "Tercera Instancia": ["SUPERIOR TRIBUNAL DE JUSTICIA"],
+            "Segunda Instancia": [
+                "CÁMARA DE APELACIONES EN LO CIVIL, COMERCIAL, DE FAMILIA Y FISCAL TRIBUTARIA -Sala I",
+                "CÁMARA DE APELACIONES EN LO CIVIL, COMERCIAL, DE FAMILIA Y FISCAL TRIBUTARIA-Sala II", 
+                "CÁMARA DE APELACIONES EN LO CIVIL, COMERCIAL, DE FAMILIA Y FISCAL TRIBUTARIA -Sala III", 
+                "CÁMARA DE APELACIONES EN LO CIVIL, COMERCIAL, DE FAMILIA Y FISCAL TRIBUTARIA -Sala IV", 
+                "CÁMARA DE APELACIONES EN LO CIVIL, COMERCIAL, DE FAMILIA Y FISCAL TRIBUTARIA -Sala V"
+            ],
+            "Administrativo": [
+                "CEJUME - Posadas",
+                "DEUT Defensorias - Posadas",
+                "Legajo Defensoria Civil y Comercial N° 6"
+            ],
+            "Civil": [
+                "Juzgado Civil y Comercial N° 1 - Posadas",
+                "Juzgado Civil y Comercial N° 2 - Posadas",
+                "Juzgado Civil y Comercial N° 3 - Posadas",
+                "Juzgado Civil y Comercial N° 4 - Posadas",
+                "Juzgado Civil y Comercial N° 5 - Posadas",
+                "Juzgado Civil y Comercial N° 6 - Posadas",
+                "Juzgado Civil y Comercial N° 7 - Posadas",
+                "Juzgado Civil y Comercial N° 8 - Posadas",
+                "... Civil Comercial Laboral Familia y Violencia Fliar- Apostoles"
+            ],
+            "Penal": [
+                "Juzgado de Instrucción N° 1 - Posadas",
+                "Juzgado de Instrucción N° 2 - Posadas",
+                "Juzgado de Instrucción N° 3 - Posadas",
+                "Juzgado de Instrucción N° 6 - Posadas",
+                "Juzgado de Instrucción N° 7 - Posadas",
+                "Juzgado Correccional y de Menores N° 1 - Posadas",
+                "Juzgado Correccional y de Menores N° 2 - Posadas",
+                "Tribunal Penal N° 1 - Posadas",
+                "Tribunal Penal N° 2 - Posadas"
+            ],
+            "Laboral": [
+                "Juzgado Laboral N° 1 - Posadas",
+                "Juzgado Laboral N° 2 - Posadas",
+                "Juzgado Laboral N° 3 - Posadas",
+                "Juzgado Laboral N° 4 - Posadas"
+            ],
+            "Familia": [
+                "Juzgado de Familia N° 1 - Posadas",
+                "Juzgado de Familia N° 2 - Posadas",
+                "Juzgado de Familia N° 3 - Posadas",
+                "Juzgado Familia y VF Garupa",
+                "... Civil Comercial Laboral Familia y Violencia Fliar- Apostoles"
+            ],
+            "Violencia Familiar": [
+                "Juzgado de Violencia Familiar N° 1 - Posadas",
+                "Juzgado de Violencia Familiar N° 2 - Posadas",
+                "Juzgado F y Violencia Familiar Garupa",
+                "... Civil Comercial Laboral Familia y Violencia Fliar- Apostoles"
+            ],
+            "Paz": [
+                "Juzgado de Paz Civil Comercial N° 1 - Posadas",
+                "Juzgado de Paz Civil Comercial N° 2 - Posadas",
+                "Juzgado de Paz de Itaembe Mini - Posadas",
+                "Juzgado de Paz de Itaembe Guazu - Posadas",
+                "Juzgado de Paz de Villa Cabello - Posadas",
+                "Juzgado de Paz de Garupa",
+                "Juzgado de Paz de Fatima - Garupa",
+                "Juzgado de Paz de Apostoles",
+                "Juzgado de Paz de Candelaria"
+            ]
+        };
+
+        // ===== Helpers UI =====
+        const $ = (id) => document.getElementById(id);
+        const tablaCuerpo = $("tablaCuerpo");
+        const modal = $("modalRegistro");
+        const modalTitulo = $("modalTitulo");
+        const floatingAlert = $("floating-alert");
+        const tableCount = $("tableCount");
+
+        // ===== Variables de estado =====
+        let notificaciones = [];
+        let notificacionesFiltradas = [];
+        let paginaActual = 1;
+        let editandoId = null;
+        const registrosPorPagina = 10;
+
+        // ===== Funciones de utilidad =====
+        const mostrarAlertaFlotante = (mensaje, tipo) => {
+            floatingAlert.textContent = mensaje;
+            floatingAlert.classList.remove('danger', 'success');
+            floatingAlert.classList.add(tipo);
+            floatingAlert.classList.add('show');
+            setTimeout(() => {
+                floatingAlert.classList.remove('show');
+            }, 3000);
+        };
+
+        const formatearFecha = (fechaString) => {
+            if(!fechaString) return '';
+            const fecha = new Date(fechaString + 'T12:00:00'); 
+            if(isNaN(fecha.getTime())) return fechaString;
+            return fecha.toLocaleDateString('es-AR');
+        };
+
+        // ===== Funciones de validación =====
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = [
+                "fechaNotificacion", "expediente", "caratula", 
+                "juzgado", "responsable", "tipoNotificacion", "prioridadNotificacion"
+            ];
+            
+            requiredFields.forEach(id => {
+                const field = $(id);
+                const parent = field.closest('.form-group');
+                if (field.value.trim() === "") {
+                    parent.classList.add('error');
+                    isValid = false;
+                } else {
+                    parent.classList.remove('error');
+                }
+            });
+
+            return isValid;
+        }
+
+        // ===== Funciones de paginación =====
+        function actualizarPaginacion() {
+            const totalPaginas = Math.ceil(notificacionesFiltradas.length / registrosPorPagina);
+            const inicio = (paginaActual - 1) * registrosPorPagina + 1;
+            const fin = Math.min(paginaActual * registrosPorPagina, notificacionesFiltradas.length);
+            const total = notificacionesFiltradas.length;
+            
+            // Actualizar información de página
+            const pageInfoText = `Mostrando ${inicio}-${fin} de ${total} registros`;
+            $("pageInfoTop").textContent = pageInfoText;
+            $("pageInfoBottom").textContent = pageInfoText;
+            
+            // Actualizar selectores de página
+            const pageSelectTop = $("pageSelectTop");
+            const pageSelectBottom = $("pageSelectBottom");
+            
+            pageSelectTop.innerHTML = '';
+            pageSelectBottom.innerHTML = '';
+            
+            for (let i = 1; i <= totalPaginas; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Página ${i}`;
+                if (i === paginaActual) {
+                    option.selected = true;
+                }
+                pageSelectTop.appendChild(option.cloneNode(true));
+                pageSelectBottom.appendChild(option);
+            }
+            
+            // Actualizar estado de botones
+            const prevButtons = [$("btnPrevPageTop"), $("btnPrevPageBottom")];
+            const nextButtons = [$("btnNextPageTop"), $("btnNextPageBottom")];
+            
+            prevButtons.forEach(btn => {
+                btn.disabled = paginaActual === 1;
+            });
+            
+            nextButtons.forEach(btn => {
+                btn.disabled = paginaActual === totalPaginas;
+            });
+            
+            // Actualizar contador de tabla
+            tableCount.textContent = `Total: ${total}`;
+        }
+
+        function cambiarPagina(nuevaPagina) {
+            const totalPaginas = Math.ceil(notificacionesFiltradas.length / registrosPorPagina);
+            
+            if (nuevaPagina < 1 || nuevaPagina > totalPaginas) {
+                return;
+            }
+            
+            paginaActual = nuevaPagina;
+            renderTabla();
+            actualizarPaginacion();
+        }
+
+        // ===== Funciones de renderizado =====
+        function renderTabla() {
+            const inicio = (paginaActual - 1) * registrosPorPagina;
+            const fin = inicio + registrosPorPagina;
+            const notificacionesToShow = notificacionesFiltradas.slice(inicio, fin);
+            
+            tablaCuerpo.innerHTML = '';
+            
+            if (notificacionesToShow.length === 0) {
+                tablaCuerpo.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">No hay notificaciones que coincidan con los filtros</div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            notificacionesToShow.forEach(notif => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formatearFecha(notif.fecha)}</td>
+                    <td>${notif.expediente || ''}</td>
+                    <td>${notif.caratula || ''}</td>
+                    <td>${notif.juzgado || ''}</td>
+                    <td>${notif.responsable || ''}</td>
+                    <td>${notif.tipo || ''}</td>
+                    <td><span class="badge ${(notif.prioridad || '').toLowerCase()}">${notif.prioridad || ''}</span></td>
+                    <td class="actions">
+                        <button class="button button-secondary editar-notificacion" data-id="${notif.id}" title="Editar">
+                            <i class="fa fa-pen"></i> Editar
+                        </button>
+                    </td>
+                `;
+                tablaCuerpo.appendChild(tr);
+            });
+
+            // Asignar eventos a los botones
+            document.querySelectorAll(".editar-notificacion").forEach(btn => {
+                btn.onclick = () => abrirEditar(btn.dataset.id);
+            });
+        }
+
+        // ===== Funciones de filtrado =====
+        function aplicarFiltros() {
+            const texto = ($("filtroTexto").value || "").toLowerCase();
+            const fecha = $("filtroFecha").value;
+            const responsable = $("filtroResponsable").value;
+            const juzgado = $("filtroJuzgado").value;
+            const tipo = $("filtroTipo").value;
+            const prioridad = $("filtroPrioridad").value;
+            
+            notificacionesFiltradas = notificaciones.filter(notif => {
+                return (
+                    (texto === '' || 
+                        (notif.expediente && notif.expediente.toLowerCase().includes(texto)) || 
+                        (notif.caratula && notif.caratula.toLowerCase().includes(texto))) &&
+                    (fecha === '' || notif.fecha === fecha) &&
+                    (responsable === '' || notif.responsable === responsable) &&
+                    (juzgado === '' || notif.juzgado === juzgado) &&
+                    (tipo === '' || notif.tipo === tipo) &&
+                    (prioridad === '' || notif.prioridad === prioridad)
+                );
+            });
+            
+            paginaActual = 1;
+            renderTabla();
+            actualizarPaginacion();
+        }
+
+        // ===== Funciones CRUD =====
+        function abrirNuevo() {
+            editandoId = null;
+            modalTitulo.textContent = "Nuevo Registro";
+            $("formRegistro").reset();
+            
+            // Limpiar errores de validación
+            document.querySelectorAll('.form-group.error').forEach(el => {
+                el.classList.remove('error');
+            });
+            
+            // Limpiar botones de prioridad
+            document.querySelectorAll('.prioridad-btn').forEach(b => b.classList.remove('activa'));
+            
+            modal.style.display = "flex";
+        }
+
+        function abrirEditar(id) {
+            editandoId = id;
+            modalTitulo.textContent = "Editar Registro";
+            
+            const notificacion = notificaciones.find(n => n.id === id);
+            if (notificacion) {
+                $("fechaNotificacion").value = notificacion.fecha;
+                $("expediente").value = notificacion.expediente;
+                $("caratula").value = notificacion.caratula;
+                $("juzgado").value = notificacion.juzgado;
+                $("responsable").value = notificacion.responsable;
+                $("tipoNotificacion").value = notificacion.tipo;
+                
+                // Establecer prioridad
+                const prioridad = notificacion.prioridad.toLowerCase();
+                const botonPrioridad = document.querySelector(`.prioridad-btn.${prioridad}`);
+                if (botonPrioridad) {
+                    botonPrioridad.classList.add('activa');
+                    $("prioridadNotificacion").value = notificacion.prioridad;
+                }
+                
+                // Limpiar errores de validación
+                document.querySelectorAll('.form-group.error').forEach(el => {
+                    el.classList.remove('error');
+                });
+                
+                modal.style.display = "flex";
+            } else {
+                mostrarAlertaFlotante("Notificación no encontrada", "danger");
+            }
+        }
+
+        function cerrarModal() {
+            modal.style.display = "none";
+            editandoId = null;
+        }
+
+        async function guardarRegistro(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                mostrarAlertaFlotante("Por favor, completa los campos obligatorios", "danger");
+                return;
+            }
+            
+            const prioridad = $("prioridadNotificacion").value;
+            if(!prioridad) {
+                mostrarAlertaFlotante('Por favor seleccione una prioridad', 'danger');
+                return;
+            }
+            
+            const nuevaNotificacion = {
+                fecha: $("fechaNotificacion").value,
+                expediente: $("expediente").value,
+                caratula: $("caratula").value,
+                juzgado: $("juzgado").value,
+                responsable: $("responsable").value,
+                tipo: $("tipoNotificacion").value,
+                prioridad: prioridad
+            };
+            
+            try {
+                if (editandoId) {
+                    // Actualizar registro existente
+                    await db.collection("causas").doc(editandoId).update(nuevaNotificacion);
+                    mostrarAlertaFlotante("Registro actualizado correctamente", "success");
+                } else {
+                    // Crear nuevo registro
+                    await db.collection("causas").add(nuevaNotificacion);
+                    mostrarAlertaFlotante("Registro guardado correctamente", "success");
+                }
+                
+                cerrarModal();
+                cargarDatos();
+            } catch(error) {
+                console.error("Error al guardar:", error);
+                mostrarAlertaFlotante("Error al guardar el registro: " + error.message, "danger");
+            }
+        }
+
+        // ===== Funciones de datos =====
+        function cargarListas() {
+            const juzgadoSelect = $("juzgado");
+            const juzgadoFiltroSelect = $("filtroJuzgado");
+            const responsableSelect = $("responsable");
+            const responsableFiltroSelect = $("filtroResponsable");
+            
+            // Limpiar selects
+            juzgadoSelect.innerHTML = '<option value="">Seleccione...</option>';
+            juzgadoFiltroSelect.innerHTML = '<option value="">Todos</option>';
+            responsableSelect.innerHTML = '<option value="">Seleccione...</option>';
+            responsableFiltroSelect.innerHTML = '<option value="">Todos</option>';
+            
+            // Cargar juzgados
+            for(let categoria in juzgados) {
+                const grupo = document.createElement('optgroup');
+                grupo.label = categoria;
+                
+                juzgados[categoria].forEach(juzgado => {
+                    const opcion = document.createElement('option');
+                    opcion.value = juzgado;
+                    opcion.textContent = juzgado;
+                    grupo.appendChild(opcion);
+                    
+                    // También para el filtro
+                    const opcionFiltro = document.createElement('option');
+                    opcionFiltro.value = juzgado;
+                    opcionFiltro.textContent = juzgado;
+                    juzgadoFiltroSelect.appendChild(opcionFiltro);
+                });
+                
+                juzgadoSelect.appendChild(grupo);
+            }
+            
+            // Cargar responsables
+            responsables.forEach(responsable => {
+                const opcion = document.createElement('option');
+                opcion.value = responsable;
+                opcion.textContent = responsable;
+                responsableSelect.appendChild(opcion);
+                
+                const opcionFiltro = document.createElement('option');
+                opcionFiltro.value = responsable;
+                opcionFiltro.textContent = responsable;
+                responsableFiltroSelect.appendChild(opcionFiltro);
+            });
+        }
+
+        async function cargarDatos() {
+            try {
+                tablaCuerpo.innerHTML = '<tr><td colspan="8" style="text-align:center;">Cargando datos...</td></tr>';
+                
+                const querySnapshot = await db.collection("causas").get();
+                notificaciones = querySnapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                
+                // Ordenar por fecha (más recientes primero)
+                notificaciones.sort((a, b) => new Date(b.fecha + 'T12:00:00') - new Date(a.fecha + 'T12:00:00'));
+                
+                aplicarFiltros();
+            } catch(error) {
+                console.error("Error al cargar datos:", error);
+                mostrarAlertaFlotante("Error al cargar los datos: " + error.message, "danger");
+                tablaCuerpo.innerHTML = '<tr><td colspan="8" style="text-align:center;">Error al cargar datos. Verifica la conexión.</td></tr>';
+            }
+        }
+
+        // ===== Funciones de impresión =====
+        function imprimirListado() {
+            window.print();
+        }
+
+        // ===== Inicialización =====
+        function initApp() {
+            // Cargar listas de opciones
+            cargarListas();
+            
+            // Cargar datos iniciales
+            cargarDatos();
+            
+            // Asignar eventos
+            $("btnNuevo").onclick = abrirNuevo;
+            $("btnGuardar").onclick = guardarRegistro;
+            $("btnCancelar").onclick = cerrarModal;
+            $("btnImprimir").onclick = imprimirListado;
+            
+            // Eventos de filtrado
+            $("filtroTexto").addEventListener('input', aplicarFiltros);
+            $("filtroFecha").addEventListener('change', aplicarFiltros);
+            $("filtroResponsable").addEventListener('change', aplicarFiltros);
+            $("filtroJuzgado").addEventListener('change', aplicarFiltros);
+            $("filtroTipo").addEventListener('change', aplicarFiltros);
+            $("filtroPrioridad").addEventListener('change', aplicarFiltros);
+            
+            // Configurar botones de prioridad
+            document.querySelectorAll('.prioridad-btn').forEach(boton => {
+                boton.onclick = () => {
+                    document.querySelectorAll('.prioridad-btn').forEach(b => b.classList.remove('activa'));
+                    boton.classList.add('activa');
+                    $("prioridadNotificacion").value = boton.textContent;
+                };
+            });
+            
+            // Eventos de paginación superiores
+            $("btnPrevPageTop").onclick = () => cambiarPagina(paginaActual - 1);
+            $("btnNextPageTop").onclick = () => cambiarPagina(paginaActual + 1);
+            $("pageSelectTop").onchange = (e) => cambiarPagina(parseInt(e.target.value));
+            
+            // Eventos de paginación inferiores
+            $("btnPrevPageBottom").onclick = () => cambiarPagina(paginaActual - 1);
+            $("btnNextPageBottom").onclick = () => cambiarPagina(paginaActual + 1);
+            $("pageSelectBottom").onchange = (e) => cambiarPagina(parseInt(e.target.value));
+
+            // Cerrar modal al hacer clic fuera
+            window.addEventListener("click", e => {
+                if (e.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+
+        // Inicializar la aplicación cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>

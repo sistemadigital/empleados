@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Datos de Partes</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+    
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-blue: #007bff;
+            --primary-light-blue: #e7f4ff;
+            --primary-dark-blue: #0056b3;
+            --secondary-gray: #f8f9fa;
+            --secondary-light-gray: #e9ecef;
+            --secondary-dark-gray: #6c757d;
+            --status-success: #28a745;
+            --status-warning: #ffc107;
+            --status-danger: #dc3545;
+            --status-info: #17a2b8;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-light: #ffffff;
+            --background-default: #ffffff;
+            --background-card: #ffffff;
+            --background-header: #ffffff;
+            --background-table-header: #f8f9fa;
+            --border-default: #dee2e6;
+            --font-family: 'Arial', 'Helvetica', sans-serif;
+            --h1-size: 20px;
+            --h2-size: 18px;
+            --body-large-size: 16px;
+            --body-regular-size: 14px;
+            --caption-size: 12px;
+            --font-weight-regular: 400;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+            --spacing-unit: 8px;
+            --spacing-xs: 4px;
+            --spacing-s: 8px;
+            --spacing-m: 16px;
+            --spacing-l: 24px;
+            --spacing-xl: 32px;
+            --spacing-gutter: 20px;
+            --border-radius-default: 4px;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-default);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--background-header);
+            border-bottom: 1px solid var(--border-default);
+            padding: var(--spacing-s) var(--spacing-m);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: var(--h1-size);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-blue);
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-m) var(--spacing-gutter);
+        }
+
+        /* Tarjetas de resumen (KPIs) */
+        .kpi-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .kpi-title {
+            font-size: var(--h2-size);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-m);
+        }
+
+        .kpi-cards {
+            display: flex;
+            gap: var(--spacing-m);
+            overflow-x: auto;
+            padding-bottom: var(--spacing-s);
+        }
+
+        .kpi-card {
+            background-color: var(--background-card);
+            padding: var(--spacing-m) var(--spacing-l);
+            border-radius: var(--border-radius-default);
+            border: 1px solid var(--border-default);
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 180px;
+            flex: 1;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .kpi-card.total {
+            background-color: var(--primary-blue);
+            color: var(--text-light);
+        }
+
+        .kpi-card.activos {
+            border-left: 4px solid var(--status-success);
+        }
+
+        .kpi-card.inactivos {
+            border-left: 4px solid var(--status-warning);
+        }
+
+        .kpi-number {
+            font-size: 24px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .kpi-card.total .kpi-number {
+            color: var(--text-light);
+        }
+
+        .kpi-label {
+            font-size: var(--caption-size);
+            font-weight: var(--font-weight-regular);
+            text-transform: uppercase;
+        }
+
+        .kpi-card.total .kpi-label {
+            color: var(--text-light);
+        }
+
+        /* Filtros */
+        .filters-section {
+            background-color: var(--background-card);
+            padding: var(--spacing-m);
+            border-radius: var(--border-radius-default);
+            border: 1px solid var(--border-default);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .filters-title {
+            font-size: var(--h2-size);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-m);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-m);
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: var(--body-regular-size);
+            margin-bottom: var(--spacing-xs);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .input, .dropdown {
+            border: 1px solid var(--border-default);
+            border-radius: var(--border-radius-default);
+            padding: var(--spacing-s);
+            background-color: var(--background-default);
+            color: var(--text-primary);
+            font-size: var(--body-regular-size);
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .input:focus, .dropdown:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-s);
+            margin-top: var(--spacing-m);
+            flex-wrap: wrap;
+        }
+
+        .button {
+            background-color: var(--primary-blue);
+            color: var(--text-light);
+            border: none;
+            border-radius: var(--border-radius-default);
+            padding: var(--spacing-s) var(--spacing-m);
+            font-size: var(--body-regular-size);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .button-success {
+            background-color: var(--status-success);
+        }
+
+        .button-secondary {
+            background-color: var(--secondary-dark-gray);
+        }
+
+        .button-danger {
+            background-color: var(--status-danger);
+        }
+
+        /* Tabla de datos - Estilo moderno */
+        .table-section {
+            background-color: var(--background-card);
+            border-radius: var(--border-radius-default);
+            border: 1px solid var(--border-default);
+            overflow: hidden;
+            box-shadow: var(--shadow-subtle);
+            margin-bottom: var(--spacing-m);
+        }
+
+        .table-title {
+            font-size: var(--h2-size);
+            font-weight: var(--font-weight-semibold);
+            padding: var(--spacing-m);
+            background-color: var(--background-table-header);
+            border-bottom: 1px solid var(--border-default);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .data-table th {
+            background-color: var(--background-table-header);
+            font-weight: var(--font-weight-semibold);
+            border-bottom: 2px solid var(--border-default);
+            padding: var(--spacing-m);
+            color: var(--text-primary);
+            font-size: var(--caption-size);
+            text-transform: uppercase;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table td {
+            border-bottom: 1px solid var(--border-default);
+            padding: var(--spacing-m);
+            color: var(--text-primary);
+            font-size: var(--body-regular-size);
+            vertical-align: top;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover td {
+            background-color: var(--secondary-gray);
+        }
+
+        /* Acciones en tabla */
+        .table-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+            flex-wrap: wrap;
+        }
+
+        .table-actions .button {
+            padding: 6px 10px;
+            font-size: var(--caption-size);
+        }
+
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-m);
+            background: var(--background-card);
+            border-radius: var(--border-radius-default);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .pagination .page-info {
+            font-size: var(--body-regular-size);
+            color: var(--text-secondary);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .pagination .nav-buttons {
+            display: flex;
+            gap: var(--spacing-s);
+        }
+
+        /* MODALES */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal .content {
+            background: #fff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: fadeIn .25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            background: var(--primary-blue);
+            color: #fff;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .modal-footer {
+            background: #fff;
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* Modal de detalle compacto */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary-blue);
+            font-size: var(--caption-size);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: var(--body-regular-size);
+            color: var(--text-primary);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--secondary-light-gray);
+        }
+
+        .detail-section {
+            grid-column: 1 / -1;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid var(--primary-blue);
+        }
+
+        .detail-section-title {
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-size: var(--body-large-size);
+        }
+
+        /* Alerta flotante */
+        .floating-alert {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--status-danger);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            max-width: 400px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .floating-alert.success {
+            background-color: var(--status-success);
+        }
+
+        .floating-alert.show {
+            opacity: 1;
+            visibility: visible;
+            top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 100%;
+                padding: var(--spacing-s);
+            }
+            
+            .kpi-cards {
+                gap: var(--spacing-s);
+            }
+            
+            .kpi-card {
+                min-width: 160px;
+                padding: var(--spacing-s) var(--spacing-m);
+            }
+            
+            .filter-row {
+                gap: var(--spacing-s);
+            }
+            
+            .filter-group {
+                min-width: 140px;
+            }
+
+            .modal .content {
+                max-width: 95%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: var(--spacing-s);
+                text-align: center;
+            }
+            
+            .kpi-cards {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                overflow-x: visible;
+            }
+            
+            .kpi-card {
+                min-width: auto;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                min-width: auto;
+            }
+            
+            .pagination {
+                flex-direction: column;
+                gap: var(--spacing-m);
+                text-align: center;
+            }
+            
+            .table-title {
+                padding: var(--spacing-s);
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-s);
+            }
+            
+            .data-table th, 
+            .data-table td {
+                padding: var(--spacing-s);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: var(--spacing-xs);
+            }
+            
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-card {
+                padding: var(--spacing-m);
+            }
+            
+            .kpi-number {
+                font-size: var(--h1-size);
+            }
+            
+            .filters-section,
+            .table-section {
+                padding: var(--spacing-s);
+            }
+            
+            .filters-title,
+            .table-title {
+                font-size: var(--body-large-size);
+            }
+
+            .modal .content {
+                max-width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: var(--spacing-s);
+            }
+            
+            .table-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Alerta flotante -->
+    <div class="floating-alert" id="floating-alert"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Registro de Partes</div>
+            <button id="btnNuevo" class="button">
+                <i class="fas fa-plus"></i> Nuevo Registro
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container">
+        <!-- Tarjetas de resumen (KPIs) -->
+        <section class="kpi-section">
+            <h2 class="kpi-title">Resumen de Registros</h2>
+            <div class="kpi-cards" id="kpiCards">
+                <div class="loading">Cargando datos...</div>
+            </div>
+        </section>
+
+        <!-- Filtros -->
+        <section class="filters-section">
+            <h2 class="filters-title">Filtros de Búsqueda</h2>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label" for="searchInput">Búsqueda</label>
+                    <input type="text" id="searchInput" class="input" placeholder="🔍 Buscar...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="expteAntiguoFilter">Expte. más antiguo</label>
+                    <input type="text" id="expteAntiguoFilter" class="input" placeholder="Filtrar por expediente...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="defensoriaPatrocinanteFilter">Defensoría Patrocinante</label>
+                    <select id="defensoriaPatrocinanteFilter" class="dropdown">
+                        <option value="">Def. Patrocinante (Todas)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="defensoriaMpcFilter">Defensoría MPC</label>
+                    <select id="defensoriaMpcFilter" class="dropdown">
+                        <option value="">Def. MPC (Todas)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <button id="btnPrintListado" class="button button-success">
+                    <i class="fas fa-print"></i> Imprimir Listado
+                </button>
+                <button id="btnActualizar" class="button button-secondary">
+                    <i class="fas fa-sync"></i> Actualizar
+                </button>
+            </div>
+        </section>
+
+        <!-- Tabla de datos -->
+        <section class="table-section">
+            <div class="table-title">
+                <h2>Registros de Partes</h2>
+                <div class="table-actions">
+                    <button id="btnExportar" class="button button-success">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th onclick="ordenarPor('apellido')">Apellido</th>
+                            <th onclick="ordenarPor('nombre')">Nombre</th>
+                            <th onclick="ordenarPor('dni')">DNI</th>
+                            <th onclick="ordenarPor('ciudad')">Ciudad</th>
+                            <th>Defensoría Patrocinante</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="6" class="loading">Cargando registros...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Paginación -->
+        <div id="pagination" class="pagination"></div>
+    </main>
+
+    <!-- Modal de registro -->
+    <div id="modalRegistro" class="modal">
+        <div class="content">
+            <div class="modal-header">
+                <i class="fa-solid fa-user-plus"></i>
+                <h2 id="modalRegistroTitle" style="margin:0;">Nuevo Registro</h2>
+            </div>
+            <div class="modal-body">
+                <form id="registroForm">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label for="apellido" class="detail-label">Apellido *</label>
+                            <input type="text" id="apellido" name="apellido" class="input" required />
+                        </div>
+                        <div class="detail-item">
+                            <label for="nombre" class="detail-label">Nombre *</label>
+                            <input type="text" id="nombre" name="nombre" class="input" required />
+                        </div>
+                        <div class="detail-item">
+                            <label for="dni" class="detail-label">DNI *</label>
+                            <input type="text" id="dni" name="dni" class="input" required pattern="[0-9]{7,8}" />
+                        </div>
+                        <div class="detail-item">
+                            <label for="domicilio" class="detail-label">Domicilio</label>
+                            <input type="text" id="domicilio" name="domicilio" class="input" />
+                        </div>
+                        <div class="detail-item">
+                            <label for="ciudad" class="detail-label">Ciudad</label>
+                            <input type="text" id="ciudad" name="ciudad" class="input" />
+                        </div>
+                        <div class="detail-item">
+                            <label for="telefono" class="detail-label">Teléfono</label>
+                            <input type="text" id="telefono" name="telefono" class="input" />
+                        </div>
+                        <div class="detail-item">
+                            <label for="email" class="detail-label">Email</label>
+                            <input type="email" id="email" name="email" class="input" />
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-section-title">Intervención de Defensorías</div>
+                            
+                            <div class="detail-item">
+                                <label for="datosAntecedentes" class="detail-label">Datos Judiciales Antecedentes</label>
+                                <textarea id="datosAntecedentes" name="datosAntecedentes" class="input" rows="3"></textarea>
+                            </div>
+                            <div class="detail-item">
+                                <label for="expteAntiguo" class="detail-label">Expte. más antiguo</label>
+                                <input type="text" id="expteAntiguo" name="expteAntiguo" class="input" />
+                            </div>
+                            <div class="detail-item">
+                                <label for="defensoriaPatrocinante" class="detail-label">Defensoría Patrocinante</label>
+                                <select id="defensoriaPatrocinante" name="defensoriaPatrocinante" class="dropdown">
+                                    <option value="">Seleccionar</option>
+                                    <option value="Defensoria Civil 3">Defensoría Civil 3</option>
+                                    <option value="Defensoria Civil 4">Defensoría Civil 4</option>
+                                    <option value="Defensoria Civil 5">Defensoría Civil 5</option>
+                                    <option value="Defensoria 7 Villa Cabello">Defensoría 7 Villa Cabello</option>
+                                    <option value="Defensoria 8 Garupa">Defensoría 8 Garupá</option>
+                                    <option value="Defensoria 9 Itaembe Mini">Defensoría 9 Itaembé Miní</option>
+                                </select>
+                            </div>
+                            <div class="detail-item">
+                                <label for="condicionParte" class="detail-label">Condición de parte</label>
+                                <input type="text" id="condicionParte" name="condicionParte" class="input" />
+                            </div>
+                            <div class="detail-item">
+                                <label for="defensoriaMpc" class="detail-label">Defensoría MPC</label>
+                                <select id="defensoriaMpc" name="defensoriaMpc" class="dropdown">
+                                    <option value="">Seleccionar</option>
+                                    <option value="Defensoria Civil 3">Defensoría Civil 3</option>
+                                    <option value="Defensoria Civil 4">Defensoría Civil 4</option>
+                                    <option value="Defensoria Civil 5">Defensoría Civil 5</option>
+                                    <option value="Defensoria 7 Villa Cabello">Defensoría 7 Villa Cabello</option>
+                                    <option value="Defensoria 8 Garupa">Defensoría 8 Garupá</option>
+                                    <option value="Defensoria 9 Itaembe Mini">Defensoría 9 Itaembé Miní</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-section-title">Información Adicional</div>
+                            
+                            <div class="detail-item">
+                                <label for="datosNnya" class="detail-label">Datos de NNyA involucrados</label>
+                                <textarea id="datosNnya" name="datosNnya" class="input" rows="3"></textarea>
+                            </div>
+                            <div class="detail-item">
+                                <label for="situacionMedica" class="detail-label">Situación Médica</label>
+                                <textarea id="situacionMedica" name="situacionMedica" class="input" rows="3"></textarea>
+                            </div>
+                            <div class="detail-item">
+                                <label for="situacionLaboral" class="detail-label">Situación Laboral</label>
+                                <textarea id="situacionLaboral" name="situacionLaboral" class="input" rows="3"></textarea>
+                            </div>
+                            <div class="detail-item">
+                                <label for="observaciones" class="detail-label">Otras Observaciones</label>
+                                <textarea id="observaciones" name="observaciones" class="input" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="button button-success" type="button" id="btnGuardar">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+                <button class="button button-secondary" type="button" id="btnCancelar">
+                    <i class="fa fa-xmark"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de detalles compacto -->
+    <div id="modalDetalle" class="modal">
+        <div class="content">
+            <div class="modal-header">
+                <i class="fa-solid fa-eye"></i>
+                <h2 style="margin:0;">Detalle del Registro</h2>
+            </div>
+            <div class="modal-body">
+                <div id="detalleContenido"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnImprimirDetalle" class="button button-success">
+                    <i class="fa fa-print"></i> Imprimir
+                </button>
+                <button id="btnCerrarDetalle" class="button button-secondary">
+                    <i class="fa fa-xmark"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC871IwG89d3yd-BUY9tj2q0_gmBV3AMfM",
+            authDomain: "datos-partes.firebaseapp.com",
+            databaseURL: "https://datos-partes-default-rtdb.firebaseio.com",
+            projectId: "datos-partes",
+            storageBucket: "datos-partes.firebasestorage.app",
+            messagingSenderId: "277413385546",
+            appId: "1:277413385546:web:9863aaa081727a84479db3"
+        };
+        
+        const DEFENSORIA_OPTIONS = [
+            { value: "Defensoria Civil 3", label: "Defensoría Civil 3" },
+            { value: "Defensoria Civil 4", label: "Defensoría Civil 4" },
+            { value: "Defensoria Civil 5", label: "Defensoría Civil 5" },
+            { value: "Defensoria 7 Villa Cabello", label: "Defensoría 7 Villa Cabello" },
+            { value: "Defensoria 8 Garupa", label: "Defensoría 8 Garupá" },
+            { value: "Defensoria 9 Itaembe Mini", label: "Defensoría 9 Itaembé Miní" }
+        ];
+
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        // Variables globales
+        let todosLosRegistros = [];
+        let registros = [];
+        let registroEditando = null;
+        let ordenActual = { campo: 'apellido', direccion: 'asc' };
+        let paginaActual = 1;
+        const registrosPorPagina = 10;
+
+        // Elementos DOM
+        const floatingAlert = document.getElementById('floating-alert');
+        const modalRegistro = document.getElementById('modalRegistro');
+        const modalDetalle = document.getElementById('modalDetalle');
+        const btnNuevo = document.getElementById('btnNuevo');
+        const btnGuardar = document.getElementById('btnGuardar');
+        const btnCancelar = document.getElementById('btnCancelar');
+        const btnImprimirDetalle = document.getElementById('btnImprimirDetalle');
+        const btnCerrarDetalle = document.getElementById('btnCerrarDetalle');
+        const btnPrintListado = document.getElementById('btnPrintListado');
+        const btnActualizar = document.getElementById('btnActualizar');
+        const btnExportar = document.getElementById('btnExportar');
+
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', function () {
+            renderDefensoriaFilters();
+            cargarTodosLosRegistros();
+            
+            // Event listeners
+            document.getElementById('registroForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                guardarRegistro();
+            });
+            
+            btnNuevo.onclick = abrirModalRegistro;
+            btnGuardar.onclick = guardarRegistro;
+            btnCancelar.onclick = cerrarModalRegistro;
+            btnCerrarDetalle.onclick = cerrarModalDetalle;
+            btnImprimirDetalle.onclick = imprimirDetalle;
+            btnPrintListado.onclick = printListadoCompleto;
+            btnActualizar.onclick = cargarTodosLosRegistros;
+            btnExportar.onclick = exportarDatos;
+            
+            // Filtros en tiempo real
+            document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+            document.getElementById('expteAntiguoFilter').addEventListener('input', aplicarFiltros);
+            document.getElementById('defensoriaPatrocinanteFilter').addEventListener('change', aplicarFiltros);
+            document.getElementById('defensoriaMpcFilter').addEventListener('change', aplicarFiltros);
+            
+            // Cerrar modales al hacer clic fuera
+            window.addEventListener('click', e => {
+                if (e.target === modalRegistro) cerrarModalRegistro();
+                if (e.target === modalDetalle) cerrarModalDetalle();
+            });
+        });
+
+        // Función para renderizar las opciones de las Defensorías en los filtros
+        function renderDefensoriaFilters() {
+            const patrocinanteSelect = document.getElementById('defensoriaPatrocinanteFilter');
+            const mpcSelect = document.getElementById('defensoriaMpcFilter');
+
+            const optionsHtml = DEFENSORIA_OPTIONS.map(opt => `<option value="${opt.value.toLowerCase()}">${opt.label}</option>`).join('');
+            
+            patrocinanteSelect.innerHTML = `<option value="">Def. Patrocinante (Todas)</option>${optionsHtml}`;
+            mpcSelect.innerHTML = `<option value="">Def. MPC (Todas)</option>${optionsHtml}`;
+        }
+
+        // Abrir modal de registro
+        function abrirModalRegistro() {
+            limpiarFormulario();
+            document.getElementById('modalRegistroTitle').textContent = 'Nuevo Registro';
+            modalRegistro.style.display = 'flex';
+        }
+
+        // Cerrar modal de registro
+        function cerrarModalRegistro() {
+            modalRegistro.style.display = 'none';
+            registroEditando = null;
+        }
+
+        // Cerrar modal de detalle
+        function cerrarModalDetalle() {
+            modalDetalle.style.display = 'none';
+        }
+
+        // Validar formulario
+        function validarFormulario() {
+            let isValid = true;
+            const requiredFields = ["apellido", "nombre", "dni"];
+            
+            requiredFields.forEach(id => {
+                const field = document.getElementById(id);
+                if (field.value.trim() === "") {
+                    isValid = false;
+                }
+                
+                // Validación específica para DNI
+                if (id === 'dni' && field.value.trim() !== "") {
+                    const dniPattern = /^[0-9]{7,8}$/;
+                    if (!dniPattern.test(field.value.trim())) {
+                        isValid = false;
+                    }
+                }
+            });
+
+            return isValid;
+        }
+
+        // Mostrar alerta flotante
+        function mostrarAlertaFlotante(mensaje, tipo) {
+            floatingAlert.textContent = mensaje;
+            floatingAlert.classList.remove('danger', 'success');
+            floatingAlert.classList.add(tipo);
+            floatingAlert.classList.add('show');
+            setTimeout(() => {
+                floatingAlert.classList.remove('show');
+            }, 3000);
+        }
+
+        // Guardar registro
+        function guardarRegistro() {
+            if (!validarFormulario()) {
+                mostrarAlertaFlotante("Por favor complete los campos obligatorios correctamente", 'danger');
+                return;
+            }
+            
+            const formData = new FormData(document.getElementById('registroForm'));
+            const registro = {};
+            for (let [key, value] of formData.entries()) {
+                registro[key] = value.trim();
+            }
+            
+            // Asegurar que los campos de Defensoría estén en minúsculas para la búsqueda
+            if (registro.defensoriaPatrocinante) {
+                registro.defensoriaPatrocinante = registro.defensoriaPatrocinante.toLowerCase();
+            }
+            if (registro.defensoriaMpc) {
+                registro.defensoriaMpc = registro.defensoriaMpc.toLowerCase();
+            }
+            
+            registro.fechaCreacion = new Date().toISOString();
+            registro.fechaModificacion = new Date().toISOString();
+
+            if (registroEditando) {
+                database.ref('registros/' + registroEditando).update(registro)
+                    .then(() => {
+                        mostrarAlertaFlotante('Registro actualizado exitosamente', 'success');
+                        limpiarFormulario();
+                        cerrarModalRegistro();
+                        cargarTodosLosRegistros();
+                        registroEditando = null;
+                    })
+                    .catch((error) => mostrarAlertaFlotante('Error al actualizar: ' + error.message, 'danger'));
+            } else {
+                database.ref('registros').push(registro)
+                    .then(() => {
+                        mostrarAlertaFlotante('Registro guardado exitosamente', 'success');
+                        limpiarFormulario();
+                        cerrarModalRegistro();
+                        cargarTodosLosRegistros();
+                    })
+                    .catch((error) => mostrarAlertaFlotante('Error al guardar: ' + error.message, 'danger'));
+            }
+        }
+
+        // Cargar todos los registros
+        function cargarTodosLosRegistros() {
+            database.ref('registros').once('value')
+                .then((snapshot) => {
+                    todosLosRegistros = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const registro = childSnapshot.val();
+                        registro.id = childSnapshot.key;
+                        todosLosRegistros.push(registro);
+                    });
+                    aplicarFiltros();
+                    actualizarKPIs();
+                })
+                .catch((error) => mostrarAlertaFlotante('Error al cargar registros: ' + error.message, 'danger'));
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            let dataset = [...todosLosRegistros];
+
+            // Obtener términos de búsqueda
+            const terminoGlobal = document.getElementById('searchInput').value.toLowerCase().trim();
+            const expteFiltro = document.getElementById('expteAntiguoFilter').value.toLowerCase().trim();
+            const defPatrocinanteFiltro = document.getElementById('defensoriaPatrocinanteFilter').value.toLowerCase().trim();
+            const defMpcFiltro = document.getElementById('defensoriaMpcFilter').value.toLowerCase().trim();
+            
+            // Aplicar filtros
+            if (terminoGlobal || expteFiltro || defPatrocinanteFiltro || defMpcFiltro) {
+                dataset = dataset.filter(registro => {
+                    let pasaFiltro = true;
+
+                    // Filtro Global
+                    if (terminoGlobal) {
+                        const matchGlobal = Object.values(registro).some(valor => 
+                            valor && valor.toString().toLowerCase().includes(terminoGlobal)
+                        );
+                        if (!matchGlobal) pasaFiltro = false;
+                    }
+                    
+                    // Filtro Expte. más antiguo
+                    if (pasaFiltro && expteFiltro) {
+                        const expte = (registro.expteAntiguo || '').toLowerCase();
+                        if (!expte.includes(expteFiltro)) pasaFiltro = false;
+                    }
+
+                    // Filtro Defensoría Patrocinante
+                    if (pasaFiltro && defPatrocinanteFiltro) {
+                        const defPatr = (registro.defensoriaPatrocinante || '').toLowerCase();
+                        if (defPatr !== defPatrocinanteFiltro) pasaFiltro = false;
+                    }
+
+                    // Filtro Defensoría MPC
+                    if (pasaFiltro && defMpcFiltro) {
+                        const defMpc = (registro.defensoriaMpc || '').toLowerCase();
+                        if (defMpc !== defMpcFiltro) pasaFiltro = false;
+                    }
+                    
+                    return pasaFiltro;
+                });
+            }
+
+            // Asignar el resultado ordenado
+            registros = ordenarRegistros(dataset);
+
+            // Resetear a la primera página después de filtrar
+            paginaActual = 1; 
+            mostrarRegistros();
+            actualizarPaginacion();
+        }
+
+        // Mostrar registros en tabla
+        function mostrarRegistros() {
+            const tbody = document.getElementById('tableBody');
+            if (registros.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><h3>No hay registros</h3><p>Ajuste sus filtros o agregue un nuevo registro.</p></td></tr>';
+                return;
+            }
+            
+            // Calcular registros para la página actual
+            const inicio = (paginaActual - 1) * registrosPorPagina;
+            const fin = inicio + registrosPorPagina;
+            const registrosPagina = registros.slice(inicio, fin);
+            
+            // Helper para obtener el label de Defensoría
+            const getDefensoriaLabel = (value) => {
+                if (!value) return '-';
+                const option = DEFENSORIA_OPTIONS.find(opt => opt.value.toLowerCase() === value.toLowerCase());
+                return option ? option.label : safe(value);
+            };
+
+            tbody.innerHTML = registrosPagina.map(registro => `
+                <tr>
+                    <td>${registro.apellido || '-'}</td>
+                    <td>${registro.nombre || '-'}</td>
+                    <td>${registro.dni || '-'}</td>
+                    <td>${registro.ciudad || '-'}</td>
+                    <td>${getDefensoriaLabel(registro.defensoriaPatrocinante)}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="button" onclick="verRegistro('${registro.id}')" title="Ver">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                            <button class="button button-secondary" onclick="editarRegistro('${registro.id}')" title="Editar">
+                                <i class="fa fa-pen"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Actualizar KPIs
+        function actualizarKPIs() {
+            const kpiCardsContainer = document.getElementById('kpiCards');
+            
+            if (todosLosRegistros.length === 0) {
+                kpiCardsContainer.innerHTML = '<div class="loading">No hay datos disponibles</div>';
+                return;
+            }
+            
+            // Calcular KPIs
+            const totalRegistros = todosLosRegistros.length;
+            const registrosActivos = todosLosRegistros.filter(r => r.estado !== 'inactivo').length;
+            const registrosInactivos = todosLosRegistros.filter(r => r.estado === 'inactivo').length;
+            
+            let kpisHTML = '';
+            
+            const kpisConfig = [
+                { key: 'total', label: 'Total de Registros', class: 'total' },
+                { key: 'activos', label: 'Registros Activos', class: 'activos' },
+                { key: 'inactivos', label: 'Registros Inactivos', class: 'inactivos' }
+            ];
+            
+            // Generar tarjetas de KPIs
+            kpisConfig.forEach(kpi => {
+                let valor = 0;
+                if (kpi.key === 'total') valor = totalRegistros;
+                if (kpi.key === 'activos') valor = registrosActivos;
+                if (kpi.key === 'inactivos') valor = registrosInactivos;
+                
+                kpisHTML += `
+                    <div class="kpi-card ${kpi.class}">
+                        <div class="kpi-number">${valor}</div>
+                        <div class="kpi-label">${kpi.label}</div>
+                    </div>
+                `;
+            });
+            
+            kpiCardsContainer.innerHTML = kpisHTML;
+        }
+
+        // Actualizar paginación
+        function actualizarPaginacion() {
+            const paginacion = document.getElementById('pagination');
+            const totalPaginas = Math.ceil(registros.length / registrosPorPagina);
+            
+            if (totalPaginas <= 1) {
+                paginacion.innerHTML = '';
+                return;
+            }
+            
+            let html = `
+                <div class="page-info">
+                    Página ${paginaActual} de ${totalPaginas} | Mostrando ${Math.min(registrosPorPagina, registros.length - (paginaActual - 1) * registrosPorPagina)} de ${registros.length} registros
+                </div>
+                <div class="nav-buttons">
+                    <button class="button" id="btnPrevPage" ${paginaActual === 1 ? 'disabled' : ''}><i class="fa fa-arrow-left"></i> Anterior</button>
+                    <button class="button" id="btnNextPage" ${paginaActual === totalPaginas ? 'disabled' : ''}>Siguiente <i class="fa fa-arrow-right"></i></button>
+                </div>
+            `;
+
+            paginacion.innerHTML = html;
+
+            document.getElementById('btnPrevPage').onclick = () => {
+                paginaActual--;
+                mostrarRegistros();
+                actualizarPaginacion();
+            };
+
+            document.getElementById('btnNextPage').onclick = () => {
+                paginaActual++;
+                mostrarRegistros();
+                actualizarPaginacion();
+            };
+        }
+
+        // Helper para valores seguros
+        function safe(v) { return (v && String(v).trim()) ? String(v) : '-'; }
+
+        // Ordenar registros
+        function ordenarPor(campo) {
+            if (ordenActual.campo === campo) {
+                ordenActual.direccion = ordenActual.direccion === 'asc' ? 'desc' : 'asc';
+            } else {
+                ordenActual.campo = campo; 
+                ordenActual.direccion = 'asc';
+            }
+            aplicarFiltros();
+            actualizarIndicadoresOrden();
+        }
+        
+        function ordenarRegistros(array) {
+            array.sort((a, b) => {
+                const valorA = (a[ordenActual.campo] || '').toString().toLowerCase();
+                const valorB = (b[ordenActual.campo] || '').toString().toLowerCase();
+                return (ordenActual.direccion === 'asc') ? valorA.localeCompare(valorB) : valorB.localeCompare(valorA);
+            });
+            return array;
+        }
+        
+        function actualizarIndicadoresOrden() {
+            document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '');
+            const indicador = document.getElementById('sort-' + ordenActual.campo);
+            if (indicador) indicador.textContent = ordenActual.direccion === 'asc' ? '↑' : '↓';
+        }
+
+        // Ver registro - Modal compacto que solo muestra datos registrados
+        function verRegistro(id) {
+            const registro = todosLosRegistros.find(r => r.id === id);
+            if (!registro) return;
+
+            // Helper para obtener el label para la visualización
+            const getDefensoriaLabelDetalle = (value) => {
+                if (!value) return null;
+                const option = DEFENSORIA_OPTIONS.find(opt => opt.value.toLowerCase() === value.toLowerCase());
+                return option ? option.label : safe(value);
+            };
+
+            const detalleContenido = document.getElementById('detalleContenido');
+            let contenidoHTML = '<div class="detail-grid">';
+            
+            // Datos personales - solo mostrar si hay valores
+            const datosPersonales = [
+                { label: 'Apellido', value: registro.apellido },
+                { label: 'Nombre', value: registro.nombre },
+                { label: 'DNI', value: registro.dni },
+                { label: 'Domicilio', value: registro.domicilio },
+                { label: 'Ciudad', value: registro.ciudad },
+                { label: 'Teléfono', value: registro.telefono },
+                { label: 'Email', value: registro.email }
+            ];
+            
+            datosPersonales.forEach(item => {
+                if (item.value) {
+                    contenidoHTML += `
+                        <div class="detail-item">
+                            <div class="detail-label">${item.label}</div>
+                            <div class="detail-value">${item.value}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Intervención de Defensorías - solo mostrar si hay al menos un valor
+            const tieneIntervencion = registro.datosAntecedentes || registro.expteAntiguo || 
+                                     registro.defensoriaPatrocinante || registro.condicionParte || 
+                                     registro.defensoriaMpc;
+            
+            if (tieneIntervencion) {
+                contenidoHTML += `<div class="detail-section"><div class="detail-section-title">Intervención de Defensorías</div>`;
+                
+                const intervencionData = [
+                    { label: 'Datos Judiciales Antecedentes', value: registro.datosAntecedentes },
+                    { label: 'Expte. más antiguo', value: registro.expteAntiguo },
+                    { label: 'Defensoría Patrocinante', value: getDefensoriaLabelDetalle(registro.defensoriaPatrocinante) },
+                    { label: 'Condición de parte', value: registro.condicionParte },
+                    { label: 'Defensoría MPC', value: getDefensoriaLabelDetalle(registro.defensoriaMpc) }
+                ];
+                
+                intervencionData.forEach(item => {
+                    if (item.value) {
+                        contenidoHTML += `
+                            <div class="detail-item">
+                                <div class="detail-label">${item.label}</div>
+                                <div class="detail-value">${item.value}</div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                contenidoHTML += `</div>`;
+            }
+            
+            // Información adicional - solo mostrar si hay al menos un valor
+            const tieneInfoAdicional = registro.datosNnya || registro.situacionMedica || 
+                                      registro.situacionLaboral || registro.observaciones;
+            
+            if (tieneInfoAdicional) {
+                contenidoHTML += `<div class="detail-section"><div class="detail-section-title">Información Adicional</div>`;
+                
+                const infoAdicional = [
+                    { label: 'Datos de NNyA involucrados', value: registro.datosNnya },
+                    { label: 'Situación Médica', value: registro.situacionMedica },
+                    { label: 'Situación Laboral', value: registro.situacionLaboral },
+                    { label: 'Otras Observaciones', value: registro.observaciones }
+                ];
+                
+                infoAdicional.forEach(item => {
+                    if (item.value) {
+                        contenidoHTML += `
+                            <div class="detail-item">
+                                <div class="detail-label">${item.label}</div>
+                                <div class="detail-value">${item.value}</div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                contenidoHTML += `</div>`;
+            }
+            
+            contenidoHTML += '</div>';
+            detalleContenido.innerHTML = contenidoHTML;
+            modalDetalle.style.display = 'flex';
+        }
+
+        // Editar registro
+        function editarRegistro(id) {
+            const registro = todosLosRegistros.find(r => r.id === id);
+            if (!registro) return;
+            
+            Object.keys(registro).forEach(key => {
+                const campo = document.getElementById(key);
+                if (campo && key !== 'id') campo.value = registro[key] || '';
+            });
+            
+            registroEditando = id;
+            document.getElementById('modalRegistroTitle').textContent = 'Editar Registro';
+            modalRegistro.style.display = 'flex';
+            cerrarModalDetalle();
+            mostrarAlertaFlotante('Modo edición activado. Modifique los campos y guarde los cambios.', 'success');
+        }
+
+        // Limpiar formulario
+        function limpiarFormulario() { 
+            document.getElementById('registroForm').reset(); 
+            registroEditando = null; 
+        }
+
+        // Funciones de impresión
+        function printListadoCompleto() {
+            window.print();
+        }
+
+        function imprimirDetalle() {
+            const detalleContenido = document.getElementById('detalleContenido').innerHTML;
+            const w = window.open('', '_blank');
+            const estilo = `
+                <style>
+                    body { font-family: 'Arial', 'Helvetica', sans-serif; color:#212529; }
+                    h1 { font-size: 20px; margin-bottom: 10px; color: #007bff; }
+                    .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+                    .detail-item { margin-bottom: 10px; }
+                    .detail-label { font-weight: 600; color: #007bff; font-size: 12px; margin-bottom: 4px; text-transform: uppercase; }
+                    .detail-value { font-size: 14px; color: #212529; padding: 8px 0; border-bottom: 1px solid #e9ecef; }
+                    .detail-section { grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 2px solid #007bff; }
+                    .detail-section-title { font-weight: 700; color: #007bff; margin-bottom: 10px; font-size: 16px; }
+                </style>`;
+            
+            w.document.write(`
+                <html>
+                    <head>
+                        <title>Detalle del Registro</title>
+                        ${estilo}
+                    </head>
+                    <body>
+                        <h1>Detalle del Registro</h1>
+                        ${detalleContenido}
+                    </body>
+                </html>
+            `);
+            w.document.close();
+            w.focus();
+            setTimeout(() => { w.print(); }, 100);
+        }
+
+        // Exportar datos
+        function exportarDatos() {
+            if (registros.length === 0) {
+                mostrarAlertaFlotante('No hay datos para exportar', 'danger');
+                return;
+            }
+            
+            // Crear CSV
+            let csv = 'Apellido,Nombre,DNI,Domicilio,Ciudad,Teléfono,Email,Defensoría Patrocinante,Condición de parte,Defensoría MPC\n';
+            
+            registros.forEach(registro => {
+                const row = [
+                    registro.apellido || '',
+                    registro.nombre || '',
+                    registro.dni || '',
+                    registro.domicilio || '',
+                    registro.ciudad || '',
+                    registro.telefono || '',
+                    registro.email || '',
+                    registro.defensoriaPatrocinante || '',
+                    registro.condicionParte || '',
+                    registro.defensoriaMpc || ''
+                ].map(field => `"${field}"`).join(',');
+                
+                csv += row + '\n';
+            });
+            
+            // Descargar archivo
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'registros_partes.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            mostrarAlertaFlotante('Datos exportados correctamente', 'success');
+        }
+    </script>
+</body>
+</html>
