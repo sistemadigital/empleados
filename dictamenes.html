@@ -200,7 +200,7 @@
       background-color: var(--secondary-dark-gray);
     }
 
-    /* Secciones diferenciadas */
+    /* Secciones diferenciadas - Estilo similar a causas.html */
     .section {
       margin-bottom: var(--spacing-xl);
     }
@@ -237,50 +237,57 @@
       gap: var(--spacing-s);
     }
 
-    /* Tabla de documentos */
-    .table-container {
-      background: var(--background-card);
+    /* Tabla de documentos - Estilo similar a causas.html */
+    .table-section {
+      background-color: var(--background-card);
       border-radius: var(--border-radius-default);
       border: 1px solid var(--border-default);
-      box-shadow: var(--shadow-subtle);
       overflow: hidden;
+      box-shadow: var(--shadow-subtle);
     }
 
-    .doc-table {
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .data-table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed; /* Para evitar que las columnas se expandan demasiado */
     }
 
-    .doc-table th {
+    .data-table th {
       background-color: var(--background-table-header);
       font-weight: var(--font-weight-semibold);
-      text-align: left;
+      border-bottom: 2px solid var(--border-default);
       padding: var(--spacing-m);
       color: var(--text-primary);
       font-size: var(--caption-size);
       text-transform: uppercase;
-      border-bottom: 2px solid var(--border-default);
     }
 
-    .doc-table td {
+    .data-table td {
       border-bottom: 1px solid var(--border-default);
       padding: var(--spacing-m);
       color: var(--text-primary);
       font-size: var(--body-regular-size);
-      vertical-align: top;
     }
 
-    .doc-table tr:last-child td {
+    .data-table tr:last-child td {
       border-bottom: none;
     }
 
-    .doc-table tr:hover td {
+    .data-table tr:hover td {
       background-color: var(--secondary-gray);
     }
 
+    /* Estilos específicos para documentos - Columnas ajustadas */
     .doc-name {
       font-weight: var(--font-weight-semibold);
       color: var(--primary-blue);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .doc-meta {
@@ -291,11 +298,13 @@
     .doc-theme {
       font-style: italic;
       color: var(--text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .doc-detail {
       color: var(--text-secondary);
-      max-width: 300px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -341,34 +350,55 @@
       font-style: italic;
     }
 
-    /* Ayuda */
-    .help-box {
+    /* Paginación */
+    .pagination-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-m);
       background: var(--background-card);
-      border-left: 4px solid var(--primary-blue);
-      padding: var(--spacing-m) var(--spacing-l);
-      margin: var(--spacing-xl) auto;
+      border-top: 1px solid var(--border-default);
+    }
+
+    .pagination-info {
+      font-size: var(--body-regular-size);
+      color: var(--text-secondary);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: var(--spacing-s);
+      align-items: center;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+
+    .page-btn {
+      background: var(--secondary-light-gray);
+      border: 1px solid var(--border-default);
       border-radius: var(--border-radius-default);
-      max-width: 800px;
-      box-shadow: var(--shadow-subtle);
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: var(--caption-size);
+      min-width: 32px;
+      text-align: center;
     }
 
-    .help-box h2 {
-      margin-top: 0;
-      color: var(--primary-blue);
-      font-size: var(--h1-size);
-      margin-bottom: var(--spacing-s);
+    .page-btn:hover {
+      background: var(--secondary-gray);
     }
 
-    .help-box ul {
-      margin: 0;
-      padding-left: var(--spacing-l);
+    .page-btn.active {
+      background: var(--primary-blue);
+      color: var(--text-light);
+      border-color: var(--primary-blue);
     }
 
-    .help-box li {
-      margin: var(--spacing-xs) 0;
-    }
-
-    /* Modal */
+    /* Modal - Manteniendo el estilo actual */
     .modal {
       display: none;
       position: fixed;
@@ -494,6 +524,10 @@
         max-width: 100%;
         padding: var(--spacing-s);
       }
+      
+      .data-table {
+        table-layout: auto;
+      }
     }
 
     @media (max-width: 768px) {
@@ -536,12 +570,20 @@
         justify-content: flex-end;
       }
       
-      .table-container {
-        overflow-x: auto;
+      .doc-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
       }
       
-      .doc-table {
-        min-width: 800px;
+      .data-table th,
+      .data-table td {
+        padding: var(--spacing-s);
+      }
+      
+      .pagination-container {
+        flex-direction: column;
+        gap: var(--spacing-s);
+        text-align: center;
       }
       
       .modal-content {
@@ -558,14 +600,17 @@
     }
 
     @media (max-width: 576px) {
-      .doc-actions {
-        flex-direction: column;
-        gap: var(--spacing-xs);
+      .table-wrap {
+        overflow-x: auto;
       }
       
-      .doc-table th,
-      .doc-table td {
-        padding: var(--spacing-s);
+      .data-table {
+        min-width: 600px;
+      }
+      
+      .page-numbers {
+        flex-wrap: wrap;
+        justify-content: center;
       }
     }
   </style>
@@ -629,22 +674,32 @@
           </button>
         </div>
       </div>
-      <div class="table-container">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Fecha</th>
-              <th>Usuario</th>
-              <th>Temática</th>
-              <th>Detalle</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="civilDocuments">
-            <!-- Los documentos de Civil se cargarán aquí -->
-          </tbody>
-        </table>
+      <div class="table-section">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Nombre</th>
+                <th style="width: 12%;">Fecha</th>
+                <th style="width: 15%;">Usuario</th>
+                <th style="width: 18%;">Temática</th>
+                <th style="width: 20%;">Detalle</th>
+                <th style="width: 15%;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="civilDocuments">
+              <!-- Los documentos de Civil se cargarán aquí -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-container" id="civilPagination">
+          <div class="pagination-info" id="civilPaginationInfo">Página 1 de 1</div>
+          <div class="pagination-controls">
+            <button class="page-btn" id="civilPrevBtn" disabled>‹</button>
+            <div class="page-numbers" id="civilPageNumbers"></div>
+            <button class="page-btn" id="civilNextBtn" disabled>›</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -661,22 +716,32 @@
           </button>
         </div>
       </div>
-      <div class="table-container">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Fecha</th>
-              <th>Usuario</th>
-              <th>Temática</th>
-              <th>Detalle</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="familiaDocuments">
-            <!-- Los documentos de Familia se cargarán aquí -->
-          </tbody>
-        </table>
+      <div class="table-section">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Nombre</th>
+                <th style="width: 12%;">Fecha</th>
+                <th style="width: 15%;">Usuario</th>
+                <th style="width: 18%;">Temática</th>
+                <th style="width: 20%;">Detalle</th>
+                <th style="width: 15%;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="familiaDocuments">
+              <!-- Los documentos de Familia se cargarán aquí -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-container" id="familiaPagination">
+          <div class="pagination-info" id="familiaPaginationInfo">Página 1 de 1</div>
+          <div class="pagination-controls">
+            <button class="page-btn" id="familiaPrevBtn" disabled>‹</button>
+            <div class="page-numbers" id="familiaPageNumbers"></div>
+            <button class="page-btn" id="familiaNextBtn" disabled>›</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -693,22 +758,32 @@
           </button>
         </div>
       </div>
-      <div class="table-container">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Fecha</th>
-              <th>Usuario</th>
-              <th>Temática</th>
-              <th>Detalle</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="violenciaDocuments">
-            <!-- Los documentos de Violencia Familiar se cargarán aquí -->
-          </tbody>
-        </table>
+      <div class="table-section">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Nombre</th>
+                <th style="width: 12%;">Fecha</th>
+                <th style="width: 15%;">Usuario</th>
+                <th style="width: 18%;">Temática</th>
+                <th style="width: 20%;">Detalle</th>
+                <th style="width: 15%;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="violenciaDocuments">
+              <!-- Los documentos de Violencia Familiar se cargarán aquí -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-container" id="violenciaPagination">
+          <div class="pagination-info" id="violenciaPaginationInfo">Página 1 de 1</div>
+          <div class="pagination-controls">
+            <button class="page-btn" id="violenciaPrevBtn" disabled>‹</button>
+            <div class="page-numbers" id="violenciaPageNumbers"></div>
+            <button class="page-btn" id="violenciaNextBtn" disabled>›</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -725,327 +800,430 @@
           </button>
         </div>
       </div>
-      <div class="table-container">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Fecha</th>
-              <th>Usuario</th>
-              <th>Temática</th>
-              <th>Detalle</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="escritosDocuments">
-            <!-- Los documentos de Escritos se cargarán aquí -->
-          </tbody>
-        </table>
+      <div class="table-section">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Nombre</th>
+                <th style="width: 12%;">Fecha</th>
+                <th style="width: 15%;">Usuario</th>
+                <th style="width: 18%;">Temática</th>
+                <th style="width: 20%;">Detalle</th>
+                <th style="width: 15%;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="escritosDocuments">
+              <!-- Los documentos de Escritos se cargarán aquí -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-container" id="escritosPagination">
+          <div class="pagination-info" id="escritosPaginationInfo">Página 1 de 1</div>
+          <div class="pagination-controls">
+            <button class="page-btn" id="escritosPrevBtn" disabled>‹</button>
+            <div class="page-numbers" id="escritosPageNumbers"></div>
+            <button class="page-btn" id="escritosNextBtn" disabled>›</button>
+          </div>
+        </div>
       </div>
     </section>
-  <!-- Modal -->
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <i class="fa-solid fa-file-pen"></i>
-        <h2 id="modalTitle">Documento</h2>
-      </div>
-      <div class="modal-body">
-        <form id="docForm">
-          <input type="hidden" id="docId" />
-          <input type="hidden" id="docUrlHidden" />
-          <div class="form-row">
-            <label for="docName">Nombre</label>
-            <input id="docName" type="text" required />
-          </div>
-          <div class="form-row">
-            <label for="docCategory">Categoría</label>
-            <select id="docCategory" required>
-              <option value="Civil">Civil</option>
-              <option value="Familia">Familia</option>
-              <option value="Violencia Familiar">Violencia Familiar</option>
-              <option value="Escritos">Escritos</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label for="docTheme">Temática (opcional)</label>
-            <input id="docTheme" type="text" />
-          </div>
-          <div class="form-row">
-            <label for="docDetail">Detalle</label>
-            <textarea id="docDetail"></textarea>
-          </div>
-          <div class="form-row">
-            <label>URL del archivo</label>
-            <div id="fileUrlWrap"></div>
-          </div>
-          <div id="filePreviewWrap"></div>
-        </form>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="button button-secondary" id="cancelModal">
-          <i class="fa-solid fa-xmark"></i> Cancelar
-        </button>
-        <button type="submit" class="button button-success" form="docForm">
-          <i class="fa-solid fa-floppy-disk"></i> Guardar
-        </button>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fa-solid fa-file-pen"></i>
+          <h2 id="modalTitle">Documento</h2>
+        </div>
+        <div class="modal-body">
+          <form id="docForm">
+            <input type="hidden" id="docId" />
+            <input type="hidden" id="docUrlHidden" />
+            <div class="form-row">
+              <label for="docName">Nombre</label>
+              <input id="docName" type="text" required />
+            </div>
+            <div class="form-row">
+              <label for="docCategory">Categoría</label>
+              <select id="docCategory" required>
+                <option value="Civil">Civil</option>
+                <option value="Familia">Familia</option>
+                <option value="Violencia Familiar">Violencia Familiar</option>
+                <option value="Escritos">Escritos</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="docTheme">Temática (opcional)</label>
+              <input id="docTheme" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="docDetail">Detalle</label>
+              <textarea id="docDetail"></textarea>
+            </div>
+            <div class="form-row">
+              <label>URL del archivo</label>
+              <div id="fileUrlWrap"></div>
+            </div>
+            <div id="filePreviewWrap"></div>
+          </form>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="button button-secondary" id="cancelModal">
+            <i class="fa-solid fa-xmark"></i> Cancelar
+          </button>
+          <button type="submit" class="button button-success" form="docForm">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
-  
-  <script>
-    /******** CONFIG CLOUDINARY ********/
-    const CLOUD_NAME = "dttsqsrmk";
-    const UPLOAD_PRESET = "DICTAMEN";
-    /***********************************/
-
-    /******** CONFIG FIREBASE ********/
-    const firebaseConfig = {
-      apiKey: "AIzaSyCuOFYjLBR-2azWbR6q-R5vd6HFhGyyQ-w",
-      authDomain: "dictamenes6.firebaseapp.com",
-      databaseURL: "https://dictamenes6-default-rtdb.firebaseio.com",
-      projectId: "dictamenes6",
-      storageBucket: "dictamenes6.firebasestorage.app",
-      messagingSenderId: "497353513668",
-      appId: "1:497353513668:web:83ae1af8fd794bb66ec791"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    const documentsRef = database.ref('documents');
-    /***********************************/
-
-    let documents = [];
-    const currentUser = "Usuario Actual";
-    let targetCategory = null;
-
-    const categoryMap = {
-      "Civil": { 
-        container: "civilDocuments", 
-        count: "civilCount",
-        section: "civilSection"
-      },
-      "Familia": { 
-        container: "familiaDocuments", 
-        count: "familiaCount",
-        section: "familiaSection"
-      },
-      "Violencia Familiar": { 
-        container: "violenciaDocuments", 
-        count: "violenciaCount",
-        section: "violenciaSection"
-      },
-      "Escritos": { 
-        container: "escritosDocuments", 
-        count: "escritosCount",
-        section: "escritosSection"
-      }
-    };
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
     
-    const openFileBtn = document.getElementById("openFileBtn");
-    const fileInput = document.getElementById("fileInput");
-    const modal = document.getElementById("modal");
-    const docForm = document.getElementById("docForm");
-    const cancelModal = document.getElementById("cancelModal");
-    const fileUrlWrap = document.getElementById("fileUrlWrap");
-    const filePreviewWrap = document.getElementById("filePreviewWrap");
-    const progressWrap = document.getElementById("progressWrap");
-    const progressFill = document.getElementById("progressFill");
-    const progressPercent = document.getElementById("progressPercent");
-    const searchInput = document.getElementById("searchInput");
+    <script>
+      /******** CONFIG CLOUDINARY ********/
+      const CLOUD_NAME = "dttsqsrmk";
+      const UPLOAD_PRESET = "DICTAMEN";
+      /***********************************/
 
-    // Escuchar cambios en la base de datos y renderizar
-    documentsRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      documents = [];
-      if (data) {
-        // Convertir el objeto de Firebase a un array y agregar el ID de la clave
-        Object.keys(data).forEach(key => {
-          documents.push({
-            id: key,
-            ...data[key]
+      /******** CONFIG FIREBASE ********/
+      const firebaseConfig = {
+        apiKey: "AIzaSyCuOFYjLBR-2azWbR6q-R5vd6HFhGyyQ-w",
+        authDomain: "dictamenes6.firebaseapp.com",
+        databaseURL: "https://dictamenes6-default-rtdb.firebaseio.com",
+        projectId: "dictamenes6",
+        storageBucket: "dictamenes6.firebasestorage.app",
+        messagingSenderId: "497353513668",
+        appId: "1:497353513668:web:83ae1af8fd794bb66ec791"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const documentsRef = database.ref('documents');
+      /***********************************/
+
+      let documents = [];
+      const currentUser = "Usuario Actual";
+      let targetCategory = null;
+
+      // Estado de paginación para cada categoría
+      const paginationState = {
+        Civil: { currentPage: 1, itemsPerPage: 5 },
+        Familia: { currentPage: 1, itemsPerPage: 5 },
+        "Violencia Familiar": { currentPage: 1, itemsPerPage: 5 },
+        Escritos: { currentPage: 1, itemsPerPage: 5 }
+      };
+
+      const categoryMap = {
+        "Civil": { 
+          container: "civilDocuments", 
+          count: "civilCount",
+          section: "civilSection",
+          pagination: "civilPagination",
+          paginationInfo: "civilPaginationInfo",
+          prevBtn: "civilPrevBtn",
+          nextBtn: "civilNextBtn",
+          pageNumbers: "civilPageNumbers"
+        },
+        "Familia": { 
+          container: "familiaDocuments", 
+          count: "familiaCount",
+          section: "familiaSection",
+          pagination: "familiaPagination",
+          paginationInfo: "familiaPaginationInfo",
+          prevBtn: "familiaPrevBtn",
+          nextBtn: "familiaNextBtn",
+          pageNumbers: "familiaPageNumbers"
+        },
+        "Violencia Familiar": { 
+          container: "violenciaDocuments", 
+          count: "violenciaCount",
+          section: "violenciaSection",
+          pagination: "violenciaPagination",
+          paginationInfo: "violenciaPaginationInfo",
+          prevBtn: "violenciaPrevBtn",
+          nextBtn: "violenciaNextBtn",
+          pageNumbers: "violenciaPageNumbers"
+        },
+        "Escritos": { 
+          container: "escritosDocuments", 
+          count: "escritosCount",
+          section: "escritosSection",
+          pagination: "escritosPagination",
+          paginationInfo: "escritosPaginationInfo",
+          prevBtn: "escritosPrevBtn",
+          nextBtn: "escritosNextBtn",
+          pageNumbers: "escritosPageNumbers"
+        }
+      };
+      
+      const openFileBtn = document.getElementById("openFileBtn");
+      const fileInput = document.getElementById("fileInput");
+      const modal = document.getElementById("modal");
+      const docForm = document.getElementById("docForm");
+      const cancelModal = document.getElementById("cancelModal");
+      const fileUrlWrap = document.getElementById("fileUrlWrap");
+      const filePreviewWrap = document.getElementById("filePreviewWrap");
+      const progressWrap = document.getElementById("progressWrap");
+      const progressFill = document.getElementById("progressFill");
+      const progressPercent = document.getElementById("progressPercent");
+      const searchInput = document.getElementById("searchInput");
+
+      // Escuchar cambios en la base de datos y renderizar
+      documentsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        documents = [];
+        if (data) {
+          // Convertir el objeto de Firebase a un array y agregar el ID de la clave
+          Object.keys(data).forEach(key => {
+            documents.push({
+              id: key,
+              ...data[key]
+            });
           });
+        }
+        renderDocuments(searchInput.value.toLowerCase());
+      });
+      
+      // Botón general
+      openFileBtn.addEventListener("click", ()=>{ targetCategory=null; fileInput.click(); });
+
+      // Botones + Agregar por categoría
+      document.querySelectorAll(".add-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          targetCategory = btn.dataset.cat;
+          fileInput.click();
+        });
+      });
+
+      fileInput.addEventListener("change", e=>{
+        const file = e.target.files[0];
+        if(file) uploadFile(file);
+      });
+
+      function uploadFile(file){
+        const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("upload_preset", UPLOAD_PRESET);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+
+        xhr.upload.onprogress = e=>{
+          if(e.lengthComputable){
+            const pct = Math.round((e.loaded/e.total)*100);
+            progressWrap.style.display="block";
+            progressFill.style.width=pct+"%";
+            progressPercent.textContent=pct+"%";
+          }
+        };
+        xhr.onload = ()=>{
+          progressWrap.style.display="none";
+          if(xhr.status>=200 && xhr.status<300){
+            const res = JSON.parse(xhr.responseText);
+            openModal(res.secure_url,res.original_filename,file.type);
+          } else {
+            alert("Error al subir archivo");
+          }
+        };
+        xhr.send(fd);
+      }
+
+      function openModal(url,name,type){
+        document.getElementById("docId").value="";
+        document.getElementById("docName").value=name;
+        document.getElementById("docCategory").value= targetCategory || "Civil";
+        document.getElementById("docTheme").value="";
+        document.getElementById("docDetail").value="";
+        document.getElementById("docUrlHidden").value=url;
+        fileUrlWrap.innerHTML=`<a href="${url}" target="_blank" class="doc-link"><i class="fa-solid fa-external-link-alt"></i> ${url}</a>`;
+        filePreviewWrap.innerHTML = type.startsWith("image/") ? `<img src="${url}" class="preview-img"/>` : "";
+        modal.style.display="flex";
+      }
+
+      cancelModal.addEventListener("click",()=> modal.style.display="none");
+      window.addEventListener("click",e=>{ if(e.target===modal) modal.style.display="none"; });
+
+      docForm.addEventListener("submit",e=>{
+        e.preventDefault();
+        const id=document.getElementById("docId").value;
+        const doc={
+          name: document.getElementById("docName").value,
+          category: document.getElementById("docCategory").value,
+          theme: document.getElementById("docTheme").value,
+          detail: document.getElementById("docDetail").value,
+          url: document.getElementById("docUrlHidden").value,
+          date: new Date().toLocaleDateString(),
+          user: currentUser
+        };
+
+        if(id){
+          documentsRef.child(id).update(doc)
+            .then(()=> console.log("Documento actualizado"))
+            .catch(error=> console.error("Error al actualizar:", error));
+        } else {
+          documentsRef.push(doc)
+            .then(()=> console.log("Documento agregado"))
+            .catch(error=> console.error("Error al agregar:", error));
+        }
+        modal.style.display="none";
+      });
+
+      // 🔍 Filtro de búsqueda global
+      searchInput.addEventListener("input", ()=>{
+        const filter = searchInput.value.toLowerCase();
+        renderDocuments(filter);
+        
+        // Mostrar/ocultar secciones según si tienen resultados
+        Object.keys(categoryMap).forEach(cat => {
+          const { section } = categoryMap[cat];
+          const sectionElement = document.getElementById(section);
+          const docs = documents.filter(d => 
+            d.category === cat && (
+              d.name.toLowerCase().includes(filter) ||
+              (d.theme||"").toLowerCase().includes(filter) ||
+              (d.detail||"").toLowerCase().includes(filter) ||
+              d.category.toLowerCase().includes(filter)
+            )
+          );
+          
+          sectionElement.style.display = docs.length > 0 ? "block" : "none";
+        });
+      });
+
+      // Función para cambiar página
+      function changePage(category, page) {
+        paginationState[category].currentPage = page;
+        renderDocuments(searchInput.value.toLowerCase());
+      }
+
+      // Función para renderizar la paginación
+      function renderPagination(category, totalItems, itemsPerPage, currentPage) {
+        const { paginationInfo, prevBtn, nextBtn, pageNumbers } = categoryMap[category];
+        
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        // Actualizar información de paginación
+        document.getElementById(paginationInfo).textContent = `Página ${currentPage} de ${totalPages}`;
+        
+        // Configurar botones anterior/siguiente
+        document.getElementById(prevBtn).disabled = currentPage === 1;
+        document.getElementById(nextBtn).disabled = currentPage === totalPages;
+        
+        // Configurar eventos de los botones
+        document.getElementById(prevBtn).onclick = () => {
+          if (currentPage > 1) changePage(category, currentPage - 1);
+        };
+        
+        document.getElementById(nextBtn).onclick = () => {
+          if (currentPage < totalPages) changePage(category, currentPage + 1);
+        };
+        
+        // Renderizar números de página
+        const pageNumbersContainer = document.getElementById(pageNumbers);
+        pageNumbersContainer.innerHTML = '';
+        
+        // Mostrar máximo 5 números de página
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        
+        if (endPage - startPage < 4) {
+          startPage = Math.max(1, endPage - 4);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          const pageBtn = document.createElement('button');
+          pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+          pageBtn.textContent = i;
+          pageBtn.onclick = () => changePage(category, i);
+          pageNumbersContainer.appendChild(pageBtn);
+        }
+      }
+
+      function renderDocuments(filter=""){
+        Object.keys(categoryMap).forEach(cat=>{
+          const {container, count, pagination} = categoryMap[cat];
+          const tbody = document.getElementById(container);
+          const countElement = document.getElementById(count);
+          const paginationContainer = document.getElementById(pagination);
+          let docs = documents.filter(d=>d.category===cat);
+
+          // Aplicar filtro
+          if(filter){
+            docs = docs.filter(d=>
+              d.name.toLowerCase().includes(filter) ||
+              (d.theme||"").toLowerCase().includes(filter) ||
+              (d.detail||"").toLowerCase().includes(filter) ||
+              d.category.toLowerCase().includes(filter)
+            );
+          }
+          
+          countElement.textContent = docs.length;
+          
+          // Mostrar/ocultar paginación según si hay documentos
+          paginationContainer.style.display = docs.length > 0 ? "flex" : "none";
+          
+          if (docs.length) {
+            // Calcular paginación
+            const { currentPage, itemsPerPage } = paginationState[cat];
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedDocs = docs.slice(startIndex, endIndex);
+            
+            tbody.innerHTML = paginatedDocs.map(d => `
+              <tr>
+                <td>
+                  <div class="doc-name" title="${d.name}">${d.name}</div>
+                </td>
+                <td>
+                  <div class="doc-meta">${d.date}</div>
+                </td>
+                <td>
+                  <div class="doc-meta">${d.user}</div>
+                </td>
+                <td>
+                  <div class="doc-theme" title="${d.theme || ''}">${d.theme || ''}</div>
+                </td>
+                <td>
+                  <div class="doc-detail" title="${d.detail || ''}">${d.detail || ''}</div>
+                </td>
+                <td>
+                  <div class="doc-actions">
+                    <a href="${d.url}" target="_blank" class="doc-link"><i class="fa-solid fa-eye"></i> Ver</a>
+                    <button class="edit-btn" onclick="editDoc('${d.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+                  </div>
+                </td>
+              </tr>
+            `).join("");
+            
+            // Renderizar controles de paginación
+            renderPagination(cat, docs.length, itemsPerPage, currentPage);
+          } else {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No hay documentos en esta categoría</td></tr>`;
+            paginationContainer.style.display = "none";
+          }
         });
       }
-      renderDocuments(searchInput.value.toLowerCase());
-    });
-    
-    // Botón general
-    openFileBtn.addEventListener("click", ()=>{ targetCategory=null; fileInput.click(); });
 
-    // Botones + Agregar por categoría
-    document.querySelectorAll(".add-btn").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        targetCategory = btn.dataset.cat;
-        fileInput.click();
-      });
-    });
-
-    fileInput.addEventListener("change", e=>{
-      const file = e.target.files[0];
-      if(file) uploadFile(file);
-    });
-
-    function uploadFile(file){
-      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", UPLOAD_PRESET);
-
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", url, true);
-
-      xhr.upload.onprogress = e=>{
-        if(e.lengthComputable){
-          const pct = Math.round((e.loaded/e.total)*100);
-          progressWrap.style.display="block";
-          progressFill.style.width=pct+"%";
-          progressPercent.textContent=pct+"%";
-        }
-      };
-      xhr.onload = ()=>{
-        progressWrap.style.display="none";
-        if(xhr.status>=200 && xhr.status<300){
-          const res = JSON.parse(xhr.responseText);
-          openModal(res.secure_url,res.original_filename,file.type);
-        } else {
-          alert("Error al subir archivo");
-        }
-      };
-      xhr.send(fd);
-    }
-
-    function openModal(url,name,type){
-      document.getElementById("docId").value="";
-      document.getElementById("docName").value=name;
-      document.getElementById("docCategory").value= targetCategory || "Civil";
-      document.getElementById("docTheme").value="";
-      document.getElementById("docDetail").value="";
-      document.getElementById("docUrlHidden").value=url;
-      fileUrlWrap.innerHTML=`<a href="${url}" target="_blank" class="doc-link"><i class="fa-solid fa-external-link-alt"></i> ${url}</a>`;
-      filePreviewWrap.innerHTML = type.startsWith("image/") ? `<img src="${url}" class="preview-img"/>` : "";
-      modal.style.display="flex";
-    }
-
-    cancelModal.addEventListener("click",()=> modal.style.display="none");
-    window.addEventListener("click",e=>{ if(e.target===modal) modal.style.display="none"; });
-
-    docForm.addEventListener("submit",e=>{
-      e.preventDefault();
-      const id=document.getElementById("docId").value;
-      const doc={
-        name: document.getElementById("docName").value,
-        category: document.getElementById("docCategory").value,
-        theme: document.getElementById("docTheme").value,
-        detail: document.getElementById("docDetail").value,
-        url: document.getElementById("docUrlHidden").value,
-        date: new Date().toLocaleDateString(),
-        user: currentUser
-      };
-
-      if(id){
-        documentsRef.child(id).update(doc)
-          .then(()=> console.log("Documento actualizado"))
-          .catch(error=> console.error("Error al actualizar:", error));
-      } else {
-        documentsRef.push(doc)
-          .then(()=> console.log("Documento agregado"))
-          .catch(error=> console.error("Error al agregar:", error));
+      window.editDoc = function(id){
+        const d = documents.find(x => x.id === id);
+        if(!d) return;
+        document.getElementById("docId").value = d.id;
+        document.getElementById("docName").value = d.name;
+        document.getElementById("docCategory").value = d.category;
+        document.getElementById("docTheme").value = d.theme || "";
+        document.getElementById("docDetail").value = d.detail || "";
+        document.getElementById("docUrlHidden").value = d.url;
+        fileUrlWrap.innerHTML = `<a href="${d.url}" target="_blank" class="doc-link"><i class="fa-solid fa-external-link-alt"></i> ${d.url}</a>`;
+        filePreviewWrap.innerHTML = d.url.match(/\.(jpg|jpeg|png|gif)$/i) ? `<img src="${d.url}" class="preview-img"/>` : "";
+        modal.style.display = "flex";
       }
-      modal.style.display="none";
-    });
-
-    // 🔍 Filtro de búsqueda global
-    searchInput.addEventListener("input", ()=>{
-      const filter = searchInput.value.toLowerCase();
-      renderDocuments(filter);
-      
-      // Mostrar/ocultar secciones según si tienen resultados
-      Object.keys(categoryMap).forEach(cat => {
-        const { section } = categoryMap[cat];
-        const sectionElement = document.getElementById(section);
-        const docs = documents.filter(d => 
-          d.category === cat && (
-            d.name.toLowerCase().includes(filter) ||
-            (d.theme||"").toLowerCase().includes(filter) ||
-            (d.detail||"").toLowerCase().includes(filter) ||
-            d.category.toLowerCase().includes(filter)
-          )
-        );
-        
-        sectionElement.style.display = docs.length > 0 ? "block" : "none";
-      });
-    });
-
-    function renderDocuments(filter=""){
-      Object.keys(categoryMap).forEach(cat=>{
-        const {container, count} = categoryMap[cat];
-        const tbody = document.getElementById(container);
-        const countElement = document.getElementById(count);
-        let docs = documents.filter(d=>d.category===cat);
-
-        // Aplicar filtro
-        if(filter){
-          docs = docs.filter(d=>
-            d.name.toLowerCase().includes(filter) ||
-            (d.theme||"").toLowerCase().includes(filter) ||
-            (d.detail||"").toLowerCase().includes(filter) ||
-            d.category.toLowerCase().includes(filter)
-          );
-        }
-        
-        countElement.textContent = docs.length;
-        
-        if (docs.length) {
-          tbody.innerHTML = docs.map(d => `
-            <tr>
-              <td>
-                <div class="doc-name">${d.name}</div>
-              </td>
-              <td>
-                <div class="doc-meta">${d.date}</div>
-              </td>
-              <td>
-                <div class="doc-meta">${d.user}</div>
-              </td>
-              <td>
-                <div class="doc-theme">${d.theme || ''}</div>
-              </td>
-              <td>
-                <div class="doc-detail" title="${d.detail || ''}">${d.detail || ''}</div>
-              </td>
-              <td>
-                <div class="doc-actions">
-                  <a href="${d.url}" target="_blank" class="doc-link"><i class="fa-solid fa-eye"></i> Ver</a>
-                  <button class="edit-btn" onclick="editDoc('${d.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
-                </div>
-              </td>
-            </tr>
-          `).join("");
-        } else {
-          tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No hay documentos en esta categoría</td></tr>`;
-        }
-      });
-    }
-
-    window.editDoc=function(id){
-      const d=documents.find(x=>x.id===id);
-      if(!d) return;
-      document.getElementById("docId").value=d.id;
-      document.getElementById("docName").value=d.name;
-      document.getElementById("docCategory").value=d.category;
-      document.getElementById("docTheme").value=d.theme||"";
-      document.getElementById("docDetail").value=d.detail||"";
-      document.getElementById("docUrlHidden").value=d.url;
-      fileUrlWrap.innerHTML=`<a href="${d.url}" target="_blank" class="doc-link"><i class="fa-solid fa-external-link-alt"></i> ${d.url}</a>`;
-      filePreviewWrap.innerHTML = d.url.match(/\.(jpg|jpeg|png|gif)$/i) ? `<img src="${d.url}" class="preview-img"/>` : "";
-      modal.style.display="flex";
-    }
-  </script>
+    </script>
+  </div>
 </body>
 </html>
