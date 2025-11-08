@@ -1027,24 +1027,30 @@
             }
             
             /* ===== CAMBIO SOLICITADO ===== */
-            /* KPIs en una columna en pantallas pequeñas */
+            /* KPIs en una columna con estilo de proteccion-adultos */
             .kpi-cards {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: var(--spacing-s);
             }
             
             .kpi-card {
-                /* Esto hace que ocupe el 100% del ancho */
-                flex: 1 1 100%; 
-                min-width: 0;
-                padding: 10px 8px;
+                padding: var(--spacing-m);
+                text-align: center;
+                min-width: auto;
+                flex: none;
             }
-            /* ===== FIN DEL CAMBIO ===== */
             
             .kpi-number {
-                font-size: var(--h1-size);
+                font-size: var(--display-size);
+                margin-bottom: var(--spacing-xs);
             }
+            
+            .kpi-label {
+                font-size: var(--caption-size);
+                text-transform: uppercase;
+            }
+            /* ===== FIN DEL CAMBIO ===== */
             
             .filters-section,
             .table-section,
