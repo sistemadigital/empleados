@@ -70,7 +70,6 @@
             color: var(--text-primary);
             line-height: 1.5;
             min-height: 100vh;
-            /* overflow-x: hidden; <-- ESTA LÍNEA FUE ELIMINADA */
         }
 
         /* Header */
@@ -345,6 +344,36 @@
         .prioridad-alta { background-color: var(--status-danger); }
         .prioridad-ninguna { background-color: var(--secondary-dark-gray); }
 
+        /* NUEVO: Estilos para prioridad en texto */
+        .prioridad-texto {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        .prioridad-texto.alta { 
+            background-color: rgba(220, 53, 69, 0.1); 
+            color: var(--status-danger); 
+            border: 2px solid var(--status-danger);
+        }
+        .prioridad-texto.media { 
+            background-color: rgba(255, 193, 7, 0.1); 
+            color: var(--status-warning); 
+            border: 2px solid var(--status-warning);
+        }
+        .prioridad-texto.baja { 
+            background-color: rgba(40, 167, 69, 0.1); 
+            color: var(--status-success); 
+            border: 2px solid var(--status-success);
+        }
+        .prioridad-texto.ninguna { 
+            background-color: rgba(108, 117, 125, 0.1); 
+            color: var(--secondary-dark-gray); 
+            border: 2px solid var(--secondary-dark-gray);
+        }
+
         /* Sidebar */
         .sidebar {
             background: var(--background-card);
@@ -411,7 +440,7 @@
         }
 
         /* MODALES - Estilos de index.html */
-        #modal, #modalVer, #confirmModal, #alertModal {
+        #modal, #modalVer, #alertModal {
             display: none;
             position: fixed;
             inset: 0;
@@ -421,7 +450,7 @@
             padding: 20px;
             z-index: 1000;
         }
-        #modal .content, #modalVer .content, #confirmModal .content, #alertModal .content {
+        #modal .content, #modalVer .content, #alertModal .content {
             background: #fff;
             border-radius: 16px;
             max-width: 980px;
@@ -571,29 +600,29 @@
         .prioridad-alta { background-color: var(--status-danger); }
         .prioridad-ninguna { background-color: var(--secondary-dark-gray); }
 
-        #confirmModal .content, #alertModal .content {
+        #alertModal .content {
             max-width: 400px;
             padding: 24px;
             text-align: center;
             gap: 16px;
         }
-        #confirmModal h3, #alertModal h3 {
+        #alertModal h3 {
             margin: 0;
             color: var(--primary-blue);
             font-size: 1.5rem;
         }
-        #confirmModal p, #alertModal p {
+        #alertModal p {
             margin: 0;
             color: var(--secondary-dark-gray);
             font-size: 0.95rem;
         }
-        #confirmModal .actions-row, #alertModal .actions-row {
+        #alertModal .actions-row {
             display: flex;
             justify-content: space-around;
             gap: 12px;
             margin-top: 20px;
         }
-        #confirmModal .actions-row .btn, #alertModal .actions-row .btn {
+        #alertModal .actions-row .btn {
             flex-grow: 1;
         }
         .alert-danger { background: var(--status-danger); color: white; }
@@ -773,6 +802,99 @@
             line-height: 1.4;
         }
 
+        /* Estilos para impresión - OCULTAR BOTONES Y ACCIONES */
+        @media print {
+            .button, .actions, .action-buttons, .controls-form,
+            #btnNuevo, #btnPrintListado, #btnPrintFechas, #btnPrintForm,
+            #btnPrintRegistro, #btnCerrarVer, #btnAgregarNota, #btnVerLineaTiempo,
+            #btnPrintTodos, #btnPrintFiltrado,
+            .fa-solid, .fas, .far, .fa, .fa-eye, .fa-pen, .fa-trash, .fa-plus,
+            .fa-save, .fa-print, .fa-xmark, .fa-check, .fa-arrow-left, .fa-arrow-right,
+            .fa-exclamation-triangle, .fa-timeline, .fa-file-pen,
+            .btn-eliminar-audiencia, .btn-audiencia, .floating-alert,
+            .prioridad-destacada, .tabs-nav, .tab-button {
+                display: none !important;
+            }
+            
+            .header, .filters-section, .sidebar, .pagination-container {
+                display: none !important;
+            }
+            
+            body, .container, .main-layout, .main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .table-section, .kpi-section, .modal .content, #modalVer .content {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid;
+            }
+            
+            .data-table {
+                min-width: 100% !important;
+            }
+            
+            .kpi-cards {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 10px !important;
+            }
+            
+            .prioridad-pill {
+                color: #000 !important;
+                background-color: transparent !important;
+                border: 1px solid #000 !important;
+            }
+            
+            /* Estilos específicos para imprimir el formulario */
+            .tab-content {
+                display: block !important;
+            }
+            
+            #formCausa .grid {
+                display: table !important;
+                width: 100% !important;
+            }
+            
+            .field {
+                display: table-row !important;
+                margin-bottom: 0 !important;
+            }
+            
+            .field label {
+                display: table-cell !important;
+                padding: 8px !important;
+                font-weight: bold !important;
+                width: 40% !important;
+                border-bottom: 1px solid #ddd !important;
+            }
+            
+            .field input, .field textarea, .field select {
+                display: table-cell !important;
+                width: 100% !important;
+                padding: 8px !important;
+                border: none !important;
+                border-bottom: 1px solid #ddd !important;
+                background: transparent !important;
+            }
+            
+            .field textarea {
+                height: auto !important;
+                min-height: 60px !important;
+            }
+            
+            /* Estilos para prioridad en texto durante impresión */
+            .prioridad-texto {
+                color: #000 !important;
+                background-color: transparent !important;
+                border: 1px solid #000 !important;
+                font-weight: bold !important;
+            }
+        }
+
         /* Responsive mejorado para móviles */
         @media (max-width: 1024px) {
             .container {
@@ -892,7 +1014,6 @@
             .container {
                 padding: var(--spacing-xs);
                 width: 100%;
-                /* overflow-x: hidden; <-- ESTA LÍNEA FUE ELIMINADA */
             }
             
             .kpi-cards {
@@ -1087,8 +1208,11 @@
                     </div>
                     
                     <div class="action-buttons">
-                        <button id="btnPrintListado" class="button button-success">
-                            <i class="fas fa-print"></i> Imprimir Listado
+                        <button id="btnPrintTodos" class="button button-success">
+                            <i class="fas fa-print"></i> Imprimir Todos
+                        </button>
+                        <button id="btnPrintFiltrado" class="button button-success">
+                            <i class="fas fa-print"></i> Imprimir Filtrado
                         </button>
                     </div>
                 </section>
@@ -1107,7 +1231,7 @@
                                     <th>Estado</th>
                                     <th>Prioridad</th>
                                     <th>Registro</th>
-                                    <th>Acciones</th>
+                                    <th class="no-print">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tbodyCausas">
@@ -1270,7 +1394,6 @@
             </div>
             <div class="controls-form">
                 <button class="button button-success" type="button" id="btnGuardar"><i class="fa fa-save"></i>Guardar</button>
-                <button class="button button-secondary" type="button" id="btnPrintForm"><i class="fa fa-print"></i>Imprimir</button>
             </div>
         </div>
     </div>
@@ -1301,17 +1424,6 @@
         </div>
     </div>
 
-    <div id="confirmModal">
-        <div class="content">
-            <h3 id="confirmModalTitle"></h3>
-            <p id="confirmModalMessage"></p>
-            <div class="actions-row">
-                <button id="btnConfirmarEliminar" class="button button-danger"><i class="fa fa-trash"></i> Eliminar</button>
-                <button id="btnCancelarEliminar" class="button button-secondary"><i class="fa fa-xmark"></i> Cancelar</button>
-            </div>
-        </div>
-    </div>
-
     <div id="alertModal">
         <div class="content">
             <h3 id="alertTitle"></h3>
@@ -1323,7 +1435,7 @@
     </div>
 
     <script>
-        // ===== Firebase (COMPAT) =====
+        // ===== CONFIGURACIÓN DE FIREBASE =====
         const firebaseConfig = {
             apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
             authDomain: "causas-defensoria.firebaseapp.com",
@@ -1332,13 +1444,43 @@
             messagingSenderId: "186064671470",
             appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
         };
+
+        // ===== INICIALIZACIÓN DE FIREBASE =====
+        // Verificar si Firebase ya está inicializado
+        let app;
+        try {
+            app = firebase.app();
+            console.log("Firebase ya está inicializado");
+        } catch (e) {
+            console.log("Inicializando Firebase...");
+            app = firebase.initializeApp(firebaseConfig);
+        }
         
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ===== Helpers UI =====
-        const $ = (id)=>document.getElementById(id);
+        // ===== VARIABLES GLOBALES =====
+        let modo = "nuevo"; // Variable global para el modo (nuevo/editar)
+        let datosCache = [];
+        let paginaActual = 1;
+        let datosFiltrados = [];
+        let causaActualId = null;
+        let unsubCausas = null;
+        let usuariosCache = [];
+        let juzgadosPorTipoCache = {};
+        let kpisData = {};
+
+        // ===== CONSTANTES Y CONFIGURACIONES =====
+        const recordsPerPage = 10;
+        const intervencionOptions = [
+            "Ministerio Principal", "Ministerio Complementario", "Patrocinante Actor",
+            "Patrocinante Demandado", "Patrocinante Tercero", "Defensor de Ausente",
+            "Patrocinante presunto incapaz", "Asesor Letrado", "Ministerio Público del incapaz",
+            "Ministerio Público en turno Abril", "Ministerio Público en turno Agosto",
+            "Ministerio Público en turno Diciembre", "Asistencia Letrada del incapaz","Tutor Ad Litem","Defensor Oficial Art 329 CPCC", "Defensor Oficial Art 626 CPCC"   
+        ];
+
+        // ===== SELECTORES DEL DOM =====
+        const $ = (id) => document.getElementById(id);
         const tbody = $("tbodyCausas");
         const modal = $("modal");
         const modalVer = $("modalVer");
@@ -1351,12 +1493,10 @@
         const filtroPrioridad = $("filtroPrioridad");
         const filtroIntervencion = $("filtroIntervencion");
         const filtroTipoProceso = $("filtroTipoProceso");
-        
         const notaBitacora = $("notaBitacora");
         const historialNotas = $("historialNotas");
         const btnAgregarNota = $("btnAgregarNota");
         const btnVerLineaTiempo = $("btnVerLineaTiempo");
-
         const listAud = $("listAud");
         const listGes = $("listGesell");
         const listVenc = $("listVenc");
@@ -1364,35 +1504,22 @@
         const cAud = $("countAud");
         const cGes = $("countGesell");
         const cVenc = $("countVenc");
-        const cVrec = $("countVrec");
-
+        const cVrec = $("cVrec");
         const floatingAlert = $("floating-alert");
         const audienciasContainer = $("audiencias-container");
         const btnAgregarAudiencia = $("btnAgregarAudiencia");
-        
-        const confirmModal = $("confirmModal");
-        const btnConfirmarEliminar = $("btnConfirmarEliminar");
-        const btnCancelarEliminar = $("btnCancelarEliminar");
-        
         const alertModal = $("alertModal");
         const alertTitle = $("alertTitle");
         const alertMessage = $("alertMessage");
         const btnAlertOK = $("btnAlertOK");
+        
+        // Selectores del formulario
+        const selTipo = $("tipoProceso"), selJuz = $("juzgado"), selUsu = $("usuarioAsignado"), selPrioridad = $("prioridad");
+        const tabButtons = document.querySelectorAll(".tab-button");
+        const tabContents = document.querySelectorAll(".tab-content");
 
-        // ===== PAGINACIÓN del lado del Servidor y Realtime =====
-        const recordsPerPage = 10;
-        let firstVisible = null;
-        let lastVisible = null;
-        let queryDirection = 'next';
-        let history = []; // Historial para la navegación 'atrás'
-        
-        // ===== Variables de estado para los filtros =====
-        let datosCache = [];
-        let paginaActual = 1;
-        let datosFiltrados = [];
-        
-        // ===== Utils =====
-        const toDate = (v)=> v?.toDate ? v.toDate() : (v?.seconds ? new Date(v.seconds*1000) : (v ? new Date(v) : null));
+        // ===== FUNCIONES UTILITARIAS =====
+        const toDate = (v) => v?.toDate ? v.toDate() : (v?.seconds ? new Date(v.seconds*1000) : (v ? new Date(v) : null));
         
         function formatearFecha(d, conHora = false) {
             const fecha = toDate(d);
@@ -1412,7 +1539,7 @@
             return `${dia}/${mes}/${año} ${horas}:${minutos}`;
         }
         
-        const prioridadClase = (p)=>{
+        const prioridadClase = (p) => {
             p = (p || "Ninguna").toLowerCase();
             if(p === "alta") return "prioridad-alta";
             if(p === "media") return "prioridad-media";
@@ -1420,28 +1547,18 @@
             return "prioridad-ninguna";
         };
 
-        let causaActualId = null;
-        let unsubCausas = null;
+        const prioridadClaseTexto = (p) => {
+            p = (p || "Ninguna").toLowerCase();
+            if(p === "alta") return "alta";
+            if(p === "media") return "media";
+            if(p === "baja") return "baja";
+            return "ninguna";
+        };
 
-        // Variables para datos dinámicos de Firestore
-        let usuariosCache = [];
-        let juzgadosPorTipoCache = {};
-        
-        // Opciones para Intervención (extraídas del formulario de alta/edición)
-        const intervencionOptions = [
-            "Ministerio Principal", "Ministerio Complementario", "Patrocinante Actor",
-            "Patrocinante Demandado", "Patrocinante Tercero", "Defensor de Ausente",
-            "Patrocinante presunto incapaz", "Asesor Letrado", "Ministerio Público del incapaz",
-            "Ministerio Público en turno Abril", "Ministerio Público en turno Agosto",
-            "Ministerio Público en turno Diciembre", "Asistencia Letrada del incapaz","Tutor Ad Litem","Defensor Oficial Art 329 CPCC", "Defensor Oficial Art 626 CPCC"   
-        ];
-
-        // Variables para KPIs
-        let kpisData = {};
-
-        // ===== Funciones para cargar datos de Firestore =====
+        // ===== FUNCIONES DE DATOS =====
         async function cargarUsuarios() {
             try {
+                console.log("Cargando usuarios...");
                 const snapshot = await db.collection("usuarios").get();
                 usuariosCache = [];
                 snapshot.forEach(doc => {
@@ -1451,13 +1568,16 @@
                     }
                 });
                 usuariosCache.sort((a, b) => a.localeCompare(b));
+                console.log("Usuarios cargados:", usuariosCache.length);
             } catch (e) {
                 console.error("Error al cargar usuarios:", e);
+                mostrarAlertaFlotante("Error al cargar usuarios", 'danger');
             }
         }
 
         async function cargarJuzgados() {
             try {
+                console.log("Cargando juzgados...");
                 const snapshot = await db.collection("juzgados").get();
                 juzgadosPorTipoCache = {};
                 snapshot.forEach(doc => {
@@ -1472,12 +1592,14 @@
                 Object.keys(juzgadosPorTipoCache).forEach(tipo => {
                     juzgadosPorTipoCache[tipo].sort((a, b) => a.localeCompare(b));
                 });
+                console.log("Juzgados cargados:", Object.keys(juzgadosPorTipoCache).length);
             } catch (e) {
                 console.error("Error al cargar juzgados:", e);
+                mostrarAlertaFlotante("Error al cargar juzgados", 'danger');
             }
         }
 
-        // ===== Funciones para poblar selects =====
+        // ===== FUNCIONES DE INTERFAZ =====
         function poblarTiposProceso() {
             const selTipo = $("tipoProceso");
             const tipos = Object.keys(juzgadosPorTipoCache).sort((a, b) => a.localeCompare(b));
@@ -1485,7 +1607,6 @@
                 tipos.map(t => `<option value="${t}">${t}</option>`).join('');
         }
         
-        // NUEVA FUNCIÓN: Poblar filtro de Tipos de Proceso
         function poblarFiltroTiposProceso() {
             const current = filtroTipoProceso.value;
             const tipos = Object.keys(juzgadosPorTipoCache).sort((a, b) => a.localeCompare(b));
@@ -1495,7 +1616,6 @@
             if (current) filtroTipoProceso.value = current;
         }
         
-        // NUEVA FUNCIÓN: Poblar filtro de Intervención
         function poblarFiltroIntervencion() {
             const current = filtroIntervencion.value;
             filtroIntervencion.innerHTML = '<option value="">Intervención (todas)</option>' + 
@@ -1523,26 +1643,31 @@
             if (current) filtroUsuario.value = current;
         }
 
-        // ===== Lógica de paginación y carga de datos desde el servidor =====
+        // ===== FUNCIONES PRINCIPALES =====
         function suscribirCausas() {
             if (unsubCausas) unsubCausas();
+            
+            console.log("Suscribiendo a cambios en causas...");
             unsubCausas = db.collection("causas").orderBy("fechaRegistro", "desc").onSnapshot(
                 snap => {
+                    console.log("Datos recibidos:", snap.size, "registros");
                     datosCache = [];
-                    snap.forEach(d => datosCache.push({ id: d.id, ...d.data() }));
+                    snap.forEach(d => {
+                        datosCache.push({ id: d.id, ...d.data() });
+                    });
                     handleFilterChange();
                     renderSidebar(datosCache);
-                    poblarFiltroUsuarios();
+                    // poblarFiltroUsuarios(); // CORRECCIÓN: Eliminado, es redundante
                     actualizarKPIs();
                 },
                 err => {
-                    console.error("onSnapshot causas:", err);
+                    console.error("Error en onSnapshot causas:", err);
                     tbody.innerHTML = "<tr><td colspan='9'>Error al cargar los datos.</td></tr>";
+                    mostrarAlertaFlotante("Error al cargar los expedientes", 'danger');
                 }
             );
         }
 
-        // ===== Filtros y Paginación (del lado del cliente) =====
         function filtrarDatos() {
             const q = (buscador.value || "").toLowerCase();
             const est = (filtroEstado.value || "").toLowerCase();
@@ -1552,7 +1677,6 @@
             const tipoProc = (filtroTipoProceso.value || "").toLowerCase();
             
             return datosCache.filter(d => {
-                // Lógica de búsqueda mejorada para buscar en todos los campos de texto
                 const okTexto = !q || Object.values(d).some(value => {
                     const stringValue = String(value || "").toLowerCase();
                     return stringValue.includes(q);
@@ -1582,15 +1706,7 @@
             renderTablas(dataToRender);
             renderPaginacion(datosFiltrados.length, dataToRender.length);
         };
-        
-        buscador.oninput = handleFilterChange;
-        filtroEstado.onchange = handleFilterChange;
-        filtroUsuario.onchange = handleFilterChange;
-        filtroPrioridad.onchange = handleFilterChange;
-        filtroIntervencion.onchange = handleFilterChange;
-        filtroTipoProceso.onchange = handleFilterChange;
-        
-        // ===== Render =====
+
         function accionesHTML(id){
             return `<button class="button ver-detalles" data-id="${id}" title="Ver"><i class="fa fa-eye"></i></button>
                     <button class="button button-secondary editar-detalles" data-id="${id}" title="Editar"><i class="fa fa-pen"></i></button>
@@ -1618,7 +1734,6 @@
             document.querySelectorAll(".editar-detalles").forEach(b=>b.onclick=()=>abrirEditar(b.dataset.id));
         }
 
-        // ===== PAGINACIÓN: Render y Controles =====
         function renderPaginacion(totalRecords, recordsOnPage) {
             const container = $("paginacion-container");
             const totalPages = Math.ceil(totalRecords / recordsPerPage);
@@ -1633,18 +1748,21 @@
                 </div>
             `;
 
-            $("btnPrevPage").onclick = () => {
-                paginaActual--;
-                renderTablaPaginada();
-            };
+            if ($("btnPrevPage")) {
+                $("btnPrevPage").onclick = () => {
+                    paginaActual--;
+                    renderTablaPaginada();
+                };
+            }
 
-            $("btnNextPage").onclick = () => {
-                paginaActual++;
-                renderTablaPaginada();
-            };
+            if ($("btnNextPage")) {
+                $("btnNextPage").onclick = () => {
+                    paginaActual++;
+                    renderTablaPaginada();
+                };
+            }
         }
 
-        // ===== Sidebar (eventos próximos) =====
         function renderSidebar(data){
             const hoy = new Date();
             const limite = new Date(hoy.getTime() + 30*24*60*60*1000);
@@ -1705,7 +1823,6 @@
             renderList(eventos.vrec, listVrec, cVrec, "No hay venc. de recursos próximos");
         }
 
-        // ===== Funciones para KPIs =====
         function actualizarKPIs() {
             const kpiCardsContainer = $("kpiCards");
             
@@ -1755,17 +1872,16 @@
             kpiCardsContainer.innerHTML = kpisHTML;
         }
 
-        // ===== ABM Causas =====
-        $("btnNuevo").onclick = async ()=>{ 
+        // ===== FUNCIONES DE GESTIÓN DE EXPEDIENTES =====
+        $("btnNuevo").onclick = ()=>{ // CORRECCIÓN: No necesita ser async
             modo = "nuevo"; 
             resetFormCausa(); 
             editId.value = ""; 
             tituloForm.textContent = "Nuevo Expediente"; 
-            await initForm();
+            // await initForm(); // CORRECCIÓN: Eliminado, los listeners ya están
             modal.style.display = "flex"; 
         };
         
-        // Función de validación mejorada
         function validateForm() {
             let isValid = true;
             const requiredFields = ["numCausa", "caratula", "tipoProceso", "juzgado", "prioridad", "usuarioAsignado"];
@@ -1808,17 +1924,6 @@
         btnAlertOK.onclick = () => {
             alertModal.style.display = "none";
         };
-        
-        const mostrarConfirmacion = (titulo, mensaje, onConfirm) => {
-            $("confirmModalTitle").textContent = titulo;
-            $("confirmModalMessage").textContent = mensaje;
-            confirmModal.style.display = "flex";
-            btnConfirmarEliminar.onclick = onConfirm;
-            btnCancelarEliminar.onclick = () => {
-                confirmModal.style.display = "none";
-                btnConfirmarEliminar.onclick = null;
-            };
-        };
 
         const mostrarAlertaFlotante = (mensaje, tipo) => {
             floatingAlert.textContent = mensaje;
@@ -1842,15 +1947,20 @@
             try {
                 if (modo === "nuevo") {
                     await db.collection("causas").add({...datos, fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()});
+                    mostrarAlertaFlotante("Se guardó correctamente el expediente.", 'success');
                 } else {
                     await db.collection("causas").doc(editId.value).update(datos);
+                    mostrarAlertaFlotante("El registro fue correctamente actualizado.", 'success');
                 }
-                mostrarAlertaFlotante("Se guardó correctamente el expediente.", 'success');
                 modal.style.display = "none";
                 resetFormCausa();
             } catch (e) {
                 console.error(e);
-                mostrarAlertaPersonalizada("Error", "No se pudo guardar. Revisa la consola para más detalles.");
+                if (modo === "nuevo") {
+                    mostrarAlertaFlotante("Fallo al crear el registro.", 'danger');
+                } else {
+                    mostrarAlertaFlotante("Fallo de actualización del registro.", 'danger');
+                }
             } finally {
                 btnGuardar.disabled = false;
             }
@@ -1858,26 +1968,15 @@
         
         $("btnGuardar").onclick = guardarExpediente;
         
-        function abrirConfirmarEliminar(id) {
-            const onConfirm = async () => {
-                try {
-                    await db.collection("causas").doc(id).delete();
-                    confirmModal.style.display = "none";
-                    mostrarAlertaPersonalizada("Eliminado", "Expediente eliminado correctamente.");
-                } catch (e) {
-                    console.error("Error al eliminar el expediente:", e);
-                    mostrarAlertaPersonalizada("Error", "No se pudo eliminar el registro.");
-                }
-            };
-            mostrarConfirmacion("¿Estás seguro?", "Esta acción eliminará el registro de forma permanente. No se puede deshacer.", onConfirm);
-        }
-        
         async function abrirEditar(id){
-            modo = "editar"; resetFormCausa(); editId.value = id; tituloForm.textContent = "Editar Expediente";
+            modo = "editar"; 
+            resetFormCausa(); // Resetear primero para limpiar estado
+            editId.value = id; 
+            tituloForm.textContent = "Editar Expediente";
             try{
                 const snap = await db.collection("causas").doc(id).get();
                 if (snap.exists){
-                    await initForm();
+                    // await initForm(); // CORRECCIÓN: Eliminado
                     cargarDatosEnForm(snap.data());
                     modal.style.display = "flex"; 
                 } else {
@@ -1900,14 +1999,16 @@
                 const d = snap.data();
                 let contenidoHTML = "";
 
-                const prioridadDestacada = `<div class="prioridad-destacada ${prioridadClase(d.prioridad)}"><i class="fa fa-exclamation-triangle"></i><h4>PRIORIDAD ${d.prioridad.toUpperCase()}</h4></div>`;
-                contenidoHTML += prioridadDestacada;
+                // Mostrar prioridad en texto con colores según el nivel
+                const prioridadClaseTextoVal = prioridadClaseTexto(d.prioridad);
+                const prioridadTexto = `<div class="prioridad-texto ${prioridadClaseTextoVal}"><strong>Prioridad: ${d.prioridad || "Ninguna"}</strong></div>`;
+                contenidoHTML += prioridadTexto;
                 
                 const etiquetas = {
                     numCausa: "N° Expediente", caratula: "Carátula", tipoProceso: "Tipo de Proceso", juzgado: "Juzgado",
                     fechaInicio: "Fecha de Inicio", fechaPase: "Fecha de Pase", intervencion: "Intervención",
                     datosNnya: "Datos de NNyA", vencimiento: "Vencimiento", usuarioAsignado: "Usuario Asignado",
-                    estado: "Estado", prioridad: "Prioridad", recursos: "Recursos Interpuestos",
+                    estado: "Estado", recursos: "Recursos Interpuestos",
                     recursosContestacion: "Contestación de Recursos", estadoRecursos: "Estado de Recursos",
                     vencimientoRecursos: "Vencimiento de Recursos", audienciaGesell: "Audiencia Gesell",
                     nnyaGesell: "NNyA en Gesell", observaciones: "Observaciones", fechaRegistro: "Fecha de Registro"
@@ -1998,18 +2099,248 @@
         
         btnAgregarNota.onclick = agregarNota;
         $("btnCerrarVer").onclick = ()=> modalVer.style.display = "none";
-        
-        const printSection = (html)=>{ const w = window.open("","_blank","width=900,height=700"); w.document.write(`<html><head><title>Imprimir</title></head><body>${html}</body></html>`); w.document.close(); w.focus(); w.print(); };
-        $("btnPrintListado").onclick = ()=>{ const head = tbody.closest("table").querySelector("thead").outerHTML; const body = tbody.outerHTML; printSection(`<table style="width:100%;border-collapse:collapse">${head}${body}</table>`); };
-        $("btnPrintFechas").onclick = ()=>{ const html = `<h3>Audiencias</h3>${listAud.outerHTML}<h3>Cámara Gesell</h3>${listGes.outerHTML}<h3>Vencimientos</h3>${listVenc.outerHTML}<h3>Venc. de Recursos</h3>${listVrec.outerHTML}`; printSection(html); };
-        $("btnPrintForm").onclick = ()=> printSection($("formCausa").outerHTML);
-        $("btnPrintRegistro").onclick = ()=> printSection($("verContenido").outerHTML);
 
-        // ===== Formulario - Lógica de Pestañas y Campos Condicionales =====
-        const selTipo = $("tipoProceso"), selJuz = $("juzgado"), selUsu = $("usuarioAsignado"), selPrioridad = $("prioridad");
-        const tabButtons = document.querySelectorAll(".tab-button");
-        const tabContents = document.querySelectorAll(".tab-content");
+        // ===== FUNCIONES DE IMPRESIÓN =====
+        const printSection = (html)=>{ 
+            const w = window.open("","_blank","width=900,height=700"); 
+            w.document.write(`
+                <html>
+                    <head>
+                        <title>Imprimir</title>
+                        <style>
+                            @media print {
+                                .button, .actions, .action-buttons, .controls-form,
+                                #btnNuevo, #btnPrintListado, #btnPrintFechas, #btnPrintForm,
+                                #btnPrintRegistro, #btnCerrarVer, #btnAgregarNota, #btnVerLineaTiempo,
+                                #btnPrintTodos, #btnPrintFiltrado,
+                                .fa-solid, .fas, .far, .fa, .fa-eye, .fa-pen, .fa-trash, .fa-plus,
+                                .fa-save, .fa-print, .fa-xmark, .fa-check, .fa-arrow-left, .fa-arrow-right,
+                                .fa-exclamation-triangle, .fa-timeline, .fa-file-pen,
+                                .btn-eliminar-audiencia, .btn-audiencia, .floating-alert,
+                                .prioridad-destacada, .tabs-nav, .tab-button {
+                                    display: none !important;
+                                }
+                                
+                                .header, .filters-section, .sidebar, .pagination-container {
+                                    display: none !important;
+                                }
+                                
+                                body, .container, .main-layout, .main {
+                                    margin: 0 !important;
+                                    padding: 0 !important;
+                                    width: 100% !important;
+                                    max-width: 100% !important;
+                                }
+                                
+                                .table-section, .kpi-section, .modal .content, #modalVer .content {
+                                    box-shadow: none !important;
+                                    border: 1px solid #ddd !important;
+                                    page-break-inside: avoid;
+                                }
+                                
+                                .data-table {
+                                    min-width: 100% !important;
+                                }
+                                
+                                .kpi-cards {
+                                    display: grid !important;
+                                    grid-template-columns: repeat(3, 1fr) !important;
+                                    gap: 10px !important;
+                                }
+                                
+                                .prioridad-pill {
+                                    color: #000 !important;
+                                    background-color: transparent !important;
+                                    border: 1px solid #000 !important;
+                                }
+                                
+                                .actions {
+                                    display: none !important;
+                                }
+                                
+                                /* Estilos específicos para imprimir el formulario */
+                                .tab-content {
+                                    display: block !important;
+                                }
+                                
+                                #formCausa .grid {
+                                    display: table !important;
+                                    width: 100% !important;
+                                }
+                                
+                                .field {
+                                    display: table-row !important;
+                                    margin-bottom: 0 !important;
+                                }
+                                
+                                .field label {
+                                    display: table-cell !important;
+                                    padding: 8px !important;
+                                    font-weight: bold !important;
+                                    width: 40% !important;
+                                    border-bottom: 1px solid #ddd !important;
+                                }
+                                
+                                .field input, .field textarea, .field select {
+                                    display: table-cell !important;
+                                    width: 100% !important;
+                                    padding: 8px !important;
+                                    border: none !important;
+                                    border-bottom: 1px solid #ddd !important;
+                                    background: transparent !important;
+                                }
+                                
+                                .field textarea {
+                                    height: auto !important;
+                                    min-height: 60px !important;
+                                }
+                                
+                                /* Estilos para prioridad en texto durante impresión */
+                                .prioridad-texto {
+                                    color: #000 !important;
+                                    background-color: transparent !important;
+                                    border: 1px solid #000 !important;
+                                    font-weight: bold !important;
+                                }
+                                
+                                /* Estilos para impresión del detalle */
+                                #verContenido p {
+                                    margin: 8px 0 !important;
+                                    font-size: 14px !important;
+                                    line-height: 1.4 !important;
+                                }
+                                
+                                #verContenido strong {
+                                    color: #000 !important;
+                                    font-weight: bold !important;
+                                }
+                                
+                                .notes-history {
+                                    margin-top: 20px !important;
+                                    padding-top: 20px !important;
+                                    border-top: 1px solid #ddd !important;
+                                }
+                                
+                                .notes-history h4 {
+                                    margin: 0 0 10px !important;
+                                    color: #000 !important;
+                                    font-size: 16px !important;
+                                    border-bottom: 2px solid #000 !important;
+                                    padding-bottom: 5px !important;
+                                }
+                                
+                                .note-item {
+                                    background: #f8f8f8 !important;
+                                    border-left: 4px solid #007bff !important;
+                                    padding: 10px !important;
+                                    margin-bottom: 10px !important;
+                                    border-radius: 8px !important;
+                                }
+                                
+                                .note-meta {
+                                    display: flex !important;
+                                    justify-content: space-between !important;
+                                    font-size: 12px !important;
+                                    color: #6c757d !important;
+                                    margin-bottom: 5px !important;
+                                }
+                                
+                                .note-text {
+                                    font-size: 14px !important;
+                                    line-height: 1.4 !important;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>${html}</body>
+                </html>
+            `); 
+            w.document.close(); 
+            w.focus(); 
+            w.print(); 
+        };
         
+        function generarTablaImpresion(data, titulo) {
+            let tableHTML = `
+                <table border="1" style="width:100%; border-collapse:collapse; margin-top:20px;">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Carátula</th>
+                            <th>Tipo</th>
+                            <th>Juzgado</th>
+                            <th>Usuario</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Registro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.forEach(d => {
+                tableHTML += `
+                    <tr>
+                        <td>${d.numCausa||""}</td>
+                        <td>${d.caratula||""}</td>
+                        <td>${d.tipoProceso||""}</td>
+                        <td>${d.juzgado||""}</td>
+                        <td>${d.usuarioAsignado||""}</td>
+                        <td>${d.estado||""}</td>
+                        <td>${d.prioridad||"Ninguna"}</td>
+                        <td>${formatearFecha(d.fechaRegistro, false)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            return `<h2>${titulo}</h2>${tableHTML}`;
+        }
+        
+        $("btnPrintTodos").onclick = ()=> { 
+            const html = generarTablaImpresion(datosCache, "Listado Completo de Expedientes Judiciales");
+            printSection(html); 
+        };
+        
+        $("btnPrintFiltrado").onclick = ()=> { 
+            const html = generarTablaImpresion(datosFiltrados, "Listado Filtrado de Expedientes Judiciales");
+            printSection(html); 
+        };
+        
+        $("btnPrintFechas").onclick = ()=>{ 
+            const html = `
+                <h2>Próximas Fechas (30 días)</h2>
+                <h3>Audiencias</h3>${listAud.outerHTML}
+                <h3>Cámara Gesell</h3>${listGes.outerHTML}
+                <h3>Vencimientos</h3>${listVenc.outerHTML}
+                <h3>Venc. de Recursos</h3>${listVrec.outerHTML}
+            `; 
+            printSection(html); 
+        };
+        
+        $("btnPrintRegistro").onclick = ()=> {
+            const contenido = `
+                <div style="padding: 20px; font-family: Arial, sans-serif;">
+                    <h2 style="text-align: center; margin-bottom: 20px; color: #007bff;">Detalle del Expediente</h2>
+                    <div style="margin-bottom: 20px;">
+                        ${verContenido.innerHTML}
+                    </div>
+                    <div class="notes-history">
+                        <h4 style="color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 5px;">Historial de Notas</h4>
+                        ${historialNotas.innerHTML}
+                    </div>
+                </div>
+            `;
+            printSection(contenido);
+        };
+
+        // ===== FUNCIONES DEL FORMULARIO =====
+        
+        // Listener para las pestañas del formulario
         tabButtons.forEach(button => {
             button.addEventListener("click", () => {
                 tabButtons.forEach(btn => btn.classList.remove("active"));
@@ -2049,10 +2380,8 @@
             }
         }
 
-        async function initForm(){
-            poblarTiposProceso();
-            poblarSelectUsuarios();
-            
+        // CORRECCIÓN: Esta función ahora solo configura los listeners
+        function initFormEventListeners(){
             selTipo.addEventListener("change", function() {
                 poblarJuzgadosPorTipo(this.value);
             });
@@ -2062,48 +2391,45 @@
                 recursosOpcionales.style.display = this.value ? "block" : "none";
             });
             
-            toggleGesell(false); 
-            $("habilitarAudienciaGesell").checked = false;
-
             // Agregar el validador en tiempo real al campo de numCausa
             $("numCausa").addEventListener("input", validarExistenciaCausa);
+
+            $("intervencion").addEventListener("change", function(){
+                const datosNnya = $("datosNnya"), contadorNnya = $("counterNnya");
+                if (this.value === "Ministerio Complementario") { 
+                    datosNnya.removeAttribute("disabled"); 
+                    contadorNnya.style.display='block'; 
+                } else { 
+                    datosNnya.value = ""; 
+                    datosNnya.setAttribute("disabled","true"); 
+                    contadorNnya.style.display='none'; 
+                }
+            });
+            
+            const limitWords = (text, max)=>{ 
+                const words = text.trim().split(/\s+/).filter(Boolean); 
+                return words.length > max ? words.slice(0,max).join(" ") : text; 
+            };
+            
+            $("observaciones").addEventListener("input", function(){ 
+                this.value = limitWords(this.value, 1000); 
+                $("counter").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/1000`; 
+            });
+            
+            $("datosNnya").addEventListener("input", function(){ 
+                this.value = limitWords(this.value, 500); 
+                $("counterNnya").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/500`; 
+            });
+            
+            $("nnyaGesell").addEventListener("input", function(){ 
+                this.value = limitWords(this.value, 400); 
+                $("counterNnyaGesell").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/400`; 
+            });
+            
+            $("habilitarAudienciaGesell").addEventListener("change", function(){ 
+                toggleGesell(this.checked); 
+            });
         }
-        
-        $("intervencion").addEventListener("change", function(){
-            const datosNnya = $("datosNnya"), contadorNnya = $("counterNnya");
-            if (this.value === "Ministerio Complementario") { 
-                datosNnya.removeAttribute("disabled"); 
-                contadorNnya.style.display='block'; 
-            } else { 
-                datosNnya.value = ""; 
-                datosNnya.setAttribute("disabled","true"); 
-                contadorNnya.style.display='none'; 
-            }
-        });
-        
-        const limitWords = (text, max)=>{ 
-            const words = text.trim().split(/\s+/).filter(Boolean); 
-            return words.length > max ? words.slice(0,max).join(" ") : text; 
-        };
-        
-        $("observaciones").addEventListener("input", function(){ 
-            this.value = limitWords(this.value, 1000); 
-            $("counter").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/1000`; 
-        });
-        
-        $("datosNnya").addEventListener("input", function(){ 
-            this.value = limitWords(this.value, 500); 
-            $("counterNnya").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/500`; 
-        });
-        
-        $("nnyaGesell").addEventListener("input", function(){ 
-            this.value = limitWords(this.value, 400); 
-            $("counterNnyaGesell").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/400`; 
-        });
-        
-        $("habilitarAudienciaGesell").addEventListener("change", function(){ 
-            toggleGesell(this.checked); 
-        });
         
         function toggleGesell(enabled){ 
             const ag = $("audienciaGesell"), ng = $("nnyaGesell"); 
@@ -2136,7 +2462,12 @@
             tabContents.forEach(content => content.classList.remove("active"));
             tabButtons[0].classList.add("active");
             tabContents[0].classList.add("active");
-            $("recursos-opcionales").style.display = "block";
+            $("recursos-opcionales").style.display = "none";
+            
+            // CORRECCIÓN: Asegurarse de resetear Gesell
+            toggleGesell(false);
+            $("habilitarAudienciaGesell").checked = false;
+
             toggleFormFields(true);
         }
 
@@ -2190,7 +2521,12 @@
                     } else {
                         el.value = val ?? "";
                     }
-                } else {
+                } else if (val && (el.type === "date" || el.type === "datetime-local")) {
+                    // Manejar fechas que ya son strings o objetos Date
+                    const fecha = toDate(val);
+                    el.value = formatFechaParaInput(fecha, el.type === "datetime-local");
+                }
+                else {
                     el.value = val ?? "";
                 }
             };
@@ -2244,33 +2580,48 @@
         
         btnAgregarAudiencia.onclick = agregarAudiencia;
         
+        // ===== EVENT LISTENERS GLOBALES =====
         window.addEventListener("click", e=>{ 
             if (e.target === modal) modal.style.display="none"; 
             if (e.target === modalVer) modalVer.style.display="none"; 
-            if (e.target === confirmModal) confirmModal.style.display="none";
             if (e.target === alertModal) alertModal.style.display="none";
         });
-        
-        let modo = "nuevo";
-        
-        // Inicialización de la aplicación
+
+        // Event listeners para filtros
+        buscador.oninput = handleFilterChange;
+        filtroEstado.onchange = handleFilterChange;
+        filtroUsuario.onchange = handleFilterChange;
+        filtroPrioridad.onchange = handleFilterChange;
+        filtroIntervencion.onchange = handleFilterChange;
+        filtroTipoProceso.onchange = handleFilterChange;
+
+        // ===== INICIALIZACIÓN DE LA APLICACIÓN =====
         async function initApp() {
             try {
+                console.log("Inicializando aplicación...");
+                // Cargar datos base (usuarios, juzgados) en paralelo
                 await Promise.all([cargarUsuarios(), cargarJuzgados()]);
                 
+                // Poblar todos los filtros y selects que dependen de los datos base
                 poblarFiltroUsuarios();
                 poblarTiposProceso();
                 poblarFiltroTiposProceso();
                 poblarFiltroIntervencion();
                 poblarSelectUsuarios();
                 
+                // CORRECCIÓN: Configurar los listeners del formulario UNA SOLA VEZ
+                initFormEventListeners();
+                
+                // Suscribirse a los datos principales (expedientes)
                 suscribirCausas();
+                console.log("Aplicación inicializada correctamente");
             } catch (error) {
                 console.error("Error durante la inicialización:", error);
                 mostrarAlertaPersonalizada("Error de Carga", "Error al cargar los datos iniciales. Verifica la consola para más detalles.");
             }
         }
 
+        // Inicializar la aplicación cuando el DOM esté listo
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
