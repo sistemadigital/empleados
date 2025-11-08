@@ -124,10 +124,12 @@
         }
 
         .kpi-cards {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid; /* CAMBIADO */
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* AÑADIDO */
             gap: 12px;
             padding-bottom: var(--spacing-s);
+            /* display: flex; */  /* ELIMINADO */
+            /* flex-wrap: wrap; */ /* ELIMINADO */
         }
 
         .kpi-card {
@@ -138,8 +140,8 @@
             text-align: center;
             box-shadow: var(--shadow-subtle);
             transition: transform 0.2s, box-shadow 0.2s;
-            min-width: 100px;
-            flex: 1;
+            /* min-width: 100px; */ /* ELIMINADO */
+            /* flex: 1; */          /* ELIMINADO */
             display: flex;
             flex-direction: column;
             align-items: center;
