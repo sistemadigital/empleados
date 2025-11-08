@@ -112,7 +112,7 @@
             align-items: start;
         }
 
-        /* Tarjetas de resumen (KPIs) */
+        /* ===== MODIFICADO: Tarjetas de resumen (KPIs) con estilo del calendario ===== */
         .kpi-section {
             margin-bottom: var(--spacing-xl);
         }
@@ -125,21 +125,25 @@
 
         .kpi-cards {
             display: flex;
-            gap: var(--spacing-m);
-            overflow-x: auto;
+            flex-wrap: wrap;
+            gap: 12px;
             padding-bottom: var(--spacing-s);
         }
 
         .kpi-card {
             background-color: var(--background-card);
-            padding: var(--spacing-m) var(--spacing-l);
-            border-radius: var(--border-radius-default);
+            padding: 12px 16px;
+            border-radius: 10px;
             border: 1px solid var(--border-default);
             text-align: center;
             box-shadow: var(--shadow-subtle);
             transition: transform 0.2s, box-shadow 0.2s;
-            min-width: 180px;
+            min-width: 100px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .kpi-card:hover {
@@ -169,9 +173,9 @@
         }
 
         .kpi-number {
-            font-size: var(--display-size);
+            font-size: 24px;
             font-weight: var(--font-weight-bold);
-            margin-bottom: var(--spacing-xs);
+            margin-bottom: 4px;
         }
 
         .kpi-card.total .kpi-number {
@@ -179,7 +183,7 @@
         }
 
         .kpi-label {
-            font-size: var(--caption-size);
+            font-size: 12px;
             font-weight: var(--font-weight-regular);
             text-transform: uppercase;
         }
@@ -895,7 +899,7 @@
             }
         }
 
-        /* Responsive mejorado para móviles */
+        /* ===== MODIFICADO: Responsive mejorado para móviles con KPIs del calendario ===== */
         @media (max-width: 1024px) {
             .container {
                 max-width: 100%;
@@ -941,14 +945,18 @@
                 text-align: center;
             }
             
+            /* MODIFICADO: KPIs responsivos como en el calendario */
             .kpi-cards {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                overflow-x: visible;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: space-between;
             }
             
             .kpi-card {
-                min-width: auto;
+                flex: 1;
+                min-width: 80px;
+                padding: 10px 12px;
             }
             
             .filter-row {
@@ -1016,12 +1024,17 @@
                 width: 100%;
             }
             
+            /* MODIFICADO: KPIs más compactos en pantallas pequeñas */
             .kpi-cards {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
             }
             
             .kpi-card {
-                padding: var(--spacing-m);
+                flex: 1 1 calc(50% - 8px);
+                min-width: 0;
+                padding: 10px 8px;
             }
             
             .kpi-number {
@@ -1112,6 +1125,11 @@
         @media (max-width: 360px) {
             .container {
                 padding: 4px;
+            }
+            
+            /* MODIFICADO: KPIs en una columna en pantallas muy pequeñas */
+            .kpi-card {
+                flex: 1 1 100%;
             }
             
             .kpi-card {
