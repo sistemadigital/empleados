@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Expedientes Judiciales</title>
+    <title>Causas</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -1024,7 +1024,8 @@
                 width: 100%;
             }
             
-            /* MODIFICADO: KPIs más compactos en pantallas pequeñas */
+            /* ===== CAMBIO SOLICITADO ===== */
+            /* KPIs en una columna en pantallas pequeñas */
             .kpi-cards {
                 display: flex;
                 flex-wrap: wrap;
@@ -1032,10 +1033,12 @@
             }
             
             .kpi-card {
-                flex: 1 1 calc(50% - 8px);
+                /* Esto hace que ocupe el 100% del ancho */
+                flex: 1 1 100%; 
                 min-width: 0;
                 padding: 10px 8px;
             }
+            /* ===== FIN DEL CAMBIO ===== */
             
             .kpi-number {
                 font-size: var(--h1-size);
@@ -1127,12 +1130,9 @@
                 padding: 4px;
             }
             
-            /* MODIFICADO: KPIs en una columna en pantallas muy pequeñas */
+            /* La regla de 576px ya cubre esto, pero la dejamos por si acaso */
             .kpi-card {
                 flex: 1 1 100%;
-            }
-            
-            .kpi-card {
                 padding: 10px;
             }
             
@@ -1522,7 +1522,7 @@
         const cAud = $("countAud");
         const cGes = $("countGesell");
         const cVenc = $("countVenc");
-        const cVrec = $("cVrec");
+        const cVrec = $("countVrec"); // <-- ESTA ES LA CORRECCIÓN
         const floatingAlert = $("floating-alert");
         const audienciasContainer = $("audiencias-container");
         const btnAgregarAudiencia = $("btnAgregarAudiencia");
