@@ -270,6 +270,33 @@
         flex-wrap: wrap;
     }
 
+    /* Botones de acción en tabla - más compactos */
+    .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .action-btn:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-btn.view {
+        color: var(--primary-blue);
+    }
+    
+    .action-btn.edit {
+        color: var(--status-warning);
+    }
+
     /* Badges para prioridades */
     .badge {
         padding: 6px 10px;
@@ -333,7 +360,7 @@
     }
 
     /* MODALES */
-    #modalRegistro {
+    #modalRegistro, #modalVer {
         display: none;
         position: fixed;
         inset: 0;
@@ -344,7 +371,7 @@
         z-index: 1000;
     }
     
-    #modalRegistro .content {
+    #modalRegistro .content, #modalVer .content {
         background: #fff;
         border-radius: 16px;
         max-width: 600px;
@@ -463,6 +490,26 @@
         opacity: 1;
     }
 
+    /* Estilos para modal de solo lectura (Ver) */
+    #modalVer .form-group input, 
+    #modalVer .form-group textarea, 
+    #modalVer .form-group select {
+        background-color: #f5f5f5;
+        border-color: #e0e0e0;
+        color: #666;
+        cursor: not-allowed;
+    }
+
+    /* Prioridad en modal VER - solo muestra la registrada */
+    .prioridad-display {
+        padding: 10px;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 10px;
+    }
+
     /* ALERTA FLOTANTE */
     .floating-alert {
         position: fixed;
@@ -519,7 +566,7 @@
             min-width: 140px;
         }
 
-        #modalRegistro .content {
+        #modalRegistro .content, #modalVer .content {
             max-width: 95%;
         }
     }
@@ -556,6 +603,10 @@
         .prioridad-opciones {
             flex-direction: column;
         }
+        
+        .actions {
+            justify-content: center;
+        }
     }
 
     @media (max-width: 576px) {
@@ -573,7 +624,7 @@
             font-size: var(--body-large-size);
         }
 
-        #modalRegistro .content {
+        #modalRegistro .content, #modalVer .content {
             max-width: 100%;
             max-height: 100vh;
             border-radius: 0;
@@ -586,7 +637,8 @@
         }
         
         .actions {
-            flex-direction: column;
+            flex-direction: row;
+            justify-content: center;
         }
         
         .data-table {
@@ -598,11 +650,46 @@
         }
     }
 
+    /* Estilos de impresión */
     @media print {
-        body * { visibility: hidden; }
-        #admin, #admin * { visibility: visible; }
-        #admin { position: absolute; top: 0; left: 0; width: 100%; }
-        .filters-section, .pagination-container, .actions, .header button { display: none !important; }
+        body * { 
+            visibility: hidden; 
+        }
+        
+        .table-section, 
+        .table-section * { 
+            visibility: visible; 
+        }
+        
+        .table-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            box-shadow: none;
+            border: none;
+        }
+        
+        .header, 
+        .filters-section, 
+        .pagination-container, 
+        .actions, 
+        .action-buttons,
+        .modal,
+        .floating-alert { 
+            display: none !important; 
+        }
+        
+        .data-table th {
+            background-color: #f0f0f0 !important;
+            color: #000 !important;
+        }
+        
+        .badge {
+            border: 1px solid #000;
+            color: #000;
+            background-color: white !important;
+        }
     }
 </style>
 </head>
@@ -803,6 +890,60 @@
         </div>
     </div>
 
+    <!-- Modal para ver notificación -->
+    <div id="modalVer">
+        <div class="content">
+            <div class="modal-header">
+                <i class="fa-solid fa-eye"></i>
+                <h2 id="modalTituloVer" style="margin:0;">Ver Registro</h2>
+            </div>
+            <div class="modal-body">
+                <form id="formVer">
+                    <div class="form-group">
+                        <label for="fechaNotificacionVer">Fecha de notificación</label>
+                        <input type="date" id="fechaNotificacionVer" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="expedienteVer">Expediente</label>
+                        <input type="text" id="expedienteVer" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="caratulaVer">Carátula</label>
+                        <textarea id="caratulaVer" readonly></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="juzgadoVer">Juzgado</label>
+                        <select id="juzgadoVer" readonly></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="responsableVer">Responsable</label>
+                        <select id="responsableVer" readonly></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoNotificacionVer">Tipo</label>
+                        <select id="tipoNotificacionVer" readonly>
+                            <option value="">Seleccione...</option>
+                            <option>Providencia</option>
+                            <option>Resolución</option>
+                            <option>Sentencia</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Prioridad</label>
+                        <div id="prioridadVerDisplay" class="prioridad-display">
+                            <!-- Aquí se mostrará solo la prioridad registrada -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="controls-form">
+                <button class="button button-secondary" type="button" id="btnCerrarVer">
+                    <i class="fa fa-xmark"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ===== Configuración de Firebase =====
         const firebaseConfig = {
@@ -899,6 +1040,7 @@
         const $ = (id) => document.getElementById(id);
         const tablaCuerpo = $("tablaCuerpo");
         const modal = $("modalRegistro");
+        const modalVer = $("modalVer");
         const modalTitulo = $("modalTitulo");
         const floatingAlert = $("floating-alert");
         const tableCount = $("tableCount");
@@ -1037,8 +1179,11 @@
                     <td>${notif.tipo || ''}</td>
                     <td><span class="badge ${(notif.prioridad || '').toLowerCase()}">${notif.prioridad || ''}</span></td>
                     <td class="actions">
-                        <button class="button button-secondary editar-notificacion" data-id="${notif.id}" title="Editar">
-                            <i class="fa fa-pen"></i> Editar
+                        <button class="action-btn view ver-notificacion" data-id="${notif.id}" title="Ver">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="action-btn edit editar-notificacion" data-id="${notif.id}" title="Editar">
+                            <i class="fa fa-pen"></i>
                         </button>
                     </td>
                 `;
@@ -1046,6 +1191,10 @@
             });
 
             // Asignar eventos a los botones
+            document.querySelectorAll(".ver-notificacion").forEach(btn => {
+                btn.onclick = () => abrirVer(btn.dataset.id);
+            });
+            
             document.querySelectorAll(".editar-notificacion").forEach(btn => {
                 btn.onclick = () => abrirEditar(btn.dataset.id);
             });
@@ -1127,9 +1276,38 @@
             }
         }
 
+        function abrirVer(id) {
+            const notificacion = notificaciones.find(n => n.id === id);
+            if (notificacion) {
+                $("fechaNotificacionVer").value = notificacion.fecha;
+                $("expedienteVer").value = notificacion.expediente;
+                $("caratulaVer").value = notificacion.caratula;
+                $("juzgadoVer").value = notificacion.juzgado;
+                $("responsableVer").value = notificacion.responsable;
+                $("tipoNotificacionVer").value = notificacion.tipo;
+                
+                // Mostrar solo la prioridad registrada (sin botones de otras prioridades)
+                const prioridadDisplay = $("prioridadVerDisplay");
+                const prioridad = notificacion.prioridad || '';
+                const prioridadClass = prioridad.toLowerCase();
+                
+                prioridadDisplay.innerHTML = `
+                    <span class="badge ${prioridadClass}">${prioridad}</span>
+                `;
+                
+                modalVer.style.display = "flex";
+            } else {
+                mostrarAlertaFlotante("Notificación no encontrada", "danger");
+            }
+        }
+
         function cerrarModal() {
             modal.style.display = "none";
             editandoId = null;
+        }
+
+        function cerrarModalVer() {
+            modalVer.style.display = "none";
         }
 
         async function guardarRegistro(e) {
@@ -1175,29 +1353,46 @@
             }
         }
 
+        // ===== Funciones de impresión =====
+        function imprimirListado() {
+            window.print();
+        }
+
         // ===== Funciones de datos =====
         function cargarListas() {
             const juzgadoSelect = $("juzgado");
             const juzgadoFiltroSelect = $("filtroJuzgado");
+            const juzgadoVerSelect = $("juzgadoVer");
             const responsableSelect = $("responsable");
             const responsableFiltroSelect = $("filtroResponsable");
+            const responsableVerSelect = $("responsableVer");
             
             // Limpiar selects
             juzgadoSelect.innerHTML = '<option value="">Seleccione...</option>';
             juzgadoFiltroSelect.innerHTML = '<option value="">Todos</option>';
+            juzgadoVerSelect.innerHTML = '';
             responsableSelect.innerHTML = '<option value="">Seleccione...</option>';
             responsableFiltroSelect.innerHTML = '<option value="">Todos</option>';
+            responsableVerSelect.innerHTML = '';
             
             // Cargar juzgados
             for(let categoria in juzgados) {
                 const grupo = document.createElement('optgroup');
                 grupo.label = categoria;
                 
+                const grupoVer = document.createElement('optgroup');
+                grupoVer.label = categoria;
+                
                 juzgados[categoria].forEach(juzgado => {
                     const opcion = document.createElement('option');
                     opcion.value = juzgado;
                     opcion.textContent = juzgado;
                     grupo.appendChild(opcion);
+                    
+                    const opcionVer = document.createElement('option');
+                    opcionVer.value = juzgado;
+                    opcionVer.textContent = juzgado;
+                    grupoVer.appendChild(opcionVer);
                     
                     // También para el filtro
                     const opcionFiltro = document.createElement('option');
@@ -1207,6 +1402,7 @@
                 });
                 
                 juzgadoSelect.appendChild(grupo);
+                juzgadoVerSelect.appendChild(grupoVer.cloneNode(true));
             }
             
             // Cargar responsables
@@ -1215,6 +1411,11 @@
                 opcion.value = responsable;
                 opcion.textContent = responsable;
                 responsableSelect.appendChild(opcion);
+                
+                const opcionVer = document.createElement('option');
+                opcionVer.value = responsable;
+                opcionVer.textContent = responsable;
+                responsableVerSelect.appendChild(opcionVer);
                 
                 const opcionFiltro = document.createElement('option');
                 opcionFiltro.value = responsable;
@@ -1241,11 +1442,6 @@
             }
         }
 
-        // ===== Funciones de impresión =====
-        function imprimirListado() {
-            window.print();
-        }
-
         // ===== Inicialización =====
         function initApp() {
             // Cargar listas de opciones
@@ -1259,6 +1455,7 @@
             $("btnGuardar").onclick = guardarRegistro;
             $("btnCancelar").onclick = cerrarModal;
             $("btnImprimir").onclick = imprimirListado;
+            $("btnCerrarVer").onclick = cerrarModalVer;
             
             // Eventos de filtrado
             $("filtroTexto").addEventListener('input', aplicarFiltros);
@@ -1269,9 +1466,9 @@
             $("filtroPrioridad").addEventListener('change', aplicarFiltros);
             
             // Configurar botones de prioridad
-            document.querySelectorAll('.prioridad-btn').forEach(boton => {
+            document.querySelectorAll('#grupoPrioridad .prioridad-btn').forEach(boton => {
                 boton.onclick = () => {
-                    document.querySelectorAll('.prioridad-btn').forEach(b => b.classList.remove('activa'));
+                    document.querySelectorAll('#grupoPrioridad .prioridad-btn').forEach(b => b.classList.remove('activa'));
                     boton.classList.add('activa');
                     $("prioridadNotificacion").value = boton.textContent;
                 };
@@ -1291,6 +1488,9 @@
             window.addEventListener("click", e => {
                 if (e.target === modal) {
                     modal.style.display = "none";
+                }
+                if (e.target === modalVer) {
+                    modalVer.style.display = "none";
                 }
             });
         }
