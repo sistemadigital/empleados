@@ -282,7 +282,7 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
+            min-width: 1200px;
         }
 
         .data-table th {
@@ -335,6 +335,8 @@
             background: var(--background-card);
             border-radius: var(--border-radius-default);
             box-shadow: var(--shadow-subtle);
+            flex-wrap: wrap;
+            gap: var(--spacing-m);
         }
 
         .pagination .page-info {
@@ -346,6 +348,37 @@
         .pagination .nav-buttons {
             display: flex;
             gap: var(--spacing-s);
+            align-items: center;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: var(--spacing-xs);
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-default);
+            background: white;
+            border-radius: var(--border-radius-default);
+            cursor: pointer;
+            font-size: var(--body-regular-size);
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            background: var(--secondary-light-gray);
+        }
+
+        .page-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
         }
 
         /* MODALES */
@@ -475,6 +508,40 @@
             top: 20px;
         }
 
+        /* Estilos para impresión */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .table-section, .table-section * {
+                visibility: visible;
+            }
+            .table-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+            }
+            .table-title, .table-actions, .table-actions * {
+                display: none !important;
+            }
+            .data-table {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            .data-table th, .data-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            /* Ocultar columna de acciones al imprimir */
+            .data-table th:last-child,
+            .data-table td:last-child {
+                display: none;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .container {
@@ -501,6 +568,10 @@
 
             .modal .content {
                 max-width: 95%;
+            }
+
+            .data-table {
+                min-width: 1000px;
             }
         }
 
@@ -602,6 +673,10 @@
             .table-actions {
                 flex-direction: column;
             }
+
+            .page-numbers {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -670,11 +745,6 @@
         <section class="table-section">
             <div class="table-title">
                 <h2>Registros de Partes</h2>
-                <div class="table-actions">
-                    <button id="btnExportar" class="button button-success">
-                        <i class="fas fa-download"></i> Exportar
-                    </button>
-                </div>
             </div>
             <div class="table-wrap">
                 <table class="data-table">
@@ -683,14 +753,20 @@
                             <th onclick="ordenarPor('apellido')">Apellido</th>
                             <th onclick="ordenarPor('nombre')">Nombre</th>
                             <th onclick="ordenarPor('dni')">DNI</th>
+                            <th>Domicilio</th>
                             <th onclick="ordenarPor('ciudad')">Ciudad</th>
-                            <th>Defensoría Patrocinante</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Expte. Antiguo</th>
+                            <th>Def. Patrocinante</th>
+                            <th>Condición</th>
+                            <th>Def. MPC</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
                         <tr>
-                            <td colspan="6" class="loading">Cargando registros...</td>
+                            <td colspan="12" class="loading">Cargando registros...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -869,7 +945,7 @@
         let registroEditando = null;
         let ordenActual = { campo: 'apellido', direccion: 'asc' };
         let paginaActual = 1;
-        const registrosPorPagina = 10;
+        const registrosPorPagina = 5;
 
         // Elementos DOM
         const floatingAlert = document.getElementById('floating-alert');
@@ -882,7 +958,6 @@
         const btnCerrarDetalle = document.getElementById('btnCerrarDetalle');
         const btnPrintListado = document.getElementById('btnPrintListado');
         const btnActualizar = document.getElementById('btnActualizar');
-        const btnExportar = document.getElementById('btnExportar');
 
         // Inicializar aplicación
         document.addEventListener('DOMContentLoaded', function () {
@@ -902,7 +977,6 @@
             btnImprimirDetalle.onclick = imprimirDetalle;
             btnPrintListado.onclick = printListadoCompleto;
             btnActualizar.onclick = cargarTodosLosRegistros;
-            btnExportar.onclick = exportarDatos;
             
             // Filtros en tiempo real
             document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
@@ -1100,7 +1174,7 @@
         function mostrarRegistros() {
             const tbody = document.getElementById('tableBody');
             if (registros.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><h3>No hay registros</h3><p>Ajuste sus filtros o agregue un nuevo registro.</p></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" class="empty-state"><h3>No hay registros</h3><p>Ajuste sus filtros o agregue un nuevo registro.</p></td></tr>';
                 return;
             }
             
@@ -1121,8 +1195,14 @@
                     <td>${registro.apellido || '-'}</td>
                     <td>${registro.nombre || '-'}</td>
                     <td>${registro.dni || '-'}</td>
+                    <td>${registro.domicilio || '-'}</td>
                     <td>${registro.ciudad || '-'}</td>
+                    <td>${registro.telefono || '-'}</td>
+                    <td>${registro.email || '-'}</td>
+                    <td>${registro.expteAntiguo || '-'}</td>
                     <td>${getDefensoriaLabel(registro.defensoriaPatrocinante)}</td>
+                    <td>${registro.condicionParte || '-'}</td>
+                    <td>${getDefensoriaLabel(registro.defensoriaMpc)}</td>
                     <td>
                         <div class="table-actions">
                             <button class="button" onclick="verRegistro('${registro.id}')" title="Ver">
@@ -1187,12 +1267,29 @@
                 return;
             }
             
+            // Calcular qué números de página mostrar
+            let inicio = Math.max(1, paginaActual - 2);
+            let fin = Math.min(totalPaginas, inicio + 4);
+            
+            // Ajustar si estamos cerca del final
+            if (fin - inicio < 4 && inicio > 1) {
+                inicio = Math.max(1, fin - 4);
+            }
+            
+            let pageNumbersHTML = '';
+            for (let i = inicio; i <= fin; i++) {
+                pageNumbersHTML += `<button class="page-btn ${i === paginaActual ? 'active' : ''}" onclick="irAPagina(${i})">${i}</button>`;
+            }
+            
             let html = `
                 <div class="page-info">
                     Página ${paginaActual} de ${totalPaginas} | Mostrando ${Math.min(registrosPorPagina, registros.length - (paginaActual - 1) * registrosPorPagina)} de ${registros.length} registros
                 </div>
                 <div class="nav-buttons">
                     <button class="button" id="btnPrevPage" ${paginaActual === 1 ? 'disabled' : ''}><i class="fa fa-arrow-left"></i> Anterior</button>
+                    <div class="page-numbers">
+                        ${pageNumbersHTML}
+                    </div>
                     <button class="button" id="btnNextPage" ${paginaActual === totalPaginas ? 'disabled' : ''}>Siguiente <i class="fa fa-arrow-right"></i></button>
                 </div>
             `;
@@ -1210,6 +1307,13 @@
                 mostrarRegistros();
                 actualizarPaginacion();
             };
+        }
+
+        // Ir a página específica
+        function irAPagina(pagina) {
+            paginaActual = pagina;
+            mostrarRegistros();
+            actualizarPaginacion();
         }
 
         // Helper para valores seguros
@@ -1400,47 +1504,6 @@
             w.document.close();
             w.focus();
             setTimeout(() => { w.print(); }, 100);
-        }
-
-        // Exportar datos
-        function exportarDatos() {
-            if (registros.length === 0) {
-                mostrarAlertaFlotante('No hay datos para exportar', 'danger');
-                return;
-            }
-            
-            // Crear CSV
-            let csv = 'Apellido,Nombre,DNI,Domicilio,Ciudad,Teléfono,Email,Defensoría Patrocinante,Condición de parte,Defensoría MPC\n';
-            
-            registros.forEach(registro => {
-                const row = [
-                    registro.apellido || '',
-                    registro.nombre || '',
-                    registro.dni || '',
-                    registro.domicilio || '',
-                    registro.ciudad || '',
-                    registro.telefono || '',
-                    registro.email || '',
-                    registro.defensoriaPatrocinante || '',
-                    registro.condicionParte || '',
-                    registro.defensoriaMpc || ''
-                ].map(field => `"${field}"`).join(',');
-                
-                csv += row + '\n';
-            });
-            
-            // Descargar archivo
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'registros_partes.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            mostrarAlertaFlotante('Datos exportados correctamente', 'success');
         }
     </script>
 </body>
