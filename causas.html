@@ -269,12 +269,6 @@
         .button:hover {
             opacity: 0.9;
         }
-        
-        /* AÑADIDO: Estilo para el botón de Cargar Todos */
-        .button-warning {
-            background-color: var(--status-warning);
-            color: var(--text-primary);
-        }
 
         .button-success {
             background-color: #1e7e34;
@@ -819,10 +813,10 @@
             .button, .actions, .action-buttons, .controls-form,
             #btnNuevo, #btnPrintListado, #btnPrintFechas, #btnPrintForm,
             #btnPrintRegistro, #btnCerrarVer, #btnAgregarNota, #btnVerLineaTiempo,
-            #btnPrintTodos, #btnPrintFiltrado, #btnCargarTodos, /* AÑADIDO: Ocultar btnCargarTodos */
+            #btnPrintTodos, #btnPrintFiltrado,
             .fa-solid, .fas, .far, .fa, .fa-eye, .fa-pen, .fa-trash, .fa-plus,
             .fa-save, .fa-print, .fa-xmark, .fa-check, .fa-arrow-left, .fa-arrow-right,
-            .fa-exclamation-triangle, .fa-timeline, .fa-file-pen, .fa-database, /* AÑADIDO: Ocultar fa-database */
+            .fa-exclamation-triangle, .fa-timeline, .fa-file-pen,
             .btn-eliminar-audiencia, .btn-audiencia, .floating-alert,
             .prioridad-destacada, .tabs-nav, .tab-button {
                 display: none !important;
@@ -1240,9 +1234,6 @@
                         <button id="btnPrintFiltrado" class="button button-success">
                             <i class="fas fa-print"></i> Imprimir Filtrado
                         </button>
-                        <button id="btnCargarTodos" class="button button-warning">
-                            <i class="fas fa-database"></i> Cargar Todos (Modo Rápido)
-                        </button>
                     </div>
                 </section>
 
@@ -1394,12 +1385,12 @@
                         <div id="tab3" class="tab-content">
                             <div class="field">
                                 <label for="recursos">Recursos Interpuestos</label>
-                                <select id="recursos"><option value="">Seleccione un recurso</option><option>Apelación</option><option>Queja</option><option>Inconstitucionalidad</option><option>Nulidad</option><option>Reposición</option><option>Aclaratoria</option><option>Recurso Extraordinario</option><option>RecurSO de Inaplicabilidad</option></select>
+                                <select id="recursos"><option value="">Seleccione un recurso</option><option>Apelación</option><option>Queja</option><option>Inconstitucionalidad</option><option>Nulidad</option><option>Reposición</option><option>Aclaratoria</option><option>Recurso Extraordinario</option><option>Recurso de Inaplicabilidad</option></select>
                             </div>
                             <div id="recursos-opcionales" style="display:none;">
                                 <div class="field">
                                     <label for="recursosContestacion">Recursos Contestación</label>
-                                    <select id="recursosContestacion"><option value="">Seleccione un recurso</option><option>Apelación</option><option>Queja</option><option>Inconstitucionalidad</option><option>Nulidad</option><option>Reposición</option><option>Aclaratoria</option><option>RecurSO Extraordinario</option><option>Recurso de Inaplicabilidad</option></select>
+                                    <select id="recursosContestacion"><option value="">Seleccione un recurso</option><option>Apelación</option><option>Queja</option><option>Inconstitucionalidad</option><option>Nulidad</option><option>Reposición</option><option>Aclaratoria</option><option>Recurso Extraordinario</option><option>Recurso de Inaplicabilidad</option></select>
                                 </div>
                                 <div class="field">
                                     <label for="estadoRecursos">Estado de Recursos</label>
@@ -1500,8 +1491,6 @@
 
         // ===== CONSTANTES Y CONFIGURACIONES =====
         const recordsPerPage = 10;
-        const CAUSAS_LIMIT = 50; // MODIFICACIÓN: Límite para la carga inicial de bajo costo
-        let isFullLoadActive = false; // MODIFICACIÓN: Bandera para saber si se cargó todo
         const intervencionOptions = [
             "Ministerio Principal", "Ministerio Complementario", "Patrocinante Actor",
             "Patrocinante Demandado", "Patrocinante Tercero", "Defensor de Ausente",
@@ -1675,54 +1664,17 @@
         }
 
         // ===== FUNCIONES PRINCIPALES =====
-        
-        /* ========================================================================= */
-        /* ==================== CÓDIGO MEJORADO PARA COSTOS ======================== */
-        /* ========================================================================= */
-        
-        function suscribirCausas(loadAll = false) { // MODIFICADO
+        function suscribirCausas() {
             if (unsubCausas) unsubCausas();
             
             console.log("Suscribiendo a cambios en causas...");
-            
-            isFullLoadActive = loadAll; // MODIFICADO
-            let causasQuery = db.collection("causas").orderBy("fechaRegistro", "desc"); // MODIFICADO
-            const btnCargarTodos = $("btnCargarTodos"); // MODIFICADO
-
-            // APLICACIÓN DEL LÍMITE (MEJORA DE COSTO):
-            if (!loadAll) { // MODIFICADO
-                causasQuery = causasQuery.limit(CAUSAS_LIMIT);
-                console.log(`Cargando solo las primeras ${CAUSAS_LIMIT} causas (Modo de bajo costo).`);
-                if (btnCargarTodos) {
-                    btnCargarTodos.disabled = false;
-                    btnCargarTodos.innerHTML = '<i class="fas fa-database"></i> Cargar Todos (Modo Rápido)';
-                    btnCargarTodos.classList.remove('button-success', 'button-danger');
-                    btnCargarTodos.classList.add('button-warning');
-                }
-            } else { // MODIFICADO
-                console.log("Cargando la colección completa (Modo para filtrar todos los datos).");
-                if (btnCargarTodos) {
-                    btnCargarTodos.disabled = true;
-                    btnCargarTodos.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
-                }
-            }
-            
-            unsubCausas = causasQuery.onSnapshot( // MODIFICADO (usa causasQuery)
+            unsubCausas = db.collection("causas").orderBy("fechaRegistro", "desc").onSnapshot(
                 snap => {
                     console.log("Datos recibidos:", snap.size, "registros");
                     datosCache = [];
                     snap.forEach(d => {
                         datosCache.push({ id: d.id, ...d.data() });
                     });
-                    
-                    // MODIFICADO: Actualizar botón al completar
-                    if (loadAll && btnCargarTodos) {
-                        btnCargarTodos.innerHTML = '<i class="fas fa-check"></i> Todos Cargados';
-                        btnCargarTodos.classList.remove('button-warning', 'button-danger');
-                        btnCargarTodos.classList.add('button-success');
-                        btnCargarTodos.disabled = true; // Sigue deshabilitado
-                    }
-
                     handleFilterChange();
                     renderSidebar(datosCache);
                     // poblarFiltroUsuarios(); // CORRECCIÓN: Eliminado, es redundante
@@ -1732,14 +1684,6 @@
                     console.error("Error en onSnapshot causas:", err);
                     tbody.innerHTML = "<tr><td colspan='9'>Error al cargar los datos.</td></tr>";
                     mostrarAlertaFlotante("Error al cargar los expedientes", 'danger');
-                    
-                    // MODIFICADO: Resetear botón en error
-                    if (btnCargarTodos) {
-                         btnCargarTodos.disabled = false;
-                         btnCargarTodos.innerHTML = '<i class="fas fa-database"></i> Reintentar Carga';
-                         btnCargarTodos.classList.remove('button-success', 'button-warning');
-                         btnCargarTodos.classList.add('button-danger');
-                    }
                 }
             );
         }
@@ -1814,16 +1758,9 @@
             const container = $("paginacion-container");
             const totalPages = Math.ceil(totalRecords / recordsPerPage);
             container.style.display = totalPages > 1 ? "flex" : "none";
-            
-            // MODIFICACIÓN: Añadir advertencia si los resultados están limitados
-            let advertenciaLimitado = "";
-            if (!isFullLoadActive && totalRecords >= CAUSAS_LIMIT) {
-                advertenciaLimitado = ` (Resultados limitados a ${CAUSAS_LIMIT}. Presione 'Cargar Todos' para ver el historial completo.)`;
-            }
-            
             container.innerHTML = `
                 <div class="page-info">
-                    Página ${paginaActual} de ${totalPages} | Mostrando ${recordsOnPage} de ${totalRecords} registros${advertenciaLimitado}
+                    Página ${paginaActual} de ${totalPages} | Mostrando ${recordsOnPage} de ${totalRecords} registros
                 </div>
                 <div class="nav-buttons">
                     <button id="btnPrevPage" class="button" ${paginaActual === 1 ? 'disabled' : ''}><i class="fa fa-arrow-left"></i> Anterior</button>
@@ -1909,18 +1846,12 @@
         function actualizarKPIs() {
             const kpiCardsContainer = $("kpiCards");
             
-            // MODIFICACIÓN: Los KPIs siempre deben calcularse sobre datosCache,
-            // pero si la carga no está completa, deben reflejar el total real de la BD,
-            // no solo los 50 cargados.
-            // Para este ejemplo, los KPIs seguirán basándose en datosCache.
-            // Una implementación más avanzada traería los KPIs de un 'documento de agregación' en Firebase.
-            
             if (datosCache.length === 0) {
                 kpiCardsContainer.innerHTML = '<div class="loading">No hay datos disponibles</div>';
                 return;
             }
             
-            // Calcular KPIs (basado en el caché actual, sea limitado o completo)
+            // Calcular KPIs
             const totalCasos = datosCache.length;
             const enTramite = datosCache.filter(c => c.estado && c.estado === 'En trámite').length;
             const finalizado = datosCache.filter(c => c.estado && c.estado === 'Finalizado').length;
@@ -1937,14 +1868,16 @@
             
             let kpisHTML = '';
             
+            // KPIs predefinidos con etiquetas formateadas
             const kpisConfig = [
-                { key: 'total', label: 'Total (Cargados)', class: 'total' }, // Etiqueta modificada
+                { key: 'total', label: 'Total de Causas', class: 'total' },
                 { key: 'enTramite', label: 'En Trámite', class: 'en-tramite' },
                 { key: 'finalizado', label: 'Finalizado', class: 'finalizado' },
                 { key: 'enAlzada', label: 'En Alzada', class: 'en-alzada' },
                 { key: 'archivado', label: 'Archivado', class: 'archivado' }
             ];
             
+            // Generar tarjetas de KPIs basadas en los datos
             kpisConfig.forEach(kpi => {
                 if (kpisData[kpi.key] !== undefined) {
                     kpisHTML += `
@@ -1958,20 +1891,6 @@
             
             kpiCardsContainer.innerHTML = kpisHTML;
         }
-
-        // MODIFICACIÓN: Nueva función para manejar el botón "Cargar Todos"
-        function handleLoadAll() {
-            if (isFullLoadActive) return; // Ya está cargado, no hacer nada
-            
-            if (confirm("Al cargar todos los expedientes, se realizará una lectura completa de la base de datos, lo que puede aumentar el costo de Firebase. ¿Desea continuar?")) {
-                suscribirCausas(true); // Llama a la función con loadAll = true
-            }
-        }
-        
-        /* ========================================================================= */
-        /* ================== FIN DEL CÓDIGO MEJORADO PARA COSTOS ================== */
-        /* ========================================================================= */
-
 
         // ===== FUNCIONES DE GESTIÓN DE EXPEDIENTES =====
         $("btnNuevo").onclick = ()=>{ // CORRECCIÓN: No necesita ser async
@@ -2213,10 +2132,10 @@
                                 .button, .actions, .action-buttons, .controls-form,
                                 #btnNuevo, #btnPrintListado, #btnPrintFechas, #btnPrintForm,
                                 #btnPrintRegistro, #btnCerrarVer, #btnAgregarNota, #btnVerLineaTiempo,
-                                #btnPrintTodos, #btnPrintFiltrado, #btnCargarTodos, /* AÑADIDO: Ocultar btnCargarTodos */
+                                #btnPrintTodos, #btnPrintFiltrado,
                                 .fa-solid, .fas, .far, .fa, .fa-eye, .fa-pen, .fa-trash, .fa-plus,
                                 .fa-save, .fa-print, .fa-xmark, .fa-check, .fa-arrow-left, .fa-arrow-right,
-                                .fa-exclamation-triangle, .fa-timeline, .fa-file-pen, .fa-database, /* AÑADIDO: Ocultar fa-database */
+                                .fa-exclamation-triangle, .fa-timeline, .fa-file-pen,
                                 .btn-eliminar-audiencia, .btn-audiencia, .floating-alert,
                                 .prioridad-destacada, .tabs-nav, .tab-button {
                                     display: none !important;
@@ -2713,14 +2632,8 @@
                 // CORRECCIÓN: Configurar los listeners del formulario UNA SOLA VEZ
                 initFormEventListeners();
                 
-                // MODIFICADO: Configurar el listener del botón de Cargar Todos
-                const btnCargarTodos = $("btnCargarTodos");
-                if (btnCargarTodos) {
-                    btnCargarTodos.onclick = handleLoadAll; // Enlaza el botón a la nueva función
-                }
-
                 // Suscribirse a los datos principales (expedientes)
-                suscribirCausas(false); // MODIFICADO: Carga limitada por defecto
+                suscribirCausas();
                 console.log("Aplicación inicializada correctamente");
             } catch (error) {
                 console.error("Error durante la inicialización:", error);

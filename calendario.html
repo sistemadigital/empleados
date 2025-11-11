@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   
@@ -47,10 +48,19 @@
     .container {
       max-width: 1600px;
       margin: 0 auto;
+      display: flex;
+      gap: 24px;
     }
 
     .main-panel {
       flex: 1;
+    }
+
+    .sidebar {
+      width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .header {
@@ -67,6 +77,53 @@
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
+    }
+
+    .stats-cards {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 100px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+
+    .stat-count {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .stat-card.audiencia {
+      border-left: 4px solid #0D6EFD;
+    }
+
+    .stat-card.gesel {
+      border-left: 4px solid #FD7E14;
+    }
+
+    .stat-card.vencimiento {
+      border-left: 4px solid #DC3545;
+    }
+
+    .stat-card.recurso {
+      border-left: 4px solid #6F42C1;
     }
 
     .nav-controls {
@@ -175,6 +232,28 @@
       gap: 12px;
     }
 
+    .view-toggle {
+      display: flex;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .view-btn {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .view-btn:not(.active) {
+      opacity: 0.7;
+    }
 
     /* Calendario principal */
     .calendar-view {
@@ -192,6 +271,120 @@
       background: #fafafa;
       border-bottom: 1px solid var(--border);
     }
+
+    /* Vista Día */
+    .day-view-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .day-view-table th,
+    .day-view-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .day-view-table th {
+      background: #fafafa;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .time-cell {
+      width: 120px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .event-cell {
+      position: relative;
+    }
+
+    .event-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .event-badge.audiencia { background: var(--color-audiencia); }
+    .event-badge.gesel { background: var(--color-gesel); }
+    .event-badge.vencimiento { background: var(--color-vencimiento); }
+    .event-badge.recurso { background: var(--color-recurso); }
+
+    .event-time {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    /* Vista Semana */
+    .week-header {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .day-header {
+      padding: 16px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .day-header.today {
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+
+    .week-days {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      min-height: 600px;
+    }
+
+    .day-cell {
+      border-right: 1px solid var(--border);
+      padding: 12px;
+      position: relative;
+    }
+
+    .day-cell:last-child {
+      border-right: none;
+    }
+
+    .day-number {
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .day-cell.has-event {
+      background-color: var(--event-day-bg);
+    }
+
+    .event {
+      background: var(--color-audiencia);
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      word-break: break-word;
+      cursor: pointer;
+    }
+
+    .event.gesel { background: var(--color-gesel); }
+    .event.vencimiento { background: var(--color-vencimiento); }
+    .event.recurso { background: var(--color-recurso); }
 
     /* Vista Mes */
     .month-grid {
@@ -240,6 +433,153 @@
     .month-event.vencimiento { background: var(--color-vencimiento); }
     .month-event.recurso { background: var(--color-recurso); }
 
+    /* Sidebar - Mini calendario */
+    .mini-calendar {
+      background: var(--bg-content);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .mini-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .mini-day-name {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 4px 0;
+    }
+
+    .mini-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .mini-day.other-month {
+      color: var(--text-secondary);
+      opacity: 0.4;
+    }
+
+    .mini-day.today {
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .mini-day.has-event {
+      position: relative;
+    }
+
+    .mini-day.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      width: 4px;
+      height: 4px;
+      background: var(--accent-blue);
+      border-radius: 50%;
+    }
+
+    /* Eventos del día */
+    .today-events {
+      background: var(--bg-content);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-top: 16px;
+    }
+
+    .today-events h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .event-item {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .event-item.audiencia { background: var(--color-audiencia); }
+    .event-item.gesel { background: var(--color-gesel); }
+    .event-item.vencimiento { background: var(--color-vencimiento); }
+    .event-item.recurso { background: var(--color-recurso); }
+
+    .event-item-time {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    /* Resumen del mes */
+    .month-stats {
+      background: var(--bg-content);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-top: 16px;
+    }
+
+    .month-stats h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .stats-table th,
+    .stats-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-table th {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .stats-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stats-count {
+      font-weight: 600;
+      text-align: right;
+    }
 
     /* Modal de detalles de causa */
     .modal {
@@ -297,6 +637,21 @@
     }
 
     /* Responsive */
+    @media (max-width: 1100px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .mini-calendar, .today-events, .month-stats {
+        flex: 1;
+        min-width: 280px;
+      }
+    }
+
     @media (max-width: 768px) {
       .header {
         flex-direction: column;
@@ -312,13 +667,54 @@
         margin-bottom: 10px;
         flex-wrap: wrap;
       }
+      .stats-cards {
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+      .stat-card {
+        flex: 1;
+        min-width: 80px;
+      }
+      .week-header,
+      .week-days,
+      .month-grid {
+        grid-template-columns: 1fr;
+      }
+      .day-cell {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        min-height: 200px;
+      }
+      .day-cell:last-child {
+        border-bottom: none;
+      }
       .month-day {
         min-height: 80px;
       }
     }
 
     @media (max-width: 480px) {
-      /* Estilos responsivos simplificados */
+      .stats-cards {
+        gap: 8px;
+      }
+      .stat-card {
+        min-width: 70px;
+        padding: 8px 10px;
+      }
+      .stat-count {
+        font-size: 20px;
+      }
+      .stat-label {
+        font-size: 10px;
+      }
+      .month-stats {
+        padding: 12px;
+      }
+      .stats-table th,
+      .stats-table td {
+        padding: 6px 8px;
+      }
     }
 
     /* Estilos para impresión */
@@ -340,9 +736,29 @@
 </head>
 <body>
   <div class="container">
+    <!-- Panel principal -->
     <div class="main-panel">
       <div class="header">
         <div class="header-left">
+          <!-- Tarjetas de estadísticas -->
+          <div class="stats-cards">
+            <div class="stat-card audiencia">
+              <div class="stat-count" id="count-audiencia">0</div>
+              <div class="stat-label">Audiencias</div>
+            </div>
+            <div class="stat-card gesel">
+              <div class="stat-count" id="count-gesel">0</div>
+              <div class="stat-label">Cámara Gesell</div>
+            </div>
+            <div class="stat-card vencimiento">
+              <div class="stat-count" id="count-vencimiento">0</div>
+              <div class="stat-label">Vencimientos</div>
+            </div>
+            <div class="stat-card recurso">
+              <div class="stat-count" id="count-recurso">0</div>
+              <div class="stat-label">Recursos</div>
+            </div>
+          </div>
           
           <div class="nav-controls">
             <button class="nav-btn" id="prevBtn">‹</button>
@@ -369,6 +785,14 @@
             </button>
           </div>
         </div>
+
+        <div class="header-right">
+          <div class="view-toggle">
+            <button class="view-btn" data-view="day">Día</button>
+            <button class="view-btn active" data-view="week">Semana</button>
+            <button class="view-btn" data-view="month">Mes</button>
+          </div>
+        </div>
       </div>
 
       <div class="calendar-view">
@@ -377,8 +801,54 @@
       </div>
     </div>
 
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="mini-calendar">
+        <div class="mini-header">
+          <span id="miniMonthLabel">Junio 2024</span>
+        </div>
+        <div class="mini-grid" id="miniCalendarGrid"></div>
+      </div>
+
+      <div class="today-events">
+        <h3>Eventos de Hoy</h3>
+        <div class="event-list" id="todayEventsList"></div>
+      </div>
+      
+      <!-- Nueva sección: Resumen del mes -->
+      <div class="month-stats">
+        <h3>Resumen del Mes</h3>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th class="stats-count">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Audiencias</td>
+              <td class="stats-count" id="month-audiencia">0</td>
+            </tr>
+            <tr>
+              <td>Cámara Gesell</td>
+              <td class="stats-count" id="month-gesel">0</td>
+            </tr>
+            <tr>
+              <td>Vencimientos</td>
+              <td class="stats-count" id="month-vencimiento">0</td>
+            </tr>
+            <tr>
+              <td>Recursos</td>
+              <td class="stats-count" id="month-recurso">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
+  <!-- Modal para detalles de causa -->
   <div id="modalCausa" class="modal hidden">
     <div class="modal-content">
       <span id="closeModal" class="close">&times;</span>
@@ -405,7 +875,7 @@
 
     // Estado
     let currentDate = new Date();
-    const currentView = 'month'; // 'day', 'week', 'month' -> Solo se usa 'month'
+    let currentView = 'week'; // 'day', 'week', 'month'
     let events = [];
     let causasMap = {};
     let currentCausaId = null;
@@ -425,11 +895,15 @@
     // DOM
     const mainMonthLabel = document.getElementById('mainMonthLabel');
     const calendarContent = document.getElementById('calendarContent');
+    const miniMonthLabel = document.getElementById('miniMonthLabel');
+    const miniCalendarGrid = document.getElementById('miniCalendarGrid');
+    const todayEventsList = document.getElementById('todayEventsList');
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const todayBtn = document.getElementById('todayBtn');
+    const viewButtons = document.querySelectorAll('.view-btn');
     const filterTipo = document.getElementById('filterTipo');
     const modalCausa = document.getElementById('modalCausa');
     const modalBody = document.getElementById('modalBody');
@@ -437,6 +911,18 @@
     const btnPrintCausa = document.getElementById('btnPrintCausa');
     const btnPrintView = document.getElementById('btnPrintView');
     
+    // Elementos para las tarjetas de estadísticas
+    const countAudiencia = document.getElementById('count-audiencia');
+    const countGesel = document.getElementById('count-gesel');
+    const countVencimiento = document.getElementById('count-vencimiento');
+    const countRecurso = document.getElementById('count-recurso');
+    
+    // Elementos para la tabla de resumen del mes
+    const monthAudiencia = document.getElementById('month-audiencia');
+    const monthGesel = document.getElementById('month-gesel');
+    const monthVencimiento = document.getElementById('month-vencimiento');
+    const monthRecurso = document.getElementById('month-recurso');
+
     // Inicializar
     document.addEventListener('DOMContentLoaded', () => {
       setupEventListeners();
@@ -513,6 +999,8 @@
           procesarFechas(data.vencimientoRecursos, "Vencimiento Recurso");
         });
         
+        updateStatsCards();
+        updateMonthStats();
         renderAll();
       }, (error) => {
         console.error("Error cargando causas:", error);
@@ -552,19 +1040,101 @@
             fechaCompleta: new Date(new Date().setDate(new Date().getDate() + 3))
           }
         ];
+        updateStatsCards();
+        updateMonthStats();
         renderAll();
       });
     }
 
+    // Actualizar las tarjetas de estadísticas
+    function updateStatsCards() {
+      const counts = {
+        audiencia: 0,
+        gesel: 0,
+        vencimiento: 0,
+        recurso: 0
+      };
+      
+      events.forEach(event => {
+        if (counts.hasOwnProperty(event.type)) {
+          counts[event.type]++;
+        }
+      });
+      
+      countAudiencia.textContent = counts.audiencia;
+      countGesel.textContent = counts.gesel;
+      countVencimiento.textContent = counts.vencimiento;
+      countRecurso.textContent = counts.recurso;
+    }
+    
+    // Actualizar la tabla de resumen del mes
+    function updateMonthStats() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      // Obtener el primer y último día del mes actual
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      
+      // Inicializar contadores
+      const counts = {
+        audiencia: 0,
+        gesel: 0,
+        vencimiento: 0,
+        recurso: 0
+      };
+      
+      // Filtrar eventos del mes actual
+      const filtered = getFilteredEvents();
+      
+      filtered.forEach(event => {
+        const eventDate = parseDate(event.date);
+        // Verificar si el evento está en el mes actual
+        if (eventDate.getMonth() === month && eventDate.getFullYear() === year) {
+          if (counts.hasOwnProperty(event.type)) {
+            counts[event.type]++;
+          }
+        }
+      });
+      
+      // Actualizar la tabla
+      monthAudiencia.textContent = counts.audiencia;
+      monthGesel.textContent = counts.gesel;
+      monthVencimiento.textContent = counts.vencimiento;
+      monthRecurso.textContent = counts.recurso;
+    }
+
     function setupEventListeners() {
-      // Navegación (simplificada para solo mes)
+      // Cambiar vista
+      viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          viewButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentView = btn.dataset.view;
+          renderAll();
+        });
+      });
+
+      // Navegación
       prevBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
+        if (currentView === 'day') {
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else if (currentView === 'week') {
+          currentDate.setDate(currentDate.getDate() - 7);
+        } else if (currentView === 'month') {
+          currentDate.setMonth(currentDate.getMonth() - 1);
+        }
         renderAll();
       });
 
       nextBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
+        if (currentView === 'day') {
+          currentDate.setDate(currentDate.getDate() + 1);
+        } else if (currentView === 'week') {
+          currentDate.setDate(currentDate.getDate() + 7);
+        } else if (currentView === 'month') {
+          currentDate.setMonth(currentDate.getMonth() + 1);
+        }
         renderAll();
       });
 
@@ -625,9 +1195,15 @@
       const searchText = searchInput.value ? ` - Búsqueda: "${searchInput.value}"` : '';
       
       printContent += `<h1>${title}${filterText}${searchText}</h1>`;
-      printContent += `<p>Vista: Mes</p>`;
+      printContent += `<p>Vista: ${currentView.charAt(0).toUpperCase() + currentView.slice(1)}</p>`;
       
-      printContent += renderMonthViewForPrint(filtered);
+      if (currentView === 'day') {
+        printContent += renderDayViewForPrint(filtered);
+      } else if (currentView === 'week') {
+        printContent += renderWeekViewForPrint(filtered);
+      } else if (currentView === 'month') {
+        printContent += renderMonthViewForPrint(filtered);
+      }
       
       const w = window.open("", "", "width=900,height=700");
       w.document.write(`
@@ -664,6 +1240,99 @@
     }
 
     // Funciones para generar contenido para impresión
+    function renderDayViewForPrint(eventsList) {
+      const dateStr = formatDate(currentDate);
+      const dayEvents = eventsList.filter(e => e.date === dateStr);
+      
+      let html = `<h2>Vista del Día: ${dateStr}</h2>`;
+      
+      if (dayEvents.length === 0) {
+        html += '<p>No hay eventos para este día.</p>';
+        return html;
+      }
+      
+      html += `
+        <table>
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Evento</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      // Generar horas de 8 AM a 8 PM
+      for (let h = 8; h <= 20; h++) {
+        const hour24 = h.toString().padStart(2, '0');
+        const timeLabel = `${h}:00`;
+        const eventsAtHour = dayEvents.filter(e => {
+          const startHour = parseInt(e.start.split(':')[0]);
+          return startHour === h;
+        });
+
+        if (eventsAtHour.length > 0) {
+          eventsAtHour.forEach((e, idx) => {
+            html += `
+              <tr>
+                ${idx === 0 ? `<td rowspan="${eventsAtHour.length}">${timeLabel}</td>` : ''}
+                <td>${e.title}</td>
+                <td>${e.tipoOriginal}</td>
+              </tr>
+            `;
+          });
+        } else {
+          html += `
+            <tr>
+              <td>${timeLabel}</td>
+              <td></td>
+              <td></td>
+            </tr>
+          `;
+        }
+      }
+
+      html += `
+          </tbody>
+        </table>
+      `;
+      
+      return html;
+    }
+
+    function renderWeekViewForPrint(eventsList) {
+      const monday = getMonday(currentDate);
+      const weekDates = [];
+      for (let i = 0; i < 5; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        weekDates.push(d);
+      }
+      
+      let html = `<h2>Vista de la Semana: ${formatDate(weekDates[0])} - ${formatDate(weekDates[4])}</h2>`;
+      
+      let hasEvents = false;
+      weekDates.forEach(date => {
+        const dateStr = formatDate(date);
+        const dayEvents = eventsList.filter(e => e.date === dateStr);
+        
+        if (dayEvents.length > 0) {
+          hasEvents = true;
+          html += `<h3>${dateStr}</h3>`;
+          dayEvents.forEach(e => {
+            html += `<div class="event ${e.type}">${e.start} - ${e.end}: ${e.title}</div>`;
+          });
+        }
+      });
+      
+      if (!hasEvents) {
+        html += '<p>No hay eventos para esta semana.</p>';
+      }
+      
+      return html;
+    }
+
     function renderMonthViewForPrint(eventsList) {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
@@ -772,6 +1441,9 @@
 
     function renderAll() {
       renderMainCalendar();
+      renderMiniCalendar();
+      renderTodayEvents();
+      updateMonthStats();
     }
 
     function renderMainCalendar() {
@@ -781,7 +1453,139 @@
 
       const filtered = getFilteredEvents();
 
-      renderMonthView(filtered);
+      if (currentView === 'day') {
+        renderDayView(filtered);
+      } else if (currentView === 'week') {
+        renderWeekView(filtered);
+      } else if (currentView === 'month') {
+        renderMonthView(filtered);
+      }
+    }
+
+    function renderDayView(eventsList) {
+      const dateStr = formatDate(currentDate);
+      const dayEvents = eventsList.filter(e => e.date === dateStr);
+
+      let html = `
+        <table class="day-view-table">
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Evento</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      // Generar horas de 8 AM a 8 PM
+      for (let h = 8; h <= 20; h++) {
+        const hour24 = h.toString().padStart(2, '0');
+        const timeLabel = `${h}:00`;
+        const eventsAtHour = dayEvents.filter(e => {
+          const startHour = parseInt(e.start.split(':')[0]);
+          return startHour === h;
+        });
+
+        if (eventsAtHour.length > 0) {
+          eventsAtHour.forEach((e, idx) => {
+            html += `
+              <tr>
+                ${idx === 0 ? `<td rowspan="${eventsAtHour.length}" class="time-cell">${timeLabel}</td>` : ''}
+                <td class="event-cell">
+                  <div class="event-badge ${e.type}" data-causa-id="${e.causaId}">${e.title}</div>
+                  <div class="event-time">${e.start} – ${e.end}</div>
+                </td>
+              </tr>
+            `;
+          });
+        } else {
+          html += `
+            <tr>
+              <td class="time-cell">${timeLabel}</td>
+              <td></td>
+            </tr>
+          `;
+        }
+      }
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      calendarContent.innerHTML = html;
+      
+      // Agregar event listeners a los eventos para abrir el modal
+      document.querySelectorAll('.event-badge').forEach(badge => {
+        badge.addEventListener('click', () => {
+          const causaId = badge.dataset.causaId;
+          showCausaDetails(causaId);
+        });
+      });
+    }
+
+    function getMonday(d) {
+      const date = new Date(d);
+      const day = date.getDay();
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(date.setDate(diff));
+    }
+
+    function renderWeekView(eventsList) {
+      const monday = getMonday(currentDate);
+      const weekDates = [];
+      for (let i = 0; i < 5; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        weekDates.push(d);
+      }
+
+      let headerHTML = '';
+      let daysHTML = '';
+
+      const todayStr = formatDate(new Date());
+
+      weekDates.forEach((date, i) => {
+        const dateStr = formatDate(date);
+        const dayNum = date.getDate();
+        const isToday = dateStr === todayStr;
+        const weekdayShort = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'];
+
+        headerHTML += `<div class="day-header ${isToday ? 'today' : ''}">${weekdayShort[i]} ${dayNum}</div>`;
+
+        let eventsHTML = '';
+        const dayEvents = eventsList.filter(e => e.date === dateStr);
+        if (dayEvents.length > 0) {
+          dayEvents.forEach(e => {
+            eventsHTML += `
+              <div class="event ${e.type}" data-causa-id="${e.causaId}">
+                <div>${e.title}</div>
+                <div class="event-time">${e.start} – ${e.end}</div>
+              </div>
+            `;
+          });
+        }
+
+        daysHTML += `
+          <div class="day-cell ${dayEvents.length > 0 ? 'has-event' : ''}">
+            <div class="day-number">${dayNum}</div>
+            ${eventsHTML}
+          </div>
+        `;
+      });
+
+      calendarContent.innerHTML = `
+        <div class="week-header">${headerHTML}</div>
+        <div class="week-days">${daysHTML}</div>
+      `;
+      
+      // Agregar event listeners a los eventos para abrir el modal
+      document.querySelectorAll('.event').forEach(event => {
+        event.addEventListener('click', () => {
+          const causaId = event.dataset.causaId;
+          showCausaDetails(causaId);
+        });
+      });
     }
 
     function renderMonthView(eventsList) {
@@ -841,6 +1645,91 @@
       document.querySelectorAll('.month-event').forEach(event => {
         event.addEventListener('click', () => {
           const causaId = event.dataset.causaId;
+          showCausaDetails(causaId);
+        });
+      });
+    }
+
+    function renderMiniCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDay = firstDay.getDay();
+      const daysInMonth = lastDay.getDate();
+
+      miniMonthLabel.textContent = `${monthNames[month]} ${year}`;
+      miniCalendarGrid.innerHTML = '';
+
+      // Encabezados
+      ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].forEach(name => {
+        const el = document.createElement('div');
+        el.className = 'mini-day-name';
+        el.textContent = name;
+        miniCalendarGrid.appendChild(el);
+      });
+
+      // Días anteriores
+      const prevMonthLastDay = new Date(year, month, 0).getDate();
+      for (let i = startDay === 0 ? 6 : startDay - 1; i >= 0; i--) {
+        const day = prevMonthLastDay - i;
+        const el = document.createElement('div');
+        el.className = 'mini-day other-month';
+        el.textContent = day;
+        miniCalendarGrid.appendChild(el);
+      }
+
+      // Días actuales
+      const todayStr = formatDate(new Date());
+      const filtered = getFilteredEvents();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = formatDate(new Date(year, month, day));
+        const el = document.createElement('div');
+        el.className = 'mini-day';
+        el.textContent = day;
+        if (dateStr === todayStr) el.classList.add('today');
+        if (filtered.some(e => e.date === dateStr)) el.classList.add('has-event');
+        miniCalendarGrid.appendChild(el);
+      }
+
+      // Días siguientes
+      const totalCells = 42;
+      const daysSoFar = startDay === 0 ? 6 + 1 : startDay + daysInMonth;
+      const nextDays = totalCells - daysSoFar;
+      for (let day = 1; day <= nextDays; day++) {
+        const el = document.createElement('div');
+        el.className = 'mini-day other-month';
+        el.textContent = day;
+        miniCalendarGrid.appendChild(el);
+      }
+    }
+
+    function renderTodayEvents() {
+      const todayStr = formatDate(new Date());
+      const filtered = getFilteredEvents();
+      const todayEvents = filtered.filter(e => e.date === todayStr);
+      todayEventsList.innerHTML = '';
+
+      if (todayEvents.length === 0) {
+        todayEventsList.innerHTML = '<div style="color: var(--text-secondary); font-style: italic;">No hay eventos hoy</div>';
+        return;
+      }
+
+      todayEvents.forEach(e => {
+        const el = document.createElement('div');
+        el.className = `event-item ${e.type}`;
+        el.setAttribute('data-causa-id', e.causaId);
+        el.innerHTML = `
+          <div>${e.title}</div>
+          <div class="event-item-time">${e.start} – ${e.end}</div>
+        `;
+        todayEventsList.appendChild(el);
+      });
+      
+      // Agregar event listeners a los eventos para abrir el modal
+      document.querySelectorAll('.event-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const causaId = item.dataset.causaId;
           showCausaDetails(causaId);
         });
       });
