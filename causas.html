@@ -55,6 +55,10 @@
             --shadow-subtle: 0 1px 3px rgba(0,0,0,0.1);
             --radius: 12px;
             --shadow: 0 4px 15px rgba(0,0,0,.08);
+            --color-audiencias: #007bff;
+            --color-vencimientos: #dc3545;
+            --color-gesell: #28a745;
+            --color-recursos: #6f42c1;
         }
 
         /* Estilos base */
@@ -124,12 +128,10 @@
         }
 
         .kpi-cards {
-            display: grid; /* CAMBIADO */
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* AÑADIDO */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             padding-bottom: var(--spacing-s);
-            /* display: flex; */  /* ELIMINADO */
-            /* flex-wrap: wrap; */ /* ELIMINADO */
         }
 
         .kpi-card {
@@ -140,8 +142,6 @@
             text-align: center;
             box-shadow: var(--shadow-subtle);
             transition: transform 0.2s, box-shadow 0.2s;
-            /* min-width: 100px; */ /* ELIMINADO */
-            /* flex: 1; */          /* ELIMINADO */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -380,7 +380,7 @@
             border: 2px solid var(--secondary-dark-gray);
         }
 
-        /* Sidebar */
+        /* Sidebar - NUEVO: Estilos para el panel de Eventos de Hoy */
         .sidebar {
             background: var(--background-card);
             border-radius: var(--border-radius-default);
@@ -422,6 +422,63 @@
             background: var(--primary-light-blue);
             font-size: 0.75rem;
             margin-left: 6px;
+        }
+
+        /* NUEVO: Estilos para el panel de Eventos de Hoy */
+        .eventos-hoy {
+            margin-bottom: 10px;
+        }
+        .evento-titulo {
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid;
+        }
+        .evento-audiencias { color: var(--color-audiencias); border-color: var(--color-audiencias); }
+        .evento-vencimientos { color: var(--color-vencimientos); border-color: var(--color-vencimientos); }
+        .evento-gesell { color: var(--color-gesell); border-color: var(--color-gesell); }
+        .evento-recursos { color: var(--color-recursos); border-color: var(--color-recursos); }
+        
+        .evento-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid;
+            transition: all 0.2s;
+        }
+        .evento-item-audiencias { border-left-color: var(--color-audiencias); }
+        .evento-item-vencimientos { border-left-color: var(--color-vencimientos); }
+        .evento-item-gesell { border-left-color: var(--color-gesell); }
+        .evento-item-recursos { border-left-color: var(--color-recursos); }
+        
+        .evento-item:hover {
+            background: #e9ecef;
+            transform: translateX(2px);
+        }
+        
+        .evento-numero {
+            font-weight: bold;
+            color: var(--primary-blue);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .evento-numero:hover {
+            color: var(--primary-dark-blue);
+        }
+        
+        .evento-hora {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .evento-vacio {
+            font-style: italic;
+            color: var(--text-secondary);
+            padding: 6px 8px;
         }
 
         /* Paginación */
@@ -1225,6 +1282,25 @@
                                 <option value="Alta">Alta</option>
                             </select>
                         </div>
+                        <!-- NUEVO: Filtro para eventos y fechas -->
+                        <div class="filter-group">
+                            <label class="filter-label" for="filtroEventos">Filtrar por Evento</label>
+                            <select id="filtroEventos" class="dropdown">
+                                <option value="">Todos los eventos</option>
+                                <option value="audiencias">Audiencias</option>
+                                <option value="gesell">Cámara Gesell</option>
+                                <option value="vencimientos">Vencimientos</option>
+                                <option value="recursos">Recursos</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="filtroFechaDesde">Fecha Desde</label>
+                            <input type="date" id="filtroFechaDesde" class="input">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="filtroFechaHasta">Fecha Hasta</label>
+                            <input type="date" id="filtroFechaHasta" class="input">
+                        </div>
                     </div>
                     
                     <div class="action-buttons">
@@ -1266,27 +1342,25 @@
                 <div id="paginacion-container"></div>
             </div>
 
+            <!-- NUEVO: Panel de Eventos de Hoy -->
             <aside class="sidebar">
-                <h2>📅 Próximas Fechas (30 días)</h2>
-                <div class="group">
-                    <div class="k">Audiencias <span class="pill" id="countAud">0</span></div>
-                    <div id="listAud"></div>
+                <h2>📅 Eventos de Hoy</h2>
+                <div class="eventos-hoy">
+                    <div class="evento-titulo evento-audiencias">Audiencias</div>
+                    <div id="listAudHoy"></div>
                 </div>
-                <div class="group">
-                    <div class="k">Cámara Gesell <span class="pill" id="countGesell">0</span></div>
-                    <div id="listGesell"></div>
+                <div class="eventos-hoy">
+                    <div class="evento-titulo evento-gesell">Cámara Gesell</div>
+                    <div id="listGesellHoy"></div>
                 </div>
-                <div class="group">
-                    <div class="k">Vencimientos <span class="pill" id="countVenc">0</span></div>
-                    <div id="listVenc"></div>
+                <div class="eventos-hoy">
+                    <div class="evento-titulo evento-vencimientos">Vencimientos</div>
+                    <div id="listVencHoy"></div>
                 </div>
-                <div class="group">
-                    <div class="k">Venc. de Recursos <span class="pill" id="countVrec">0</span></div>
-                    <div id="listVrec"></div>
+                <div class="eventos-hoy">
+                    <div class="evento-titulo evento-recursos">Recursos</div>
+                    <div id="listRecursosHoy"></div>
                 </div>
-                <button id="btnPrintFechas" class="button button-success" style="margin-top:8px;width:100%;">
-                    <i class="fas fa-print"></i> Imprimir Fechas
-                </button>
             </aside>
         </div>
     </main>
@@ -1437,7 +1511,6 @@
                 </div>
             </div>
             <div class="controls-form" style="justify-content:flex-end;">
-                <a href="https://sistemadigital.github.io/defensor-secretarios/lineatiempo.html" id="btnVerLineaTiempo" class="button"><i class="fa-solid fa-timeline"></i> Ver Línea de Tiempo</a>
                 <button id="btnCerrarVer" class="button button-secondary"><i class="fa fa-xmark"></i>Cerrar</button>
                 <button id="btnPrintRegistro" class="button button-success"><i class="fa fa-print"></i>Imprimir Registro</button>
             </div>
@@ -1513,18 +1586,16 @@
         const filtroPrioridad = $("filtroPrioridad");
         const filtroIntervencion = $("filtroIntervencion");
         const filtroTipoProceso = $("filtroTipoProceso");
+        const filtroEventos = $("filtroEventos");
+        const filtroFechaDesde = $("filtroFechaDesde");
+        const filtroFechaHasta = $("filtroFechaHasta");
         const notaBitacora = $("notaBitacora");
         const historialNotas = $("historialNotas");
         const btnAgregarNota = $("btnAgregarNota");
-        const btnVerLineaTiempo = $("btnVerLineaTiempo");
-        const listAud = $("listAud");
-        const listGes = $("listGesell");
-        const listVenc = $("listVenc");
-        const listVrec = $("listVrec");
-        const cAud = $("countAud");
-        const cGes = $("countGesell");
-        const cVenc = $("countVenc");
-        const cVrec = $("countVrec"); // <-- ESTA ES LA CORRECCIÓN
+        const listAudHoy = $("listAudHoy");
+        const listGesellHoy = $("listGesellHoy");
+        const listVencHoy = $("listVencHoy");
+        const listRecursosHoy = $("listRecursosHoy");
         const floatingAlert = $("floating-alert");
         const audienciasContainer = $("audiencias-container");
         const btnAgregarAudiencia = $("btnAgregarAudiencia");
@@ -1676,8 +1747,7 @@
                         datosCache.push({ id: d.id, ...d.data() });
                     });
                     handleFilterChange();
-                    renderSidebar(datosCache);
-                    // poblarFiltroUsuarios(); // CORRECCIÓN: Eliminado, es redundante
+                    renderEventosHoy();
                     actualizarKPIs();
                 },
                 err => {
@@ -1688,6 +1758,7 @@
             );
         }
 
+        // ===== FUNCIÓN CORREGIDA: FILTRAR DATOS =====
         function filtrarDatos() {
             const q = (buscador.value || "").toLowerCase();
             const est = (filtroEstado.value || "").toLowerCase();
@@ -1695,20 +1766,97 @@
             const prio = (filtroPrioridad.value || "").toLowerCase();
             const interv = (filtroIntervencion.value || "").toLowerCase();
             const tipoProc = (filtroTipoProceso.value || "").toLowerCase();
+            const evento = (filtroEventos.value || "").toLowerCase();
+            const fechaDesde = filtroFechaDesde.value;
+            const fechaHasta = filtroFechaHasta.value;
             
             return datosCache.filter(d => {
-                const okTexto = !q || Object.values(d).some(value => {
-                    const stringValue = String(value || "").toLowerCase();
-                    return stringValue.includes(q);
-                });
+                // Filtro de texto (búsqueda) - busca en campos principales
+                const okTexto = !q || 
+                    (d.numCausa && d.numCausa.toLowerCase().includes(q)) ||
+                    (d.caratula && d.caratula.toLowerCase().includes(q)) ||
+                    (d.tipoProceso && d.tipoProceso.toLowerCase().includes(q)) ||
+                    (d.juzgado && d.juzgado.toLowerCase().includes(q)) ||
+                    (d.usuarioAsignado && d.usuarioAsignado.toLowerCase().includes(q)) ||
+                    (d.estado && d.estado.toLowerCase().includes(q));
 
-                const okEstado = !est || (String(d.estado) || "").toLowerCase() === est;
-                const okUsuario = !usu || (String(d.usuarioAsignado) || "").toLowerCase() === usu;
-                const okPrioridad = !prio || (String(d.prioridad) || "").toLowerCase() === prio;
-                const okIntervencion = !interv || (String(d.intervencion) || "").toLowerCase() === interv;
-                const okTipoProceso = !tipoProc || (String(d.tipoProceso) || "").toLowerCase() === tipoProc;
+                // Filtros exactos
+                const okEstado = !est || (String(d.estado || "").toLowerCase() === est);
+                const okUsuario = !usu || (String(d.usuarioAsignado || "").toLowerCase() === usu);
+                const okPrioridad = !prio || (String(d.prioridad || "").toLowerCase() === prio);
+                const okIntervencion = !interv || (String(d.intervencion || "").toLowerCase() === interv);
+                const okTipoProceso = !tipoProc || (String(d.tipoProceso || "").toLowerCase() === tipoProc);
 
-                return okTexto && okEstado && okUsuario && okPrioridad && okIntervencion && okTipoProceso;
+                // Si no hay filtro de evento ni de fechas, devolvemos los filtros básicos
+                if (!evento && !fechaDesde && !fechaHasta) {
+                    return okTexto && okEstado && okUsuario && okPrioridad && okIntervencion && okTipoProceso;
+                }
+
+                // Filtro de eventos y fechas
+                let tieneEvento = !evento; // Si no hay evento seleccionado, entonces no filtra por evento
+                let cumpleRangoFechas = !fechaDesde && !fechaHasta; // Si no hay fechas, no filtra por fecha
+
+                // Si hay evento o fechas, buscamos en los eventos de la causa
+                if (evento || fechaDesde || fechaHasta) {
+                    let eventos = [];
+
+                    // Audiencias
+                    if (Array.isArray(d.audiencias)) {
+                        d.audiencias.forEach(aud => {
+                            if (aud) {
+                                eventos.push({ tipo: 'audiencias', fecha: toDate(aud) });
+                            }
+                        });
+                    }
+
+                    // Cámara Gesell
+                    if (d.audienciaGesell) {
+                        eventos.push({ tipo: 'gesell', fecha: toDate(d.audienciaGesell) });
+                    }
+
+                    // Vencimientos
+                    if (d.vencimiento) {
+                        eventos.push({ tipo: 'vencimientos', fecha: toDate(d.vencimiento) });
+                    }
+
+                    // Vencimientos de Recursos
+                    if (d.vencimientoRecursos) {
+                        eventos.push({ tipo: 'recursos', fecha: toDate(d.vencimientoRecursos) });
+                    }
+
+                    // Filtrar por tipo de evento si hay
+                    let eventosFiltrados = eventos;
+                    if (evento) {
+                        eventosFiltrados = eventos.filter(e => e.tipo === evento);
+                    }
+
+                    // Filtrar por rango de fechas si hay
+                    if (fechaDesde || fechaHasta) {
+                        const desde = fechaDesde ? new Date(fechaDesde) : null;
+                        const hasta = fechaHasta ? new Date(fechaHasta + 'T23:59:59') : null;
+
+                        eventosFiltrados = eventosFiltrados.filter(e => {
+                            if (!e.fecha) return false;
+                            const fechaEvento = new Date(e.fecha);
+                            let cumpleDesde = true;
+                            let cumpleHasta = true;
+                            if (desde) {
+                                cumpleDesde = fechaEvento >= desde;
+                            }
+                            if (hasta) {
+                                cumpleHasta = fechaEvento <= hasta;
+                            }
+                            return cumpleDesde && cumpleHasta;
+                        });
+                    }
+
+                    // Si hay evento, debe tener al menos un evento del tipo y que cumpla el rango
+                    tieneEvento = !evento || eventosFiltrados.length > 0;
+                    // Si hay fechas, debe tener al menos un evento que cumpla el rango (y el tipo si hay)
+                    cumpleRangoFechas = eventosFiltrados.length > 0 || (!fechaDesde && !fechaHasta);
+                }
+
+                return okTexto && okEstado && okUsuario && okPrioridad && okIntervencion && okTipoProceso && tieneEvento && cumpleRangoFechas;
             });
         }
 
@@ -1729,8 +1877,7 @@
 
         function accionesHTML(id){
             return `<button class="button ver-detalles" data-id="${id}" title="Ver"><i class="fa fa-eye"></i></button>
-                    <button class="button button-secondary editar-detalles" data-id="${id}" title="Editar"><i class="fa fa-pen"></i></button>
-                    <a href="https://sistemadigital.github.io/defensor-secretarios/lineatiempo.html?id=${id}" class="button" title="Ver Línea de Tiempo"><i class="fa-solid fa-timeline"></i></a>`;
+                    <button class="button button-secondary editar-detalles" data-id="${id}" title="Editar"><i class="fa fa-pen"></i></button>`;
         }
 
         function renderTablas(data){
@@ -1783,64 +1930,108 @@
             }
         }
 
-        function renderSidebar(data){
+        // NUEVA FUNCIÓN: Renderizar eventos de hoy
+        function renderEventosHoy() {
             const hoy = new Date();
-            const limite = new Date(hoy.getTime() + 30*24*60*60*1000);
-            const eventos = {aud:[], ges:[], venc:[], vrec:[]};
+            hoy.setHours(0, 0, 0, 0);
+            const manana = new Date(hoy);
+            manana.setDate(manana.getDate() + 1);
             
-            const pushIfRange = (arr, fecha, label)=>{ 
-                const f = toDate(fecha); 
-                if(!f || isNaN(f)) return; 
-                if(f >= hoy && f <= limite) arr.push({f, label}); 
+            const eventosHoy = {
+                audiencias: [],
+                gesell: [],
+                vencimientos: [],
+                recursos: []
             };
             
-            data.forEach(d=>{
+            datosCache.forEach(d => {
                 const id = d.numCausa || d.id;
+                const causaId = d.id;
                 
                 // Audiencias
                 if (Array.isArray(d.audiencias)) {
                     d.audiencias.forEach(aud => {
-                        pushIfRange(eventos.aud, aud, `${id} - Audiencia`);
+                        const fechaAud = toDate(aud);
+                        if (fechaAud && fechaAud >= hoy && fechaAud < manana) {
+                            eventosHoy.audiencias.push({
+                                id: causaId,
+                                numCausa: id,
+                                fecha: fechaAud,
+                                tipo: 'Audiencia'
+                            });
+                        }
                     });
-                } else if (d.audiencias) {
-                    pushIfRange(eventos.aud, d.audiencias, `${id} - Audiencia`);
                 }
                 
                 // Cámara Gesell
-                pushIfRange(eventos.ges, d.audienciaGesell, `${id} - Cámara Gesell`);
-                
-                // Vencimientos
-                pushIfRange(eventos.venc, d.vencimiento, `${id} - Vencimiento`);
-                
-                // Vencimientos de Recursos
-                pushIfRange(eventos.vrec, d.vencimientoRecursos, `${id} - ${d.recursos||'Recurso'}`);
-            });
-            
-            const renderList = (arr, target, counterRef, empty)=>{
-                arr.sort((a,b)=>a.f - b.f); 
-                target.innerHTML="";
-                
-                if(!arr.length){ 
-                    target.innerHTML = `<div class="k">${empty}</div>`; 
-                    counterRef.textContent = "0"; 
-                    return; 
+                const fechaGesell = toDate(d.audienciaGesell);
+                if (fechaGesell && fechaGesell >= hoy && fechaGesell < manana) {
+                    eventosHoy.gesell.push({
+                        id: causaId,
+                        numCausa: id,
+                        fecha: fechaGesell,
+                        tipo: 'Cámara Gesell'
+                    });
                 }
                 
-                counterRef.textContent = String(arr.length);
-                arr.forEach(e=> {
-                    target.insertAdjacentHTML("beforeend", 
-                    `<div class="event">
-                        <div class="when">${formatearFecha(e.f, true)}</div>
-                        <div class="what">— ${e.label}</div>
-                    </div>`
-                    );
+                // Vencimientos
+                const fechaVenc = toDate(d.vencimiento);
+                if (fechaVenc && fechaVenc >= hoy && fechaVenc < manana) {
+                    eventosHoy.vencimientos.push({
+                        id: causaId,
+                        numCausa: id,
+                        fecha: fechaVenc,
+                        tipo: 'Vencimiento'
+                    });
+                }
+                
+                // Vencimientos de Recursos
+                const fechaVrec = toDate(d.vencimientoRecursos);
+                if (fechaVrec && fechaVrec >= hoy && fechaVrec < manana) {
+                    eventosHoy.recursos.push({
+                        id: causaId,
+                        numCausa: id,
+                        fecha: fechaVrec,
+                        tipo: 'Vencimiento de Recurso'
+                    });
+                }
+            });
+            
+            // Función para renderizar una lista de eventos
+            const renderListaEventos = (eventos, target, tipo) => {
+                target.innerHTML = "";
+                
+                if (!eventos.length) {
+                    target.innerHTML = `<div class="evento-vacio">No hay eventos para hoy</div>`;
+                    return;
+                }
+                
+                // Ordenar eventos por fecha
+                eventos.sort((a, b) => a.fecha - b.fecha);
+                
+                eventos.forEach(evento => {
+                    const elemento = document.createElement('div');
+                    elemento.className = `evento-item evento-item-${tipo}`;
+                    elemento.innerHTML = `
+                        <span class="evento-numero" data-id="${evento.id}">${evento.numCausa}</span>
+                        <span class="evento-hora">${formatearFecha(evento.fecha, true)}</span>
+                    `;
+                    target.appendChild(elemento);
+                    
+                    // Agregar event listener al número de causa
+                    const numeroCausa = elemento.querySelector('.evento-numero');
+                    numeroCausa.onclick = (e) => {
+                        e.preventDefault();
+                        abrirVer(evento.id);
+                    };
                 });
             };
             
-            renderList(eventos.aud, listAud, cAud, "No hay audiencias próximas");
-            renderList(eventos.ges, listGes, cGes, "No hay Cámaras Gesell próximas");
-            renderList(eventos.venc, listVenc, cVenc, "No hay vencimientos próximos");
-            renderList(eventos.vrec, listVrec, cVrec, "No hay venc. de recursos próximos");
+            // Renderizar cada tipo de evento
+            renderListaEventos(eventosHoy.audiencias, listAudHoy, 'audiencias');
+            renderListaEventos(eventosHoy.gesell, listGesellHoy, 'gesell');
+            renderListaEventos(eventosHoy.vencimientos, listVencHoy, 'vencimientos');
+            renderListaEventos(eventosHoy.recursos, listRecursosHoy, 'recursos');
         }
 
         function actualizarKPIs() {
@@ -2062,7 +2253,6 @@
 
                 verContenido.innerHTML = contenidoHTML;
                 await cargarNotas(id);
-                btnVerLineaTiempo.href = `https://sistemadigital.github.io/defensor-secretarios/lineatiempo.html?id=${causaActualId}`;
                 modalVer.style.display = "flex";
             } catch(e) {
                 console.error(e);
@@ -2330,18 +2520,7 @@
             const html = generarTablaImpresion(datosFiltrados, "Listado Filtrado de Expedientes Judiciales");
             printSection(html); 
         };
-        
-        $("btnPrintFechas").onclick = ()=>{ 
-            const html = `
-                <h2>Próximas Fechas (30 días)</h2>
-                <h3>Audiencias</h3>${listAud.outerHTML}
-                <h3>Cámara Gesell</h3>${listGes.outerHTML}
-                <h3>Vencimientos</h3>${listVenc.outerHTML}
-                <h3>Venc. de Recursos</h3>${listVrec.outerHTML}
-            `; 
-            printSection(html); 
-        };
-        
+
         $("btnPrintRegistro").onclick = ()=> {
             const contenido = `
                 <div style="padding: 20px; font-family: Arial, sans-serif;">
@@ -2614,6 +2793,9 @@
         filtroPrioridad.onchange = handleFilterChange;
         filtroIntervencion.onchange = handleFilterChange;
         filtroTipoProceso.onchange = handleFilterChange;
+        filtroEventos.onchange = handleFilterChange;
+        filtroFechaDesde.onchange = handleFilterChange;
+        filtroFechaHasta.onchange = handleFilterChange;
 
         // ===== INICIALIZACIÓN DE LA APLICACIÓN =====
         async function initApp() {
