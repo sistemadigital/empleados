@@ -1486,11 +1486,9 @@
             if(p === "baja") return "baja";
             return "ninguna";
         };
-
         // NUEVA FUNCIÓN: Obtener próximo evento
         function obtenerProximoEvento(causa) {
             const eventos = [];
-
             // Audiencias
             if (Array.isArray(causa.audiencias)) {
                 causa.audiencias.forEach(aud => {
@@ -1500,7 +1498,6 @@
                     }
                 });
             }
-
             // Cámara Gesell
             if (causa.audienciaGesell) {
                 const fecha = toDate(causa.audienciaGesell);
@@ -1508,7 +1505,6 @@
                     eventos.push({ tipo: "Gesell", fecha: fecha });
                 }
             }
-
             // Vencimiento
             if (causa.vencimiento) {
                 const fecha = toDate(causa.vencimiento);
@@ -1516,7 +1512,6 @@
                     eventos.push({ tipo: "Vencimiento", fecha: fecha });
                 }
             }
-
             // Vencimiento de Recursos
             if (causa.vencimientoRecursos) {
                 const fecha = toDate(causa.vencimientoRecursos);
@@ -1524,14 +1519,11 @@
                     eventos.push({ tipo: "Recurso", fecha: fecha });
                 }
             }
-
             if (eventos.length === 0) return null;
-
             // Encontrar el evento más próximo
             eventos.sort((a, b) => a.fecha - b.fecha);
             return eventos[0];
         }
-
         // ===== FUNCIONES DE DATOS =====
         async function cargarUsuarios() {
             try {
@@ -1633,7 +1625,8 @@
                 }
             );
         }
-        // ===== FUNCIÓN CORREGIDA: FILTRAR DATOS =====
+
+        // ===== FUNCIÓN MODIFICADA: FILTRAR EN TODOS LOS CAMPOS =====
         function filtrarDatos() {
             const q = (buscador.value || "").toLowerCase();
             const est = (filtroEstado.value || "").toLowerCase();
@@ -1645,27 +1638,37 @@
             const fechaDesde = filtroFechaDesde.value;
             const fechaHasta = filtroFechaHasta.value;
             return datosCache.filter(d => {
-                // Filtro de texto (búsqueda) - busca en campos principales
-                const okTexto = !q || 
-                    (d.numCausa && d.numCausa.toLowerCase().includes(q)) ||
-                    (d.caratula && d.caratula.toLowerCase().includes(q)) ||
-                    (d.tipoProceso && d.tipoProceso.toLowerCase().includes(q)) ||
-                    (d.juzgado && d.juzgado.toLowerCase().includes(q)) ||
-                    (d.usuarioAsignado && d.usuarioAsignado.toLowerCase().includes(q)) ||
-                    (d.estado && d.estado.toLowerCase().includes(q));
+                // Filtro de texto (búsqueda): busca en TODOS los campos del objeto
+                let okTexto = true;
+                if (q) {
+                    okTexto = false;
+                    for (const [key, value] of Object.entries(d)) {
+                        if (value !== null && value !== undefined) {
+                            const stringValue = String(value).toLowerCase();
+                            if (stringValue.includes(q)) {
+                                okTexto = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 // Filtros exactos
                 const okEstado = !est || (String(d.estado || "").toLowerCase() === est);
                 const okUsuario = !usu || (String(d.usuarioAsignado || "").toLowerCase() === usu);
                 const okPrioridad = !prio || (String(d.prioridad || "").toLowerCase() === prio);
                 const okIntervencion = !interv || (String(d.intervencion || "").toLowerCase() === interv);
                 const okTipoProceso = !tipoProc || (String(d.tipoProceso || "").toLowerCase() === tipoProc);
+
                 // Si no hay filtro de evento ni de fechas, devolvemos los filtros básicos
                 if (!evento && !fechaDesde && !fechaHasta) {
                     return okTexto && okEstado && okUsuario && okPrioridad && okIntervencion && okTipoProceso;
                 }
+
                 // Filtro de eventos y fechas
                 let tieneEvento = !evento; // Si no hay evento seleccionado, entonces no filtra por evento
                 let cumpleRangoFechas = !fechaDesde && !fechaHasta; // Si no hay fechas, no filtra por fecha
+
                 // Si hay evento o fechas, buscamos en los eventos de la causa
                 if (evento || fechaDesde || fechaHasta) {
                     let eventos = [];
@@ -1689,11 +1692,13 @@
                     if (d.vencimientoRecursos) {
                         eventos.push({ tipo: 'recursos', fecha: toDate(d.vencimientoRecursos) });
                     }
+
                     // Filtrar por tipo de evento si hay
                     let eventosFiltrados = eventos;
                     if (evento) {
                         eventosFiltrados = eventos.filter(e => e.tipo === evento);
                     }
+
                     // Filtrar por rango de fechas si hay
                     if (fechaDesde || fechaHasta) {
                         const desde = fechaDesde ? new Date(fechaDesde) : null;
@@ -1712,14 +1717,17 @@
                             return cumpleDesde && cumpleHasta;
                         });
                     }
+
                     // Si hay evento, debe tener al menos un evento del tipo y que cumpla el rango
                     tieneEvento = !evento || eventosFiltrados.length > 0;
                     // Si hay fechas, debe tener al menos un evento que cumpla el rango (y el tipo si hay)
                     cumpleRangoFechas = eventosFiltrados.length > 0 || (!fechaDesde && !fechaHasta);
                 }
+
                 return okTexto && okEstado && okUsuario && okPrioridad && okIntervencion && okTipoProceso && tieneEvento && cumpleRangoFechas;
             });
         }
+
         const handleFilterChange = () => {
             datosFiltrados = filtrarDatos();
             paginaActual = 1;
@@ -1745,7 +1753,6 @@
                 if (proxEvento) {
                     proxEventoHTML = `${proxEvento.tipo}<br><small>${formatearFecha(proxEvento.fecha, true)}</small>`;
                 }
-
                 tbody.insertAdjacentHTML("beforeend", `
                     <tr>
                         <td>${d.numCausa||""}</td>
