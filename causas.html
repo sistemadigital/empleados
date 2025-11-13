@@ -57,6 +57,7 @@
             --color-vencimientos: #dc3545;
             --color-gesell: #28a745;
             --color-recursos: #6f42c1;
+            --color-diligencias: #fd7e14;
         }
         /* Estilos base */
         * {
@@ -390,6 +391,7 @@
         .evento-vencimientos { color: var(--color-vencimientos); border-color: var(--color-vencimientos); }
         .evento-gesell { color: var(--color-gesell); border-color: var(--color-gesell); }
         .evento-recursos { color: var(--color-recursos); border-color: var(--color-recursos); }
+        .evento-diligencias { color: var(--color-diligencias); border-color: var(--color-diligencias); }
         .evento-item {
             display: flex;
             align-items: center;
@@ -405,6 +407,7 @@
         .evento-item-vencimientos { border-left-color: var(--color-vencimientos); }
         .evento-item-gesell { border-left-color: var(--color-gesell); }
         .evento-item-recursos { border-left-color: var(--color-recursos); }
+        .evento-item-diligencias { border-left-color: var(--color-diligencias); }
         .evento-item:hover {
             background: #e9ecef;
             transform: translateX(2px);
@@ -427,6 +430,24 @@
             color: var(--text-secondary);
             padding: 6px 8px;
         }
+        /* NUEVO: Estilos para eventos en la tabla */
+        .eventos-lista {
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+        .evento-tabla {
+            padding: 4px 6px;
+            margin-bottom: 3px;
+            border-left: 3px solid;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .evento-tabla.audiencia { border-left-color: var(--color-audiencias); }
+        .evento-tabla.gesell { border-left-color: var(--color-gesell); }
+        .evento-tabla.vencimiento { border-left-color: var(--color-vencimientos); }
+        .evento-tabla.recurso { border-left-color: var(--color-recursos); }
+        .evento-tabla.diligencia { border-left-color: var(--color-diligencias); }
         /* Paginación */
         #paginacion-container {
             display: flex;
@@ -677,6 +698,39 @@
         }
         .btn-audiencia {
             background: var(--status-success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        /* NUEVO: Estilos para diligencias */
+        .diligencias-container {
+            margin-bottom: 10px;
+        }
+        .diligencia-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .diligencia-item input[type="datetime-local"] {
+            flex: 1;
+        }
+        .diligencia-item input[type="text"] {
+            flex: 2;
+        }
+        .btn-eliminar-diligencia {
+            background: var(--status-danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .btn-diligencia {
+            background: var(--color-diligencias);
             color: white;
             border: none;
             border-radius: 8px;
@@ -1157,6 +1211,7 @@
                                 <option value="gesell">Cámara Gesell</option>
                                 <option value="vencimientos">Vencimientos</option>
                                 <option value="recursos">Recursos</option>
+                                <option value="diligencias">Diligencias</option>
                             </select>
                         </div>
                         <div class="filter-group">
@@ -1191,7 +1246,7 @@
                                     <th>Estado</th>
                                     <th>Prioridad</th>
                                     <th>Registro</th>
-                                    <th>Próx. Evento</th>
+                                    <th>Eventos</th>
                                     <th class="no-print">Acciones</th>
                                 </tr>
                             </thead>
@@ -1224,6 +1279,11 @@
                     <div class="evento-titulo evento-recursos">Recursos</div>
                     <div id="listRecursosHoy"></div>
                 </div>
+                <!-- NUEVO: Sección para Diligencias -->
+                <div class="eventos-hoy">
+                    <div class="evento-titulo evento-diligencias">Diligencias</div>
+                    <div id="listDiligenciasHoy"></div>
+                </div>
             </aside>
         </div>
     </main>
@@ -1239,9 +1299,12 @@
                     <div class="tabs-container">
                         <div class="tabs-nav">
                             <button type="button" class="tab-button active" data-tab="tab1">Datos Principales</button>
-                            <button type="button" class="tab-button" data-tab="tab2">Fechas y Vencimientos</button>
-                            <button type="button" class="tab-button" data-tab="tab3">Recursos</button>
-                            <button type="button" class="tab-button" data-tab="tab4">Observaciones</button>
+                            <button type="button" class="tab-button" data-tab="tab2">Fechas</button>
+                            <button type="button" class="tab-button" data-tab="tab3">Audiencias</button>
+                            <button type="button" class="tab-button" data-tab="tab4">Vencimientos</button>
+                            <button type="button" class="tab-button" data-tab="tab5">Diligencias</button>
+                            <button type="button" class="tab-button" data-tab="tab6">Recursos</button>
+                            <button type="button" class="tab-button" data-tab="tab7">Observaciones</button>
                         </div>
                         <div id="tab1" class="tab-content active">
                             <div class="field">
@@ -1299,7 +1362,8 @@
                         <div id="tab2" class="tab-content">
                             <div class="field"><label for="fechaInicio">Fecha de Inicio</label><input type="date" id="fechaInicio" /></div>
                             <div class="field"><label for="fechaPase">Fecha de Pase</label><input type="datetime-local" id="fechaPase" /></div>
-                            <div class="field"><label for="vencimiento">Vencimiento</label><input type="datetime-local" id="vencimiento" /></div>
+                        </div>
+                        <div id="tab3" class="tab-content">
                             <div class="field">
                                 <label for="audiencias">Audiencias señaladas</label>
                                 <div id="audiencias-container" class="audiencias-container"></div>
@@ -1315,7 +1379,18 @@
                                 <textarea id="nnyaGesell" disabled></textarea><div class="counter" id="counterNnyaGesell" style="display:none">0/400</div>
                             </div>
                         </div>
-                        <div id="tab3" class="tab-content">
+                        <div id="tab4" class="tab-content">
+                            <div class="field"><label for="vencimiento">Vencimiento</label><input type="datetime-local" id="vencimiento" /></div>
+                            <div class="field"><label for="vencimientoRecursos">Vencimiento de Recursos</label><input type="datetime-local" id="vencimientoRecursos" /></div>
+                        </div>
+                        <div id="tab5" class="tab-content">
+                            <div class="field">
+                                <label for="diligencias">Diligencias</label>
+                                <div id="diligencias-container" class="diligencias-container"></div>
+                                <button type="button" id="btnAgregarDiligencia" class="btn-diligencia"><i class="fa fa-plus"></i> Agregar Diligencia</button>
+                            </div>
+                        </div>
+                        <div id="tab6" class="tab-content">
                             <div class="field">
                                 <label for="recursos">Recursos Interpuestos</label>
                                 <select id="recursos"><option value="">Seleccione un recurso</option><option>Apelación</option><option>Queja</option><option>Inconstitucionalidad</option><option>Nulidad</option><option>Reposición</option><option>Aclaratoria</option><option>Recurso Extraordinario</option><option>Recurso de Inaplicabilidad</option></select>
@@ -1329,13 +1404,9 @@
                                     <label for="estadoRecursos">Estado de Recursos</label>
                                     <select id="estadoRecursos"><option value="">Seleccione un estado</option><option>Pendiente</option><option>En trámite</option><option>Resuelto</option><option>Rechazado</option></select>
                                 </div>
-                                <div class="field">
-                                    <label for="vencimientoRecursos">Vencimiento de Recursos</label>
-                                    <input type="datetime-local" id="vencimientoRecursos" />
-                                </div>
                             </div>
                         </div>
-                        <div id="tab4" class="tab-content">
+                        <div id="tab7" class="tab-content">
                             <div class="field">
                                 <label for="observaciones">Observaciones (máx. 1000 palabras)</label>
                                 <textarea id="observaciones" rows="5"></textarea><div class="counter" id="counter">0/1000</div>
@@ -1446,9 +1517,12 @@
         const listGesellHoy = $("listGesellHoy");
         const listVencHoy = $("listVencHoy");
         const listRecursosHoy = $("listRecursosHoy");
+        const listDiligenciasHoy = $("listDiligenciasHoy");
         const floatingAlert = $("floating-alert");
         const audienciasContainer = $("audiencias-container");
+        const diligenciasContainer = $("diligencias-container");
         const btnAgregarAudiencia = $("btnAgregarAudiencia");
+        const btnAgregarDiligencia = $("btnAgregarDiligencia");
         const alertModal = $("alertModal");
         const alertTitle = $("alertTitle");
         const alertMessage = $("alertMessage");
@@ -1486,43 +1560,78 @@
             if(p === "baja") return "baja";
             return "ninguna";
         };
-        // NUEVA FUNCIÓN: Obtener próximo evento
-        function obtenerProximoEvento(causa) {
+        // NUEVA FUNCIÓN: Obtener todos los eventos de una causa
+        function obtenerTodosEventos(causa) {
             const eventos = [];
+            
             // Audiencias
             if (Array.isArray(causa.audiencias)) {
                 causa.audiencias.forEach(aud => {
                     const fecha = toDate(aud);
                     if (fecha) {
-                        eventos.push({ tipo: "Audiencia", fecha: fecha });
+                        eventos.push({ 
+                            tipo: "Audiencia", 
+                            fecha: fecha,
+                            clase: "audiencia"
+                        });
                     }
                 });
             }
+            
             // Cámara Gesell
             if (causa.audienciaGesell) {
                 const fecha = toDate(causa.audienciaGesell);
                 if (fecha) {
-                    eventos.push({ tipo: "Gesell", fecha: fecha });
+                    eventos.push({ 
+                        tipo: "Gesell", 
+                        fecha: fecha,
+                        clase: "gesell"
+                    });
                 }
             }
+            
             // Vencimiento
             if (causa.vencimiento) {
                 const fecha = toDate(causa.vencimiento);
                 if (fecha) {
-                    eventos.push({ tipo: "Vencimiento", fecha: fecha });
+                    eventos.push({ 
+                        tipo: "Vencimiento", 
+                        fecha: fecha,
+                        clase: "vencimiento"
+                    });
                 }
             }
+            
             // Vencimiento de Recursos
             if (causa.vencimientoRecursos) {
                 const fecha = toDate(causa.vencimientoRecursos);
                 if (fecha) {
-                    eventos.push({ tipo: "Recurso", fecha: fecha });
+                    eventos.push({ 
+                        tipo: "Recurso", 
+                        fecha: fecha,
+                        clase: "recurso"
+                    });
                 }
             }
-            if (eventos.length === 0) return null;
-            // Encontrar el evento más próximo
-            eventos.sort((a, b) => a.fecha - b.fecha);
-            return eventos[0];
+            
+            // Diligencias
+            if (Array.isArray(causa.diligencias)) {
+                causa.diligencias.forEach(dilig => {
+                    const fecha = toDate(dilig.fecha);
+                    if (fecha) {
+                        eventos.push({ 
+                            tipo: "Diligencia", 
+                            fecha: fecha,
+                            detalle: dilig.detalle || '',
+                            clase: "diligencia"
+                        });
+                    }
+                });
+            }
+            
+            // Ordenar eventos por fecha (más reciente primero)
+            eventos.sort((a, b) => b.fecha - a.fecha);
+            return eventos;
         }
         // ===== FUNCIONES DE DATOS =====
         async function cargarUsuarios() {
@@ -1692,6 +1801,14 @@
                     if (d.vencimientoRecursos) {
                         eventos.push({ tipo: 'recursos', fecha: toDate(d.vencimientoRecursos) });
                     }
+                    // Diligencias
+                    if (Array.isArray(d.diligencias)) {
+                        d.diligencias.forEach(dilig => {
+                            if (dilig.fecha) {
+                                eventos.push({ tipo: 'diligencias', fecha: toDate(dilig.fecha) });
+                            }
+                        });
+                    }
 
                     // Filtrar por tipo de evento si hay
                     let eventosFiltrados = eventos;
@@ -1748,10 +1865,18 @@
         function renderTablas(data){
             tbody.innerHTML = data.length ? "" : "<tr><td colspan='10'>No hay registros</td></tr>";
             data.forEach(d=>{
-                const proxEvento = obtenerProximoEvento(d);
-                let proxEventoHTML = "—";
-                if (proxEvento) {
-                    proxEventoHTML = `${proxEvento.tipo}<br><small>${formatearFecha(proxEvento.fecha, true)}</small>`;
+                const todosEventos = obtenerTodosEventos(d);
+                let eventosHTML = "—";
+                if (todosEventos.length > 0) {
+                    eventosHTML = `<div class="eventos-lista">`;
+                    todosEventos.forEach(evento => {
+                        let eventoTexto = `${evento.tipo}: ${formatearFecha(evento.fecha, true)}`;
+                        if (evento.tipo === "Diligencia" && evento.detalle) {
+                            eventoTexto += ` - ${evento.detalle}`;
+                        }
+                        eventosHTML += `<div class="evento-tabla ${evento.clase}">${eventoTexto}</div>`;
+                    });
+                    eventosHTML += `</div>`;
                 }
                 tbody.insertAdjacentHTML("beforeend", `
                     <tr>
@@ -1763,7 +1888,7 @@
                         <td>${d.estado||""}</td>
                         <td><span class="prioridad-pill ${prioridadClase(d.prioridad)}">${d.prioridad||"Ninguna"}</span></td>
                         <td>${formatearFecha(d.fechaRegistro, false)}</td>
-                        <td>${proxEventoHTML}</td>
+                        <td>${eventosHTML}</td>
                         <td class="actions">${accionesHTML(d.id)}</td>
                     </tr>`);
             });
@@ -1796,7 +1921,7 @@
                 };
             }
         }
-        // NUEVA FUNCIÓN: Renderizar eventos de hoy
+        // NUEVA FUNCIÓN: Renderizar eventos de hoy - ACTUALIZADA para incluir diligencias
         function renderEventosHoy() {
             const hoy = new Date();
             hoy.setHours(0, 0, 0, 0);
@@ -1806,7 +1931,8 @@
                 audiencias: [],
                 gesell: [],
                 vencimientos: [],
-                recursos: []
+                recursos: [],
+                diligencias: []
             };
             datosCache.forEach(d => {
                 const id = d.numCausa || d.id;
@@ -1855,6 +1981,21 @@
                         tipo: 'Vencimiento de Recurso'
                     });
                 }
+                // Diligencias
+                if (Array.isArray(d.diligencias)) {
+                    d.diligencias.forEach(dilig => {
+                        const fechaDilig = toDate(dilig.fecha);
+                        if (fechaDilig && fechaDilig >= hoy && fechaDilig < manana) {
+                            eventosHoy.diligencias.push({
+                                id: causaId,
+                                numCausa: id,
+                                fecha: fechaDilig,
+                                tipo: 'Diligencia',
+                                detalle: dilig.detalle || ''
+                            });
+                        }
+                    });
+                }
             });
             // Función para renderizar una lista de eventos
             const renderListaEventos = (eventos, target, tipo) => {
@@ -1868,10 +2009,14 @@
                 eventos.forEach(evento => {
                     const elemento = document.createElement('div');
                     elemento.className = `evento-item evento-item-${tipo}`;
-                    elemento.innerHTML = `
+                    let contenido = `
                         <span class="evento-numero" data-id="${evento.id}">${evento.numCausa}</span>
                         <span class="evento-hora">${formatearFecha(evento.fecha, true)}</span>
                     `;
+                    if (tipo === 'diligencias' && evento.detalle) {
+                        contenido += `<span class="evento-detalle" style="font-size:0.8rem;color:var(--text-secondary);">${evento.detalle}</span>`;
+                    }
+                    elemento.innerHTML = contenido;
                     target.appendChild(elemento);
                     // Agregar event listener al número de causa
                     const numeroCausa = elemento.querySelector('.evento-numero');
@@ -1886,6 +2031,7 @@
             renderListaEventos(eventosHoy.gesell, listGesellHoy, 'gesell');
             renderListaEventos(eventosHoy.vencimientos, listVencHoy, 'vencimientos');
             renderListaEventos(eventosHoy.recursos, listRecursosHoy, 'recursos');
+            renderListaEventos(eventosHoy.diligencias, listDiligenciasHoy, 'diligencias');
         }
         function actualizarKPIs() {
             const kpiCardsContainer = $("kpiCards");
@@ -1934,7 +2080,6 @@
             resetFormCausa(); 
             editId.value = ""; 
             tituloForm.textContent = "Nuevo Expediente"; 
-            // await initForm(); // CORRECCIÓN: Eliminado, los listeners ya están
             modal.style.display = "flex"; 
         };
         function validateForm() {
@@ -2020,7 +2165,6 @@
             try{
                 const snap = await db.collection("causas").doc(id).get();
                 if (snap.exists){
-                    // await initForm(); // CORRECCIÓN: Eliminado
                     cargarDatosEnForm(snap.data());
                     modal.style.display = "flex"; 
                 } else {
@@ -2057,7 +2201,7 @@
                 const ordenClaves = [
                     "numCausa", "caratula", "tipoProceso", "juzgado", "estado", "usuarioAsignado",
                     "fechaRegistro", "fechaInicio", "fechaPase", "intervencion", "datosNnya", "vencimiento",
-                    "audiencias", "recursos", "recursosContestacion", "estadoRecursos", "vencimientoRecursos",
+                    "audiencias", "diligencias", "recursos", "recursosContestacion", "estadoRecursos", "vencimientoRecursos",
                     "audienciaGesell", "nnyaGesell", "observaciones"
                 ];
                 ordenClaves.forEach(k => {
@@ -2069,11 +2213,18 @@
                             v.forEach(aud => {
                                 contenidoHTML += `<p style="margin-left: 20px;">${formatearFecha(aud, true)}</p>`;
                             });
+                        } else if (k === "diligencias" && Array.isArray(v) && v.length > 0) {
+                            contenidoHTML += `<p><strong>Diligencias:</strong></p>`;
+                            v.forEach(dilig => {
+                                const fecha = formatearFecha(dilig.fecha, true);
+                                const detalle = dilig.detalle ? ` - ${dilig.detalle}` : '';
+                                contenidoHTML += `<p style="margin-left: 20px;">${fecha}${detalle}</p>`;
+                            });
                         } else if (['fechaInicio', 'fechaRegistro'].includes(k)) {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${formatearFecha(v, false)}</p>`;
                         } else if (v.seconds) {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${formatearFecha(v, true)}</p>`;
-                        } else if (k !== "audiencias") {
+                        } else if (k !== "audiencias" && k !== "diligencias") {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${v}</p>`;
                         }
                     }
@@ -2284,16 +2435,22 @@
                             <th>Estado</th>
                             <th>Prioridad</th>
                             <th>Registro</th>
-                            <th>Próx. Evento</th>
+                            <th>Eventos</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
             data.forEach(d => {
-                const proxEvento = obtenerProximoEvento(d);
-                let proxEventoTexto = "—";
-                if (proxEvento) {
-                    proxEventoTexto = `${proxEvento.tipo} ${formatearFecha(proxEvento.fecha, true)}`;
+                const todosEventos = obtenerTodosEventos(d);
+                let eventosTexto = "—";
+                if (todosEventos.length > 0) {
+                    eventosTexto = todosEventos.map(evento => {
+                        let texto = `${evento.tipo}: ${formatearFecha(evento.fecha, true)}`;
+                        if (evento.tipo === "Diligencia" && evento.detalle) {
+                            texto += ` - ${evento.detalle}`;
+                        }
+                        return texto;
+                    }).join('; ');
                 }
                 tableHTML += `
                     <tr>
@@ -2305,7 +2462,7 @@
                         <td>${d.estado||""}</td>
                         <td>${d.prioridad||"Ninguna"}</td>
                         <td>${formatearFecha(d.fechaRegistro, false)}</td>
-                        <td>${proxEventoTexto}</td>
+                        <td>${eventosTexto}</td>
                     </tr>
                 `;
             });
@@ -2437,7 +2594,9 @@
             $("counterNnyaGesell").textContent = "0/400"; 
             selPrioridad.value = "Ninguna"; 
             audienciasContainer.innerHTML = ""; 
+            diligenciasContainer.innerHTML = "";
             agregarAudiencia();
+            agregarDiligencia();
             document.querySelectorAll('.field.error').forEach(el => el.classList.remove('error'));
             // Volver a la primera pestaña
             tabButtons.forEach(btn => btn.classList.remove("active"));
@@ -2467,6 +2626,21 @@
                 if (input.value) audiencias.push(new Date(input.value)); 
             });
             datos.audiencias = audiencias.length > 0 ? audiencias : null;
+            
+            // NUEVO: Recolectar diligencias
+            const diligencias = [];
+            diligenciasContainer.querySelectorAll('.diligencia-item').forEach(item => {
+                const fechaInput = item.querySelector('input[type="datetime-local"]');
+                const detalleInput = item.querySelector('input[type="text"]');
+                if (fechaInput.value) {
+                    diligencias.push({
+                        fecha: new Date(fechaInput.value),
+                        detalle: detalleInput.value || ''
+                    });
+                }
+            });
+            datos.diligencias = diligencias.length > 0 ? diligencias : null;
+            
             return datos;
         }
         function cargarDatosEnForm(d) {
@@ -2522,6 +2696,18 @@
             } else {
                 agregarAudiencia();
             }
+            // NUEVO: Cargar diligencias
+            diligenciasContainer.innerHTML = "";
+            if (Array.isArray(d.diligencias) && d.diligencias.length > 0) {
+                d.diligencias.forEach(dilig => {
+                    const fecha = toDate(dilig.fecha);
+                    if (fecha) {
+                        diligenciasContainer.appendChild(crearDiligenciaItem(formatFechaParaInput(fecha, true), dilig.detalle || ''));
+                    }
+                });
+            } else {
+                agregarDiligencia();
+            }
             const habilitar = !!(d.audienciaGesell || d.nnyaGesell);
             $("habilitarAudienciaGesell").checked = habilitar;
             toggleGesell(habilitar);
@@ -2543,7 +2729,30 @@
         function agregarAudiencia() { 
             audienciasContainer.appendChild(crearAudienciaItem()); 
         }
+        // NUEVO: Funciones para manejar diligencias
+        function crearDiligenciaItem(fechaValue = "", detalleValue = "") {
+            const item = document.createElement('div');
+            item.className = 'diligencia-item';
+            item.innerHTML = `
+                <input type="datetime-local" value="${fechaValue}">
+                <input type="text" placeholder="Detalle de la diligencia" value="${detalleValue}">
+                <button type="button" class="btn-eliminar-diligencia"><i class="fa fa-trash"></i></button>
+            `;
+            const eliminarBtn = item.querySelector('.btn-eliminar-diligencia');
+            eliminarBtn.onclick = function() { 
+                if (diligenciasContainer.children.length > 1) {
+                    item.remove(); 
+                } else {
+                    mostrarAlertaPersonalizada("Error", "Debe haber al menos una diligencia"); 
+                }
+            };
+            return item;
+        }
+        function agregarDiligencia() { 
+            diligenciasContainer.appendChild(crearDiligenciaItem()); 
+        }
         btnAgregarAudiencia.onclick = agregarAudiencia;
+        btnAgregarDiligencia.onclick = agregarDiligencia;
         // ===== EVENT LISTENERS GLOBALES =====
         window.addEventListener("click", e=>{ 
             if (e.target === modal) modal.style.display="none"; 
