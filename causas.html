@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Causas</title>
-    
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
-    
     <style>
         /* Variables CSS */
         :root {
@@ -60,14 +58,12 @@
             --color-gesell: #28a745;
             --color-recursos: #6f42c1;
         }
-
         /* Estilos base */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: var(--font-family);
             background-color: var(--background-default);
@@ -75,7 +71,6 @@
             line-height: 1.5;
             min-height: 100vh;
         }
-
         /* Header */
         .header {
             background-color: var(--background-header);
@@ -86,7 +81,6 @@
             z-index: 100;
             box-shadow: var(--shadow-subtle);
         }
-
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -94,20 +88,17 @@
             max-width: 1800px;
             margin: 0 auto;
         }
-
         .logo {
             font-size: var(--h1-size);
             font-weight: var(--font-weight-bold);
             color: var(--primary-blue);
         }
-
         /* Contenedor principal */
         .container {
             max-width: 1800px;
             margin: 0 auto;
             padding: var(--spacing-m) var(--spacing-gutter);
         }
-
         /* Layout principal */
         .main-layout {
             display: grid;
@@ -115,25 +106,21 @@
             gap: var(--spacing-xl);
             align-items: start;
         }
-
         /* ===== MODIFICADO: Tarjetas de resumen (KPIs) con estilo del calendario ===== */
         .kpi-section {
             margin-bottom: var(--spacing-xl);
         }
-
         .kpi-title {
             font-size: var(--h2-size);
             font-weight: var(--font-weight-semibold);
             margin-bottom: var(--spacing-m);
         }
-
         .kpi-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             padding-bottom: var(--spacing-s);
         }
-
         .kpi-card {
             background-color: var(--background-card);
             padding: 12px 16px;
@@ -147,53 +134,42 @@
             align-items: center;
             justify-content: center;
         }
-
         .kpi-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
-
         .kpi-card.total {
             background-color: var(--primary-blue);
             color: var(--text-light);
         }
-
         .kpi-card.en-tramite {
             border-left: 4px solid var(--primary-blue);
         }
-
         .kpi-card.finalizado {
             border-left: 4px solid var(--status-success);
         }
-
         .kpi-card.en-alzada {
             border-left: 4px solid var(--status-warning);
         }
-
         .kpi-card.archivado {
             border-left: 4px solid var(--secondary-dark-gray);
         }
-
         .kpi-number {
             font-size: 24px;
             font-weight: var(--font-weight-bold);
             margin-bottom: 4px;
         }
-
         .kpi-card.total .kpi-number {
             color: var(--text-light);
         }
-
         .kpi-label {
             font-size: 12px;
             font-weight: var(--font-weight-regular);
             text-transform: uppercase;
         }
-
         .kpi-card.total .kpi-label {
             color: var(--text-light);
         }
-
         /* Filtros */
         .filters-section {
             background-color: var(--background-card);
@@ -203,31 +179,26 @@
             margin-bottom: var(--spacing-xl);
             box-shadow: var(--shadow-subtle);
         }
-
         .filters-title {
             font-size: var(--h2-size);
             font-weight: var(--font-weight-semibold);
             margin-bottom: var(--spacing-m);
         }
-
         .filter-row {
             display: flex;
             flex-wrap: wrap;
             gap: var(--spacing-m);
         }
-
         .filter-group {
             flex: 1;
             min-width: 150px;
         }
-
         .filter-label {
             display: block;
             font-size: var(--body-regular-size);
             margin-bottom: var(--spacing-xs);
             font-weight: var(--font-weight-semibold);
         }
-
         .input, .dropdown {
             border: 1px solid var(--border-default);
             border-radius: var(--border-radius-default);
@@ -238,12 +209,10 @@
             width: 100%;
             transition: border-color 0.2s;
         }
-
         .input:focus, .dropdown:focus {
             outline: none;
             border-color: var(--primary-blue);
         }
-
         /* Botones de acción */
         .action-buttons {
             display: flex;
@@ -251,7 +220,6 @@
             margin-top: var(--spacing-m);
             flex-wrap: wrap;
         }
-
         .button {
             background-color: var(--primary-blue);
             color: var(--text-light);
@@ -265,23 +233,18 @@
             align-items: center;
             gap: var(--spacing-xs);
         }
-
         .button:hover {
             opacity: 0.9;
         }
-
         .button-success {
             background-color: #1e7e34;
         }
-
         .button-secondary {
             background-color: var(--secondary-dark-gray);
         }
-
         .button-danger {
             background-color: var(--status-danger);
         }
-
         /* Tabla de datos */
         .table-section {
             background-color: var(--background-card);
@@ -290,7 +253,6 @@
             overflow: hidden;
             box-shadow: var(--shadow-subtle);
         }
-
         .table-title {
             font-size: var(--h2-size);
             font-weight: var(--font-weight-semibold);
@@ -298,18 +260,15 @@
             background-color: var(--background-table-header);
             border-bottom: 1px solid var(--border-default);
         }
-
         .table-wrap {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
-
         .data-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 1000px;
         }
-
         .data-table th {
             background-color: var(--background-table-header);
             font-weight: var(--font-weight-semibold);
@@ -319,22 +278,18 @@
             font-size: var(--caption-size);
             text-transform: uppercase;
         }
-
         .data-table td {
             border-bottom: 1px solid var(--border-default);
             padding: var(--spacing-m);
             color: var(--text-primary);
             font-size: var(--body-regular-size);
         }
-
         .data-table tr:last-child td {
             border-bottom: none;
         }
-
         .data-table tr:hover td {
             background-color: var(--secondary-gray);
         }
-
         /* Estilos para prioridad */
         .prioridad-pill {
             display: inline-block;
@@ -349,7 +304,6 @@
         .prioridad-media { background-color: var(--status-warning); }
         .prioridad-alta { background-color: var(--status-danger); }
         .prioridad-ninguna { background-color: var(--secondary-dark-gray); }
-
         /* NUEVO: Estilos para prioridad en texto */
         .prioridad-texto {
             font-size: 1.2rem;
@@ -379,7 +333,6 @@
             color: var(--secondary-dark-gray); 
             border: 2px solid var(--secondary-dark-gray);
         }
-
         /* Sidebar - NUEVO: Estilos para el panel de Eventos de Hoy */
         .sidebar {
             background: var(--background-card);
@@ -423,7 +376,6 @@
             font-size: 0.75rem;
             margin-left: 6px;
         }
-
         /* NUEVO: Estilos para el panel de Eventos de Hoy */
         .eventos-hoy {
             margin-bottom: 10px;
@@ -438,7 +390,6 @@
         .evento-vencimientos { color: var(--color-vencimientos); border-color: var(--color-vencimientos); }
         .evento-gesell { color: var(--color-gesell); border-color: var(--color-gesell); }
         .evento-recursos { color: var(--color-recursos); border-color: var(--color-recursos); }
-        
         .evento-item {
             display: flex;
             align-items: center;
@@ -454,12 +405,10 @@
         .evento-item-vencimientos { border-left-color: var(--color-vencimientos); }
         .evento-item-gesell { border-left-color: var(--color-gesell); }
         .evento-item-recursos { border-left-color: var(--color-recursos); }
-        
         .evento-item:hover {
             background: #e9ecef;
             transform: translateX(2px);
         }
-        
         .evento-numero {
             font-weight: bold;
             color: var(--primary-blue);
@@ -469,18 +418,15 @@
         .evento-numero:hover {
             color: var(--primary-dark-blue);
         }
-        
         .evento-hora {
             font-size: 0.85rem;
             color: var(--text-secondary);
         }
-        
         .evento-vacio {
             font-style: italic;
             color: var(--text-secondary);
             padding: 6px 8px;
         }
-
         /* Paginación */
         #paginacion-container {
             display: flex;
@@ -501,7 +447,6 @@
             display: flex;
             gap: var(--spacing-s);
         }
-
         /* MODALES - Estilos de index.html */
         #modal, #modalVer, #alertModal {
             display: none;
@@ -528,7 +473,6 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .modal-header {
             position: sticky;
             top: 0;
@@ -560,7 +504,6 @@
             justify-content: flex-end;
             z-index: 5;
         }
-
         #formCausa .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -597,7 +540,6 @@
             color: #6b7280;
             margin-top: 4px;
         }
-        
         #agregarNota {
             margin-top: 20px;
             padding: 15px;
@@ -627,7 +569,6 @@
             cursor: pointer;
             margin-top: 10px;
         }
-
         #verContenido p {
             margin: .35rem 0;
             font-size: .92rem;
@@ -642,13 +583,11 @@
             background: #f9fbff;
             border-radius: 6px;
         }
-
         .actions {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-        
         .prioridad-pill {
             display: inline-block;
             padding: 4px 8px;
@@ -662,7 +601,6 @@
         .prioridad-media { background-color: var(--status-warning); }
         .prioridad-alta { background-color: var(--status-danger); }
         .prioridad-ninguna { background-color: var(--secondary-dark-gray); }
-
         #alertModal .content {
             max-width: 400px;
             padding: 24px;
@@ -690,7 +628,6 @@
         }
         .alert-danger { background: var(--status-danger); color: white; }
         .alert-success { background: var(--status-success); color: white; }
-        
         /* MODIFICACIONES PARA LA ALERTA FLOTANTE */
         .floating-alert {
             position: fixed;
@@ -713,13 +650,11 @@
         .floating-alert.success {
             background-color: var(--status-success);
         }
-
         .floating-alert.show {
             opacity: 1;
             visibility: visible;
             top: 20px;
         }
-
         .audiencias-container {
             margin-bottom: 10px;
         }
@@ -749,7 +684,6 @@
             cursor: pointer;
             margin-top: 8px;
         }
-
         /* Estilos para el formulario con pestañas */
         .tabs-container {
             margin-bottom: 15px;
@@ -789,7 +723,6 @@
         .tab-content .field:not(:last-child) {
             margin-bottom: 10px;
         }
-
         /* NUEVOS ESTILOS PARA LA VALIDACIÓN */
         .field.error input,
         .field.error textarea,
@@ -809,7 +742,6 @@
         .field {
             margin-bottom: 15px;
         }
-
         /* Resaltado de prioridad en la vista detallada */
         #verContenido .prioridad-destacada {
             display: flex;
@@ -832,7 +764,6 @@
         .prioridad-destacada.prioridad-media { background-color: var(--status-warning); }
         .prioridad-destacada.prioridad-alta { background-color: var(--status-danger); }
         .prioridad-destacada.prioridad-ninguna { background-color: var(--secondary-dark-gray); }
-
         /* Estilos para el historial de notas */
         .notes-history {
             margin-top: 20px;
@@ -864,7 +795,6 @@
             font-size: 0.9rem;
             line-height: 1.4;
         }
-
         /* Estilos para impresión - OCULTAR BOTONES Y ACCIONES */
         @media print {
             .button, .actions, .action-buttons, .controls-form,
@@ -878,55 +808,45 @@
             .prioridad-destacada, .tabs-nav, .tab-button {
                 display: none !important;
             }
-            
             .header, .filters-section, .sidebar, .pagination-container {
                 display: none !important;
             }
-            
             body, .container, .main-layout, .main {
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
             }
-            
             .table-section, .kpi-section, .modal .content, #modalVer .content {
                 box-shadow: none !important;
                 border: 1px solid #ddd !important;
                 page-break-inside: avoid;
             }
-            
             .data-table {
                 min-width: 100% !important;
             }
-            
             .kpi-cards {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
                 gap: 10px !important;
             }
-            
             .prioridad-pill {
                 color: #000 !important;
                 background-color: transparent !important;
                 border: 1px solid #000 !important;
             }
-            
             /* Estilos específicos para imprimir el formulario */
             .tab-content {
                 display: block !important;
             }
-            
             #formCausa .grid {
                 display: table !important;
                 width: 100% !important;
             }
-            
             .field {
                 display: table-row !important;
                 margin-bottom: 0 !important;
             }
-            
             .field label {
                 display: table-cell !important;
                 padding: 8px !important;
@@ -934,7 +854,6 @@
                 width: 40% !important;
                 border-bottom: 1px solid #ddd !important;
             }
-            
             .field input, .field textarea, .field select {
                 display: table-cell !important;
                 width: 100% !important;
@@ -943,12 +862,10 @@
                 border-bottom: 1px solid #ddd !important;
                 background: transparent !important;
             }
-            
             .field textarea {
                 height: auto !important;
                 min-height: 60px !important;
             }
-            
             /* Estilos para prioridad en texto durante impresión */
             .prioridad-texto {
                 color: #000 !important;
@@ -957,53 +874,43 @@
                 font-weight: bold !important;
             }
         }
-
         /* ===== MODIFICADO: Responsive mejorado para móviles con KPIs del calendario ===== */
         @media (max-width: 1024px) {
             .container {
                 max-width: 100%;
                 padding: var(--spacing-s);
             }
-            
             .main-layout {
                 grid-template-columns: 1fr;
                 gap: var(--spacing-m);
             }
-            
             .sidebar {
                 position: relative;
                 top: 0;
             }
-            
             .kpi-cards {
                 gap: var(--spacing-s);
             }
-            
             .kpi-card {
                 min-width: 160px;
                 padding: var(--spacing-s) var(--spacing-m);
             }
-            
             .filter-row {
                 gap: var(--spacing-s);
             }
-            
             .filter-group {
                 min-width: 140px;
             }
-
             #modal .content, #modalVer .content {
                 max-width: 95%;
             }
         }
-
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 gap: var(--spacing-s);
                 text-align: center;
             }
-            
             /* MODIFICADO: KPIs responsivos como en el calendario */
             .kpi-cards {
                 display: flex;
@@ -1011,64 +918,51 @@
                 gap: 8px;
                 justify-content: space-between;
             }
-            
             .kpi-card {
                 flex: 1;
                 min-width: 80px;
                 padding: 10px 12px;
             }
-            
             .filter-row {
                 flex-direction: column;
             }
-            
             .filter-group {
                 min-width: auto;
             }
-            
             #paginacion-container {
                 flex-direction: column;
                 gap: var(--spacing-m);
                 text-align: center;
             }
-            
             .table-title {
                 padding: var(--spacing-s);
             }
-            
             .data-table th, 
             .data-table td {
                 padding: var(--spacing-s);
             }
-
             .action-buttons {
                 flex-direction: column;
             }
-
             .controls-form {
                 flex-direction: column;
             }
-
             #formCausa .grid {
                 grid-template-columns: 1fr;
             }
-            
             /* Mejoras para móviles */
             .tabs-nav {
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
-            
             .tab-button {
                 padding: 10px 14px;
                 font-size: 0.85rem;
             }
-            
             .data-table {
                 min-width: 600px;
             }
-            
             .actions {
                 flex-wrap: nowrap;
                 overflow-x: auto;
@@ -1076,13 +970,11 @@
                 padding-bottom: 4px;
             }
         }
-
         @media (max-width: 576px) {
             .container {
                 padding: var(--spacing-xs);
                 width: 100%;
             }
-            
             /* ===== CAMBIO SOLICITADO ===== */
             /* KPIs en una columna en pantallas pequeñas */
             .kpi-cards {
@@ -1090,7 +982,6 @@
                 flex-wrap: wrap;
                 gap: 8px;
             }
-            
             .kpi-card {
                 /* Esto hace que ocupe el 100% del ancho */
                 flex: 1 1 100%; 
@@ -1098,120 +989,98 @@
                 padding: 10px 8px;
             }
             /* ===== FIN DEL CAMBIO ===== */
-            
             .kpi-number {
                 font-size: var(--h1-size);
             }
-            
             .filters-section,
             .table-section,
             .sidebar {
                 padding: var(--spacing-s);
             }
-            
             .filters-title,
             .table-title,
             .sidebar h2 {
                 font-size: var(--body-large-size);
             }
-            
             .event {
                 flex-direction: column;
                 gap: var(--spacing-xs);
             }
-            
             .group {
                 margin-bottom: var(--spacing-s);
             }
-
             #modal .content, #modalVer .content {
                 max-width: 100%;
                 max-height: 100vh;
                 border-radius: 0;
                 margin: 0;
             }
-
             .modal-header,
             .modal-body,
             .controls-form {
                 padding: var(--spacing-s);
             }
-            
             /* Mejoras específicas para móviles pequeños */
             .filter-group {
                 width: 100%;
             }
-            
             .button {
                 width: 100%;
                 justify-content: center;
             }
-            
             .tab-button {
                 padding: 8px 12px;
                 font-size: 0.8rem;
             }
-            
             .table-wrap {
                 margin: 0 -8px;
                 padding: 0 8px;
             }
-            
             .data-table {
                 min-width: 100%;
             }
-            
             .prioridad-pill {
                 font-size: 0.7rem;
                 padding: 3px 6px;
             }
-            
             .actions {
                 flex-direction: column;
                 gap: 4px;
             }
-            
             .actions .button {
                 width: 100%;
                 font-size: 0.85rem;
             }
-            
             .floating-alert {
                 max-width: 90%;
                 font-size: 0.9rem;
                 padding: 10px 15px;
             }
         }
-        
         /* Estilos para pantallas muy pequeñas (menos de 360px) */
         @media (max-width: 360px) {
             .container {
                 padding: 4px;
             }
-            
             /* La regla de 576px ya cubre esto, pero la dejamos por si acaso */
             .kpi-card {
                 flex: 1 1 100%;
                 padding: 10px;
             }
-            
             .filters-section,
             .table-section,
             .sidebar {
                 padding: 8px;
             }
-            
             .tab-button {
                 padding: 6px 8px;
                 font-size: 0.75rem;
             }
-            
             .data-table th, 
             .data-table td {
                 padding: 6px;
                 font-size: 0.8rem;
             }
-            
             .button {
                 padding: 8px 12px;
                 font-size: 0.85rem;
@@ -1221,7 +1090,6 @@
 </head>
 <body>
     <div class="floating-alert" id="floating-alert"></div>
-
     <header class="header">
         <div class="header-content">
             <button id="btnNuevo" class="button">
@@ -1229,7 +1097,6 @@
             </button>
         </div>
     </header>
-
     <main class="container">
         <div class="main-layout">
             <div class="main">
@@ -1239,7 +1106,6 @@
                         <div class="loading">Cargando datos...</div>
                     </div>
                 </section>
-
                 <section class="filters-section">
                     <h2 class="filters-title">Filtros de Búsqueda</h2>
                     <div class="filter-row">
@@ -1302,7 +1168,6 @@
                             <input type="date" id="filtroFechaHasta" class="input">
                         </div>
                     </div>
-                    
                     <div class="action-buttons">
                         <button id="btnPrintTodos" class="button button-success">
                             <i class="fas fa-print"></i> Imprimir Todos
@@ -1312,7 +1177,6 @@
                         </button>
                     </div>
                 </section>
-
                 <section class="table-section">
                     <h2 class="table-title">Expedientes Judiciales</h2>
                     <div class="table-wrap">
@@ -1327,21 +1191,20 @@
                                     <th>Estado</th>
                                     <th>Prioridad</th>
                                     <th>Registro</th>
+                                    <th>Próx. Evento</th>
                                     <th class="no-print">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tbodyCausas">
                                 <tr>
-                                    <td colspan="9">Cargando expedientes...</td>
+                                    <td colspan="10">Cargando expedientes...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </section>
-                
                 <div id="paginacion-container"></div>
             </div>
-
             <!-- NUEVO: Panel de Eventos de Hoy -->
             <aside class="sidebar">
                 <h2>📅 Eventos de Hoy</h2>
@@ -1364,7 +1227,6 @@
             </aside>
         </div>
     </main>
-
     <div id="modal">
         <div class="content">
             <div class="modal-header">
@@ -1381,7 +1243,6 @@
                             <button type="button" class="tab-button" data-tab="tab3">Recursos</button>
                             <button type="button" class="tab-button" data-tab="tab4">Observaciones</button>
                         </div>
-
                         <div id="tab1" class="tab-content active">
                             <div class="field">
                                 <label for="numCausa">N° Expediente *</label>
@@ -1435,7 +1296,6 @@
                                 <textarea id="datosNnya" disabled></textarea><div class="counter" id="counterNnya" style="display:none">0/500</div>
                             </div>
                         </div>
-
                         <div id="tab2" class="tab-content">
                             <div class="field"><label for="fechaInicio">Fecha de Inicio</label><input type="date" id="fechaInicio" /></div>
                             <div class="field"><label for="fechaPase">Fecha de Pase</label><input type="datetime-local" id="fechaPase" /></div>
@@ -1455,7 +1315,6 @@
                                 <textarea id="nnyaGesell" disabled></textarea><div class="counter" id="counterNnyaGesell" style="display:none">0/400</div>
                             </div>
                         </div>
-
                         <div id="tab3" class="tab-content">
                             <div class="field">
                                 <label for="recursos">Recursos Interpuestos</label>
@@ -1476,7 +1335,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div id="tab4" class="tab-content">
                             <div class="field">
                                 <label for="observaciones">Observaciones (máx. 1000 palabras)</label>
@@ -1491,7 +1349,6 @@
             </div>
         </div>
     </div>
-
     <div id="modalVer">
         <div class="content">
             <div class="modal-header">
@@ -1516,7 +1373,6 @@
             </div>
         </div>
     </div>
-
     <div id="alertModal">
         <div class="content">
             <h3 id="alertTitle"></h3>
@@ -1526,7 +1382,6 @@
             </div>
         </div>
     </div>
-
     <script>
         // ===== CONFIGURACIÓN DE FIREBASE =====
         const firebaseConfig = {
@@ -1537,7 +1392,6 @@
             messagingSenderId: "186064671470",
             appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
         };
-
         // ===== INICIALIZACIÓN DE FIREBASE =====
         // Verificar si Firebase ya está inicializado
         let app;
@@ -1548,9 +1402,7 @@
             console.log("Inicializando Firebase...");
             app = firebase.initializeApp(firebaseConfig);
         }
-        
         const db = firebase.firestore();
-
         // ===== VARIABLES GLOBALES =====
         let modo = "nuevo"; // Variable global para el modo (nuevo/editar)
         let datosCache = [];
@@ -1561,7 +1413,6 @@
         let usuariosCache = [];
         let juzgadosPorTipoCache = {};
         let kpisData = {};
-
         // ===== CONSTANTES Y CONFIGURACIONES =====
         const recordsPerPage = 10;
         const intervencionOptions = [
@@ -1571,7 +1422,6 @@
             "Ministerio Público en turno Abril", "Ministerio Público en turno Agosto",
             "Ministerio Público en turno Diciembre", "Asistencia Letrada del incapaz","Tutor Ad Litem","Defensor Oficial Art 329 CPCC", "Defensor Oficial Art 626 CPCC"   
         ];
-
         // ===== SELECTORES DEL DOM =====
         const $ = (id) => document.getElementById(id);
         const tbody = $("tbodyCausas");
@@ -1603,33 +1453,25 @@
         const alertTitle = $("alertTitle");
         const alertMessage = $("alertMessage");
         const btnAlertOK = $("btnAlertOK");
-        
         // Selectores del formulario
         const selTipo = $("tipoProceso"), selJuz = $("juzgado"), selUsu = $("usuarioAsignado"), selPrioridad = $("prioridad");
         const tabButtons = document.querySelectorAll(".tab-button");
         const tabContents = document.querySelectorAll(".tab-content");
-
         // ===== FUNCIONES UTILITARIAS =====
         const toDate = (v) => v?.toDate ? v.toDate() : (v?.seconds ? new Date(v.seconds*1000) : (v ? new Date(v) : null));
-        
         function formatearFecha(d, conHora = false) {
             const fecha = toDate(d);
             if (!fecha || isNaN(fecha)) return "";
-
             const dia = String(fecha.getDate()).padStart(2, '0');
             const mes = String(fecha.getMonth() + 1).padStart(2, '0');
             const año = fecha.getFullYear();
-            
             if (!conHora) {
                 return `${dia}/${mes}/${año}`;
             }
-            
             const horas = String(fecha.getHours()).padStart(2, '0');
             const minutos = String(fecha.getMinutes()).padStart(2, '0');
-            
             return `${dia}/${mes}/${año} ${horas}:${minutos}`;
         }
-        
         const prioridadClase = (p) => {
             p = (p || "Ninguna").toLowerCase();
             if(p === "alta") return "prioridad-alta";
@@ -1637,7 +1479,6 @@
             if(p === "baja") return "prioridad-baja";
             return "prioridad-ninguna";
         };
-
         const prioridadClaseTexto = (p) => {
             p = (p || "Ninguna").toLowerCase();
             if(p === "alta") return "alta";
@@ -1645,6 +1486,51 @@
             if(p === "baja") return "baja";
             return "ninguna";
         };
+
+        // NUEVA FUNCIÓN: Obtener próximo evento
+        function obtenerProximoEvento(causa) {
+            const eventos = [];
+
+            // Audiencias
+            if (Array.isArray(causa.audiencias)) {
+                causa.audiencias.forEach(aud => {
+                    const fecha = toDate(aud);
+                    if (fecha) {
+                        eventos.push({ tipo: "Audiencia", fecha: fecha });
+                    }
+                });
+            }
+
+            // Cámara Gesell
+            if (causa.audienciaGesell) {
+                const fecha = toDate(causa.audienciaGesell);
+                if (fecha) {
+                    eventos.push({ tipo: "Gesell", fecha: fecha });
+                }
+            }
+
+            // Vencimiento
+            if (causa.vencimiento) {
+                const fecha = toDate(causa.vencimiento);
+                if (fecha) {
+                    eventos.push({ tipo: "Vencimiento", fecha: fecha });
+                }
+            }
+
+            // Vencimiento de Recursos
+            if (causa.vencimientoRecursos) {
+                const fecha = toDate(causa.vencimientoRecursos);
+                if (fecha) {
+                    eventos.push({ tipo: "Recurso", fecha: fecha });
+                }
+            }
+
+            if (eventos.length === 0) return null;
+
+            // Encontrar el evento más próximo
+            eventos.sort((a, b) => a.fecha - b.fecha);
+            return eventos[0];
+        }
 
         // ===== FUNCIONES DE DATOS =====
         async function cargarUsuarios() {
@@ -1665,7 +1551,6 @@
                 mostrarAlertaFlotante("Error al cargar usuarios", 'danger');
             }
         }
-
         async function cargarJuzgados() {
             try {
                 console.log("Cargando juzgados...");
@@ -1689,7 +1574,6 @@
                 mostrarAlertaFlotante("Error al cargar juzgados", 'danger');
             }
         }
-
         // ===== FUNCIONES DE INTERFAZ =====
         function poblarTiposProceso() {
             const selTipo = $("tipoProceso");
@@ -1697,47 +1581,39 @@
             selTipo.innerHTML = '<option value="">Seleccione un tipo</option>' + 
                 tipos.map(t => `<option value="${t}">${t}</option>`).join('');
         }
-        
         function poblarFiltroTiposProceso() {
             const current = filtroTipoProceso.value;
             const tipos = Object.keys(juzgadosPorTipoCache).sort((a, b) => a.localeCompare(b));
-            
             filtroTipoProceso.innerHTML = '<option value="">Tipo de Proceso (todos)</option>' + 
                 tipos.map(t => `<option value="${t}">${t}</option>`).join('');
             if (current) filtroTipoProceso.value = current;
         }
-        
         function poblarFiltroIntervencion() {
             const current = filtroIntervencion.value;
             filtroIntervencion.innerHTML = '<option value="">Intervención (todas)</option>' + 
                 intervencionOptions.map(i => `<option value="${i}">${i}</option>`).join('');
             if (current) filtroIntervencion.value = current;
         }
-
         function poblarJuzgadosPorTipo(tipoSeleccionado) {
             const selJuz = $("juzgado");
             const juzgados = juzgadosPorTipoCache[tipoSeleccionado] || [];
             selJuz.innerHTML = '<option value="">Seleccione un juzgado</option>' + 
                 juzgados.map(j => `<option value="${j}">${j}</option>`).join('');
         }
-
         function poblarSelectUsuarios() {
             const selUsu = $("usuarioAsignado");
             selUsu.innerHTML = '<option value="">Seleccione un usuario</option>' + 
                 usuariosCache.map(u => `<option value="${u}">${u}</option>`).join('');
         }
-
         function poblarFiltroUsuarios() {
             const current = filtroUsuario.value; 
             filtroUsuario.innerHTML = '<option value="">Usuario (todos)</option>' + 
                 usuariosCache.map(u => `<option value="${u}">${u}</option>`).join('');
             if (current) filtroUsuario.value = current;
         }
-
         // ===== FUNCIONES PRINCIPALES =====
         function suscribirCausas() {
             if (unsubCausas) unsubCausas();
-            
             console.log("Suscribiendo a cambios en causas...");
             unsubCausas = db.collection("causas").orderBy("fechaRegistro", "desc").onSnapshot(
                 snap => {
@@ -1752,12 +1628,11 @@
                 },
                 err => {
                     console.error("Error en onSnapshot causas:", err);
-                    tbody.innerHTML = "<tr><td colspan='9'>Error al cargar los datos.</td></tr>";
+                    tbody.innerHTML = "<tr><td colspan='10'>Error al cargar los datos.</td></tr>";
                     mostrarAlertaFlotante("Error al cargar los expedientes", 'danger');
                 }
             );
         }
-
         // ===== FUNCIÓN CORREGIDA: FILTRAR DATOS =====
         function filtrarDatos() {
             const q = (buscador.value || "").toLowerCase();
@@ -1769,7 +1644,6 @@
             const evento = (filtroEventos.value || "").toLowerCase();
             const fechaDesde = filtroFechaDesde.value;
             const fechaHasta = filtroFechaHasta.value;
-            
             return datosCache.filter(d => {
                 // Filtro de texto (búsqueda) - busca en campos principales
                 const okTexto = !q || 
@@ -1779,27 +1653,22 @@
                     (d.juzgado && d.juzgado.toLowerCase().includes(q)) ||
                     (d.usuarioAsignado && d.usuarioAsignado.toLowerCase().includes(q)) ||
                     (d.estado && d.estado.toLowerCase().includes(q));
-
                 // Filtros exactos
                 const okEstado = !est || (String(d.estado || "").toLowerCase() === est);
                 const okUsuario = !usu || (String(d.usuarioAsignado || "").toLowerCase() === usu);
                 const okPrioridad = !prio || (String(d.prioridad || "").toLowerCase() === prio);
                 const okIntervencion = !interv || (String(d.intervencion || "").toLowerCase() === interv);
                 const okTipoProceso = !tipoProc || (String(d.tipoProceso || "").toLowerCase() === tipoProc);
-
                 // Si no hay filtro de evento ni de fechas, devolvemos los filtros básicos
                 if (!evento && !fechaDesde && !fechaHasta) {
                     return okTexto && okEstado && okUsuario && okPrioridad && okIntervencion && okTipoProceso;
                 }
-
                 // Filtro de eventos y fechas
                 let tieneEvento = !evento; // Si no hay evento seleccionado, entonces no filtra por evento
                 let cumpleRangoFechas = !fechaDesde && !fechaHasta; // Si no hay fechas, no filtra por fecha
-
                 // Si hay evento o fechas, buscamos en los eventos de la causa
                 if (evento || fechaDesde || fechaHasta) {
                     let eventos = [];
-
                     // Audiencias
                     if (Array.isArray(d.audiencias)) {
                         d.audiencias.forEach(aud => {
@@ -1808,33 +1677,27 @@
                             }
                         });
                     }
-
                     // Cámara Gesell
                     if (d.audienciaGesell) {
                         eventos.push({ tipo: 'gesell', fecha: toDate(d.audienciaGesell) });
                     }
-
                     // Vencimientos
                     if (d.vencimiento) {
                         eventos.push({ tipo: 'vencimientos', fecha: toDate(d.vencimiento) });
                     }
-
                     // Vencimientos de Recursos
                     if (d.vencimientoRecursos) {
                         eventos.push({ tipo: 'recursos', fecha: toDate(d.vencimientoRecursos) });
                     }
-
                     // Filtrar por tipo de evento si hay
                     let eventosFiltrados = eventos;
                     if (evento) {
                         eventosFiltrados = eventos.filter(e => e.tipo === evento);
                     }
-
                     // Filtrar por rango de fechas si hay
                     if (fechaDesde || fechaHasta) {
                         const desde = fechaDesde ? new Date(fechaDesde) : null;
                         const hasta = fechaHasta ? new Date(fechaHasta + 'T23:59:59') : null;
-
                         eventosFiltrados = eventosFiltrados.filter(e => {
                             if (!e.fecha) return false;
                             const fechaEvento = new Date(e.fecha);
@@ -1849,24 +1712,20 @@
                             return cumpleDesde && cumpleHasta;
                         });
                     }
-
                     // Si hay evento, debe tener al menos un evento del tipo y que cumpla el rango
                     tieneEvento = !evento || eventosFiltrados.length > 0;
                     // Si hay fechas, debe tener al menos un evento que cumpla el rango (y el tipo si hay)
                     cumpleRangoFechas = eventosFiltrados.length > 0 || (!fechaDesde && !fechaHasta);
                 }
-
                 return okTexto && okEstado && okUsuario && okPrioridad && okIntervencion && okTipoProceso && tieneEvento && cumpleRangoFechas;
             });
         }
-
         const handleFilterChange = () => {
             datosFiltrados = filtrarDatos();
             paginaActual = 1;
             renderTablaPaginada();
             actualizarKPIs();
         };
-        
         const renderTablaPaginada = () => {
             const startIndex = (paginaActual - 1) * recordsPerPage;
             const endIndex = startIndex + recordsPerPage;
@@ -1874,15 +1733,19 @@
             renderTablas(dataToRender);
             renderPaginacion(datosFiltrados.length, dataToRender.length);
         };
-
         function accionesHTML(id){
             return `<button class="button ver-detalles" data-id="${id}" title="Ver"><i class="fa fa-eye"></i></button>
                     <button class="button button-secondary editar-detalles" data-id="${id}" title="Editar"><i class="fa fa-pen"></i></button>`;
         }
-
         function renderTablas(data){
-            tbody.innerHTML = data.length ? "" : "<tr><td colspan='9'>No hay registros</td></tr>";
+            tbody.innerHTML = data.length ? "" : "<tr><td colspan='10'>No hay registros</td></tr>";
             data.forEach(d=>{
+                const proxEvento = obtenerProximoEvento(d);
+                let proxEventoHTML = "—";
+                if (proxEvento) {
+                    proxEventoHTML = `${proxEvento.tipo}<br><small>${formatearFecha(proxEvento.fecha, true)}</small>`;
+                }
+
                 tbody.insertAdjacentHTML("beforeend", `
                     <tr>
                         <td>${d.numCausa||""}</td>
@@ -1893,14 +1756,13 @@
                         <td>${d.estado||""}</td>
                         <td><span class="prioridad-pill ${prioridadClase(d.prioridad)}">${d.prioridad||"Ninguna"}</span></td>
                         <td>${formatearFecha(d.fechaRegistro, false)}</td>
+                        <td>${proxEventoHTML}</td>
                         <td class="actions">${accionesHTML(d.id)}</td>
                     </tr>`);
             });
-
             document.querySelectorAll(".ver-detalles").forEach(b=>b.onclick=()=>abrirVer(b.dataset.id));
             document.querySelectorAll(".editar-detalles").forEach(b=>b.onclick=()=>abrirEditar(b.dataset.id));
         }
-
         function renderPaginacion(totalRecords, recordsOnPage) {
             const container = $("paginacion-container");
             const totalPages = Math.ceil(totalRecords / recordsPerPage);
@@ -1914,14 +1776,12 @@
                     <button id="btnNextPage" class="button" ${paginaActual === totalPages ? 'disabled' : ''}>Siguiente <i class="fa fa-arrow-right"></i></button>
                 </div>
             `;
-
             if ($("btnPrevPage")) {
                 $("btnPrevPage").onclick = () => {
                     paginaActual--;
                     renderTablaPaginada();
                 };
             }
-
             if ($("btnNextPage")) {
                 $("btnNextPage").onclick = () => {
                     paginaActual++;
@@ -1929,25 +1789,21 @@
                 };
             }
         }
-
         // NUEVA FUNCIÓN: Renderizar eventos de hoy
         function renderEventosHoy() {
             const hoy = new Date();
             hoy.setHours(0, 0, 0, 0);
             const manana = new Date(hoy);
             manana.setDate(manana.getDate() + 1);
-            
             const eventosHoy = {
                 audiencias: [],
                 gesell: [],
                 vencimientos: [],
                 recursos: []
             };
-            
             datosCache.forEach(d => {
                 const id = d.numCausa || d.id;
                 const causaId = d.id;
-                
                 // Audiencias
                 if (Array.isArray(d.audiencias)) {
                     d.audiencias.forEach(aud => {
@@ -1962,7 +1818,6 @@
                         }
                     });
                 }
-                
                 // Cámara Gesell
                 const fechaGesell = toDate(d.audienciaGesell);
                 if (fechaGesell && fechaGesell >= hoy && fechaGesell < manana) {
@@ -1973,7 +1828,6 @@
                         tipo: 'Cámara Gesell'
                     });
                 }
-                
                 // Vencimientos
                 const fechaVenc = toDate(d.vencimiento);
                 if (fechaVenc && fechaVenc >= hoy && fechaVenc < manana) {
@@ -1984,7 +1838,6 @@
                         tipo: 'Vencimiento'
                     });
                 }
-                
                 // Vencimientos de Recursos
                 const fechaVrec = toDate(d.vencimientoRecursos);
                 if (fechaVrec && fechaVrec >= hoy && fechaVrec < manana) {
@@ -1996,19 +1849,15 @@
                     });
                 }
             });
-            
             // Función para renderizar una lista de eventos
             const renderListaEventos = (eventos, target, tipo) => {
                 target.innerHTML = "";
-                
                 if (!eventos.length) {
                     target.innerHTML = `<div class="evento-vacio">No hay eventos para hoy</div>`;
                     return;
                 }
-                
                 // Ordenar eventos por fecha
                 eventos.sort((a, b) => a.fecha - b.fecha);
-                
                 eventos.forEach(evento => {
                     const elemento = document.createElement('div');
                     elemento.className = `evento-item evento-item-${tipo}`;
@@ -2017,7 +1866,6 @@
                         <span class="evento-hora">${formatearFecha(evento.fecha, true)}</span>
                     `;
                     target.appendChild(elemento);
-                    
                     // Agregar event listener al número de causa
                     const numeroCausa = elemento.querySelector('.evento-numero');
                     numeroCausa.onclick = (e) => {
@@ -2026,29 +1874,24 @@
                     };
                 });
             };
-            
             // Renderizar cada tipo de evento
             renderListaEventos(eventosHoy.audiencias, listAudHoy, 'audiencias');
             renderListaEventos(eventosHoy.gesell, listGesellHoy, 'gesell');
             renderListaEventos(eventosHoy.vencimientos, listVencHoy, 'vencimientos');
             renderListaEventos(eventosHoy.recursos, listRecursosHoy, 'recursos');
         }
-
         function actualizarKPIs() {
             const kpiCardsContainer = $("kpiCards");
-            
             if (datosCache.length === 0) {
                 kpiCardsContainer.innerHTML = '<div class="loading">No hay datos disponibles</div>';
                 return;
             }
-            
             // Calcular KPIs
             const totalCasos = datosCache.length;
             const enTramite = datosCache.filter(c => c.estado && c.estado === 'En trámite').length;
             const finalizado = datosCache.filter(c => c.estado && c.estado === 'Finalizado').length;
             const enAlzada = datosCache.filter(c => c.estado && c.estado === 'En Alzada').length;
             const archivado = datosCache.filter(c => c.estado && c.estado === 'Archivado').length;
-            
             kpisData = {
                 total: totalCasos,
                 enTramite: enTramite,
@@ -2056,9 +1899,7 @@
                 enAlzada: enAlzada,
                 archivado: archivado
             };
-            
             let kpisHTML = '';
-            
             // KPIs predefinidos con etiquetas formateadas
             const kpisConfig = [
                 { key: 'total', label: 'Total de Causas', class: 'total' },
@@ -2067,7 +1908,6 @@
                 { key: 'enAlzada', label: 'En Alzada', class: 'en-alzada' },
                 { key: 'archivado', label: 'Archivado', class: 'archivado' }
             ];
-            
             // Generar tarjetas de KPIs basadas en los datos
             kpisConfig.forEach(kpi => {
                 if (kpisData[kpi.key] !== undefined) {
@@ -2079,10 +1919,8 @@
                     `;
                 }
             });
-            
             kpiCardsContainer.innerHTML = kpisHTML;
         }
-
         // ===== FUNCIONES DE GESTIÓN DE EXPEDIENTES =====
         $("btnNuevo").onclick = ()=>{ // CORRECCIÓN: No necesita ser async
             modo = "nuevo"; 
@@ -2092,11 +1930,9 @@
             // await initForm(); // CORRECCIÓN: Eliminado, los listeners ya están
             modal.style.display = "flex"; 
         };
-        
         function validateForm() {
             let isValid = true;
             const requiredFields = ["numCausa", "caratula", "tipoProceso", "juzgado", "prioridad", "usuarioAsignado"];
-            
             requiredFields.forEach(id => {
                 const field = $(id);
                 const parent = field.closest('.field');
@@ -2107,12 +1943,10 @@
                     parent.classList.remove('error');
                 }
             });
-
             if (modo === "nuevo") {
                 const numCausa = $("numCausa").value.trim();
                 const numCausaExistente = datosCache.some(d => d.numCausa === numCausa);
                 const numCausaField = $("numCausa").closest('.field');
-                
                 if (numCausaExistente) {
                     numCausaField.classList.add('error');
                     numCausaField.querySelector('.error-message').textContent = "Esta causa ya se encuentra registrada.";
@@ -2122,20 +1956,16 @@
                     numCausaField.querySelector('.error-message').textContent = "Este campo es obligatorio.";
                 }
             }
-
             return isValid;
         }
-        
         const mostrarAlertaPersonalizada = (titulo, mensaje) => {
             alertTitle.textContent = titulo;
             alertMessage.textContent = mensaje;
             alertModal.style.display = "flex";
         };
-        
         btnAlertOK.onclick = () => {
             alertModal.style.display = "none";
         };
-
         const mostrarAlertaFlotante = (mensaje, tipo) => {
             floatingAlert.textContent = mensaje;
             floatingAlert.classList.remove('danger', 'success');
@@ -2145,7 +1975,6 @@
                 floatingAlert.classList.remove('show');
             }, 3000);
         };
-
         const guardarExpediente = async () => {
             if (!validateForm()) {
                 mostrarAlertaPersonalizada("Error de Validación", "Por favor, completa los campos obligatorios.");
@@ -2154,7 +1983,6 @@
             const datos = recolectarDatosForm();
             const btnGuardar = $("btnGuardar");
             btnGuardar.disabled = true;
-            
             try {
                 if (modo === "nuevo") {
                     await db.collection("causas").add({...datos, fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()});
@@ -2176,9 +2004,7 @@
                 btnGuardar.disabled = false;
             }
         };
-        
         $("btnGuardar").onclick = guardarExpediente;
-        
         async function abrirEditar(id){
             modo = "editar"; 
             resetFormCausa(); // Resetear primero para limpiar estado
@@ -2198,7 +2024,6 @@
                 mostrarAlertaPersonalizada("Error", "No se pudo abrir el registro."); 
             }
         }
-        
         async function abrirVer(id){
             causaActualId = id;
             try{
@@ -2209,12 +2034,10 @@
                 }
                 const d = snap.data();
                 let contenidoHTML = "";
-
                 // Mostrar prioridad en texto con colores según el nivel
                 const prioridadClaseTextoVal = prioridadClaseTexto(d.prioridad);
                 const prioridadTexto = `<div class="prioridad-texto ${prioridadClaseTextoVal}"><strong>Prioridad: ${d.prioridad || "Ninguna"}</strong></div>`;
                 contenidoHTML += prioridadTexto;
-                
                 const etiquetas = {
                     numCausa: "N° Expediente", caratula: "Carátula", tipoProceso: "Tipo de Proceso", juzgado: "Juzgado",
                     fechaInicio: "Fecha de Inicio", fechaPase: "Fecha de Pase", intervencion: "Intervención",
@@ -2224,14 +2047,12 @@
                     vencimientoRecursos: "Vencimiento de Recursos", audienciaGesell: "Audiencia Gesell",
                     nnyaGesell: "NNyA en Gesell", observaciones: "Observaciones", fechaRegistro: "Fecha de Registro"
                 };
-                
                 const ordenClaves = [
                     "numCausa", "caratula", "tipoProceso", "juzgado", "estado", "usuarioAsignado",
                     "fechaRegistro", "fechaInicio", "fechaPase", "intervencion", "datosNnya", "vencimiento",
                     "audiencias", "recursos", "recursosContestacion", "estadoRecursos", "vencimientoRecursos",
                     "audienciaGesell", "nnyaGesell", "observaciones"
                 ];
-                
                 ordenClaves.forEach(k => {
                     const v = d[k];
                     if (v !== null && v !== undefined && v !== "" && k !== "prioridad") {
@@ -2250,7 +2071,6 @@
                         }
                     }
                 });
-
                 verContenido.innerHTML = contenidoHTML;
                 await cargarNotas(id);
                 modalVer.style.display = "flex";
@@ -2259,7 +2079,6 @@
                 mostrarAlertaPersonalizada("Error", "No se pudo abrir el detalle.");
             }
         }
-        
         async function cargarNotas(causaId) {
             historialNotas.innerHTML = "Cargando notas...";
             try {
@@ -2288,7 +2107,6 @@
                 historialNotas.innerHTML = `<p class="k">Error al cargar notas.</p>`;
             }
         }
-
         async function agregarNota() {
             if (!causaActualId) return mostrarAlertaPersonalizada("Error", "No se ha seleccionado una causa.");
             const notaTexto = notaBitacora.value.trim();
@@ -2306,10 +2124,8 @@
                 mostrarAlertaPersonalizada("Error", "No se pudo guardar la nota.");
             }
         }
-        
         btnAgregarNota.onclick = agregarNota;
         $("btnCerrarVer").onclick = ()=> modalVer.style.display = "none";
-
         // ===== FUNCIONES DE IMPRESIÓN =====
         const printSection = (html)=>{ 
             const w = window.open("","_blank","width=900,height=700"); 
@@ -2330,59 +2146,48 @@
                                 .prioridad-destacada, .tabs-nav, .tab-button {
                                     display: none !important;
                                 }
-                                
                                 .header, .filters-section, .sidebar, .pagination-container {
                                     display: none !important;
                                 }
-                                
                                 body, .container, .main-layout, .main {
                                     margin: 0 !important;
                                     padding: 0 !important;
                                     width: 100% !important;
                                     max-width: 100% !important;
                                 }
-                                
                                 .table-section, .kpi-section, .modal .content, #modalVer .content {
                                     box-shadow: none !important;
                                     border: 1px solid #ddd !important;
                                     page-break-inside: avoid;
                                 }
-                                
                                 .data-table {
                                     min-width: 100% !important;
                                 }
-                                
                                 .kpi-cards {
                                     display: grid !important;
                                     grid-template-columns: repeat(3, 1fr) !important;
                                     gap: 10px !important;
                                 }
-                                
                                 .prioridad-pill {
                                     color: #000 !important;
                                     background-color: transparent !important;
                                     border: 1px solid #000 !important;
                                 }
-                                
                                 .actions {
                                     display: none !important;
                                 }
-                                
                                 /* Estilos específicos para imprimir el formulario */
                                 .tab-content {
                                     display: block !important;
                                 }
-                                
                                 #formCausa .grid {
                                     display: table !important;
                                     width: 100% !important;
                                 }
-                                
                                 .field {
                                     display: table-row !important;
                                     margin-bottom: 0 !important;
                                 }
-                                
                                 .field label {
                                     display: table-cell !important;
                                     padding: 8px !important;
@@ -2390,7 +2195,6 @@
                                     width: 40% !important;
                                     border-bottom: 1px solid #ddd !important;
                                 }
-                                
                                 .field input, .field textarea, .field select {
                                     display: table-cell !important;
                                     width: 100% !important;
@@ -2399,12 +2203,10 @@
                                     border-bottom: 1px solid #ddd !important;
                                     background: transparent !important;
                                 }
-                                
                                 .field textarea {
                                     height: auto !important;
                                     min-height: 60px !important;
                                 }
-                                
                                 /* Estilos para prioridad en texto durante impresión */
                                 .prioridad-texto {
                                     color: #000 !important;
@@ -2412,25 +2214,21 @@
                                     border: 1px solid #000 !important;
                                     font-weight: bold !important;
                                 }
-                                
                                 /* Estilos para impresión del detalle */
                                 #verContenido p {
                                     margin: 8px 0 !important;
                                     font-size: 14px !important;
                                     line-height: 1.4 !important;
                                 }
-                                
                                 #verContenido strong {
                                     color: #000 !important;
                                     font-weight: bold !important;
                                 }
-                                
                                 .notes-history {
                                     margin-top: 20px !important;
                                     padding-top: 20px !important;
                                     border-top: 1px solid #ddd !important;
                                 }
-                                
                                 .notes-history h4 {
                                     margin: 0 0 10px !important;
                                     color: #000 !important;
@@ -2438,7 +2236,6 @@
                                     border-bottom: 2px solid #000 !important;
                                     padding-bottom: 5px !important;
                                 }
-                                
                                 .note-item {
                                     background: #f8f8f8 !important;
                                     border-left: 4px solid #007bff !important;
@@ -2446,7 +2243,6 @@
                                     margin-bottom: 10px !important;
                                     border-radius: 8px !important;
                                 }
-                                
                                 .note-meta {
                                     display: flex !important;
                                     justify-content: space-between !important;
@@ -2454,7 +2250,6 @@
                                     color: #6c757d !important;
                                     margin-bottom: 5px !important;
                                 }
-                                
                                 .note-text {
                                     font-size: 14px !important;
                                     line-height: 1.4 !important;
@@ -2469,7 +2264,6 @@
             w.focus(); 
             w.print(); 
         };
-        
         function generarTablaImpresion(data, titulo) {
             let tableHTML = `
                 <table border="1" style="width:100%; border-collapse:collapse; margin-top:20px;">
@@ -2483,12 +2277,17 @@
                             <th>Estado</th>
                             <th>Prioridad</th>
                             <th>Registro</th>
+                            <th>Próx. Evento</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
-            
             data.forEach(d => {
+                const proxEvento = obtenerProximoEvento(d);
+                let proxEventoTexto = "—";
+                if (proxEvento) {
+                    proxEventoTexto = `${proxEvento.tipo} ${formatearFecha(proxEvento.fecha, true)}`;
+                }
                 tableHTML += `
                     <tr>
                         <td>${d.numCausa||""}</td>
@@ -2499,28 +2298,24 @@
                         <td>${d.estado||""}</td>
                         <td>${d.prioridad||"Ninguna"}</td>
                         <td>${formatearFecha(d.fechaRegistro, false)}</td>
+                        <td>${proxEventoTexto}</td>
                     </tr>
                 `;
             });
-            
             tableHTML += `
                     </tbody>
                 </table>
             `;
-            
             return `<h2>${titulo}</h2>${tableHTML}`;
         }
-        
         $("btnPrintTodos").onclick = ()=> { 
             const html = generarTablaImpresion(datosCache, "Listado Completo de Expedientes Judiciales");
             printSection(html); 
         };
-        
         $("btnPrintFiltrado").onclick = ()=> { 
             const html = generarTablaImpresion(datosFiltrados, "Listado Filtrado de Expedientes Judiciales");
             printSection(html); 
         };
-
         $("btnPrintRegistro").onclick = ()=> {
             const contenido = `
                 <div style="padding: 20px; font-family: Arial, sans-serif;">
@@ -2536,21 +2331,17 @@
             `;
             printSection(contenido);
         };
-
         // ===== FUNCIONES DEL FORMULARIO =====
-        
         // Listener para las pestañas del formulario
         tabButtons.forEach(button => {
             button.addEventListener("click", () => {
                 tabButtons.forEach(btn => btn.classList.remove("active"));
                 tabContents.forEach(content => content.classList.remove("active"));
-                
                 button.classList.add("active");
                 const tabId = button.dataset.tab;
                 $(tabId).classList.add("active");
             });
         });
-
         function toggleFormFields(enable) {
             const formFields = document.querySelectorAll('#formCausa input, #formCausa textarea, #formCausa select');
             formFields.forEach(field => {
@@ -2560,13 +2351,11 @@
             });
             $("btnGuardar").disabled = !enable;
         }
-
         function validarExistenciaCausa() {
             if (modo !== "nuevo") return;
             const numCausa = $("numCausa").value.trim();
             const numCausaField = $("numCausa").closest('.field');
             const numCausaExistente = datosCache.some(d => d.numCausa === numCausa);
-            
             if (numCausaExistente) {
                 numCausaField.classList.add('error');
                 numCausaField.querySelector('.error-message').textContent = "Esta causa ya se encuentra registrada.";
@@ -2578,21 +2367,17 @@
                 toggleFormFields(true);
             }
         }
-
         // CORRECCIÓN: Esta función ahora solo configura los listeners
         function initFormEventListeners(){
             selTipo.addEventListener("change", function() {
                 poblarJuzgadosPorTipo(this.value);
             });
-            
             $("recursos").addEventListener("change", function(){
                 const recursosOpcionales = $("recursos-opcionales");
                 recursosOpcionales.style.display = this.value ? "block" : "none";
             });
-            
             // Agregar el validador en tiempo real al campo de numCausa
             $("numCausa").addEventListener("input", validarExistenciaCausa);
-
             $("intervencion").addEventListener("change", function(){
                 const datosNnya = $("datosNnya"), contadorNnya = $("counterNnya");
                 if (this.value === "Ministerio Complementario") { 
@@ -2604,32 +2389,26 @@
                     contadorNnya.style.display='none'; 
                 }
             });
-            
             const limitWords = (text, max)=>{ 
                 const words = text.trim().split(/\s+/).filter(Boolean); 
                 return words.length > max ? words.slice(0,max).join(" ") : text; 
             };
-            
             $("observaciones").addEventListener("input", function(){ 
                 this.value = limitWords(this.value, 1000); 
                 $("counter").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/1000`; 
             });
-            
             $("datosNnya").addEventListener("input", function(){ 
                 this.value = limitWords(this.value, 500); 
                 $("counterNnya").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/500`; 
             });
-            
             $("nnyaGesell").addEventListener("input", function(){ 
                 this.value = limitWords(this.value, 400); 
                 $("counterNnyaGesell").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/400`; 
             });
-            
             $("habilitarAudienciaGesell").addEventListener("change", function(){ 
                 toggleGesell(this.checked); 
             });
         }
-        
         function toggleGesell(enabled){ 
             const ag = $("audienciaGesell"), ng = $("nnyaGesell"); 
             if (enabled){ 
@@ -2644,7 +2423,6 @@
                 $("counterNnyaGesell").style.display='none'; 
             } 
         }
-        
         function resetFormCausa(){ 
             $("formCausa").reset(); 
             $("counter").textContent = "0/1000"; 
@@ -2653,47 +2431,37 @@
             selPrioridad.value = "Ninguna"; 
             audienciasContainer.innerHTML = ""; 
             agregarAudiencia();
-            
             document.querySelectorAll('.field.error').forEach(el => el.classList.remove('error'));
-            
             // Volver a la primera pestaña
             tabButtons.forEach(btn => btn.classList.remove("active"));
             tabContents.forEach(content => content.classList.remove("active"));
             tabButtons[0].classList.add("active");
             tabContents[0].classList.add("active");
             $("recursos-opcionales").style.display = "none";
-            
             // CORRECCIÓN: Asegurarse de resetear Gesell
             toggleGesell(false);
             $("habilitarAudienciaGesell").checked = false;
-
             toggleFormFields(true);
         }
-
         function recolectarDatosForm(){
             const fields = ["numCausa","caratula","tipoProceso","juzgado","fechaInicio","fechaPase","intervencion","datosNnya","vencimiento","usuarioAsignado","estado","prioridad","recursos","recursosContestacion","estadoRecursos","vencimientoRecursos","audienciaGesell","nnyaGesell","observaciones"];
             const datos = {};
-            
             fields.forEach(id=>{ 
                 const el = $(id); 
                 if(!el) return; 
-                
                 if (["date","datetime-local"].includes(el.type)) { 
                     datos[id] = el.value ? new Date(el.value) : null;
                 } else { 
                     datos[id] = el.value || ""; 
                 } 
             });
-            
             const audiencias = [];
             audienciasContainer.querySelectorAll('input[type="datetime-local"]').forEach(input => { 
                 if (input.value) audiencias.push(new Date(input.value)); 
             });
             datos.audiencias = audiencias.length > 0 ? audiencias : null;
-            
             return datos;
         }
-        
         function cargarDatosEnForm(d) {
             const formatFechaParaInput = (fecha, conHora = true) => {
                 if (!fecha || isNaN(fecha)) return "";
@@ -2707,7 +2475,6 @@
                 const minutos = String(fecha.getMinutes()).padStart(2, '0');
                 return `${año}-${mes}-${dia}T${horas}:${minutos}`;
             };
-            
             const setVal = (id, val) => {
                 const el = $(id);
                 if (!el) return;
@@ -2729,18 +2496,14 @@
                     el.value = val ?? "";
                 }
             };
-            
             if (d.tipoProceso) {
                 selTipo.value = d.tipoProceso;
                 poblarJuzgadosPorTipo(d.tipoProceso);
             }
-            
             ["numCausa", "caratula", "tipoProceso", "juzgado", "intervencion", "datosNnya", "usuarioAsignado", "estado", "prioridad", "recursos", "recursosContestacion", "estadoRecursos", "nnyaGesell", "observaciones"].forEach(k => setVal(k, d[k]));
             ["fechaInicio", "fechaPase", "vencimiento", "vencimientoRecursos", "audienciaGesell"].forEach(k => setVal(k, d[k]));
-            
             const hayRecursos = !!d.recursos;
             $("recursos-opcionales").style.display = hayRecursos ? "block" : "none";
-            
             audienciasContainer.innerHTML = "";
             if (Array.isArray(d.audiencias) && d.audiencias.length > 0) {
                 d.audiencias.forEach(aud => {
@@ -2752,12 +2515,10 @@
             } else {
                 agregarAudiencia();
             }
-            
             const habilitar = !!(d.audienciaGesell || d.nnyaGesell);
             $("habilitarAudienciaGesell").checked = habilitar;
             toggleGesell(habilitar);
         }
-
         function crearAudienciaItem(value = "") {
             const item = document.createElement('div');
             item.className = 'audiencia-item';
@@ -2772,20 +2533,16 @@
             };
             return item;
         }
-        
         function agregarAudiencia() { 
             audienciasContainer.appendChild(crearAudienciaItem()); 
         }
-        
         btnAgregarAudiencia.onclick = agregarAudiencia;
-        
         // ===== EVENT LISTENERS GLOBALES =====
         window.addEventListener("click", e=>{ 
             if (e.target === modal) modal.style.display="none"; 
             if (e.target === modalVer) modalVer.style.display="none"; 
             if (e.target === alertModal) alertModal.style.display="none";
         });
-
         // Event listeners para filtros
         buscador.oninput = handleFilterChange;
         filtroEstado.onchange = handleFilterChange;
@@ -2796,24 +2553,20 @@
         filtroEventos.onchange = handleFilterChange;
         filtroFechaDesde.onchange = handleFilterChange;
         filtroFechaHasta.onchange = handleFilterChange;
-
         // ===== INICIALIZACIÓN DE LA APLICACIÓN =====
         async function initApp() {
             try {
                 console.log("Inicializando aplicación...");
                 // Cargar datos base (usuarios, juzgados) en paralelo
                 await Promise.all([cargarUsuarios(), cargarJuzgados()]);
-                
                 // Poblar todos los filtros y selects que dependen de los datos base
                 poblarFiltroUsuarios();
                 poblarTiposProceso();
                 poblarFiltroTiposProceso();
                 poblarFiltroIntervencion();
                 poblarSelectUsuarios();
-                
                 // CORRECCIÓN: Configurar los listeners del formulario UNA SOLA VEZ
                 initFormEventListeners();
-                
                 // Suscribirse a los datos principales (expedientes)
                 suscribirCausas();
                 console.log("Aplicación inicializada correctamente");
@@ -2822,7 +2575,6 @@
                 mostrarAlertaPersonalizada("Error de Carga", "Error al cargar los datos iniciales. Verifica la consola para más detalles.");
             }
         }
-
         // Inicializar la aplicación cuando el DOM esté listo
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
