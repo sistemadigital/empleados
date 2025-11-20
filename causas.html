@@ -849,6 +849,69 @@
             font-size: 0.9rem;
             line-height: 1.4;
         }
+        /* NUEVO: Estilos para el editor de texto enriquecido */
+        .editor-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .editor-toolbar button {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .editor-toolbar button:hover {
+            background: #e9ecef;
+        }
+        .editor-toolbar button.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        .color-button {
+            font-weight: bold;
+            min-width: 50px;
+        }
+        .color-button.azul {
+            color: #007bff;
+            border-color: #007bff;
+        }
+        .color-button.rojo {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        .color-button.verde {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        .color-button.normal {
+            color: #212529;
+            border-color: #6c757d;
+        }
+        #observaciones-editor {
+            min-height: 120px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            background: #fff;
+            line-height: 1.5;
+        }
+        #observaciones-editor:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
         /* Estilos para impresión - OCULTAR BOTONES Y ACCIONES */
         @media print {
             .button, .actions, .action-buttons, .controls-form,
@@ -859,7 +922,7 @@
             .fa-save, .fa-print, .fa-xmark, .fa-check, .fa-arrow-left, .fa-arrow-right,
             .fa-exclamation-triangle, .fa-timeline, .fa-file-pen,
             .btn-eliminar-audiencia, .btn-audiencia, .floating-alert,
-            .prioridad-destacada, .tabs-nav, .tab-button {
+            .prioridad-destacada, .tabs-nav, .tab-button, .editor-toolbar {
                 display: none !important;
             }
             .header, .filters-section, .sidebar, .pagination-container {
@@ -926,6 +989,13 @@
                 background-color: transparent !important;
                 border: 1px solid #000 !important;
                 font-weight: bold !important;
+            }
+            /* Estilos para editor de texto en impresión */
+            #observaciones-editor {
+                border: none !important;
+                padding: 0 !important;
+                min-height: auto !important;
+                max-height: none !important;
             }
         }
         /* ===== MODIFICADO: Responsive mejorado para móviles con KPIs del calendario ===== */
@@ -1023,6 +1093,9 @@
                 -webkit-overflow-scrolling: touch;
                 padding-bottom: 4px;
             }
+            .editor-toolbar {
+                flex-wrap: wrap;
+            }
         }
         @media (max-width: 576px) {
             .container {
@@ -1109,6 +1182,13 @@
                 max-width: 90%;
                 font-size: 0.9rem;
                 padding: 10px 15px;
+            }
+            .editor-toolbar {
+                padding: 6px;
+            }
+            .editor-toolbar button {
+                padding: 4px 8px;
+                font-size: 0.8rem;
             }
         }
         /* Estilos para pantallas muy pequeñas (menos de 360px) */
@@ -1409,7 +1489,16 @@
                         <div id="tab7" class="tab-content">
                             <div class="field">
                                 <label for="observaciones">Observaciones (máx. 1000 palabras)</label>
-                                <textarea id="observaciones" rows="5"></textarea><div class="counter" id="counter">0/1000</div>
+                                <div class="editor-toolbar">
+                                    <button type="button" id="btnBold" title="Negrita"><i class="fas fa-bold"></i></button>
+                                    <button type="button" id="btnColorAzul" class="color-button azul" title="Color Azul">A</button>
+                                    <button type="button" id="btnColorRojo" class="color-button rojo" title="Color Rojo">A</button>
+                                    <button type="button" id="btnColorVerde" class="color-button verde" title="Color Verde">A</button>
+                                    <button type="button" id="btnColorNormal" class="color-button normal" title="Color Normal">Normal</button>
+                                </div>
+                                <div id="observaciones-editor" contenteditable="true"></div>
+                                <input type="hidden" id="observaciones" name="observaciones">
+                                <div class="counter" id="counter">0/1000</div>
                             </div>
                         </div>
                     </div>
@@ -1531,6 +1620,14 @@
         const selTipo = $("tipoProceso"), selJuz = $("juzgado"), selUsu = $("usuarioAsignado"), selPrioridad = $("prioridad");
         const tabButtons = document.querySelectorAll(".tab-button");
         const tabContents = document.querySelectorAll(".tab-content");
+        // NUEVOS SELECTORES PARA EL EDITOR DE TEXTO
+        const btnBold = $("btnBold");
+        const btnColorAzul = $("btnColorAzul");
+        const btnColorRojo = $("btnColorRojo");
+        const btnColorVerde = $("btnColorVerde");
+        const btnColorNormal = $("btnColorNormal");
+        const observacionesEditor = $("observaciones-editor");
+        const observacionesHidden = $("observaciones");
         // ===== FUNCIONES UTILITARIAS =====
         const toDate = (v) => v?.toDate ? v.toDate() : (v?.seconds ? new Date(v.seconds*1000) : (v ? new Date(v) : null));
         function formatearFecha(d, conHora = false) {
@@ -2224,6 +2321,9 @@
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${formatearFecha(v, false)}</p>`;
                         } else if (v.seconds) {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${formatearFecha(v, true)}</p>`;
+                        } else if (k === "observaciones") {
+                            // Mostrar observaciones como HTML
+                            contenidoHTML += `<p><strong>${etiqueta}:</strong></p><div>${v}</div>`;
                         } else if (k !== "audiencias" && k !== "diligencias") {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${v}</p>`;
                         }
@@ -2301,7 +2401,7 @@
                                 .fa-save, .fa-print, .fa-xmark, .fa-check, .fa-arrow-left, .fa-arrow-right,
                                 .fa-exclamation-triangle, .fa-timeline, .fa-file-pen,
                                 .btn-eliminar-audiencia, .btn-audiencia, .floating-alert,
-                                .prioridad-destacada, .tabs-nav, .tab-button {
+                                .prioridad-destacada, .tabs-nav, .tab-button, .editor-toolbar {
                                     display: none !important;
                                 }
                                 .header, .filters-section, .sidebar, .pagination-container {
@@ -2411,6 +2511,13 @@
                                 .note-text {
                                     font-size: 14px !important;
                                     line-height: 1.4 !important;
+                                }
+                                /* Estilos para editor de texto en impresión */
+                                #observaciones-editor {
+                                    border: none !important;
+                                    padding: 0 !important;
+                                    min-height: auto !important;
+                                    max-height: none !important;
                                 }
                             }
                         </style>
@@ -2531,6 +2638,58 @@
                 toggleFormFields(true);
             }
         }
+        // NUEVA FUNCIÓN: Inicializar editor de texto enriquecido
+        function initEditor() {
+            // Botón negrita
+            btnBold.addEventListener('click', function() {
+                document.execCommand('bold', false, null);
+                observacionesEditor.focus();
+            });
+            
+            // Botones de color
+            btnColorAzul.addEventListener('click', function() {
+                document.execCommand('styleWithCSS', false, true);
+                document.execCommand('foreColor', false, '#007bff');
+                observacionesEditor.focus();
+            });
+            
+            btnColorRojo.addEventListener('click', function() {
+                document.execCommand('styleWithCSS', false, true);
+                document.execCommand('foreColor', false, '#dc3545');
+                observacionesEditor.focus();
+            });
+            
+            btnColorVerde.addEventListener('click', function() {
+                document.execCommand('styleWithCSS', false, true);
+                document.execCommand('foreColor', false, '#28a745');
+                observacionesEditor.focus();
+            });
+            
+            // Botón para volver al color normal (negro)
+            btnColorNormal.addEventListener('click', function() {
+                document.execCommand('styleWithCSS', false, true);
+                document.execCommand('foreColor', false, '#212529');
+                observacionesEditor.focus();
+            });
+            
+            // Actualizar contador de palabras y hidden input
+            observacionesEditor.addEventListener('input', function() {
+                // Obtener texto sin etiquetas HTML para contar palabras
+                const text = this.innerText || this.textContent;
+                const words = text.trim().split(/\s+/).filter(Boolean);
+                $("counter").textContent = `${words.length}/1000`;
+                
+                // Actualizar el hidden input con el HTML
+                observacionesHidden.value = this.innerHTML;
+            });
+            
+            // Manejar pegado para eliminar formato no deseado
+            observacionesEditor.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                document.execCommand('insertText', false, text);
+            });
+        }
         // CORRECCIÓN: Esta función ahora solo configura los listeners
         function initFormEventListeners(){
             selTipo.addEventListener("change", function() {
@@ -2557,10 +2716,6 @@
                 const words = text.trim().split(/\s+/).filter(Boolean); 
                 return words.length > max ? words.slice(0,max).join(" ") : text; 
             };
-            $("observaciones").addEventListener("input", function(){ 
-                this.value = limitWords(this.value, 1000); 
-                $("counter").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/1000`; 
-            });
             $("datosNnya").addEventListener("input", function(){ 
                 this.value = limitWords(this.value, 500); 
                 $("counterNnya").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/500`; 
@@ -2572,6 +2727,9 @@
             $("habilitarAudienciaGesell").addEventListener("change", function(){ 
                 toggleGesell(this.checked); 
             });
+            
+            // Inicializar editor de texto enriquecido
+            initEditor();
         }
         function toggleGesell(enabled){ 
             const ag = $("audienciaGesell"), ng = $("nnyaGesell"); 
@@ -2608,6 +2766,9 @@
             toggleGesell(false);
             $("habilitarAudienciaGesell").checked = false;
             toggleFormFields(true);
+            // Resetear editor de texto
+            observacionesEditor.innerHTML = "";
+            observacionesHidden.value = "";
         }
         function recolectarDatosForm(){
             const fields = ["numCausa","caratula","tipoProceso","juzgado","fechaInicio","fechaPase","intervencion","datosNnya","vencimiento","usuarioAsignado","estado","prioridad","recursos","recursosContestacion","estadoRecursos","vencimientoRecursos","audienciaGesell","nnyaGesell","observaciones"];
@@ -2681,8 +2842,19 @@
                 selTipo.value = d.tipoProceso;
                 poblarJuzgadosPorTipo(d.tipoProceso);
             }
-            ["numCausa", "caratula", "tipoProceso", "juzgado", "intervencion", "datosNnya", "usuarioAsignado", "estado", "prioridad", "recursos", "recursosContestacion", "estadoRecursos", "nnyaGesell", "observaciones"].forEach(k => setVal(k, d[k]));
+            ["numCausa", "caratula", "tipoProceso", "juzgado", "intervencion", "datosNnya", "usuarioAsignado", "estado", "prioridad", "recursos", "recursosContestacion", "estadoRecursos", "nnyaGesell"].forEach(k => setVal(k, d[k]));
             ["fechaInicio", "fechaPase", "vencimiento", "vencimientoRecursos", "audienciaGesell"].forEach(k => setVal(k, d[k]));
+            
+            // Cargar observaciones en el editor
+            if (d.observaciones) {
+                observacionesEditor.innerHTML = d.observaciones;
+                observacionesHidden.value = d.observaciones;
+                // Actualizar contador de palabras
+                const text = observacionesEditor.innerText || observacionesEditor.textContent;
+                const words = text.trim().split(/\s+/).filter(Boolean);
+                $("counter").textContent = `${words.length}/1000`;
+            }
+            
             const hayRecursos = !!d.recursos;
             $("recursos-opcionales").style.display = hayRecursos ? "block" : "none";
             audienciasContainer.innerHTML = "";
