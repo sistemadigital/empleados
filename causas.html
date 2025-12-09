@@ -17,7 +17,7 @@
             --secondary-light-gray: #e9ecef;
             --secondary-dark-gray: #6c757d;
             --status-success: #28a745;
-            --status-warning: #ff8c00; /* MODIFICADO: Cambiado a naranja oscuro */
+            --status-warning: #ff8c00;
             --status-danger: #dc3545;
             --status-info: #17a2b8;
             --text-primary: #212529;
@@ -657,24 +657,34 @@
             transform: translateX(-50%);
             background-color: var(--status-danger);
             color: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
+            padding: 16px 24px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
+            z-index: 2000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: var(--font-weight-semibold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
         .floating-alert.success {
             background-color: var(--status-success);
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
         }
         .floating-alert.show {
             opacity: 1;
             visibility: visible;
-            top: 20px;
+            top: 30px;
+        }
+        .floating-alert i {
+            font-size: 1.3rem;
         }
         .audiencias-container {
             margin-bottom: 10px;
@@ -1223,7 +1233,12 @@
     </style>
 </head>
 <body>
-    <div class="floating-alert" id="floating-alert"></div>
+    <!-- ALERTA FLOTANTE ROJA - ACTUALIZADA -->
+    <div class="floating-alert" id="floating-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="floating-alert-text"></span>
+    </div>
+    
     <header class="header">
         <div class="header-content">
             <button id="btnNuevo" class="button">
@@ -1620,6 +1635,7 @@
         const listRecursosHoy = $("listRecursosHoy");
         const listDiligenciasHoy = $("listDiligenciasHoy");
         const floatingAlert = $("floating-alert");
+        const floatingAlertText = $("floating-alert-text");
         const audienciasContainer = $("audiencias-container");
         const diligenciasContainer = $("diligencias-container");
         const btnAgregarAudiencia = $("btnAgregarAudiencia");
@@ -1675,6 +1691,34 @@
             if(p === "baja") return "baja";
             return "ninguna";
         };
+        
+        // ===== FUNCIÓN ACTUALIZADA: ALERTA FLOTANTE =====
+        function mostrarAlertaFlotante(mensaje, tipo = 'danger') {
+            if (!floatingAlertText) {
+                console.error("Elemento floating-alert-text no encontrado");
+                return;
+            }
+            
+            floatingAlertText.textContent = mensaje;
+            floatingAlert.classList.remove('danger', 'success', 'show');
+            floatingAlert.classList.add(tipo);
+            
+            // Asegurar que el ícono sea visible
+            const icon = floatingAlert.querySelector('i');
+            if (icon) {
+                icon.style.display = 'block';
+            }
+            
+            // Usar setTimeout para asegurar que el DOM se actualice
+            setTimeout(() => {
+                floatingAlert.classList.add('show');
+            }, 10);
+            
+            // Ocultar después de 5 segundos
+            setTimeout(() => {
+                floatingAlert.classList.remove('show');
+            }, 5000);
+        }
         
         // NUEVA FUNCIÓN: Obtener todos los eventos de una causa
         function obtenerTodosEventos(causa) {
@@ -2234,17 +2278,19 @@
         }
         
         // ===== FUNCIONES DE GESTIÓN DE EXPEDIENTES =====
-        $("btnNuevo").onclick = ()=>{ // CORRECCIÓN: No necesita ser async
+        function abrirNuevoExpediente() {
             modo = "nuevo"; 
             resetFormCausa(); 
             editId.value = ""; 
             tituloForm.textContent = "Nuevo Expediente"; 
             modal.style.display = "flex"; 
-        };
+        }
         
         function validateForm() {
             let isValid = true;
             const requiredFields = ["numCausa", "caratula", "tipoProceso", "juzgado", "prioridad", "usuarioAsignado"];
+            
+            // Validar campos obligatorios
             requiredFields.forEach(id => {
                 const field = $(id);
                 const parent = field.closest('.field');
@@ -2255,19 +2301,33 @@
                     parent.classList.remove('error');
                 }
             });
+            
+            // Si hay campos obligatorios vacíos, mostrar alerta flotante roja
+            if (!isValid) {
+                mostrarAlertaFlotante("Complete todos los campos obligatorios marcados con *", 'danger');
+                return false;
+            }
+            
+            // Validar que el número de expediente no exista en modo nuevo
             if (modo === "nuevo") {
                 const numCausa = $("numCausa").value.trim();
                 const numCausaExistente = datosCache.some(d => d.numCausa === numCausa);
                 const numCausaField = $("numCausa").closest('.field');
+                
                 if (numCausaExistente) {
                     numCausaField.classList.add('error');
                     numCausaField.querySelector('.error-message').textContent = "Esta causa ya se encuentra registrada.";
+                    
+                    // MOSTRAR ALERTA FLOTANTE ROJA
+                    mostrarAlertaFlotante("Existe en el sistema ese registro, por favor verifique e intente nuevamente.", 'danger');
+                    
                     isValid = false;
                 } else {
                     numCausaField.classList.remove('error');
                     numCausaField.querySelector('.error-message').textContent = "Este campo es obligatorio.";
                 }
             }
+            
             return isValid;
         }
         
@@ -2281,19 +2341,9 @@
             alertModal.style.display = "none";
         };
         
-        const mostrarAlertaFlotante = (mensaje, tipo) => {
-            floatingAlert.textContent = mensaje;
-            floatingAlert.classList.remove('danger', 'success');
-            floatingAlert.classList.add(tipo);
-            floatingAlert.classList.add('show');
-            setTimeout(() => {
-                floatingAlert.classList.remove('show');
-            }, 3000);
-        };
-        
         const guardarExpediente = async () => {
+            // Validar formulario (esto mostrará las alertas flotantes si hay errores)
             if (!validateForm()) {
-                mostrarAlertaPersonalizada("Error de Validación", "Por favor, completa los campos obligatorios.");
                 return;
             }
             
@@ -2305,6 +2355,7 @@
             const datos = recolectarDatosForm();
             const btnGuardar = $("btnGuardar");
             btnGuardar.disabled = true;
+            
             try {
                 if (modo === "nuevo") {
                     await db.collection("causas").add({...datos, fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()});
@@ -2326,8 +2377,6 @@
                 btnGuardar.disabled = false;
             }
         };
-        
-        $("btnGuardar").onclick = guardarExpediente;
         
         async function abrirEditar(id){
             modo = "editar"; 
@@ -2707,15 +2756,21 @@
             $("btnGuardar").disabled = !enable;
         }
         
+        // ===== FUNCIÓN MODIFICADA: VALIDAR EXISTENCIA DE CAUSA EN TIEMPO REAL =====
         function validarExistenciaCausa() {
             if (modo !== "nuevo") return;
+            
             const numCausa = $("numCausa").value.trim();
             const numCausaField = $("numCausa").closest('.field');
             const numCausaExistente = datosCache.some(d => d.numCausa === numCausa);
+            
             if (numCausaExistente) {
                 numCausaField.classList.add('error');
                 numCausaField.querySelector('.error-message').textContent = "Esta causa ya se encuentra registrada.";
-                mostrarAlertaFlotante("Causa registrada antes, vuelva a intentar con otro numero.", 'danger');
+                
+                // MOSTRAR ALERTA FLOTANTE ROJA
+                mostrarAlertaFlotante("Existe en el sistema ese registro, por favor verifique e intente nuevamente.", 'danger');
+                
                 toggleFormFields(false);
             } else {
                 numCausaField.classList.remove('error');
@@ -2727,93 +2782,126 @@
         // NUEVA FUNCIÓN: Inicializar editor de texto enriquecido
         function initEditor() {
             // Botón negrita
-            btnBold.addEventListener('click', function() {
-                document.execCommand('bold', false, null);
-                observacionesEditor.focus();
-            });
+            if (btnBold) {
+                btnBold.addEventListener('click', function() {
+                    document.execCommand('bold', false, null);
+                    observacionesEditor.focus();
+                });
+            }
             
             // Botones de color
-            btnColorAzul.addEventListener('click', function() {
-                document.execCommand('styleWithCSS', false, true);
-                document.execCommand('foreColor', false, '#007bff');
-                observacionesEditor.focus();
-            });
+            if (btnColorAzul) {
+                btnColorAzul.addEventListener('click', function() {
+                    document.execCommand('styleWithCSS', false, true);
+                    document.execCommand('foreColor', false, '#007bff');
+                    observacionesEditor.focus();
+                });
+            }
             
-            btnColorRojo.addEventListener('click', function() {
-                document.execCommand('styleWithCSS', false, true);
-                document.execCommand('foreColor', false, '#dc3545');
-                observacionesEditor.focus();
-            });
+            if (btnColorRojo) {
+                btnColorRojo.addEventListener('click', function() {
+                    document.execCommand('styleWithCSS', false, true);
+                    document.execCommand('foreColor', false, '#dc3545');
+                    observacionesEditor.focus();
+                });
+            }
             
-            btnColorVerde.addEventListener('click', function() {
-                document.execCommand('styleWithCSS', false, true);
-                document.execCommand('foreColor', false, '#28a745');
-                observacionesEditor.focus();
-            });
+            if (btnColorVerde) {
+                btnColorVerde.addEventListener('click', function() {
+                    document.execCommand('styleWithCSS', false, true);
+                    document.execCommand('foreColor', false, '#28a745');
+                    observacionesEditor.focus();
+                });
+            }
             
             // Botón para volver al color normal (negro)
-            btnColorNormal.addEventListener('click', function() {
-                document.execCommand('styleWithCSS', false, true);
-                document.execCommand('foreColor', false, '#212529');
-                observacionesEditor.focus();
-            });
+            if (btnColorNormal) {
+                btnColorNormal.addEventListener('click', function() {
+                    document.execCommand('styleWithCSS', false, true);
+                    document.execCommand('foreColor', false, '#212529');
+                    observacionesEditor.focus();
+                });
+            }
             
             // Actualizar contador de palabras y hidden input
-            observacionesEditor.addEventListener('input', function() {
-                // Obtener texto sin etiquetas HTML para contar palabras
-                const text = this.innerText || this.textContent;
-                const words = text.trim().split(/\s+/).filter(Boolean);
-                $("counter").textContent = `${words.length}/1000`;
+            if (observacionesEditor) {
+                observacionesEditor.addEventListener('input', function() {
+                    // Obtener texto sin etiquetas HTML para contar palabras
+                    const text = this.innerText || this.textContent;
+                    const words = text.trim().split(/\s+/).filter(Boolean);
+                    $("counter").textContent = `${words.length}/1000`;
+                    
+                    // Actualizar el hidden input con el HTML
+                    observacionesHidden.value = this.innerHTML;
+                });
                 
-                // Actualizar el hidden input con el HTML
-                observacionesHidden.value = this.innerHTML;
-            });
-            
-            // Manejar pegado para eliminar formato no deseado
-            observacionesEditor.addEventListener('paste', function(e) {
-                e.preventDefault();
-                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-                document.execCommand('insertText', false, text);
-            });
+                // Manejar pegado para eliminar formato no deseado
+                observacionesEditor.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                    document.execCommand('insertText', false, text);
+                });
+            }
         }
         
         // CORRECCIÓN: Esta función ahora solo configura los listeners
         function initFormEventListeners(){
-            selTipo.addEventListener("change", function() {
-                poblarJuzgadosPorTipo(this.value);
-            });
-            $("recursos").addEventListener("change", function(){
-                const recursosOpcionales = $("recursos-opcionales");
-                recursosOpcionales.style.display = this.value ? "block" : "none";
-            });
+            if (selTipo) {
+                selTipo.addEventListener("change", function() {
+                    poblarJuzgadosPorTipo(this.value);
+                });
+            }
+            
+            if ($("recursos")) {
+                $("recursos").addEventListener("change", function(){
+                    const recursosOpcionales = $("recursos-opcionales");
+                    recursosOpcionales.style.display = this.value ? "block" : "none";
+                });
+            }
+            
             // Agregar el validador en tiempo real al campo de numCausa
-            $("numCausa").addEventListener("input", validarExistenciaCausa);
-            $("intervencion").addEventListener("change", function(){
-                const datosNnya = $("datosNnya"), contadorNnya = $("counterNnya");
-                if (this.value === "Ministerio Complementario") { 
-                    datosNnya.removeAttribute("disabled"); 
-                    contadorNnya.style.display='block'; 
-                } else { 
-                    datosNnya.value = ""; 
-                    datosNnya.setAttribute("disabled","true"); 
-                    contadorNnya.style.display='none'; 
-                }
-            });
+            if ($("numCausa")) {
+                $("numCausa").addEventListener("input", validarExistenciaCausa);
+            }
+            
+            if ($("intervencion")) {
+                $("intervencion").addEventListener("change", function(){
+                    const datosNnya = $("datosNnya"), contadorNnya = $("counterNnya");
+                    if (this.value === "Ministerio Complementario") { 
+                        datosNnya.removeAttribute("disabled"); 
+                        contadorNnya.style.display='block'; 
+                    } else { 
+                        datosNnya.value = ""; 
+                        datosNnya.setAttribute("disabled","true"); 
+                        contadorNnya.style.display='none'; 
+                    }
+                });
+            }
+            
             const limitWords = (text, max)=>{ 
                 const words = text.trim().split(/\s+/).filter(Boolean); 
                 return words.length > max ? words.slice(0,max).join(" ") : text; 
             };
-            $("datosNnya").addEventListener("input", function(){ 
-                this.value = limitWords(this.value, 500); 
-                $("counterNnya").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/500`; 
-            });
-            $("nnyaGesell").addEventListener("input", function(){ 
-                this.value = limitWords(this.value, 400); 
-                $("counterNnyaGesell").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/400`; 
-            });
-            $("habilitarAudienciaGesell").addEventListener("change", function(){ 
-                toggleGesell(this.checked); 
-            });
+            
+            if ($("datosNnya")) {
+                $("datosNnya").addEventListener("input", function(){ 
+                    this.value = limitWords(this.value, 500); 
+                    $("counterNnya").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/500`; 
+                });
+            }
+            
+            if ($("nnyaGesell")) {
+                $("nnyaGesell").addEventListener("input", function(){ 
+                    this.value = limitWords(this.value, 400); 
+                    $("counterNnyaGesell").textContent = `${this.value.trim().split(/\s+/).filter(Boolean).length}/400`; 
+                });
+            }
+            
+            if ($("habilitarAudienciaGesell")) {
+                $("habilitarAudienciaGesell").addEventListener("change", function(){ 
+                    toggleGesell(this.checked); 
+                });
+            }
             
             // Inicializar editor de texto enriquecido
             initEditor();
@@ -3019,8 +3107,12 @@
             diligenciasContainer.appendChild(crearDiligenciaItem()); 
         }
         
-        btnAgregarAudiencia.onclick = agregarAudiencia;
-        btnAgregarDiligencia.onclick = agregarDiligencia;
+        if (btnAgregarAudiencia) {
+            btnAgregarAudiencia.onclick = agregarAudiencia;
+        }
+        if (btnAgregarDiligencia) {
+            btnAgregarDiligencia.onclick = agregarDiligencia;
+        }
         
         // ===== EVENT LISTENERS GLOBALES =====
         window.addEventListener("click", e=>{ 
@@ -3068,10 +3160,18 @@
                 // Suscribirse a los datos principales (expedientes)
                 suscribirCausas();
                 
+                // Asignar eventos a los botones principales
+                if ($("btnNuevo")) {
+                    $("btnNuevo").onclick = abrirNuevoExpediente;
+                }
+                if ($("btnGuardar")) {
+                    $("btnGuardar").onclick = guardarExpediente;
+                }
+                
                 console.log("Aplicación inicializada correctamente");
             } catch (error) {
                 console.error("Error durante la inicialización:", error);
-                mostrarAlertaPersonalizada("Error de Carga", "Error al cargar los datos iniciales: " + error.message);
+                mostrarAlertaFlotante("Error al cargar los datos iniciales: " + error.message, 'danger');
                 tbody.innerHTML = `<tr><td colspan='10'>Error al inicializar la aplicación: ${error.message}</td></tr>`;
             }
         }
