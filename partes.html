@@ -489,23 +489,78 @@
             padding: 12px 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             max-width: 400px;
             text-align: center;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .floating-alert.success {
             background-color: var(--status-success);
         }
 
+        .floating-alert.warning {
+            background-color: var(--status-warning);
+        }
+
         .floating-alert.show {
             opacity: 1;
             visibility: visible;
             top: 20px;
+        }
+
+        /* Campo con error */
+        .input-error {
+            border-color: var(--status-danger) !important;
+            background-color: #fff5f5 !important;
+        }
+
+        /* Modal bloqueado */
+        .modal-blocked {
+            position: relative;
+        }
+
+        .modal-blocked::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 10;
+            border-radius: 12px;
+        }
+
+        .modal-blocked .modal-body,
+        .modal-blocked .modal-footer {
+            filter: blur(1px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .modal-blocked .modal-header {
+            filter: blur(1px);
+        }
+
+        /* Campo obligatorio vacío */
+        .required-error {
+            border-color: var(--status-danger) !important;
+            background-color: #fff5f5 !important;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
 
         /* Estilos para impresión */
@@ -681,8 +736,17 @@
     </style>
 </head>
 <body>
-    <!-- Alerta flotante -->
-    <div class="floating-alert" id="floating-alert"></div>
+    <!-- Alerta flotante para duplicados -->
+    <div class="floating-alert" id="duplicateAlert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="duplicateAlertText"></span>
+    </div>
+
+    <!-- Alerta flotante para campos obligatorios -->
+    <div class="floating-alert warning" id="requiredFieldsAlert" style="display: none;">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>Faltan completar datos obligatorios.</span>
+    </div>
 
     <!-- Header -->
     <header class="header">
@@ -779,7 +843,7 @@
 
     <!-- Modal de registro -->
     <div id="modalRegistro" class="modal">
-        <div class="content">
+        <div class="content" id="modalContent">
             <div class="modal-header">
                 <i class="fa-solid fa-user-plus"></i>
                 <h2 id="modalRegistroTitle" style="margin:0;">Nuevo Registro</h2>
@@ -946,10 +1010,14 @@
         let ordenActual = { campo: 'apellido', direccion: 'asc' };
         let paginaActual = 1;
         const registrosPorPagina = 5;
+        let dniDuplicado = false;
 
         // Elementos DOM
-        const floatingAlert = document.getElementById('floating-alert');
+        const duplicateAlert = document.getElementById('duplicateAlert');
+        const duplicateAlertText = document.getElementById('duplicateAlertText');
+        const requiredFieldsAlert = document.getElementById('requiredFieldsAlert');
         const modalRegistro = document.getElementById('modalRegistro');
+        const modalContent = document.getElementById('modalContent');
         const modalDetalle = document.getElementById('modalDetalle');
         const btnNuevo = document.getElementById('btnNuevo');
         const btnGuardar = document.getElementById('btnGuardar');
@@ -958,6 +1026,9 @@
         const btnCerrarDetalle = document.getElementById('btnCerrarDetalle');
         const btnPrintListado = document.getElementById('btnPrintListado');
         const btnActualizar = document.getElementById('btnActualizar');
+        const inputApellido = document.getElementById('apellido');
+        const inputNombre = document.getElementById('nombre');
+        const inputDni = document.getElementById('dni');
 
         // Inicializar aplicación
         document.addEventListener('DOMContentLoaded', function () {
@@ -984,12 +1055,101 @@
             document.getElementById('defensoriaPatrocinanteFilter').addEventListener('change', aplicarFiltros);
             document.getElementById('defensoriaMpcFilter').addEventListener('change', aplicarFiltros);
             
+            // Detección de duplicados en tiempo real
+            inputApellido.addEventListener('input', verificarDuplicadosEnTiempoReal);
+            inputNombre.addEventListener('input', verificarDuplicadosEnTiempoReal);
+            inputDni.addEventListener('input', verificarDuplicadosEnTiempoReal);
+            
             // Cerrar modales al hacer clic fuera
             window.addEventListener('click', e => {
                 if (e.target === modalRegistro) cerrarModalRegistro();
                 if (e.target === modalDetalle) cerrarModalDetalle();
             });
         });
+
+        // Función para verificar duplicados en tiempo real
+        function verificarDuplicadosEnTiempoReal() {
+            const apellido = inputApellido.value.trim().toLowerCase();
+            const nombre = inputNombre.value.trim().toLowerCase();
+            const dni = inputDni.value.trim();
+            
+            // Resetear estado de bloqueo
+            dniDuplicado = false;
+            resetearEstilosCampos();
+            duplicateAlert.classList.remove('show');
+            modalContent.classList.remove('modal-blocked');
+            btnGuardar.disabled = false;
+            
+            // Verificar si hay apellido duplicado
+            if (apellido.length >= 2) { // Solo verificar si hay al menos 2 caracteres
+                const apellidoDuplicado = todosLosRegistros.some(registro => {
+                    if (registroEditando && registro.id === registroEditando) return false;
+                    const regApellido = (registro.apellido || '').toLowerCase();
+                    return regApellido === apellido;
+                });
+                
+                if (apellidoDuplicado) {
+                    duplicateAlertText.textContent = 'Ya existe un registro con este apellido.';
+                    duplicateAlert.classList.add('show');
+                    inputApellido.classList.add('input-error');
+                    
+                    // Ocultar alerta después de 5 segundos
+                    setTimeout(() => {
+                        duplicateAlert.classList.remove('show');
+                    }, 5000);
+                }
+            }
+            
+            // Verificar si hay nombre duplicado
+            if (nombre.length >= 2) { // Solo verificar si hay al menos 2 caracteres
+                const nombreDuplicado = todosLosRegistros.some(registro => {
+                    if (registroEditando && registro.id === registroEditando) return false;
+                    const regNombre = (registro.nombre || '').toLowerCase();
+                    return regNombre === nombre;
+                });
+                
+                if (nombreDuplicado) {
+                    duplicateAlertText.textContent = 'Ya existe un registro con este nombre.';
+                    duplicateAlert.classList.add('show');
+                    inputNombre.classList.add('input-error');
+                    
+                    // Ocultar alerta después de 5 segundos
+                    setTimeout(() => {
+                        duplicateAlert.classList.remove('show');
+                    }, 5000);
+                }
+            }
+            
+            // Verificar si hay DNI duplicado - BLOQUEA TODO EL MODAL
+            if (dni.length >= 7) { // Solo verificar si hay al menos 7 caracteres (DNI completo)
+                const dniDuplicadoExiste = todosLosRegistros.some(registro => {
+                    if (registroEditando && registro.id === registroEditando) return false;
+                    const regDni = (registro.dni || '').toString();
+                    return regDni === dni;
+                });
+                
+                if (dniDuplicadoExiste) {
+                    dniDuplicado = true;
+                    duplicateAlertText.textContent = 'Ya existe un registro con este DNI. No se puede guardar.';
+                    duplicateAlert.classList.add('show');
+                    inputDni.classList.add('input-error');
+                    modalContent.classList.add('modal-blocked');
+                    btnGuardar.disabled = true;
+                    
+                    // Ocultar alerta después de 5 segundos pero mantener bloqueado
+                    setTimeout(() => {
+                        duplicateAlert.classList.remove('show');
+                    }, 5000);
+                }
+            }
+        }
+
+        // Función para resetear estilos de los campos
+        function resetearEstilosCampos() {
+            inputApellido.classList.remove('input-error', 'required-error');
+            inputNombre.classList.remove('input-error', 'required-error');
+            inputDni.classList.remove('input-error', 'required-error');
+        }
 
         // Función para renderizar las opciones de las Defensorías en los filtros
         function renderDefensoriaFilters() {
@@ -1007,12 +1167,25 @@
             limpiarFormulario();
             document.getElementById('modalRegistroTitle').textContent = 'Nuevo Registro';
             modalRegistro.style.display = 'flex';
+            // Ocultar alertas y resetear estados
+            duplicateAlert.classList.remove('show');
+            requiredFieldsAlert.style.display = 'none';
+            resetearEstilosCampos();
+            modalContent.classList.remove('modal-blocked');
+            btnGuardar.disabled = false;
+            dniDuplicado = false;
         }
 
         // Cerrar modal de registro
         function cerrarModalRegistro() {
             modalRegistro.style.display = 'none';
             registroEditando = null;
+            duplicateAlert.classList.remove('show');
+            requiredFieldsAlert.style.display = 'none';
+            resetearEstilosCampos();
+            modalContent.classList.remove('modal-blocked');
+            btnGuardar.disabled = false;
+            dniDuplicado = false;
         }
 
         // Cerrar modal de detalle
@@ -1025,39 +1198,91 @@
             let isValid = true;
             const requiredFields = ["apellido", "nombre", "dni"];
             
+            // Primero verificar campos obligatorios
+            const camposFaltantes = [];
+            
             requiredFields.forEach(id => {
                 const field = document.getElementById(id);
-                if (field.value.trim() === "") {
+                const value = field.value.trim();
+                
+                if (value === "") {
+                    camposFaltantes.push(id);
+                    field.classList.add('required-error');
                     isValid = false;
+                } else {
+                    field.classList.remove('required-error');
                 }
                 
                 // Validación específica para DNI
-                if (id === 'dni' && field.value.trim() !== "") {
+                if (id === 'dni' && value !== "") {
                     const dniPattern = /^[0-9]{7,8}$/;
-                    if (!dniPattern.test(field.value.trim())) {
+                    if (!dniPattern.test(value)) {
+                        field.classList.add('required-error');
                         isValid = false;
                     }
                 }
             });
-
+            
+            // Mostrar alerta de campos obligatorios si faltan
+            if (camposFaltantes.length > 0) {
+                requiredFieldsAlert.style.display = 'flex';
+                requiredFieldsAlert.classList.add('show');
+                
+                // Ocultar alerta después de 5 segundos
+                setTimeout(() => {
+                    requiredFieldsAlert.classList.remove('show');
+                    setTimeout(() => {
+                        requiredFieldsAlert.style.display = 'none';
+                    }, 500);
+                }, 5000);
+                
+                return false;
+            } else {
+                requiredFieldsAlert.classList.remove('show');
+                setTimeout(() => {
+                    requiredFieldsAlert.style.display = 'none';
+                }, 500);
+            }
+            
+            // Verificar duplicados de DNI (bloqueante)
+            if (dniDuplicado) {
+                duplicateAlertText.textContent = 'Ya existe un registro con este DNI. No se puede guardar.';
+                duplicateAlert.classList.add('show');
+                return false;
+            }
+            
             return isValid;
-        }
-
-        // Mostrar alerta flotante
-        function mostrarAlertaFlotante(mensaje, tipo) {
-            floatingAlert.textContent = mensaje;
-            floatingAlert.classList.remove('danger', 'success');
-            floatingAlert.classList.add(tipo);
-            floatingAlert.classList.add('show');
-            setTimeout(() => {
-                floatingAlert.classList.remove('show');
-            }, 3000);
         }
 
         // Guardar registro
         function guardarRegistro() {
             if (!validarFormulario()) {
-                mostrarAlertaFlotante("Por favor complete los campos obligatorios correctamente", 'danger');
+                return;
+            }
+            
+            // Verificar duplicados completos antes de guardar
+            const apellido = inputApellido.value.trim().toLowerCase();
+            const nombre = inputNombre.value.trim().toLowerCase();
+            const dni = inputDni.value.trim();
+            
+            const existeDuplicadoCompleto = todosLosRegistros.some(registro => {
+                if (registroEditando && registro.id === registroEditando) {
+                    return false;
+                }
+                
+                const regApellido = (registro.apellido || '').toLowerCase();
+                const regNombre = (registro.nombre || '').toLowerCase();
+                const regDni = (registro.dni || '').toString();
+                
+                return regApellido === apellido && regNombre === nombre && regDni === dni;
+            });
+            
+            if (existeDuplicadoCompleto) {
+                duplicateAlertText.textContent = 'Este registro ya existe completamente.';
+                duplicateAlert.classList.add('show');
+                inputApellido.classList.add('input-error');
+                inputNombre.classList.add('input-error');
+                inputDni.classList.add('input-error');
                 return;
             }
             
@@ -1098,6 +1323,28 @@
                     })
                     .catch((error) => mostrarAlertaFlotante('Error al guardar: ' + error.message, 'danger'));
             }
+        }
+
+        // Función para mostrar alerta flotante
+        function mostrarAlertaFlotante(mensaje, tipo) {
+            // Crear una alerta temporal
+            const tempAlert = document.createElement('div');
+            tempAlert.className = `floating-alert ${tipo}`;
+            tempAlert.innerHTML = `<i class="fas fa-${tipo === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i><span>${mensaje}</span>`;
+            document.body.appendChild(tempAlert);
+            
+            // Mostrar alerta
+            setTimeout(() => {
+                tempAlert.classList.add('show');
+            }, 10);
+            
+            // Ocultar y remover después de 3 segundos
+            setTimeout(() => {
+                tempAlert.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(tempAlert);
+                }, 500);
+            }, 3000);
         }
 
         // Cargar todos los registros
@@ -1192,7 +1439,7 @@
 
             tbody.innerHTML = registrosPagina.map(registro => `
                 <tr>
-                    <td>${registro.apellido || '-'}</td>
+                    <td><strong>${registro.apellido || '-'}</strong></td>
                     <td>${registro.nombre || '-'}</td>
                     <td>${registro.dni || '-'}</td>
                     <td>${registro.domicilio || '-'}</td>
@@ -1461,12 +1708,21 @@
             modalRegistro.style.display = 'flex';
             cerrarModalDetalle();
             mostrarAlertaFlotante('Modo edición activado. Modifique los campos y guarde los cambios.', 'success');
+            
+            // Verificar duplicados al editar
+            setTimeout(verificarDuplicadosEnTiempoReal, 100);
         }
 
         // Limpiar formulario
         function limpiarFormulario() { 
             document.getElementById('registroForm').reset(); 
             registroEditando = null; 
+            duplicateAlert.classList.remove('show');
+            requiredFieldsAlert.style.display = 'none';
+            resetearEstilosCampos();
+            modalContent.classList.remove('modal-blocked');
+            btnGuardar.disabled = false;
+            dniDuplicado = false;
         }
 
         // Funciones de impresión
