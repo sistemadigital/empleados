@@ -922,6 +922,19 @@
             outline: none;
             border-color: var(--primary-blue);
         }
+        /* Forzar formato 24h en inputs de tiempo */
+        input[type="time"]::-webkit-datetime-edit-ampm-field {
+            display: none;
+        }
+        input[type="time"]::-moz-datetime-edit-ampm-field {
+            display: none;
+        }
+        input[type="datetime-local"]::-webkit-datetime-edit-ampm-field {
+            display: none;
+        }
+        input[type="datetime-local"]::-moz-datetime-edit-ampm-field {
+            display: none;
+        }
         /* Estilos para impresión - OCULTAR BOTONES Y ACCIONES */
         @media print {
             .button, .actions, .action-buttons, .controls-form,
@@ -1456,7 +1469,7 @@
                         </div>
                         <div id="tab2" class="tab-content">
                             <div class="field"><label for="fechaInicio">Fecha de Inicio</label><input type="date" id="fechaInicio" /></div>
-                            <div class="field"><label for="fechaPase">Fecha de Pase</label><input type="datetime-local" id="fechaPase" /></div>
+                            <div class="field"><label for="fechaPase">Fecha de Pase</label><input type="datetime-local" id="fechaPase" step="3600" /></div>
                         </div>
                         <div id="tab3" class="tab-content">
                             <div class="field">
@@ -1467,7 +1480,7 @@
                             <div class="field">
                                 <label for="audienciaGesell">Audiencia en Cámara Gesell</label>
                                 <div style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="habilitarAudienciaGesell" /><span>Habilitar</span></div>
-                                <input type="datetime-local" id="audienciaGesell" disabled />
+                                <input type="datetime-local" id="audienciaGesell" disabled step="3600" />
                             </div>
                             <div class="field">
                                 <label for="nnyaGesell">NNyA en Gesell (máx. 400 palabras)</label>
@@ -1475,8 +1488,8 @@
                             </div>
                         </div>
                         <div id="tab4" class="tab-content">
-                            <div class="field"><label for="vencimiento">Vencimiento</label><input type="datetime-local" id="vencimiento" /></div>
-                            <div class="field"><label for="vencimientoRecursos">Vencimiento de Recursos</label><input type="datetime-local" id="vencimientoRecursos" /></div>
+                            <div class="field"><label for="vencimiento">Vencimiento</label><input type="datetime-local" id="vencimiento" step="3600" /></div>
+                            <div class="field"><label for="vencimientoRecursos">Vencimiento de Recursos</label><input type="datetime-local" id="vencimientoRecursos" step="3600" /></div>
                         </div>
                         <div id="tab5" class="tab-content">
                             <div class="field">
@@ -1662,6 +1675,7 @@
         // ===== FUNCIONES UTILITARIAS =====
         const toDate = (v) => v?.toDate ? v.toDate() : (v?.seconds ? new Date(v.seconds*1000) : (v ? new Date(v) : null));
         
+        // FUNCIÓN MODIFICADA: Formato 24 horas sin AM/PM y ajuste a horario 07:00-12:00
         function formatearFecha(d, conHora = false) {
             const fecha = toDate(d);
             if (!fecha || isNaN(fecha)) return "";
@@ -1671,9 +1685,56 @@
             if (!conHora) {
                 return `${dia}/${mes}/${año}`;
             }
+            // Formato 24 horas - sin AM/PM
             const horas = String(fecha.getHours()).padStart(2, '0');
             const minutos = String(fecha.getMinutes()).padStart(2, '0');
             return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+        }
+        
+        // FUNCIÓN PARA AJUSTAR HORA AL RANGO 07:00-12:00
+        function ajustarHoraRango(fecha) {
+            if (!fecha || isNaN(fecha)) return fecha;
+            const nuevaFecha = new Date(fecha);
+            let horas = nuevaFecha.getHours();
+            let minutos = nuevaFecha.getMinutes();
+            
+            // Ajustar minutos a 00 si se seleccionaron minutos diferentes
+            if (minutos !== 0) {
+                nuevaFecha.setMinutes(0);
+            }
+            
+            // Ajustar hora al rango 07-12
+            if (horas < 7) {
+                nuevaFecha.setHours(7);
+            } else if (horas > 12) {
+                nuevaFecha.setHours(12);
+            }
+            
+            return nuevaFecha;
+        }
+        
+        // FUNCIÓN PARA FORMATEAR FECHA PARA INPUT CON AJUSTE DE HORARIO
+        function formatFechaParaInput(fecha, conHora = true) {
+            if (!fecha || isNaN(fecha)) return "";
+            
+            // Ajustar la hora al rango 07-12 si tiene hora
+            let fechaAjustada = fecha;
+            if (conHora) {
+                fechaAjustada = ajustarHoraRango(fecha);
+            }
+            
+            const año = fechaAjustada.getFullYear();
+            const mes = String(fechaAjustada.getMonth() + 1).padStart(2, '0');
+            const dia = String(fechaAjustada.getDate()).padStart(2, '0');
+            
+            if (!conHora) {
+                return `${año}-${mes}-${dia}`;
+            }
+            
+            // Formato 24 horas para datetime-local (solo horas 07-12)
+            const horas = String(fechaAjustada.getHours()).padStart(2, '0');
+            const minutos = String(fechaAjustada.getMinutes()).padStart(2, '0');
+            return `${año}-${mes}-${dia}T${horas}:${minutos}`;
         }
         
         const prioridadClase = (p) => {
@@ -2150,31 +2211,31 @@
                 const fechaGesell = toDate(d.audienciaGesell);
                 if (fechaGesell && fechaGesell >= hoy && fechaGesell < manana) {
                     eventosHoy.gesell.push({
-                        id: causaId,
-                        numCausa: id,
-                        fecha: fechaGesell,
-                        tipo: 'Cámara Gesell'
-                    });
+                                id: causaId,
+                                numCausa: id,
+                                fecha: fechaGesell,
+                                tipo: 'Cámara Gesell'
+                            });
                 }
                 // Vencimientos
                 const fechaVenc = toDate(d.vencimiento);
                 if (fechaVenc && fechaVenc >= hoy && fechaVenc < manana) {
                     eventosHoy.vencimientos.push({
-                        id: causaId,
-                        numCausa: id,
-                        fecha: fechaVenc,
-                        tipo: 'Vencimiento'
-                    });
+                                id: causaId,
+                                numCausa: id,
+                                fecha: fechaVenc,
+                                tipo: 'Vencimiento'
+                            });
                 }
                 // Vencimientos de Recursos
                 const fechaVrec = toDate(d.vencimientoRecursos);
                 if (fechaVrec && fechaVrec >= hoy && fechaVrec < manana) {
                     eventosHoy.recursos.push({
-                        id: causaId,
-                        numCausa: id,
-                        fecha: fechaVrec,
-                        tipo: 'Vencimiento de Recurso'
-                    });
+                                id: causaId,
+                                numCausa: id,
+                                fecha: fechaVrec,
+                                tipo: 'Vencimiento de Recurso'
+                            });
                 }
                 // Diligencias
                 if (Array.isArray(d.diligencias)) {
@@ -2844,6 +2905,18 @@
             }
         }
         
+        // FUNCIÓN PARA AJUSTAR HORA EN INPUTS AL CAMBIAR
+        function ajustarHoraInput() {
+            const hora = parseInt(this.value.split('T')[1]?.split(':')[0]) || 0;
+            if (hora < 7) {
+                const fechaCompleta = this.value.split('T')[0] + 'T07:00';
+                this.value = fechaCompleta;
+            } else if (hora > 12) {
+                const fechaCompleta = this.value.split('T')[0] + 'T12:00';
+                this.value = fechaCompleta;
+            }
+        }
+        
         // CORRECCIÓN: Esta función ahora solo configura los listeners
         function initFormEventListeners(){
             if (selTipo) {
@@ -2903,6 +2976,15 @@
                 });
             }
             
+            // Agregar event listeners a los inputs datetime-local para ajustar hora
+            const fechaInputs = ['fechaPase', 'vencimiento', 'vencimientoRecursos', 'audienciaGesell'];
+            fechaInputs.forEach(id => {
+                const input = $(id);
+                if (input) {
+                    input.addEventListener('change', ajustarHoraInput);
+                }
+            });
+            
             // Inicializar editor de texto enriquecido
             initEditor();
         }
@@ -2955,14 +3037,24 @@
                 const el = $(id); 
                 if(!el) return; 
                 if (["date","datetime-local"].includes(el.type)) { 
-                    datos[id] = el.value ? new Date(el.value) : null;
+                    let fecha = el.value ? new Date(el.value) : null;
+                    if (fecha && el.type === "datetime-local") {
+                        // Ajustar la hora al rango 07-12
+                        fecha = ajustarHoraRango(fecha);
+                    }
+                    datos[id] = fecha;
                 } else { 
                     datos[id] = el.value || ""; 
                 } 
             });
             const audiencias = [];
             audienciasContainer.querySelectorAll('input[type="datetime-local"]').forEach(input => { 
-                if (input.value) audiencias.push(new Date(input.value)); 
+                if (input.value) {
+                    let fecha = new Date(input.value);
+                    // Ajustar la hora al rango 07-12
+                    fecha = ajustarHoraRango(fecha);
+                    audiencias.push(fecha);
+                }
             });
             datos.audiencias = audiencias.length > 0 ? audiencias : null;
             
@@ -2972,8 +3064,11 @@
                 const fechaInput = item.querySelector('input[type="datetime-local"]');
                 const detalleInput = item.querySelector('input[type="text"]');
                 if (fechaInput.value) {
+                    let fecha = new Date(fechaInput.value);
+                    // Ajustar la hora al rango 07-12
+                    fecha = ajustarHoraRango(fecha);
                     diligencias.push({
-                        fecha: new Date(fechaInput.value),
+                        fecha: fecha,
                         detalle: detalleInput.value || ''
                     });
                 }
@@ -2984,18 +3079,6 @@
         }
         
         function cargarDatosEnForm(d) {
-            const formatFechaParaInput = (fecha, conHora = true) => {
-                if (!fecha || isNaN(fecha)) return "";
-                const año = fecha.getFullYear();
-                const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-                const dia = String(fecha.getDate()).padStart(2, '0');
-                if (!conHora) {
-                    return `${año}-${mes}-${dia}`;
-                }
-                const horas = String(fecha.getHours()).padStart(2, '0');
-                const minutos = String(fecha.getMinutes()).padStart(2, '0');
-                return `${año}-${mes}-${dia}T${horas}:${minutos}`;
-            };
             const setVal = (id, val) => {
                 const el = $(id);
                 if (!el) return;
@@ -3017,6 +3100,7 @@
                     el.value = val ?? "";
                 }
             };
+            
             if (d.tipoProceso) {
                 selTipo.value = d.tipoProceso;
                 poblarJuzgadosPorTipo(d.tipoProceso);
@@ -3067,8 +3151,13 @@
         function crearAudienciaItem(value = "") {
             const item = document.createElement('div');
             item.className = 'audiencia-item';
-            item.innerHTML = `<input type="datetime-local" value="${value}"><button type="button" class="btn-eliminar-audiencia"><i class="fa fa-trash"></i></button>`;
+            item.innerHTML = `<input type="datetime-local" value="${value}" step="3600"><button type="button" class="btn-eliminar-audiencia"><i class="fa fa-trash"></i></button>`;
+            const input = item.querySelector('input[type="datetime-local"]');
             const eliminarBtn = item.querySelector('.btn-eliminar-audiencia');
+            
+            // Agregar event listener para ajustar hora
+            input.addEventListener('change', ajustarHoraInput);
+            
             eliminarBtn.onclick = function() { 
                 if (audienciasContainer.children.length > 1) {
                     item.remove(); 
@@ -3088,11 +3177,16 @@
             const item = document.createElement('div');
             item.className = 'diligencia-item';
             item.innerHTML = `
-                <input type="datetime-local" value="${fechaValue}">
+                <input type="datetime-local" value="${fechaValue}" step="3600">
                 <input type="text" placeholder="Detalle de la diligencia" value="${detalleValue}">
                 <button type="button" class="btn-eliminar-diligencia"><i class="fa fa-trash"></i></button>
             `;
+            const input = item.querySelector('input[type="datetime-local"]');
             const eliminarBtn = item.querySelector('.btn-eliminar-diligencia');
+            
+            // Agregar event listener para ajustar hora
+            input.addEventListener('change', ajustarHoraInput);
+            
             eliminarBtn.onclick = function() { 
                 if (diligenciasContainer.children.length > 1) {
                     item.remove(); 
@@ -3175,6 +3269,25 @@
                 tbody.innerHTML = `<tr><td colspan='10'>Error al inicializar la aplicación: ${error.message}</td></tr>`;
             }
         }
+        
+        // Forzar formato 24h en inputs datetime-local para todos los navegadores
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer el formato de hora para inputs datetime-local
+            const set24HourFormat = () => {
+                const inputs = document.querySelectorAll('input[type="datetime-local"]');
+                inputs.forEach(input => {
+                    // Esto ayuda a que algunos navegadores muestren formato 24h
+                    input.setAttribute('step', '3600'); // 3600 segundos = 1 hora
+                });
+            };
+            
+            // Ejecutar al cargar y después de cada actualización del DOM
+            set24HourFormat();
+            
+            // Observar cambios en el DOM para aplicar a nuevos inputs
+            const observer = new MutationObserver(set24HourFormat);
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
         
         // Inicializar la aplicación cuando el DOM esté listo
         if (document.readyState === 'loading') {
