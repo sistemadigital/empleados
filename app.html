@@ -40,18 +40,28 @@
             color: var(--foreground);
         }
 
+        /* NAVBAR FIJA */
         .navbar {
             background: var(--card);
             backdrop-filter: blur(10px);
-            padding: 12px 20px;
+            padding: 10px 20px;
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
+            position: fixed; /* Fijo para estar siempre visible */
             top: 0;
-            z-index: 1000;
+            left: 0;
+            width: 100%;
+            height: 70px; /* Altura fija para cálculos */
+            z-index: 5000; /* Por encima del iframe */
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
+        }
+
+        /* Ajuste para que el contenido no quede oculto tras la navbar */
+        .main-content {
+            padding-top: 75px; 
+            width: 100%;
         }
 
         .navbar-left { display: flex; align-items: center; gap: 20px; }
@@ -83,7 +93,7 @@
             background: var(--popover);
             border-radius: calc(var(--radius) - 0.5rem);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            z-index: 1100;
+            z-index: 5100; /* Mayor que la navbar */
             margin-top: 8px;
             border: 1px solid var(--border);
             overflow: hidden;
@@ -113,7 +123,7 @@
         .logout-btn { background: var(--destructive); color: var(--destructive-foreground); border: none; padding: 8px 14px; border-radius: calc(var(--radius) - 0.5rem); cursor: pointer; font-weight: 600; }
 
         .welcome-screen {
-            padding: 40px;
+            padding: 20px 40px;
             min-height: calc(100vh - 80px);
             display: flex;
             justify-content: center;
@@ -151,12 +161,9 @@
             display: block;
         }
 
-        /* MODIFICACIÓN: Ajuste del panel derecho para eliminar scroll
-           y centrar el contenido.
-        */
         .right-panel {
             flex: 2.2;
-            padding: 30px; /* Reducido ligeramente el padding */
+            padding: 30px;
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(12px);
             border: 2px solid rgba(255, 255, 255, 0.5);
@@ -164,23 +171,17 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
             display: flex;
             justify-content: center;
-            align-items: center; /* Centrado verticalmente */
-            overflow: hidden;    /* Eliminado el scroll */
+            align-items: center;
+            overflow: hidden;
         }
 
-        /* ========================================================
-           NUEVOS ESTILOS: Módulos Rectangulares (Grid Ajustado) 
-           ========================================================
-        */
         .module-grid {
             display: grid;
-            /* Auto-fit para llenar el ancho disponible */
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            /* Auto-rows 1fr hace que las filas se estiren para llenar la altura */
             grid-auto-rows: 1fr;
             gap: 20px;
             width: 100%;
-            height: 100%; /* Ocupa todo el alto del panel */
+            height: 100%;
             padding: 5px;
         }
 
@@ -188,8 +189,7 @@
             background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(8px);
             border-radius: 12px;
-            padding: 15px; /* Padding ajustado */
-            /* Eliminado min-height fijo para permitir ajuste flexible */
+            padding: 15px;
             height: 100%; 
             display: flex;
             flex-direction: column;
@@ -202,8 +202,6 @@
             border: 1px solid rgba(255,255,255,0.6);
             border-left-width: 6px;
             border-left-style: solid;
-            
-            /* Tipografía */
             color: var(--foreground);
             font-weight: 700;
             font-size: 15px;
@@ -211,12 +209,11 @@
         }
 
         .rect-module:hover {
-            transform: translateY(-3px); /* Reducido ligeramente el efecto para no salir del contenedor */
+            transform: translateY(-3px);
             background: rgba(255, 255, 255, 0.9);
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
 
-        /* Colores de bordes laterales */
         .rect-module:nth-child(1) { border-left-color: rgba(239, 68, 68, 0.8); }
         .rect-module:nth-child(2) { border-left-color: rgba(59, 130, 246, 0.8); }
         .rect-module:nth-child(3) { border-left-color: rgba(16, 185, 129, 0.8); }
@@ -224,11 +221,47 @@
         .rect-module:nth-child(5) { border-left-color: rgba(139, 92, 246, 0.8); }
         .rect-module:nth-child(6) { border-left-color: rgba(6, 182, 212, 0.8); }
 
-        .iframe-container { display: none; width: 100%; height: 100%; }
-        .iframe-header { background: var(--card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .content-iframe { width: 100%; height: calc(100vh - 140px); border: none; }
+        /* ========================================================
+           AJUSTE IFRAME: Full Screen pero DEBAJO de la cabecera
+           ======================================================== 
+        */
+        .iframe-container { 
+            display: none; 
+            /* Posición fija ocupando todo */
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            /* Z-index menor que navbar (5000) pero mayor que contenido (0) */
+            z-index: 4000; 
+            background: var(--background);
+            flex-direction: column;
+            /* Padding superior igual a la altura de la navbar (70px) */
+            padding-top: 70px;
+        }
 
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
+        .iframe-header { 
+            background: var(--card); 
+            padding: 0 20px; 
+            height: 50px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-shrink: 0;
+        }
+
+        .content-iframe { 
+            width: 100%; 
+            /* Ocupa el espacio restante */
+            flex: 1; 
+            border: none; 
+            display: block;
+        }
+
+        /* Modales */
+        .modal { display: none; position: fixed; z-index: 6000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
         .modal-content { background: var(--popover); margin: 15% auto; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; }
         .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 0.8rem; cursor: pointer; font-weight: bold; }
         
@@ -245,9 +278,7 @@
             .module-grid { height: auto; }
         }
 
-        /* ======================================================== */
         /* MODAL DE LOGOUT */
-        /* ======================================================== */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -257,7 +288,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 5000;
+            z-index: 6000;
             animation: fadeIn 0.3s ease;
         }
 
@@ -401,7 +432,7 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        // Configuración específica de 2app (Defensoría Empleados) - SE MANTIENE
+        // Configuración específica (Defensoría Empleados)
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
@@ -463,7 +494,8 @@
 
         function loadPage(url, title) {
             document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('iframeContainer').style.display = 'block';
+            // Ajuste para usar flex y llenar columna
+            document.getElementById('iframeContainer').style.display = 'flex'; 
             document.getElementById('contentIframe').src = url;
             document.getElementById('iframeTitle').textContent = title;
             if(menuOpen) toggleMenu();
