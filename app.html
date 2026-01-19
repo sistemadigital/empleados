@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚖️Sistema Digital</title>
+    <title>⚖️Sistema Digital - Defensoría 6</title>
     <style>
         :root {
           --background: oklch(1.0000 0 0);
@@ -23,21 +23,6 @@
           --destructive: oklch(0.6188 0.2376 25.7658);
           --destructive-foreground: oklch(1.0000 0 0);
           --border: oklch(0.9317 0.0118 231.6594);
-          --input: oklch(0.9809 0.0025 228.7836);
-          --ring: oklch(0.6818 0.1584 243.3540);
-          --chart-1: oklch(0.6723 0.1606 244.9955);
-          --chart-2: oklch(0.6907 0.1554 160.3454);
-          --chart-3: oklch(0.8214 0.1600 82.5337);
-          --chart-4: oklch(0.7064 0.1822 151.7125);
-          --chart-5: oklch(0.5919 0.2186 10.5826);
-          --sidebar: oklch(0.9784 0.0011 197.1387);
-          --sidebar-foreground: oklch(0.1884 0.0128 248.5103);
-          --sidebar-primary: oklch(0.6723 0.1606 244.9955);
-          --sidebar-primary-foreground: oklch(1.0000 0 0);
-          --sidebar-accent: oklch(0.9392 0.0166 250.8453);
-          --sidebar-accent-foreground: oklch(0.6723 0.1606 244.9955);
-          --sidebar-border: oklch(0.9271 0.0101 238.5177);
-          --sidebar-ring: oklch(0.6818 0.1584 243.3540);
           --radius: 1.3rem;
         }
 
@@ -49,19 +34,16 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--background);
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             color: var(--foreground);
-        }
-
-        .app-container {
-            min-height: 100vh;
         }
 
         .navbar {
             background: var(--card);
             backdrop-filter: blur(10px);
-            padding: 15px 20px;
+            padding: 12px 20px;
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
@@ -72,535 +54,354 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
-        }
+        .navbar-left { display: flex; align-items: center; gap: 20px; }
+        .navbar-right { display: flex; align-items: center; gap: 15px; }
+        .navbar-brand { font-size: 18px; font-weight: bold; color: var(--primary); white-space: nowrap; }
 
-        .navbar-toggle {
+        .menu-container { position: relative; }
+        .menu-toggle {
             background: var(--primary);
             color: var(--primary-foreground);
-            border: none;
-            padding: 10px 15px;
-            border-radius: calc(var(--radius) - 0.5rem);
-            cursor: pointer;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .profile-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-            cursor: pointer;
-        }
-
-        .profile-pic-placeholder {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-foreground);
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .welcome-message {
-            color: var(--foreground);
-            font-weight: 600;
-        }
-
-        .logout-btn {
-            background: var(--destructive);
-            color: var(--destructive-foreground);
             border: none;
             padding: 8px 16px;
             border-radius: calc(var(--radius) - 0.5rem);
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: oklch(0.55 0.25 25.7658);
-        }
-
-        .main-content {
-            display: flex;
-            min-height: calc(100vh - 80px);
-        }
-
-        .sidebar {
-            width: 70px;
-            background: var(--sidebar);
-            backdrop-filter: blur(10px);
-            padding: 20px 0;
-            transition: width 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            border-right: 1px solid var(--sidebar-border);
-        }
-
-        .sidebar.expanded {
-            width: 280px;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 5px;
-        }
-
-        .sidebar-menu a {
+            font-weight: 600;
+            font-size: 15px;
             display: flex;
             align-items: center;
-            padding: 15px 20px;
-            color: var(--sidebar-foreground);
+            gap: 8px;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 260px;
+            background: var(--popover);
+            border-radius: calc(var(--radius) - 0.5rem);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1100;
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: none;
+        }
+
+        .dropdown-menu.active { display: block; }
+        .menu-section { padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .menu-items { max-height: 500px; overflow-y: auto; }
+        
+        .menu-item {
+            padding: 12px 16px;
+            display: block;
             text-decoration: none;
-            transition: all 0.3s;
-            border-left: 4px solid transparent;
             cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: bold;
+            color: #0056b3; 
         }
+        .menu-item:hover { background: var(--accent); color: #003d7a; }
+        .menu-section-title { padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; }
 
-        .sidebar-menu a:hover {
-            background: var(--sidebar-accent);
-            border-left-color: var(--sidebar-primary);
-            color: var(--sidebar-accent-foreground);
-        }
-
-        .sidebar-menu .icon {
-            font-size: 20px;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .sidebar-menu .text {
-            margin-left: 15px;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .sidebar.expanded .sidebar-menu .text {
-            opacity: 1;
-        }
-
-        .content-area {
-            flex: 1;
-            padding: 0;
-            background: var(--background);
-            position: relative;
-        }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .profile-pic { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; }
+        .profile-pic-placeholder { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary-foreground); font-weight: bold; cursor: pointer; }
+        .logout-btn { background: var(--destructive); color: var(--destructive-foreground); border: none; padding: 8px 14px; border-radius: calc(var(--radius) - 0.5rem); cursor: pointer; font-weight: 600; }
 
         .welcome-screen {
             padding: 40px;
-        }
-
-        .welcome-card {
-            background: var(--card);
-            padding: 40px;
-            border-radius: var(--radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-        }
-
-        .welcome-card h1 {
-            color: var(--card-foreground);
-            margin-bottom: 20px;
-            font-size: 32px;
-        }
-
-        .welcome-card p {
-            color: var(--muted-foreground);
-            font-size: 18px;
-            line-height: 1.6;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 30px 40px;
-            justify-items: center;
-            width: 100%;
-            max-width: 900px;
-            margin: 30px auto 0 auto;
-        }
-
-        @media (min-width: 1200px) {
-            .cards-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto auto;
-                gap: 30px 40px;
-                justify-items: center;
-                width: 100%;
-                max-width: 900px;
-                margin: 30px auto 0 auto;
-            }
-        }
-
-        .feature-card {
-            background: var(--card);
-            padding: 30px;
-            border-radius: var(--radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            border: 1px solid var(--border);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature-card h3 {
-            color: var(--card-foreground);
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-
-        .feature-card p {
-            color: var(--muted-foreground);
-            line-height: 1.6;
-        }
-        
-        /* Nuevo estilo para los iconos GIF */
-        .feature-card-icon {
-            width: 48px; /* Tamaño del icono */
-            height: 48px;
-            margin-bottom: 10px;
-        }
-        /* Fin de nuevo estilo */
-
-        .feature-card .btn-link {
-            background: var(--primary);
-            color: var(--primary-foreground);
-            padding: 10px 20px;
-            border-radius: calc(var(--radius) - 0.5rem);
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 15px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .feature-card .btn-link:hover {
-            background: oklch(0.62 0.17 244.9955);
-        }
-
-        .iframe-container {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        .iframe-header {
-            background: var(--card);
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border);
+            min-height: calc(100vh - 80px);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
         }
 
-        .iframe-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--card-foreground);
-        }
-
-        .close-iframe {
-            background: var(--destructive);
-            color: var(--destructive-foreground);
-            border: none;
-            padding: 8px 12px;
-            border-radius: calc(var(--radius) - 0.5rem);
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .close-iframe:hover {
-            background: oklch(0.55 0.25 25.7658);
-        }
-
-        .content-iframe {
+        .split-layout {
+            display: flex;
             width: 100%;
-            height: calc(100vh - 140px);
-            border: none;
+            max-width: 1500px;
+            gap: 30px;
+            align-items: stretch;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 80px;
-                height: calc(100vh - 80px);
-                z-index: 999;
-                transform: translateX(-100%);
-                width: 280px;
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .sidebar.show .sidebar-menu .text {
-                opacity: 1;
-            }
-
-            .content-area {
-                padding: 20px;
-            }
-
-            .welcome-screen {
-                padding: 20px;
-            }
-
-            .welcome-card {
-                padding: 25px;
-            }
-
-            .welcome-card h1 {
-                font-size: 24px;
-            }
-
-            .cards-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto auto;
-                gap: 30px 40px;
-                justify-items: center;
-                width: 100%;
-                max-width: 900px;
-                margin: 30px auto 0 auto;
-            }
-
-            .user-info {
-                gap: 10px;
-            }
-
-            .welcome-message {
-                display: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .navbar {
-                padding: 10px 15px;
-            }
-
-            .navbar-brand {
-                font-size: 20px;
-            }
-
-            .welcome-screen {
-                padding: 15px;
-            }
-
-            .welcome-card {
-                padding: 20px;
-            }
-
-            .feature-card {
-                padding: 20px;
-            }
-        }
-
-        /* Modal para foto de perfil */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: var(--popover);
-            margin: 15% auto;
-            padding: 30px;
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.4);
+            border: 3px solid #0056b3;
             border-radius: var(--radius);
-            width: 90%;
-            max-width: 400px;
+            padding: 40px;
             text-align: center;
-            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .mp-logo {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            display: block;
         }
 
-        .close {
-            color: var(--muted-foreground);
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        /* MODIFICACIÓN: Ajuste del panel derecho para eliminar scroll
+           y centrar el contenido.
+        */
+        .right-panel {
+            flex: 2.2;
+            padding: 30px; /* Reducido ligeramente el padding */
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Centrado verticalmente */
+            overflow: hidden;    /* Eliminado el scroll */
+        }
+
+        /* ========================================================
+           NUEVOS ESTILOS: Módulos Rectangulares (Grid Ajustado) 
+           ========================================================
+        */
+        .module-grid {
+            display: grid;
+            /* Auto-fit para llenar el ancho disponible */
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            /* Auto-rows 1fr hace que las filas se estiren para llenar la altura */
+            grid-auto-rows: 1fr;
+            gap: 20px;
+            width: 100%;
+            height: 100%; /* Ocupa todo el alto del panel */
+            padding: 5px;
+        }
+
+        .rect-module {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 15px; /* Padding ajustado */
+            /* Eliminado min-height fijo para permitir ajuste flexible */
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
             cursor: pointer;
-        }
-
-        .close:hover {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-left-width: 6px;
+            border-left-style: solid;
+            
+            /* Tipografía */
             color: var(--foreground);
+            font-weight: 700;
+            font-size: 15px;
+            line-height: 1.3;
         }
 
-        .file-input {
-            margin: 20px 0;
+        .rect-module:hover {
+            transform: translateY(-3px); /* Reducido ligeramente el efecto para no salir del contenedor */
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
 
-        .error-message {
-            color: var(--destructive);
-            margin-top: 10px;
-            font-size: 14px;
+        /* Colores de bordes laterales */
+        .rect-module:nth-child(1) { border-left-color: rgba(239, 68, 68, 0.8); }
+        .rect-module:nth-child(2) { border-left-color: rgba(59, 130, 246, 0.8); }
+        .rect-module:nth-child(3) { border-left-color: rgba(16, 185, 129, 0.8); }
+        .rect-module:nth-child(4) { border-left-color: rgba(245, 158, 11, 0.8); }
+        .rect-module:nth-child(5) { border-left-color: rgba(139, 92, 246, 0.8); }
+        .rect-module:nth-child(6) { border-left-color: rgba(6, 182, 212, 0.8); }
+
+        .iframe-container { display: none; width: 100%; height: 100%; }
+        .iframe-header { background: var(--card); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .content-iframe { width: 100%; height: calc(100vh - 140px); border: none; }
+
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
+        .modal-content { background: var(--popover); margin: 15% auto; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 0.8rem; cursor: pointer; font-weight: bold; }
+        
+        .avatar-option {
+            width: 100px; height: 100px; border-radius: 50%; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 4px solid transparent;
+        }
+        .avatar-option:hover { transform: scale(1.1); border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .avatar-container { display: flex; justify-content: center; gap: 30px; margin: 25px 0; }
+
+        @media (max-width: 850px) {
+            .split-layout { flex-direction: column; }
+            .left-panel { min-height: 200px; }
+            .right-panel { align-items: center; height: auto; min-height: 400px; }
+            .module-grid { height: auto; }
         }
 
-        .success-message {
-            color: oklch(0.69 0.15 160.3454);
-            margin-top: 10px;
-            font-size: 14px;
+        /* ======================================================== */
+        /* MODAL DE LOGOUT */
+        /* ======================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(3, 74, 117, 0.4); 
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content-logout {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 1);
+        }
+
+        .modal-title-logout { color: var(--destructive); font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
+        .modal-text-logout { color: #555; font-size: 1rem; margin-bottom: 25px; font-weight: 500; }
+        
+        .modal-buttons-logout { display: flex; gap: 15px; justify-content: center; }
+        
+        .btn-confirm-logout { 
+            background: var(--destructive); 
+            color: white; 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+            transition: transform 0.2s; 
+        }
+        
+        .btn-cancel-logout { 
+            background: #e0f2fe;
+            color: #034a75;
+            border: 1px solid transparent;
+            padding: 12px 25px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            transition: background 0.2s;
+        }
+
+        .btn-confirm-logout:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-cancel-logout:hover { background: #bae6fd; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <div id="appContainer" class="app-container">
+    <div class="app-container">
         <nav class="navbar">
-            <div style="display: flex; align-items: center;">
-                <button class="navbar-toggle" onclick="toggleSidebar()">☰</button>
-                <div class="navbar-brand">Sistema Defensoría Civil y Comercial 6</div>
-            </div>
-            <div class="user-info">
-                <span class="welcome-message">Bienvenido, <span id="userName"></span></span>
-                <div id="profilePicContainer" onclick="openProfileModal()">
-                    <div class="profile-pic-placeholder" id="profilePlaceholder">U</div>
-                    <img class="profile-pic" id="profilePic" style="display: none;" alt="Foto de perfil">
+            <div class="navbar-left">
+                <div class="menu-container">
+                    <button class="menu-toggle" id="menuToggleBtn" onclick="toggleMenu()">☰ Menú</button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="menu-items">
+                            <div class="menu-section">
+                                <div class="menu-section-title">Sistema Principal</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">Registro de Causas</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">Datos de Partes</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">Notificaciones</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/dictamenes.html', 'Dictámenes Modelos')">Dictámenes Modelos</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/organismos.html', 'Organismos')">Organismos</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados', 'Consultas y Turnos')">Consultas y Turnos</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="logout-btn" onclick="logoutUser()">Cerrar Sesión</button>
+                <div class="navbar-brand">Defensoría Civil y Comercial 6 Ministerio Público de Misiones</div>
+            </div>
+            <div class="navbar-right">
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div onclick="openProfileModal()" title="Cambiar Avatar">
+                        <div class="profile-pic-placeholder" id="profilePlaceholder">U</div>
+                        <img class="profile-pic" id="profilePic" style="display: none;">
+                    </div>
+                    <button class="logout-btn" onclick="openLogoutModal()">Salir</button>
+                </div>
             </div>
         </nav>
 
-        <div class="main-content">
-            <aside class="sidebar" id="sidebar">
-                <ul class="sidebar-menu">
-                    <li><a onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">
-                        <span class="icon">📋</span>
-                        <span class="text">Registro de Causas</span>
-                    </a></li>
-                    <li><a onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">
-                        <span class="icon">📊</span>
-                        <span class="text">Datos de Partes</span>
-                    </a></li>
-                    <li><a onclick="loadIframe('https://sistemadigital.github.io/empleados/dictamenes.html', 'Dictámenes Escritos Modelos')">
-                        <span class="icon">📝</span>
-                        <span class="text">Dictámenes Escritos Modelos</span>
-                    </a></li>
-                    <li><a onclick="loadPage('https://sistemadigital.github.io/empleados/documentos.html', 'Documentos')">
-                        <span class="icon">📄</span>
-                        <span class="text">Documentos</span>
-                    </a></li>
-                    <li><a onclick="loadIframe('https://sistemadigital.github.io/empleados/organismos.html', 'Directorio')">
-                        <span class="icon">🏛️</span>
-                        <span class="text">Directorio</span>
-                    </a></li>
-                    <li><a onclick="loadIframe('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">
-                        <span class="icon">⚖️</span>
-                        <span class="text">Notificaciones</span>
-                    </a></li>
-                </ul>
-            </aside>
-
-            <main class="content-area">
-                <div id="welcomeScreen" class="welcome-screen">
-                    <div class="welcome-card">
-                        <h1>Bienvenido al Sistema de Defensoría Civil y Comercial 6</h1>
-                        <p>Accede a todas las herramientas y recursos necesarios para gestionar eficientemente los procesos de la defensoría. Utiliza el menú lateral para navegar entre las diferentes secciones del sistema.</p>
+        <main class="main-content">
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="split-layout">
+                    <div class="left-panel">
+                        <img src="https://github.com/sistemadigital/iconos/blob/main/MP.png?raw=true" alt="Ministerio Público" class="mp-logo">
                     </div>
-
-                    <div class="cards-grid">
-                        <div class="feature-card" onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">
-                            <h3>Registro de Causas</h3>
-                            <p>Registra, actualiza y da seguimiento a todas las causas y expedientes del sistema.</p>
-                            <a class="btn-link">Acceder</a>
-                        </div>
-
-                        <div class="feature-card" onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">
-                            <h3>Datos de Partes</h3>
-                            <p>Gestiona y consulta información detallada sobre las partes involucradas en los procesos legales.</p>
-                            <a class="btn-link">Acceder</a>
-                        </div>
-                        
-                        <div class="feature-card" onclick="loadPage('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">
-                            <h3>Notificaciones Electrónicas</h3>
-                            <p>Listado de notificaciones recibidas por el Defensor Oficial.</p>
-                            <a class="btn-link">Acceder</a>
-                        </div>
-
-                        <div class="feature-card" onclick="loadIframe('https://sistemadigital.github.io/empleados/dictamenes.html', 'Dictámenes Escritos Modelos')">
-                            <h3>Dictámenes Escritos Modelos</h3>
-                            <p>Accede al sistema de dictámenes, escritos y modelos para gestionar y consultar.</p>
-                            <a class="btn-link">Acceder</a>
-                        </div>
-
-                        <div class="feature-card" onclick="loadPage('https://sistemadigital.github.io/empleados/documentos.html', 'Documentos')">
-                            <h3>Documentos</h3>
-                            <p>Gestiona, almacena y organiza todos los documentos legales y administrativos.</p>
-                            <a class="btn-link">Acceder</a>
-                        </div>
-
-                        <div class="feature-card" onclick="loadIframe('https://sistemadigital.github.io/empleados/organismos.html', 'Directorio')">
-                            <h3>Organismos</h3>
-                            <p>Accede al directorio de organismos de protección para consultar información relevante.</p>
-                            <a class="btn-link">Acceder</a>
+                    
+                    <div class="right-panel">
+                        <div class="module-grid">
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">Registro de Causas</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">Datos de Partes</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">Notificaciones</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/dictamenes.html', 'Dictámenes Modelos')">Dictámenes Modelos</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/organismos.html', 'Organismos')">Organismos</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados', 'Consultas y Turnos')">Consultas y Turnos</div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div id="iframeContainer" class="iframe-container">
-                    <div class="iframe-header">
-                        <div class="iframe-title" id="iframeTitle">Cargando...</div>
-                        <button class="close-iframe" onclick="closeIframe()">✕ Cerrar</button>
-                    </div>
-                    <iframe id="contentIframe" class="content-iframe" src=""></iframe>
+            <div id="iframeContainer" class="iframe-container">
+                <div class="iframe-header">
+                    <div id="iframeTitle" style="font-weight:bold;">Cargando...</div>
+                    <button onclick="closeIframe()" style="background:var(--destructive); color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">✕ Cerrar</button>
                 </div>
-            </main>
-        </div>
+                <iframe id="contentIframe" class="content-iframe"></iframe>
+            </div>
+        </main>
     </div>
 
     <div id="profileModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeProfileModal()">&times;</span>
-            <h3>Cambiar Foto de Perfil</h3>
-            <input type="file" id="profileFileInput" accept="image/*" class="file-input">
-            <button class="btn" onclick="uploadProfilePic()">Subir Foto</button>
-            <div id="profileMessage"></div>
+            <span onclick="closeProfileModal()" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
+            <h3 style="margin-bottom:10px;">Selecciona tu Avatar</h3>
+            <p style="font-size: 0.9em; color: var(--muted-foreground); margin-bottom: 20px;">Elige una imagen para tu perfil</p>
+            <div class="avatar-container">
+                <img src="https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true" class="avatar-option" onclick="saveAvatar('hombre')" alt="Hombre">
+                <img src="https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true" class="avatar-option" onclick="saveAvatar('mujer')" alt="Mujer">
+            </div>
+            <button class="btn" onclick="closeProfileModal()" style="background: var(--secondary);">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="logoutModal" class="modal-overlay">
+        <div class="modal-content-logout">
+            <div class="modal-title-logout">Cerrar Sesión</div>
+            <p class="modal-text-logout">¿Estás seguro que deseas salir del sistema?</p>
+            <div class="modal-buttons-logout">
+                <button class="btn-confirm-logout" id="confirmLogoutBtn">Sí, salir</button>
+                <button class="btn-cancel-logout" onclick="closeLogoutModal()">Cancelar</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
+        // Configuración específica de 2app (Defensoría Empleados) - SE MANTIENE
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
@@ -612,177 +413,95 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const storage = getStorage(app);
-
-        // Variables globales
         window.auth = auth;
-        window.storage = storage;
-        window.currentUser = null;
 
-        // Verificar estado de autenticación
+        const AVATAR_HOMBRE = "https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true";
+        const AVATAR_MUJER = "https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true";
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 window.currentUser = user;
-                showApp(user);
-            } else {
-                // Redirigir al login si no hay usuario autenticado
+                document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
+                if (user.photoURL) {
+                    document.getElementById('profilePic').src = user.photoURL;
+                    document.getElementById('profilePic').style.display = 'block';
+                    document.getElementById('profilePlaceholder').style.display = 'none';
+                }
+            } else { window.location.href = 'index.html'; }
+        });
+
+        // Lógica de Salida
+        document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
                 window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Error al salir:", error);
             }
         });
 
-        window.logoutUser = async function() {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error('Error al cerrar sesión:', error);
-            }
-        };
-
-        window.uploadProfilePic = async function() {
-            const fileInput = document.getElementById('profileFileInput');
-            const file = fileInput.files[0];
-            const messageDiv = document.getElementById('profileMessage');
-
-            if (!file) {
-                messageDiv.textContent = 'Por favor, seleccione una imagen.';
-                messageDiv.className = 'error-message';
-                return;
-            }
-
-            if (!file.type.startsWith('image/')) {
-                messageDiv.textContent = 'Por favor, seleccione un archivo de imagen válido.';
-                messageDiv.className = 'error-message';
-                return;
-            }
-
-            try {
-                const storageRef = ref(storage, `profile-pics/${window.currentUser.uid}`);
-                await uploadBytes(storageRef, file);
-                const downloadURL = await getDownloadURL(storageRef);
-                
-                await updateProfile(window.currentUser, { photoURL: downloadURL });
-                
-                // Actualizar la imagen en la interfaz
-                updateProfilePic(downloadURL);
-                
-                messageDiv.textContent = 'Foto de perfil actualizada correctamente.';
-                messageDiv.className = 'success-message';
-                
-                setTimeout(() => {
+        window.saveAvatar = async (tipo) => {
+            const nuevaUrl = (tipo === 'hombre') ? AVATAR_HOMBRE : AVATAR_MUJER;
+            if (window.currentUser) {
+                try {
+                    await updateProfile(window.currentUser, { photoURL: nuevaUrl });
+                    document.getElementById('profilePic').src = nuevaUrl;
+                    document.getElementById('profilePic').style.display = 'block';
+                    document.getElementById('profilePlaceholder').style.display = 'none';
                     closeProfileModal();
-                }, 2000);
-            } catch (error) {
-                messageDiv.textContent = 'Error al subir la imagen. Inténtelo de nuevo.';
-                messageDiv.className = 'error-message';
+                } catch (error) { console.error("Error:", error); }
             }
         };
-
-        function showApp(user) {
-            const userName = user.displayName || user.email.split('@')[0];
-            document.getElementById('userName').textContent = userName;
-            
-            // Actualizar foto de perfil
-            if (user.photoURL) {
-                updateProfilePic(user.photoURL);
-            } else {
-                const placeholder = document.getElementById('profilePlaceholder');
-                placeholder.textContent = userName.charAt(0).toUpperCase();
-            }
-        }
-
-        function updateProfilePic(photoURL) {
-            const profilePic = document.getElementById('profilePic');
-            const placeholder = document.getElementById('profilePlaceholder');
-            
-            profilePic.src = photoURL;
-            profilePic.style.display = 'block';
-            placeholder.style.display = 'none';
-        }
     </script>
 
     <script>
-        // Funciones para la interfaz
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('show');
-            } else {
-                sidebar.classList.toggle('expanded');
-            }
+        let menuOpen = false;
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            document.getElementById('dropdownMenu').classList.toggle('active');
         }
 
         function loadPage(url, title) {
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            const iframeContainer = document.getElementById('iframeContainer');
-            const iframe = document.getElementById('contentIframe');
-            const iframeTitle = document.getElementById('iframeTitle');
-
-            welcomeScreen.style.display = 'none';
-            iframeContainer.style.display = 'block';
-            iframe.src = url;
-            iframeTitle.textContent = title;
-
-            // Cerrar sidebar en móvil
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('show');
-            }
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('iframeContainer').style.display = 'block';
+            document.getElementById('contentIframe').src = url;
+            document.getElementById('iframeTitle').textContent = title;
+            if(menuOpen) toggleMenu();
         }
 
-        // Función para cargar iframe (para Dictámenes Firmados y Directorio)
-        function loadIframe(url, title) {
-            // Oculta la pantalla de bienvenida
-            const welcome = document.getElementById("welcomeScreen");
-            if (welcome) welcome.style.display = "none";
-
-            // Muestra el contenedor del iframe
-            const iframeContainer = document.getElementById("iframeContainer");
-            iframeContainer.style.display = "block";
-
-            // Cambia el título que aparece arriba del iframe
-            const iframeTitle = document.getElementById("iframeTitle");
-            if (iframeTitle) iframeTitle.textContent = title;
-
-            // Carga la URL en el iframe
-            const iframe = document.getElementById("contentIframe");
-            iframe.src = url;
-        }
+        function loadIframe(url, title) { loadPage(url, title); }
+        function openIframe(title, url) { loadPage(url, title); }
 
         function closeIframe() {
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            const iframeContainer = document.getElementById('iframeContainer');
-            const iframe = document.getElementById('contentIframe');
-
-            welcomeScreen.style.display = 'block';
-            iframeContainer.style.display = 'none';
-            iframe.src = '';
+            document.getElementById('iframeContainer').style.display = 'none';
+            document.getElementById('contentIframe').src = '';
+            document.getElementById('welcomeScreen').style.display = 'flex';
         }
 
-        function openProfileModal() {
-            document.getElementById('profileModal').style.display = 'block';
-            document.getElementById('profileMessage').textContent = '';
-        }
+        function openProfileModal() { document.getElementById('profileModal').style.display = 'block'; }
+        function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
 
-        function closeProfileModal() {
-            document.getElementById('profileModal').style.display = 'none';
-            document.getElementById('profileFileInput').value = '';
-            document.getElementById('profileMessage').textContent = '';
-        }
+        // Nuevas funciones para el modal de Logout
+        function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }
+        function closeLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
 
-        // Cerrar modal al hacer clic fuera de él
-        window.onclick = function(event) {
-            const modal = document.getElementById('profileModal');
-            if (event.target == modal) {
-                closeProfileModal();
+        // MANEJO DE CLIC AFUERA PARA MODALES Y MENÚ
+        window.onclick = (e) => {
+            // Cerrar Modal Perfil
+            const profileModal = document.getElementById('profileModal');
+            if (e.target === profileModal) closeProfileModal();
+
+            // Cerrar Modal Logout
+            const logoutModal = document.getElementById('logoutModal');
+            if (e.target === logoutModal) closeLogoutModal();
+
+            // Cerrar Menú
+            const menu = document.getElementById('dropdownMenu');
+            const toggleBtn = document.getElementById('menuToggleBtn');
+            if (menuOpen && !menu.contains(e.target) && e.target !== toggleBtn) {
+                toggleMenu();
             }
         }
-
-        // Ajustar sidebar en cambio de tamaño de ventana
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('show');
-            }
-        });
     </script>
 </body>
 </html>
