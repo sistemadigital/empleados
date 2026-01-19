@@ -64,9 +64,9 @@
             width: 100%;
         }
 
-        .navbar-left { display: flex; align-items: center; gap: 20px; }
-        .navbar-right { display: flex; align-items: center; gap: 15px; }
-        .navbar-brand { font-size: 18px; font-weight: bold; color: var(--primary); white-space: nowrap; }
+        .navbar-left { display: flex; align-items: center; gap: 20px; flex-shrink: 1; min-width: 0; }
+        .navbar-right { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+        .navbar-brand { font-size: 18px; font-weight: bold; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .menu-container { position: relative; }
         .menu-toggle {
@@ -221,23 +221,16 @@
         .rect-module:nth-child(5) { border-left-color: rgba(139, 92, 246, 0.8); }
         .rect-module:nth-child(6) { border-left-color: rgba(6, 182, 212, 0.8); }
 
-        /* ========================================================
-           AJUSTE IFRAME: Full Screen pero DEBAJO de la cabecera
-           ======================================================== 
-        */
         .iframe-container { 
             display: none; 
-            /* Posición fija ocupando todo */
             position: fixed; 
             top: 0; 
             left: 0; 
             width: 100vw; 
             height: 100vh; 
-            /* Z-index menor que navbar (5000) pero mayor que contenido (0) */
             z-index: 4000; 
             background: var(--background);
             flex-direction: column;
-            /* Padding superior igual a la altura de la navbar (70px) */
             padding-top: 70px;
         }
 
@@ -254,13 +247,11 @@
 
         .content-iframe { 
             width: 100%; 
-            /* Ocupa el espacio restante */
             flex: 1; 
             border: none; 
             display: block;
         }
 
-        /* Modales */
         .modal { display: none; position: fixed; z-index: 6000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
         .modal-content { background: var(--popover); margin: 15% auto; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; }
         .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 0.8rem; cursor: pointer; font-weight: bold; }
@@ -271,7 +262,15 @@
         .avatar-option:hover { transform: scale(1.1); border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .avatar-container { display: flex; justify-content: center; gap: 30px; margin: 25px 0; }
 
+        /* AJUSTES PARA MÓVILES */
         @media (max-width: 850px) {
+            .navbar { padding: 10px; }
+            .navbar-brand { font-size: 14px; white-space: normal; line-height: 1.1; max-width: 150px; }
+            .menu-toggle { padding: 6px 10px; font-size: 13px; min-width: 80px; }
+            .user-info { gap: 8px; }
+            #userName { display: none; } /* Ocultamos el nombre en móvil para dar espacio al botón */
+            .logout-btn { padding: 6px 10px; font-size: 13px; }
+            
             .split-layout { flex-direction: column; }
             .left-panel { min-height: 200px; }
             .right-panel { align-items: center; height: auto; min-height: 400px; }
@@ -360,7 +359,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="navbar-brand">Defensoría Civil y Comercial 6 Ministerio Público de Misiones</div>
+                <div class="navbar-brand">Defensoría 6 - Misiones</div>
             </div>
             <div class="navbar-right">
                 <div class="user-info">
@@ -432,7 +431,6 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        // Configuración específica (Defensoría Empleados)
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
@@ -461,7 +459,6 @@
             } else { window.location.href = 'index.html'; }
         });
 
-        // Lógica de Salida
         document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
             try {
                 await signOut(auth);
@@ -494,7 +491,6 @@
 
         function loadPage(url, title) {
             document.getElementById('welcomeScreen').style.display = 'none';
-            // Ajuste para usar flex y llenar columna
             document.getElementById('iframeContainer').style.display = 'flex'; 
             document.getElementById('contentIframe').src = url;
             document.getElementById('iframeTitle').textContent = title;
@@ -513,21 +509,14 @@
         function openProfileModal() { document.getElementById('profileModal').style.display = 'block'; }
         function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
 
-        // Nuevas funciones para el modal de Logout
         function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }
         function closeLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
 
-        // MANEJO DE CLIC AFUERA PARA MODALES Y MENÚ
         window.onclick = (e) => {
-            // Cerrar Modal Perfil
             const profileModal = document.getElementById('profileModal');
             if (e.target === profileModal) closeProfileModal();
-
-            // Cerrar Modal Logout
             const logoutModal = document.getElementById('logoutModal');
             if (e.target === logoutModal) closeLogoutModal();
-
-            // Cerrar Menú
             const menu = document.getElementById('dropdownMenu');
             const toggleBtn = document.getElementById('menuToggleBtn');
             if (menuOpen && !menu.contains(e.target) && e.target !== toggleBtn) {
