@@ -1751,20 +1751,25 @@
             });
             
             return datosCache.filter(d => {
-                // Búsqueda general
-                if (q) {
-                    const contieneTexto = 
-                        (d.numCausa && d.numCausa.toLowerCase().includes(q)) ||
-                        (d.caratula && d.caratula.toLowerCase().includes(q)) ||
-                        (d.tipoProceso && d.tipoProceso.toLowerCase().includes(q)) ||
-                        (d.juzgado && d.juzgado.toLowerCase().includes(q)) ||
-                        (d.usuarioAsignado && d.usuarioAsignado.toLowerCase().includes(q));
-                    
-                    if (!contieneTexto) {
-                        return false;
-                    }
-                }
-                
+               // Búsqueda general en múltiples campos
+if (q) {
+    // Función auxiliar para buscar texto dentro de arrays (como notas o diligencias)
+    const buscarEnArray = (arr, prop) => arr && Array.isArray(arr) && arr.some(item => item[prop] && item[prop].toLowerCase().includes(q));
+    const contieneTexto = 
+        (d.numCausa && d.numCausa.toLowerCase().includes(q)) ||
+        (d.caratula && d.caratula.toLowerCase().includes(q)) ||
+        (d.tipoProceso && d.tipoProceso.toLowerCase().includes(q)) ||
+        (d.juzgado && d.juzgado.toLowerCase().includes(q)) ||
+        (d.observaciones && d.observaciones.toLowerCase().includes(q)) ||
+        (d.datosNnya && d.datosNnya.toLowerCase().includes(q)) ||
+        (d.usuarioAsignado && d.usuarioAsignado.toLowerCase().includes(q)) ||
+        (d.nnyaGesell && d.nnyaGesell.toLowerCase().includes(q)) ||
+        (d.recursosContestacion && d.recursosContestacion.toLowerCase().includes(q)) ||
+        buscarEnArray(d.notas, 'texto') || 
+        buscarEnArray(d.diligencias, 'detalle');
+
+    if (!contieneTexto) return false;
+}                
                 // Filtros individuales
                 if (est && d.estado !== est) return false;
                 if (usu && d.usuarioAsignado !== usu) return false;
