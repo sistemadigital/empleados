@@ -98,14 +98,14 @@
       padding: var(--spacing-m) var(--spacing-gutter);
     }
 
-    /* Header buttons - AJUSTADO PARA NO TENER SCROLL */
+    /* Header buttons */
     .header-buttons {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       gap: var(--spacing-s);
       margin-bottom: var(--spacing-m);
-      flex-wrap: wrap; /* Permite que los botones bajen a la siguiente línea si no caben */
+      flex-wrap: wrap; 
     }
 
     .header-btn {
@@ -392,6 +392,10 @@
       margin-bottom: var(--spacing-m);
       padding: 0 var(--spacing-m);
     }
+    
+    #fileUrlWrap {
+        word-break: break-all;
+    }
 
     label {
       display: block;
@@ -435,18 +439,133 @@
       transition: width 0.3s;
     }
 
+    /* MEDIA QUERIES PARA MÓVILES Y TABLETS */
+    @media (max-width: 992px) {
+        .container {
+            padding: var(--spacing-s) var(--spacing-s);
+        }
+    }
+
     @media (max-width: 768px) {
+      /* Ajuste de botones superiores: Grilla de 2 columnas */
       .header-buttons {
-        justify-content: center; /* Centrado en móviles para mejor estética */
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
       }
       
+      .header-btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 5px;
+        white-space: normal;
+        line-height: 1.2;
+      }
+
+      /* Panel de Búsqueda */
       .search-section {
         flex-direction: column;
         align-items: stretch;
+        gap: 10px;
+      }
+      
+      .search-input {
+        min-width: 100%;
+      }
+
+      .action-buttons {
+        width: 100%;
+      }
+      
+      .button {
+        flex: 1;
+        justify-content: center;
+      }
+
+      /* TRANSICIÓN DE TABLA A CARDS (TARJETAS) */
+      .data-table thead {
+        display: none; /* Ocultar cabeceras tradicionales */
+      }
+
+      .data-table, 
+      .data-table tbody, 
+      .data-table tr, 
+      .data-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .data-table tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--border-default);
+        border-radius: var(--border-radius-default);
+        background: var(--background-card);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        padding: 5px 0;
+      }
+
+      .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 10px 15px;
+        border-bottom: 1px solid var(--secondary-light-gray);
+        text-align: right;
+        min-height: auto;
+      }
+
+      .data-table td:last-child {
+        border-bottom: none;
+        padding-top: 15px;
+        justify-content: flex-end;
+      }
+
+      /* Usamos pseudoelementos para las etiquetas */
+      .data-table td::before {
+        content: attr(data-label);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+        font-size: 11px;
+        color: var(--text-secondary);
+        text-align: left;
+        margin-right: 15px;
+        flex: 1;
+        margin-top: 3px;
+      }
+
+      /* Ajustes de contenido dentro de las cards */
+      .doc-name, .doc-detail, .doc-theme {
+        white-space: normal; /* Permitir salto de línea */
+        overflow: visible;
+        text-align: right;
+        flex: 2;
+        font-size: 14px;
+      }
+      
+      .doc-meta {
+          flex: 2;
+          text-align: right;
       }
 
       .doc-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      /* Paginación Mobile */
+      .pagination-container {
         flex-direction: column;
+        gap: 10px;
+      }
+
+      /* Modal Mobile */
+      .modal-content {
+        width: 95%;
+        padding: var(--spacing-m);
+        margin: 10px;
       }
     }
   </style>
@@ -892,14 +1011,15 @@
           if (docs.length) {
             const { currentPage, itemsPerPage } = paginationState[cat];
             const paginated = docs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+            // Se han agregado atributos data-label para el modo responsivo (cards en mobile)
             tbody.innerHTML = paginated.map(d => `
               <tr>
-                <td><div class="doc-name">${d.name}</div></td>
-                <td><div class="doc-meta">${d.date}</div></td>
-                <td><div class="doc-meta">${d.user}</div></td>
-                <td><div class="doc-theme">${d.theme || ''}</div></td>
-                <td><div class="doc-detail">${d.detail || ''}</div></td>
-                <td>
+                <td data-label="Nombre"><div class="doc-name">${d.name}</div></td>
+                <td data-label="Fecha"><div class="doc-meta">${d.date}</div></td>
+                <td data-label="Usuario"><div class="doc-meta">${d.user}</div></td>
+                <td data-label="Temática"><div class="doc-theme">${d.theme || ''}</div></td>
+                <td data-label="Detalle"><div class="doc-detail">${d.detail || ''}</div></td>
+                <td data-label="Acciones">
                   <div class="doc-actions">
                     <a href="${d.url}" target="_blank" class="doc-link">Ver</a>
                     <button class="edit-btn" onclick="editDoc('${d.id}')">Editar</button>
