@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚖️Sistema Empleados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --background: oklch(1.0000 0 0);
+            --foreground: oklch(0.1884 0.0128 248.5103);
+            --card: oklch(0.9784 0.0011 197.1387);
+            --card-foreground: oklch(0.1884 0.0128 248.5103);
+            --popover: oklch(1.0000 0 0);
+            --popover-foreground: oklch(0.1884 0.0128 248.5103);
+            --primary: oklch(0.6723 0.1606 244.9955);
+            --primary-foreground: oklch(1.0000 0 0);
+            --secondary: oklch(0.1884 0.0128 248.5103);
+            --secondary-foreground: oklch(1.0000 0 0);
+            --muted: oklch(0.9222 0.0013 286.3737);
+            --muted-foreground: oklch(0.1884 0.0128 248.5103);
+            --accent: oklch(0.9392 0.0166 250.8453);
+            --accent-foreground: oklch(0.6723 0.1606 244.9955);
+            --destructive: oklch(0.6188 0.2376 25.7658);
+            --destructive-foreground: oklch(1.0000 0 0);
+            --border: oklch(0.9317 0.0118 231.6594);
+            --input: oklch(0.9809 0.0025 228.7836);
+            --ring: oklch(0.6818 0.1584 243.3540);
+            --radius: 1.3rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: var(--foreground);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: url('https://github.com/sistemadigital/iconos/blob/main/azulfondo.jpg?raw=true') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.4);
+            filter: blur(80px);
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            z-index: -1;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(102, 126, 234, 0.2);
+            filter: blur(100px);
+            border-radius: 50%;
+            bottom: 10%;
+            right: 10%;
+            z-index: -1;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-height: 650px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro-panel {
+            flex: 2.2;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            gap: 40px;
+            border-right: 1px solid var(--border);
+        }
+
+        .intro-image {
+            max-width: 320px;
+            height: auto;
+            opacity: 0;
+            animation: fadeInSlow 2s ease forwards;
+        }
+
+        .intro-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .intro-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInText 1s ease forwards;
+            animation-delay: 2s;
+            white-space: nowrap;
+            margin-bottom: 10px;
+        }
+
+        .intro-subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin: 2px 0;
+            opacity: 0;
+            animation: fadeInSubText 0.8s ease forwards;
+        }
+
+        .subtitle-1 { animation-delay: 2.5s; }
+        .subtitle-2 { animation-delay: 2.8s; }
+        .subtitle-3 { 
+            animation-delay: 3.1s; 
+            color: var(--primary); 
+            font-weight: 700;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+        }
+
+        .icons-bar {
+            margin-top: 25px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInSlow 1s ease forwards;
+            animation-delay: 3.5s;
+        }
+
+        .icons-bar img {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .icons-bar img:hover {
+            transform: scale(1.2);
+        }
+
+        /* ESTILO PARA EL NUEVO TEXTO */
+        .ai-assistant-text {
+            color: #28a745;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1rem;
+            opacity: 0;
+            animation: fadeInSlow 1s ease forwards;
+            animation-delay: 3.8s;
+        }
+
+        .right-panel {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 50px 40px;
+            background: white;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            color: var(--foreground);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-header p {
+            color: var(--muted-foreground);
+            font-size: 0.95rem;
+        }
+
+        .form {
+            position: relative;
+            width: 100%;
+        }
+
+        .form.hidden {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        .input-with-icon input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+            margin: 0 10px;
+        }
+
+        .auth-message {
+            padding: 12px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .error-message { background: rgba(220, 53, 69, 0.1); color: var(--destructive); }
+        .success-message { background: rgba(40, 167, 69, 0.1); color: #28a745; }
+
+        .card-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--muted-foreground);
+        }
+
+        .developer { color: var(--primary); font-weight: 600; }
+
+        @keyframes fadeInSlow { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInText { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeInSubText { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+
+        @media (max-width: 1024px) {
+            body {
+                align-items: flex-start;
+                padding: 10px;
+            }
+            .login-container {
+                flex-direction: column;
+                min-height: auto;
+                max-width: 500px;
+                margin: 20px auto;
+            }
+            .intro-panel {
+                flex-direction: column;
+                gap: 20px;
+                padding: 30px 20px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .intro-image {
+                max-width: 180px;
+            }
+            .intro-title {
+                font-size: 2.2rem;
+                white-space: normal;
+                text-align: center;
+            }
+            .right-panel {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container fade-in">
+        <div class="intro-panel">
+            <img src="https://github.com/sistemadigital/iconos/blob/main/computadora-3d.png?raw=true" 
+                 alt="Computadora 3D" 
+                 class="intro-image">
+            
+            <div class="intro-text-wrapper">
+                <h1 class="intro-title">Sistema Digital</h1>
+                <p class="intro-subtitle subtitle-1">Defensoría Civil y Comercial 6</p>
+                <p class="intro-subtitle subtitle-2">Ministerio Público de Misiones</p>
+                <p class="intro-subtitle subtitle-3">Acceso exclusivo Empleados</p>
+
+                <div class="icons-bar">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/equilibrar.gif?raw=true" alt="Equilibrar">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/causa.gif?raw=true" alt="Causa">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/agenda.gif?raw=true" alt="Agenda">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/escrito.gif?raw=true" alt="Escrito">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/proteccion.gif?raw=true" alt="Protección">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/documento.gif?raw=true" alt="Documento">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/reporte.gif?raw=true" alt="Reporte">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/whatsapp.gif?raw=true" alt="WhatsApp">
+                </div>
+                <p class="ai-assistant-text">Aplicación con asistente de inteligencia artificial</p>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Bienvenido</h2>
+                    <p>Ingresa tus credenciales para continuar</p>
+                </div>
+                
+                <div id="authMessage" class="auth-message"></div>
+                
+                <div id="loginForm" class="form">
+                    <div class="form-group">
+                        <label for="loginEmail">Correo Electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" placeholder="usuario@mpmisiones.gob.ar" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="loginUser()">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                    
+                    <div class="divider"><span>¿Nuevo empleado?</span></div>
+                    
+                    <button class="btn btn-secondary" onclick="showRegisterForm()">
+                        <i class="fas fa-user-plus"></i> Crear Cuenta
+                    </button>
+                </div>
+                
+                <div id="registerForm" class="form hidden">
+                    <div class="form-group">
+                        <label for="registerName">Nombre Completo</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="registerName" placeholder="Tu nombre" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerEmail">Correo Electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="registerEmail" placeholder="usuario@mpmisiones.gob.ar" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">Contraseña</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="registerUser()">
+                        <i class="fas fa-user-check"></i> Registrarse
+                    </button>
+                    
+                    <div class="divider"><span>¿Ya tienes cuenta?</span></div>
+                    
+                    <button class="btn btn-secondary" onclick="showLoginForm()">
+                        <i class="fas fa-arrow-left"></i> Volver al Login
+                    </button>
+                </div>
+
+                <div class="card-footer">
+                    <div>Diseño y programación de:</div>
+                    <div style="font-weight: 600;">Rómulo Fioravante - Año 2025</div>
+                    <div class="developer">Versión 2.5-IA (Empleados)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
+            authDomain: "defensoria-empleados.firebaseapp.com",
+            projectId: "defensoria-empleados",
+            storageBucket: "defensoria-empleados.firebasestorage.app",
+            messagingSenderId: "438237217533",
+            appId: "1:438237217533:web:6603123e43a12da00c7494"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.loginUser = async function() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            if (!email || !password) return showMessage('Completa los campos', 'error');
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showMessage('Iniciando sesión...', 'success');
+            } catch (error) { 
+                showMessage('Credenciales inválidas o error de conexión', 'error'); 
+            }
+        };
+
+        window.registerUser = async function() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            if (!name || !email || !password) return showMessage('Completa los campos', 'error');
+            if (password.length < 6) return showMessage('La contraseña debe tener 6 caracteres', 'error');
+            
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(cred.user, { displayName: name });
+                showMessage('Cuenta creada exitosamente', 'success');
+            } catch (error) { 
+                showMessage('Error al crear cuenta', 'error'); 
+            }
+        };
+
+        function showMessage(msg, type) {
+            const div = document.getElementById('authMessage');
+            div.textContent = msg;
+            div.className = 'auth-message ' + type + '-message';
+            div.style.display = 'block';
+            setTimeout(() => div.style.display = 'none', 4000);
+        }
+
+        onAuthStateChanged(auth, user => { 
+            if(user) {
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 1000);
+            } 
+        });
+    </script>
+
+    <script>
+        function showRegisterForm() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('authMessage').style.display = 'none';
+        }
+        function showLoginForm() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('authMessage').style.display = 'none';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const isLoginVisible = !document.getElementById('loginForm').classList.contains('hidden');
+                if (isLoginVisible) {
+                    loginUser();
+                } else {
+                    registerUser();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

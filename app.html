@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚖️Sistema Digital - Defensoría 6</title>
+    <style>
+        :root {
+          --background: oklch(1.0000 0 0);
+          --foreground: oklch(0.1884 0.0128 248.5103);
+          --card: oklch(0.9784 0.0011 197.1387);
+          --card-foreground: oklch(0.1884 0.0128 248.5103);
+          --popover: oklch(1.0000 0 0);
+          --popover-foreground: oklch(0.1884 0.0128 248.5103);
+          --primary: oklch(0.6723 0.1606 244.9955);
+          --primary-foreground: oklch(1.0000 0 0);
+          --secondary: oklch(0.1884 0.0128 248.5103);
+          --secondary-foreground: oklch(1.0000 0 0);
+          --muted: oklch(0.9222 0.0013 286.3737);
+          --muted-foreground: oklch(0.1884 0.0128 248.5103);
+          --accent: oklch(0.9392 0.0166 250.8453);
+          --accent-foreground: oklch(0.6723 0.1606 244.9955);
+          --destructive: oklch(0.6188 0.2376 25.7658);
+          --destructive-foreground: oklch(1.0000 0 0);
+          --border: oklch(0.9317 0.0118 231.6594);
+          --radius: 1.3rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--foreground);
+        }
+
+        /* NAVBAR FIJA */
+        .navbar {
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: fixed; /* Fijo para estar siempre visible */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px; /* Altura fija para cálculos */
+            z-index: 5000; /* Por encima del iframe */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Ajuste para que el contenido no quede oculto tras la navbar */
+        .main-content {
+            padding-top: 75px; 
+            width: 100%;
+        }
+
+        .navbar-left { display: flex; align-items: center; gap: 20px; flex-shrink: 1; min-width: 0; }
+        .navbar-right { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+        .navbar-brand { font-size: 18px; font-weight: bold; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .menu-container { position: relative; }
+        .menu-toggle {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            padding: 8px 16px;
+            border-radius: calc(var(--radius) - 0.5rem);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 260px;
+            background: var(--popover);
+            border-radius: calc(var(--radius) - 0.5rem);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 5100; /* Mayor que la navbar */
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: none;
+        }
+
+        .dropdown-menu.active { display: block; }
+        .menu-section { padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .menu-items { max-height: 500px; overflow-y: auto; }
+        
+        .menu-item {
+            padding: 12px 16px;
+            display: block;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: bold;
+            color: #0056b3; 
+        }
+        .menu-item:hover { background: var(--accent); color: #003d7a; }
+        .menu-section-title { padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; }
+
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .profile-pic { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; }
+        .profile-pic-placeholder { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary-foreground); font-weight: bold; cursor: pointer; }
+        .logout-btn { background: var(--destructive); color: var(--destructive-foreground); border: none; padding: 8px 14px; border-radius: calc(var(--radius) - 0.5rem); cursor: pointer; font-weight: 600; }
+
+        .welcome-screen {
+            padding: 20px 40px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .split-layout {
+            display: flex;
+            width: 100%;
+            max-width: 1500px;
+            gap: 30px;
+            align-items: stretch;
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.4);
+            border: 3px solid #0056b3;
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .mp-logo {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            display: block;
+        }
+
+        .right-panel {
+            flex: 2.2;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-auto-rows: 1fr;
+            gap: 20px;
+            width: 100%;
+            height: 100%;
+            padding: 5px;
+        }
+
+        .rect-module {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 15px;
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-left-width: 6px;
+            border-left-style: solid;
+            color: var(--foreground);
+            font-weight: 700;
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .rect-module:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .rect-module:nth-child(1) { border-left-color: rgba(239, 68, 68, 0.8); }
+        .rect-module:nth-child(2) { border-left-color: rgba(59, 130, 246, 0.8); }
+        .rect-module:nth-child(3) { border-left-color: rgba(16, 185, 129, 0.8); }
+        .rect-module:nth-child(4) { border-left-color: rgba(245, 158, 11, 0.8); }
+        .rect-module:nth-child(5) { border-left-color: rgba(139, 92, 246, 0.8); }
+        .rect-module:nth-child(6) { border-left-color: rgba(6, 182, 212, 0.8); }
+
+        .iframe-container { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            z-index: 4000; 
+            background: var(--background);
+            flex-direction: column;
+            padding-top: 70px;
+        }
+
+        .iframe-header { 
+            background: var(--card); 
+            padding: 0 20px; 
+            height: 50px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-shrink: 0;
+        }
+
+        .content-iframe { 
+            width: 100%; 
+            flex: 1; 
+            border: none; 
+            display: block;
+        }
+
+        .modal { display: none; position: fixed; z-index: 6000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
+        .modal-content { background: var(--popover); margin: 15% auto; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 0.8rem; cursor: pointer; font-weight: bold; }
+        
+        .avatar-option {
+            width: 100px; height: 100px; border-radius: 50%; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 4px solid transparent;
+        }
+        .avatar-option:hover { transform: scale(1.1); border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .avatar-container { display: flex; justify-content: center; gap: 30px; margin: 25px 0; }
+
+        /* AJUSTES PARA MÓVILES */
+        @media (max-width: 850px) {
+            .navbar { padding: 10px; }
+            .navbar-brand { font-size: 14px; white-space: normal; line-height: 1.1; max-width: 150px; }
+            .menu-toggle { padding: 6px 10px; font-size: 13px; min-width: 80px; }
+            .user-info { gap: 8px; }
+            #userName { display: none; } /* Ocultamos el nombre en móvil para dar espacio al botón */
+            .logout-btn { padding: 6px 10px; font-size: 13px; }
+            
+            .split-layout { flex-direction: column; }
+            .left-panel { min-height: 200px; }
+            .right-panel { align-items: center; height: auto; min-height: 400px; }
+            .module-grid { height: auto; }
+        }
+
+        /* MODAL DE LOGOUT */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(3, 74, 117, 0.4); 
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 6000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content-logout {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 1);
+        }
+
+        .modal-title-logout { color: var(--destructive); font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
+        .modal-text-logout { color: #555; font-size: 1rem; margin-bottom: 25px; font-weight: 500; }
+        
+        .modal-buttons-logout { display: flex; gap: 15px; justify-content: center; }
+        
+        .btn-confirm-logout { 
+            background: var(--destructive); 
+            color: white; 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+            transition: transform 0.2s; 
+        }
+        
+        .btn-cancel-logout { 
+            background: #e0f2fe;
+            color: #034a75;
+            border: 1px solid transparent;
+            padding: 12px 25px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            transition: background 0.2s;
+        }
+
+        .btn-confirm-logout:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-cancel-logout:hover { background: #bae6fd; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="menu-container">
+                    <button class="menu-toggle" id="menuToggleBtn" onclick="toggleMenu()">☰ Menú</button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="menu-items">
+                            <div class="menu-section">
+                                <div class="menu-section-title">Sistema Principal</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">Registro de Causas</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">Datos de Partes</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">Notificaciones</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/dictamenes.html', 'Dictámenes Modelos')">Dictámenes Modelos</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/organismos.html', 'Organismos')">Organismos</div>
+                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados', 'Consultas y Turnos')">Consultas y Turnos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="menu-toggle" onclick="loadPage('https://sistemadigital.github.io/IA/', 'Asistente.IA')">Asistente.IA</button>
+                <div class="navbar-brand">Defensoría Civil y Comercial 6 Ministerio Público de Misiones</div>
+            </div>
+            <div class="navbar-right">
+                <div class="user-info">
+                    <span id="userName"></span>
+                    <div onclick="openProfileModal()" title="Cambiar Avatar">
+                        <div class="profile-pic-placeholder" id="profilePlaceholder">U</div>
+                        <img class="profile-pic" id="profilePic" style="display: none;">
+                    </div>
+                    <button class="logout-btn" onclick="openLogoutModal()">Salir</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="split-layout">
+                    <div class="left-panel">
+                        <img src="https://github.com/sistemadigital/iconos/blob/main/MP.png?raw=true" alt="Ministerio Público" class="mp-logo">
+                    </div>
+                    
+                    <div class="right-panel">
+                        <div class="module-grid">
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">Registro de Causas</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">Datos de Partes</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">Notificaciones</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/dictamenes.html', 'Dictámenes Modelos')">Dictámenes Modelos</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/organismos.html', 'Organismos')">Organismos</div>
+                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados', 'Consultas y Turnos')">Consultas y Turnos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="iframeContainer" class="iframe-container">
+                <div class="iframe-header">
+                    <div id="iframeTitle" style="font-weight:bold;">Cargando...</div>
+                    <button onclick="closeIframe()" style="background:var(--destructive); color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">✕ Cerrar</button>
+                </div>
+                <iframe id="contentIframe" class="content-iframe"></iframe>
+            </div>
+        </main>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeProfileModal()" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
+            <h3 style="margin-bottom:10px;">Selecciona tu Avatar</h3>
+            <p style="font-size: 0.9em; color: var(--muted-foreground); margin-bottom: 20px;">Elige una imagen para tu perfil</p>
+            <div class="avatar-container">
+                <img src="https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true" class="avatar-option" onclick="saveAvatar('hombre')" alt="Hombre">
+                <img src="https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true" class="avatar-option" onclick="saveAvatar('mujer')" alt="Mujer">
+            </div>
+            <button class="btn" onclick="closeProfileModal()" style="background: var(--secondary);">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="logoutModal" class="modal-overlay">
+        <div class="modal-content-logout">
+            <div class="modal-title-logout">Cerrar Sesión</div>
+            <p class="modal-text-logout">¿Estás seguro que deseas salir del sistema?</p>
+            <div class="modal-buttons-logout">
+                <button class="btn-confirm-logout" id="confirmLogoutBtn">Sí, salir</button>
+                <button class="btn-cancel-logout" onclick="closeLogoutModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
+            authDomain: "defensoria-empleados.firebaseapp.com",
+            projectId: "defensoria-empleados",
+            storageBucket: "defensoria-empleados.firebasestorage.app",
+            messagingSenderId: "438237217533",
+            appId: "1:438237217533:web:6603123e43a12da00c7494"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.auth = auth;
+
+        const AVATAR_HOMBRE = "https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true";
+        const AVATAR_MUJER = "https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true";
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.currentUser = user;
+                document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
+                if (user.photoURL) {
+                    document.getElementById('profilePic').src = user.photoURL;
+                    document.getElementById('profilePic').style.display = 'block';
+                    document.getElementById('profilePlaceholder').style.display = 'none';
+                }
+            } else { window.location.href = 'index.html'; }
+        });
+
+        document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Error al salir:", error);
+            }
+        });
+
+        window.saveAvatar = async (tipo) => {
+            const nuevaUrl = (tipo === 'hombre') ? AVATAR_HOMBRE : AVATAR_MUJER;
+            if (window.currentUser) {
+                try {
+                    await updateProfile(window.currentUser, { photoURL: nuevaUrl });
+                    document.getElementById('profilePic').src = nuevaUrl;
+                    document.getElementById('profilePic').style.display = 'block';
+                    document.getElementById('profilePlaceholder').style.display = 'none';
+                    closeProfileModal();
+                } catch (error) { console.error("Error:", error); }
+            }
+        };
+    </script>
+
+    <script>
+        let menuOpen = false;
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            document.getElementById('dropdownMenu').classList.toggle('active');
+        }
+
+        function loadPage(url, title) {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('iframeContainer').style.display = 'flex'; 
+            document.getElementById('contentIframe').src = url;
+            document.getElementById('iframeTitle').textContent = title;
+            if(menuOpen) toggleMenu();
+        }
+
+        function loadIframe(url, title) { loadPage(url, title); }
+        function openIframe(title, url) { loadPage(url, title); }
+
+        function closeIframe() {
+            document.getElementById('iframeContainer').style.display = 'none';
+            document.getElementById('contentIframe').src = '';
+            document.getElementById('welcomeScreen').style.display = 'flex';
+        }
+
+        function openProfileModal() { document.getElementById('profileModal').style.display = 'block'; }
+        function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
+
+        function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }
+        function closeLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
+
+        window.onclick = (e) => {
+            const profileModal = document.getElementById('profileModal');
+            if (e.target === profileModal) closeProfileModal();
+            const logoutModal = document.getElementById('logoutModal');
+            if (e.target === logoutModal) closeLogoutModal();
+            const menu = document.getElementById('dropdownMenu');
+            const toggleBtn = document.getElementById('menuToggleBtn');
+            if (menuOpen && !menu.contains(e.target) && e.target !== toggleBtn) {
+                toggleMenu();
+            }
+        }
+    </script>
+</body>
+</html>
