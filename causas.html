@@ -2811,18 +2811,17 @@
                 unsubCausas();
             }
             
-            console.log("Construyendo consulta optimizada...");
+            console.log("Construyendo consulta...");
             let query = db.collection("causas");
             
+            // FILTROS DE SERVIDOR (Dropdowns):
+            // Mantenemos estos en el servidor para optimizar la descarga de datos
             const fEstado = filtroEstado.value;
             const fUsuario = filtroUsuario.value;
             const fPrioridad = filtroPrioridad.value;
             const fIntervencion = filtroIntervencion.value;
             const fTipoProceso = filtroTipoProceso.value;
             const fEvento = filtroEventos.value;
-            const fDesde = filtroFechaDesde.value;
-            const fHasta = filtroFechaHasta.value;
-            const busqueda = buscador.value.trim();
             
             if (fEstado) query = query.where("estado", "==", fEstado);
             if (fUsuario) query = query.where("usuarioAsignado", "==", fUsuario);
@@ -2830,6 +2829,7 @@
             if (fIntervencion) query = query.where("intervencion", "==", fIntervencion);
             if (fTipoProceso) query = query.where("tipoProceso", "==", fTipoProceso);
             
+            // Filtros de eventos específicos
             if (fEvento) {
                 switch(fEvento) {
                     case 'audiencias': query = query.where("audiencias", "!=", null); break;
@@ -2840,25 +2840,11 @@
                 }
             }
             
-            if (busqueda) {
-                const palabras = busqueda.toLowerCase()
-                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                    .split(/\s+/)
-                    .filter(p => p.length > 0);
-                
-                if (palabras.length > 0) {
-                    const palabrasLimitadas = palabras.slice(0, 10);
-                    query = query.where("keywords", "array-contains-any", palabrasLimitadas);
-                }
-            }
-            
-            if (fDesde && fHasta && fDesde === fHasta) {
-                query = query.where("fechasFiltro", "array-contains", fDesde);
-            }
+            // NOTA: Hemos eliminado el filtro "keywords" del servidor para hacerlo en cliente
             
             query = query.orderBy("fechaRegistro", "desc");
             
-            console.log("Suscribiendo a cambios optimizados...");
+            console.log("Suscribiendo a cambios...");
             unsubCausas = query.onSnapshot(
                 snap => {
                     console.log("Datos recibidos del servidor:", snap.size, "registros");
@@ -2867,7 +2853,13 @@
                         datosCache.push({ id: d.id, ...d.data() });
                     });
                     
+                    // LÓGICA DE FILTRADO EN MEMORIA (Aquí solucionamos tu problema)
+                    const busquedaTexto = buscador.value.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    const fDesde = filtroFechaDesde.value;
+                    const fHasta = filtroFechaHasta.value;
+
                     datosFiltrados = datosCache.filter(d => {
+                        // 1. Filtro de Fechas
                         if (fDesde && fHasta && fDesde !== fHasta) {
                             const fechasCausa = d.fechasFiltro || [];
                             const tieneFechaEnRango = fechasCausa.some(fecha => {
@@ -2875,22 +2867,38 @@
                             });
                             if (!tieneFechaEnRango) return false;
                         }
+
+                        // 2. Filtro de Búsqueda de Texto GLOBAL (Incluye todos los campos importantes)
+                        if (busquedaTexto) {
+                            // Concatenamos todos los campos donde queremos buscar
+                            const textoAcumulado = [
+                                d.numCausa,
+                                d.caratula,
+                                d.usuarioAsignado,
+                                d.juzgado,
+                                d.tipoProceso,
+                                d.estado,
+                                d.observaciones,      // Contenido de modal ver
+                                d.datosNnya,          // Contenido de modal ver
+                                d.nnyaGesell,         // Contenido de modal ver
+                                d.intervencion,
+                                (d.diligencias || []).map(dil => dil.detalle).join(' ') // Detalles de diligencias
+                            ].join(' ').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                            // Verificamos si el texto buscado está incluido en alguna parte
+                            if (!textoAcumulado.includes(busquedaTexto)) {
+                                return false; // Si no encuentra el texto, descarta este registro
+                            }
+                        }
+                        
                         return true;
                     });
                     
                     renderTablaPaginada();
                 },
                 err => {
-                    console.error("Error en onSnapshot optimizado:", err);
-                    if (err.message.includes("index")) {
-                        tbody.innerHTML = `<tr><td colspan='10' style='color:red;text-align:center;padding:20px'>
-                            <strong>Falta Índice en Firebase.</strong><br>
-                            <span style="font-size:0.9rem">Para solucionar, ejecuta en la consola del navegador (F12):</span><br>
-                            <code style="background:#eee;padding:5px;margin:5px 0;display:inline-block">window.migrarDatosParaBusqueda()</code>
-                        </td></tr>`;
-                    } else {
-                        tbody.innerHTML = `<tr><td colspan='10'>Error al cargar los datos: ${err.message}</td></tr>`;
-                    }
+                    console.error("Error en onSnapshot:", err);
+                    tbody.innerHTML = `<tr><td colspan='10'>Error al cargar los datos: ${err.message}</td></tr>`;
                     mostrarAlertaFlotante("Error al cargar los expedientes: " + err.message, 'danger');
                 }
             );
