@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escritos Judiciales - Firebase</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <!-- CAMBIÉ LAS VERSIONES DE LAS LIBRERÍAS PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         /* Variables de color y estilo */
         :root {
@@ -488,7 +489,7 @@
                 </div>
                 <div class="action-buttons">
                     <button class="btn btn-primary" id="add-writ-btn"><i class="fas fa-plus"></i> Nuevo Escrito</button>
-                    <button class="btn btn-secondary" id="export-pdf-btn"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn btn-secondary" id="export-pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
                 </div>
             </div>
 
@@ -567,7 +568,7 @@
                                     <option>Cedron Noelia Aurora</option>
                                     <option>Corrales Alicia Mariela</option>
                                     <option>Escobar Monica Graciela</option>
-                                    <option>Fioravante Romulo</option>
+                                    <option>Fioravante Rómulo</option>
                                     <option>Gonzalez Alberto Misael</option>
                                     <option>Gonzalez Juan Jose</option>
                                     <option>Gudiño Natalia Esther</option>
@@ -835,20 +836,119 @@
             yearSelect.appendChild(opt);
         }
 
-        // Exportar PDF
-        document.getElementById('export-pdf-btn').onclick = () => {
-            const doc = new jsPDF('l');
-            doc.text("Reporte de Escritos Judiciales", 14, 15);
-            const rows = getFilteredData().map(w => [w.displayQuantity, w.year, w.type.toUpperCase(), w.process.toUpperCase(), w.user, w.fechaHora]);
-            doc.autoTable({
-                head: [['Cant', 'Año', 'Tipo', 'Proceso', 'Usuario', 'Fecha y Hora']],
-                body: rows,
-                startY: 20,
-                theme: 'grid'
-            });
-            doc.save("reporte_escritos.pdf");
-        };
+        // Exportar PDF - FIXED CON NUEVAS VERSIONES
+        document.getElementById('export-pdf-btn').addEventListener('click', () => {
+            console.log('Exportar PDF clickeado');
+            
+            const filteredData = getFilteredData();
+            
+            if (filteredData.length === 0) {
+                alert("No hay datos para exportar con los filtros actuales.");
+                return;
+            }
 
+            // jsPDF ahora está disponible como window.jspdf
+            const { jsPDF } = window.jspdf;
+            
+            // Configuración del PDF
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 15;
+            const tableWidth = pageWidth - (margin * 2);
+            
+            // Título principal
+            doc.setFontSize(18);
+            doc.setFont("helvetica", "bold");
+            doc.text("REPORTE DE ESCRITOS JUDICIALES", pageWidth / 2, 20, { align: "center" });
+            
+            // Información de filtros aplicados
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            const filters = {
+                trimestre: document.getElementById('filter-quarter').value !== 'all' ? `T${document.getElementById('filter-quarter').value}` : 'Todos',
+                año: document.getElementById('filter-year').value !== 'all' ? document.getElementById('filter-year').value : 'Todos',
+                tipo: document.getElementById('filter-type').value !== 'all' ? document.getElementById('filter-type').value : 'Todos',
+                proceso: document.getElementById('filter-process').value !== 'all' ? document.getElementById('filter-process').value : 'Todos'
+            };
+            
+            let yPos = 30;
+            doc.text("Filtros aplicados:", margin, yPos);
+            yPos += 5;
+            doc.text(`Trimestre: ${filters.trimestre} | Año: ${filters.año} | Tipo: ${filters.tipo} | Proceso: ${filters.proceso}`, margin, yPos);
+            
+            // Fecha de generación
+            const now = new Date();
+            const fechaGen = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            yPos += 5;
+            doc.text(`Generado: ${fechaGen} | Total registros: ${filteredData.length}`, margin, yPos);
+            
+            // Preparar datos para la tabla (sin acciones)
+            const tableData = filteredData.map(w => [
+                w.displayQuantity.toString(),
+                w.year,
+                w.type.toUpperCase(),
+                w.process.toUpperCase(),
+                w.user,
+                w.fechaHora
+            ]);
+            
+            // Configuración de la tabla
+            yPos += 10;
+            doc.autoTable({
+                head: [['Cant.', 'Año', 'Tipo', 'Proceso', 'Usuario', 'Fecha y Hora']],
+                body: tableData,
+                startY: yPos,
+                margin: { left: margin, right: margin },
+                tableWidth: tableWidth,
+                styles: {
+                    fontSize: 9,
+                    cellPadding: 3,
+                    overflow: 'linebreak',
+                    valign: 'middle'
+                },
+                headStyles: {
+                    fillColor: [66, 133, 244], // Azul
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 10
+                },
+                alternateRowStyles: {
+                    fillColor: [248, 249, 250]
+                },
+                columnStyles: {
+                    0: { cellWidth: 20, halign: 'center' }, // Cantidad
+                    1: { cellWidth: 25, halign: 'center' }, // Año
+                    2: { cellWidth: 30, halign: 'center' }, // Tipo
+                    3: { cellWidth: 35, halign: 'center' }, // Proceso
+                    4: { cellWidth: 50 }, // Usuario
+                    5: { cellWidth: 40, halign: 'center' } // Fecha
+                },
+                didDrawPage: function(data) {
+                    // Pie de página
+                    doc.setFontSize(8);
+                    doc.setTextColor(128, 128, 128);
+                    const pageCount = doc.internal.getNumberOfPages();
+                    for (let i = 1; i <= pageCount; i++) {
+                        doc.setPage(i);
+                        doc.text(
+                            `Página ${i} de ${pageCount}`,
+                            pageWidth / 2,
+                            doc.internal.pageSize.getHeight() - 10,
+                            { align: "center" }
+                        );
+                        doc.text(
+                            "Sistema de Gestión de Escritos Judiciales",
+                            margin,
+                            doc.internal.pageSize.getHeight() - 10
+                        );
+                    }
+                }
+            });
+            
+            // Guardar el PDF
+            const fileName = `reporte_escritos_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}.pdf`;
+            doc.save(fileName);
+        });
     </script>
 </body>
 </html>
