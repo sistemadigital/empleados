@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escritos Judiciales - Firebase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Variables de color y estilo */
+        :root {
+            --primary-color: #1a73e8;
+            --primary-dark: #0d47a1;
+            --primary-light: #e8f0fe;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #202124;
+            --text-secondary: #5f6368;
+            --border-color: #dadce0;
+            --success-color: #34a853;
+            --warning-color: #f9ab00;
+            --danger-color: #ea4335;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+            --kpi-1: #4285f4;
+            --kpi-2: #34a853;
+            --kpi-3: #f9ab00;
+            --kpi-4: #ea4335;
+        }
+
+        /* Reset y estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-color);
+            box-shadow: var(--shadow);
+            padding: 1.2rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .kpis-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .kpis-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpis-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .kpi-card {
+            background-color: var(--card-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-title {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-period {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .kpi-1 { border-top: 4px solid var(--kpi-1); }
+        .kpi-2 { border-top: 4px solid var(--kpi-2); }
+        .kpi-3 { border-top: 4px solid var(--kpi-3); }
+        .kpi-4 { border-top: 4px solid var(--kpi-4); }
+
+        .kpi-1 .kpi-value { color: var(--kpi-1); }
+        .kpi-2 .kpi-value { color: var(--kpi-2); }
+        .kpi-3 .kpi-value { color: var(--kpi-3); }
+        .kpi-4 .kpi-value { color: var(--kpi-4); }
+
+        .controls-container {
+            background-color: var(--card-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        select, input {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            background-color: white;
+            color: var(--text-color);
+            min-width: 180px;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border-radius: var(--radius);
+            border: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .table-container {
+            background-color: var(--card-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        thead {
+            background-color: var(--primary-light);
+        }
+
+        th {
+            padding: 1.2rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-varios { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-patrocinio { background-color: #e3f2fd; color: #1565c0; }
+        .badge-proceso { background-color: #f3e5f5; color: #7b1fa2; }
+
+        .quantity-cell {
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            color: var(--primary-dark);
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-edit { background-color: var(--primary-light); color: var(--primary-color); }
+        .btn-view { background-color: #e8f5e9; color: var(--success-color); }
+
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: var(--card-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal {
+            background-color: var(--card-color);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body { padding: 1.5rem; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .form-control {
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+        }
+
+        .readonly-field { background-color: var(--background-color); color: var(--text-secondary); }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        /* Loading Spinner */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+    <div id="loader"><i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary-color)"></i></div>
+
+    <div class="app-container">
+            <main>
+            <div class="kpis-container">
+                <div class="kpi-card kpi-1">
+                    <div class="kpi-title">Trimestre 1</div>
+                    <div class="kpi-value" id="kpi-1">0</div>
+                    <div class="kpi-period"><i class="far fa-calendar"></i> Ene - Mar</div>
+                </div>
+                <div class="kpi-card kpi-2">
+                    <div class="kpi-title">Trimestre 2</div>
+                    <div class="kpi-value" id="kpi-2">0</div>
+                    <div class="kpi-period"><i class="far fa-calendar"></i> Abr - Jun</div>
+                </div>
+                <div class="kpi-card kpi-3">
+                    <div class="kpi-title">Trimestre 3</div>
+                    <div class="kpi-value" id="kpi-3">0</div>
+                    <div class="kpi-period"><i class="far fa-calendar"></i> Jul - Sep</div>
+                </div>
+                <div class="kpi-card kpi-4">
+                    <div class="kpi-title">Trimestre 4</div>
+                    <div class="kpi-value" id="kpi-4">0</div>
+                    <div class="kpi-period"><i class="far fa-calendar"></i> Oct - Dic</div>
+                </div>
+            </div>
+
+            <div class="controls-container">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label class="filter-label">Trimestre</label>
+                        <select id="filter-quarter">
+                            <option value="all">Todos</option>
+                            <option value="1">T1</option>
+                            <option value="2">T2</option>
+                            <option value="3">T3</option>
+                            <option value="4">T4</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Año</label>
+                        <select id="filter-year"><option value="all">Todos</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Tipo</label>
+                        <select id="filter-type">
+                            <option value="all">Todos</option>
+                            <option value="varios">Varios</option>
+                            <option value="patrocinio">Patrocinio</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Proceso</label>
+                        <select id="filter-process">
+                            <option value="all">Todos</option>
+                            <option value="penal">Penal</option>
+                            <option value="civil">Civil</option>
+                            <option value="familia">Familia</option>
+                            <option value="laboral">Laboral</option>
+                            <option value="violencia">Violencia</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="add-writ-btn"><i class="fas fa-plus"></i> Nuevo Escrito</button>
+                    <button class="btn btn-secondary" id="export-pdf-btn"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="writs-table">
+                    <thead>
+                        <tr>
+                            <th>Cant.</th>
+                            <th>Año</th>
+                            <th>Tipo</th>
+                            <th>Proceso</th>
+                            <th>Usuario</th>
+                            <th>Fecha y Hora</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="writs-table-body"></tbody>
+                </table>
+                <div id="empty-state" class="empty-state">
+                    <i class="fas fa-file-alt fa-3x"></i>
+                    <h3>No hay registros en la base de datos</h3>
+                </div>
+            </div>
+
+            <div class="pagination-container">
+                <div class="pagination-info" id="pagination-info">Mostrando 0 escritos</div>
+                <div class="pagination-controls">
+                    <button class="page-btn" id="prev-page"><i class="fas fa-angle-left"></i></button>
+                    <div id="page-numbers"></div>
+                    <button class="page-btn" id="next-page"><i class="fas fa-angle-right"></i></button>
+                </div>
+            </div>
+        </main>
+
+        <div class="modal-overlay" id="writ-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">Nuevo Escrito</h2>
+                    <button class="close-modal" id="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="writ-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Cantidad</label>
+                                <input type="text" id="writ-quantity" class="form-control readonly-field" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Año Registro</label>
+                                <input type="text" id="writ-year" class="form-control readonly-field" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Escrito *</label>
+                                <select id="writ-type" class="form-control" required>
+                                    <option value="varios">Varios</option>
+                                    <option value="patrocinio">Patrocinio</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Proceso *</label>
+                                <select id="writ-process" class="form-control" required>
+                                    <option value="penal">Penal</option>
+                                    <option value="civil">Civil y Comercial</option>
+                                    <option value="familia">Familia</option>
+                                    <option value="laboral">Laboral</option>
+                                    <option value="violencia">Violencia Familiar</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Usuario *</label>
+                                <select id="writ-user" class="form-control" required>
+                                    <option value="" disabled selected>Seleccione un usuario</option>
+                                    <option>Bazante Nadia Romina</option>
+                                    <option>Boillat Cesar Enrique</option>
+                                    <option>Cardozo Maria Raquel</option>
+                                    <option>Cedron Noelia Aurora</option>
+                                    <option>Corrales Alicia Mariela</option>
+                                    <option>Escobar Monica Graciela</option>
+                                    <option>Fioravante Romulo</option>
+                                    <option>Gonzalez Alberto Misael</option>
+                                    <option>Gonzalez Juan Jose</option>
+                                    <option>Gudiño Natalia Esther</option>
+                                    <option>Magnani Enzo Luciano</option>
+                                    <option>Pablos Patricia</option>
+                                    <option>Palacios Ana Gabriela</option>
+                                    <option>Ortega Lucia Noemi</option>
+                                    <option>Ramos Marcelo Gustavo</option>
+                                    <option>Riveros Patricia Soledad</option>
+                                    <option>Sosa Rita Cecilia</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha y Hora</label>
+                                <input type="text" id="writ-date" class="form-control readonly-field" readonly>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="cancel-btn">Cancelar</button>
+                    <button class="btn btn-primary" id="save-btn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, query, orderBy 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // CONFIGURACIÓN DE FIREBASE (Reemplaza con tus credenciales reales)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmUQw10DFePlCVF3qqA72480fhQqbkaNM",
+            authDomain: "escritos-def6.firebaseapp.com",
+            projectId: "escritos-def6",
+            storageBucket: "escritos-def6.firebasestorage.app",
+            messagingSenderId: "115939688115",
+            appId: "1:115939688115:web:4d8818543aa8f11d0dbac6"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const escritosRef = collection(db, "escritos");
+
+        // Variables de estado
+        let writsData = [];
+        let currentWritId = null;
+        let currentPage = 1;
+        const recordsPerPage = 10;
+
+        // Elementos DOM
+        const bodyTable = document.getElementById('writs-table-body');
+        const loader = document.getElementById('loader');
+
+        // Función para formatear fecha a dd/mm/aaaa HH:mm
+        function formatDateTime(timestamp) {
+            const dateObj = new Date(timestamp);
+            const day = dateObj.getDate().toString().padStart(2, '0');
+            const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+            const year = dateObj.getFullYear();
+            const hours = dateObj.getHours().toString().padStart(2, '0');
+            const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+            
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+
+        // --- LÓGICA DE FIREBASE ---
+
+        // Cargar datos en tiempo real de la colección 'escritos'
+        const q = query(escritosRef, orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            writsData = snapshot.docs.map(doc => {
+                const data = doc.data();
+                // Formatear fecha y hora
+                const fechaHora = formatDateTime(data.timestamp);
+                
+                return {
+                    id: doc.id,
+                    ...data,
+                    fechaHora: fechaHora
+                };
+            });
+            
+            // Recalcular contador visual basado en el total
+            const total = writsData.length;
+            writsData.forEach((item, index) => {
+                item.displayQuantity = total - index;
+            });
+
+            renderTable();
+            updateKPIs();
+            loader.style.display = 'none';
+        });
+
+        async function saveToFirebase(data) {
+            try {
+                if (currentWritId) {
+                    const docRef = doc(db, "escritos", currentWritId);
+                    await updateDoc(docRef, data);
+                } else {
+                    await addDoc(escritosRef, {
+                        ...data,
+                        timestamp: Date.now()
+                    });
+                }
+                closeModal();
+            } catch (e) {
+                console.error("Error al guardar: ", e);
+                alert("Error al conectar con Firestore. Verifica tu configuración.");
+            }
+        }
+
+        // --- LÓGICA DE UI ---
+
+        function renderTable() {
+            const filtered = getFilteredData();
+            const totalPages = Math.ceil(filtered.length / recordsPerPage);
+            const start = (currentPage - 1) * recordsPerPage;
+            const pageData = filtered.slice(start, start + recordsPerPage);
+
+            bodyTable.innerHTML = '';
+            document.getElementById('empty-state').style.display = filtered.length ? 'none' : 'block';
+
+            pageData.forEach(writ => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="quantity-cell">${writ.displayQuantity}</td>
+                    <td>${writ.year}</td>
+                    <td><span class="badge ${writ.type === 'varios' ? 'badge-varios' : 'badge-patrocinio'}">${writ.type.toUpperCase()}</span></td>
+                    <td><span class="badge badge-proceso">${writ.process.toUpperCase()}</span></td>
+                    <td>${writ.user}</td>
+                    <td>${writ.fechaHora}</td>
+                    <td class="actions-cell">
+                        <button class="btn-action btn-view" onclick="viewWrit('${writ.id}')"><i class="fas fa-eye"></i></button>
+                        <button class="btn-action btn-edit" onclick="editWrit('${writ.id}')"><i class="fas fa-edit"></i></button>
+                    </td>
+                `;
+                bodyTable.appendChild(tr);
+            });
+
+            updatePagination(filtered.length, totalPages);
+        }
+
+        function getFilteredData() {
+            const q = document.getElementById('filter-quarter').value;
+            const y = document.getElementById('filter-year').value;
+            const t = document.getElementById('filter-type').value;
+            const p = document.getElementById('filter-process').value;
+
+            return writsData.filter(w => {
+                const dateObj = new Date(w.timestamp);
+                const quarter = Math.floor(dateObj.getMonth() / 3) + 1;
+                
+                if (q !== 'all' && quarter.toString() !== q) return false;
+                if (y !== 'all' && w.year !== y) return false;
+                if (t !== 'all' && w.type !== t) return false;
+                if (p !== 'all' && w.process !== p) return false;
+                return true;
+            });
+        }
+
+        function updateKPIs() {
+            const year = document.getElementById('filter-year').value;
+            const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+
+            writsData.forEach(w => {
+                if (year !== 'all' && w.year !== year) return;
+                const quarter = Math.floor(new Date(w.timestamp).getMonth() / 3) + 1;
+                counts[quarter]++;
+            });
+
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`kpi-${i}`).textContent = counts[i];
+            }
+        }
+
+        // --- MANEJO DE MODAL Y FORMULARIO ---
+
+        window.editWrit = (id) => {
+            const writ = writsData.find(w => w.id === id);
+            currentWritId = id;
+            document.getElementById('modal-title').textContent = "Editar Escrito";
+            fillForm(writ);
+            document.getElementById('writ-modal').classList.add('active');
+            document.getElementById('save-btn').style.display = 'block';
+        };
+
+        window.viewWrit = (id) => {
+            editWrit(id);
+            document.getElementById('modal-title').textContent = "Detalle Escrito";
+            document.getElementById('save-btn').style.display = 'none';
+        };
+
+        function fillForm(w) {
+            document.getElementById('writ-quantity').value = w.displayQuantity || (writsData.length + 1);
+            document.getElementById('writ-year').value = w.year;
+            document.getElementById('writ-type').value = w.type;
+            document.getElementById('writ-process').value = w.process;
+            document.getElementById('writ-user').value = w.user;
+            document.getElementById('writ-date').value = w.fechaHora;
+        }
+
+        document.getElementById('add-writ-btn').onclick = () => {
+            currentWritId = null;
+            document.getElementById('writ-form').reset();
+            document.getElementById('modal-title').textContent = "Nuevo Escrito";
+            const now = new Date();
+            const fechaHora = formatDateTime(now.getTime());
+            
+            document.getElementById('writ-year').value = now.getFullYear();
+            document.getElementById('writ-date').value = fechaHora;
+            document.getElementById('writ-quantity').value = writsData.length + 1;
+            document.getElementById('save-btn').style.display = 'block';
+            document.getElementById('writ-modal').classList.add('active');
+        };
+
+        document.getElementById('save-btn').onclick = async () => {
+            const userSelect = document.getElementById('writ-user');
+            if (!userSelect.value) {
+                alert("Por favor, seleccione un usuario.");
+                return;
+            }
+
+            const data = {
+                year: document.getElementById('writ-year').value,
+                type: document.getElementById('writ-type').value,
+                process: document.getElementById('writ-process').value,
+                user: userSelect.value
+            };
+            await saveToFirebase(data);
+        };
+
+        const closeModal = () => document.getElementById('writ-modal').classList.remove('active');
+        document.getElementById('close-modal').onclick = closeModal;
+        document.getElementById('cancel-btn').onclick = closeModal;
+
+        // Paginación y Filtros
+        function updatePagination(total, totalPages) {
+            document.getElementById('pagination-info').textContent = `Total: ${total} escritos`;
+            const container = document.getElementById('page-numbers');
+            container.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => { currentPage = i; renderTable(); };
+                container.appendChild(btn);
+            }
+        }
+
+        document.querySelectorAll('.filters select').forEach(s => {
+            s.onchange = () => { currentPage = 1; renderTable(); updateKPIs(); };
+        });
+
+        // Cargar años
+        const yearSelect = document.getElementById('filter-year');
+        const curY = new Date().getFullYear();
+        for(let y = 2026; y <= curY + 4; y++) {
+            const opt = document.createElement('option');
+            opt.value = y; opt.textContent = y;
+            yearSelect.appendChild(opt);
+        }
+
+        // Exportar PDF
+        document.getElementById('export-pdf-btn').onclick = () => {
+            const doc = new jsPDF('l');
+            doc.text("Reporte de Escritos Judiciales", 14, 15);
+            const rows = getFilteredData().map(w => [w.displayQuantity, w.year, w.type.toUpperCase(), w.process.toUpperCase(), w.user, w.fechaHora]);
+            doc.autoTable({
+                head: [['Cant', 'Año', 'Tipo', 'Proceso', 'Usuario', 'Fecha y Hora']],
+                body: rows,
+                startY: 20,
+                theme: 'grid'
+            });
+            doc.save("reporte_escritos.pdf");
+        };
+
+    </script>
+</body>
+</html>
