@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Libros de Gestión</title>
+    <title>Libros</title>
     <style>
         /* Reset y estilos base */
         * {
@@ -33,11 +33,13 @@
             padding: 30px;
         }
 
-        /* Contenedor de tarjetas */
+        /* Contenedor de tarjetas - AJUSTADO para 2x2 */
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, auto);
             gap: 25px;
+            justify-items: center;
         }
 
         /* Tarjetas de módulos */
@@ -53,6 +55,8 @@
             align-items: center;
             text-align: center;
             cursor: pointer;
+            width: 100%;
+            max-width: 350px;
         }
 
         .card:hover {
@@ -159,6 +163,13 @@
         }
 
         /* Responsive */
+        @media (max-width: 900px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 15px;
@@ -169,7 +180,6 @@
             }
             
             .cards-container {
-                grid-template-columns: 1fr;
                 gap: 20px;
             }
             
@@ -201,6 +211,14 @@
     <!-- Contenedor principal de tarjetas -->
     <div class="container">
         <div class="cards-container" id="cardsContainer">
+            <!-- Tarjeta Libro de Escritos -->
+            <div class="card" data-book="escritos">
+                <div class="card-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="card-title">Libro de Escritos</h3>
+                <button class="card-button">Abrir</button>
+            </div>
             <!-- Tarjeta Libro de Dictamen -->
             <div class="card" data-book="dictamen">
                 <div class="card-icon">
@@ -218,7 +236,7 @@
                 <h3 class="card-title">Libro de Oficios</h3>
                 <button class="card-button">Abrir</button>
             </div>
-            
+                     
             <!-- Tarjeta Libro de Actas -->
             <div class="card" data-book="actas">
                 <div class="card-icon">
@@ -246,6 +264,9 @@
     <script>
         // URLs de los libros
         const books = {
+            escritos: {
+                url: "https://sistemadigital.github.io/empleados/escritos"
+            },
             dictamen: {
                 url: "https://admindefensoria6.github.io/registro-dictamen/"
             },
