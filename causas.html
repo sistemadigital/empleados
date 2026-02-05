@@ -2089,7 +2089,8 @@
                             <div class="field">
                                 <label for="datosNnya">Datos de NNyA (máx. 500 palabras)</label>
                                 <div class="voice-input-container">
-                                    <textarea id="datosNnya" disabled></textarea>
+                                    <!-- CAMBIO: Quitamos el atributo disabled para que sea editable -->
+                                    <textarea id="datosNnya"></textarea>
                                     <button class="voice-input-btn" id="btnVoiceDatosNnya" title="Dictado por voz">
                                         <i class="fas fa-microphone"></i>
                                     </button>
@@ -2868,6 +2869,7 @@
             if (data.datosNnya) {
                 const palabrasNnya = data.datosNnya.trim().split(/\s+/).filter(p => p.length > 0);
                 $("counterNnya").textContent = `${palabrasNnya.length}/500`;
+                $("counterNnya").style.display = 'block';
             }
             if (data.nnyaGesell) {
                 const palabrasGesell = data.nnyaGesell.trim().split(/\s+/).filter(p => p.length > 0);
