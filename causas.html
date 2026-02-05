@@ -2227,7 +2227,7 @@
 
     <script>
         // ================================================================
-        // CÓDIGO ORIGINAL COMPLETO (SIN MODIFICACIONES)
+        // CÓDIGO ORIGINAL MODIFICADO PARA COMPATIBILIDAD CON CHROME
         // ================================================================
         
         const firebaseConfig = {
@@ -2364,36 +2364,129 @@
         const observacionesEditor = $("observaciones-editor");
         const observacionesHidden = $("observaciones");
         
-        const toDate = (v) => v?.toDate ? v.toDate() : (v?.seconds ? new Date(v.seconds*1000) : (v ? new Date(v) : null));
+        // FUNCIÓN MODIFICADA PARA COMPATIBILIDAD CON CHROME
+        const toDate = (v) => {
+            if (!v) return null;
+            
+            // Si es un objeto Timestamp de Firebase
+            if (v.toDate && typeof v.toDate === 'function') {
+                return v.toDate();
+            }
+            
+            // Si tiene propiedad seconds (Timestamp de Firebase en formato objeto)
+            if (v.seconds && v.nanoseconds) {
+                return new Date(v.seconds * 1000 + v.nanoseconds / 1000000);
+            }
+            
+            // Si es un string de fecha ISO
+            if (typeof v === 'string') {
+                // Chrome puede ser más estricto con los formatos de fecha
+                // Intentar parsear de varias formas
+                const date = new Date(v);
+                if (!isNaN(date.getTime())) {
+                    return date;
+                }
+                
+                // Intentar con formato datetime-local sin T
+                if (v.includes('T')) {
+                    const isoDate = new Date(v);
+                    if (!isNaN(isoDate.getTime())) {
+                        return isoDate;
+                    }
+                }
+                
+                // Intentar con formato dd/mm/yyyy
+                const parts = v.split(/[/\s:-]/);
+                if (parts.length >= 3) {
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const year = parseInt(parts[2], 10);
+                    const date = new Date(year, month, day);
+                    if (!isNaN(date.getTime())) {
+                        return date;
+                    }
+                }
+            }
+            
+            // Si es un objeto Date de JavaScript
+            if (v instanceof Date) {
+                return v;
+            }
+            
+            return null;
+        };
         
+        // FUNCIÓN MEJORADA PARA FORMATEAR FECHAS EN CHROME
         function formatearFecha(d, conHora = false) {
             const fecha = toDate(d);
-            if (!fecha || isNaN(fecha)) return "";
+            if (!fecha || isNaN(fecha.getTime())) return "";
+            
             const dia = String(fecha.getDate()).padStart(2, '0');
             const mes = String(fecha.getMonth() + 1).padStart(2, '0');
             const año = fecha.getFullYear();
+            
             if (!conHora) {
                 return `${dia}/${mes}/${año}`;
             }
+            
             const horas = String(fecha.getHours()).padStart(2, '0');
             const minutos = String(fecha.getMinutes()).padStart(2, '0');
             return `${dia}/${mes}/${año} ${horas}:${minutos}`;
         }
         
+        // FUNCIÓN MEJORADA PARA FORMATO DE INPUTS EN CHROME
         function formatFechaParaInput(fecha, conHora = true) {
-            if (!fecha || isNaN(fecha)) return "";
+            if (!fecha) return "";
             
-            const año = fecha.getFullYear();
-            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-            const dia = String(fecha.getDate()).padStart(2, '0');
+            const fechaObj = toDate(fecha);
+            if (!fechaObj || isNaN(fechaObj.getTime())) return "";
+            
+            const año = fechaObj.getFullYear();
+            const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+            const dia = String(fechaObj.getDate()).padStart(2, '0');
             
             if (!conHora) {
                 return `${año}-${mes}-${dia}`;
             }
             
-            const horas = String(fecha.getHours()).padStart(2, '0');
-            const minutos = String(fecha.getMinutes()).padStart(2, '0');
+            const horas = String(fechaObj.getHours()).padStart(2, '0');
+            const minutos = String(fechaObj.getMinutes()).padStart(2, '0');
+            
+            // IMPORTANTE: Chrome requiere formato YYYY-MM-DDThh:mm sin segundos
             return `${año}-${mes}-${dia}T${horas}:${minutos}`;
+        }
+        
+        // FUNCIÓN PARA CONVERTIR DATETIME-LOCAL A TIMESTAMP PARA FIREBASE
+        function parseDateTimeLocalToTimestamp(datetimeLocal) {
+            if (!datetimeLocal) return null;
+            
+            // El formato de datetime-local es YYYY-MM-DDThh:mm
+            const [datePart, timePart] = datetimeLocal.split('T');
+            if (!datePart || !timePart) return null;
+            
+            const [year, month, day] = datePart.split('-').map(Number);
+            const [hours, minutes] = timePart.split(':').map(Number);
+            
+            // Crear objeto Date (mes es 0-indexed)
+            const date = new Date(year, month - 1, day, hours, minutes);
+            
+            // Verificar que la fecha sea válida
+            if (isNaN(date.getTime())) return null;
+            
+            return firebase.firestore.Timestamp.fromDate(date);
+        }
+        
+        // FUNCIÓN PARA CONVERTIR DATE A TIMESTAMP PARA FIREBASE
+        function parseDateToTimestamp(dateStr) {
+            if (!dateStr) return null;
+            
+            // El formato de date es YYYY-MM-DD
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            
+            if (isNaN(date.getTime())) return null;
+            
+            return firebase.firestore.Timestamp.fromDate(date);
         }
         
         const prioridadClase = (p) => {
@@ -2490,7 +2583,7 @@
             }
         }
         
-        // FUNCIONES FALTANTES AÑADIDAS
+        // FUNCIÓN MODIFICADA PARA RECOLECTAR DATOS (COMPATIBLE CON CHROME)
         function recolectarDatosForm() {
             const datos = {
                 numCausa: $("numCausa").value.trim(),
@@ -2502,31 +2595,48 @@
                 estado: $("estado").value,
                 intervencion: $("intervencion").value,
                 datosNnya: $("datosNnya").value.trim(),
-                fechaInicio: $("fechaInicio").value || null,
-                fechaPase: $("fechaPase").value || null,
-                audienciaGesell: $("habilitarAudienciaGesell").checked ? $("audienciaGesell").value : null,
-                nnyaGesell: $("nnyaGesell").value.trim(),
-                vencimiento: $("vencimiento").value || null,
-                vencimientoRecursos: $("vencimientoRecursos").value || null,
+                fechaInicio: parseDateToTimestamp($("fechaInicio").value),
+                fechaPase: parseDateTimeLocalToTimestamp($("fechaPase").value),
+                vencimiento: parseDateTimeLocalToTimestamp($("vencimiento").value),
+                vencimientoRecursos: parseDateTimeLocalToTimestamp($("vencimientoRecursos").value),
                 recursos: $("recursos").value || null,
                 recursosContestacion: $("recursosContestacion").value || null,
                 estadoRecursos: $("estadoRecursos").value || null,
                 observaciones: observacionesHidden.value
             };
 
+            // Audiencia Gesell
+            if ($("habilitarAudienciaGesell").checked) {
+                datos.audienciaGesell = parseDateTimeLocalToTimestamp($("audienciaGesell").value);
+                datos.nnyaGesell = $("nnyaGesell").value.trim();
+            } else {
+                datos.audienciaGesell = null;
+                datos.nnyaGesell = "";
+            }
+
+            // Audiencias
             const audienciasInputs = audienciasContainer.querySelectorAll('.audiencia-fecha');
             datos.audiencias = [];
             audienciasInputs.forEach(input => {
-                if (input.value) datos.audiencias.push(input.value);
+                if (input.value) {
+                    const timestamp = parseDateTimeLocalToTimestamp(input.value);
+                    if (timestamp) datos.audiencias.push(timestamp);
+                }
             });
 
+            // Diligencias
             const diligenciasItems = diligenciasContainer.querySelectorAll('.diligencia-item');
             datos.diligencias = [];
             diligenciasItems.forEach(item => {
-                const fecha = item.querySelector('.diligencia-fecha').value;
-                const detalle = item.querySelector('.diligencia-detalle').value.trim();
+                const fechaInput = item.querySelector('.diligencia-fecha');
+                const detalleInput = item.querySelector('.diligencia-detalle');
+                const fecha = parseDateTimeLocalToTimestamp(fechaInput.value);
+                const detalle = detalleInput.value.trim();
                 if (fecha) {
-                    datos.diligencias.push({ fecha, detalle });
+                    datos.diligencias.push({ 
+                        fecha: fecha, 
+                        detalle: detalle 
+                    });
                 }
             });
 
@@ -2556,6 +2666,7 @@
             document.querySelectorAll('.field').forEach(field => field.classList.remove('error'));
         }
 
+        // FUNCIÓN MODIFICADA PARA CARGAR DATOS (COMPATIBLE CON CHROME)
         function cargarDatosEnForm(data) {
             $("numCausa").value = data.numCausa || '';
             $("caratula").value = data.caratula || '';
@@ -2567,16 +2678,20 @@
             $("estado").value = data.estado || 'En trámite';
             $("intervencion").value = data.intervencion || '';
             $("datosNnya").value = data.datosNnya || '';
+            
+            // Fechas - compatibilidad con Chrome
             $("fechaInicio").value = data.fechaInicio ? formatFechaParaInput(toDate(data.fechaInicio), false) : '';
             $("fechaPase").value = data.fechaPase ? formatFechaParaInput(toDate(data.fechaPase), true) : '';
             $("vencimiento").value = data.vencimiento ? formatFechaParaInput(toDate(data.vencimiento), true) : '';
             $("vencimientoRecursos").value = data.vencimientoRecursos ? formatFechaParaInput(toDate(data.vencimientoRecursos), true) : '';
+            
             $("recursos").value = data.recursos || '';
             $("recursosContestacion").value = data.recursosContestacion || '';
             $("estadoRecursos").value = data.estadoRecursos || '';
             observacionesEditor.innerHTML = data.observaciones || '';
             observacionesHidden.value = data.observaciones || '';
             
+            // Audiencias
             audienciasContainer.innerHTML = '';
             if (Array.isArray(data.audiencias)) {
                 data.audiencias.forEach(aud => {
@@ -2593,6 +2708,7 @@
                 });
             }
             
+            // Diligencias
             diligenciasContainer.innerHTML = '';
             if (Array.isArray(data.diligencias)) {
                 data.diligencias.forEach(dilig => {
@@ -2610,6 +2726,7 @@
                 });
             }
             
+            // Gesell
             if (data.audienciaGesell) {
                 $("habilitarAudienciaGesell").checked = true;
                 $("audienciaGesell").disabled = false;
@@ -2622,6 +2739,7 @@
                 $("recursos-opcionales").style.display = 'block';
             }
             
+            // Contadores
             if (data.observaciones) {
                 const palabrasObs = data.observaciones.trim().split(/\s+/).filter(p => p.length > 0);
                 $("counter").textContent = `${palabrasObs.length}/1000`;
@@ -2636,13 +2754,15 @@
             }
         }
         
+        // FUNCIÓN MODIFICADA PARA OBTENER EVENTOS (COMPATIBLE CON CHROME)
         function obtenerTodosEventos(causa) {
             const eventos = [];
             
+            // Audiencias
             if (Array.isArray(causa.audiencias)) {
                 causa.audiencias.forEach(aud => {
                     const fecha = toDate(aud);
-                    if (fecha) {
+                    if (fecha && !isNaN(fecha.getTime())) {
                         eventos.push({ 
                             tipo: "Audiencia", 
                             fecha: fecha,
@@ -2652,9 +2772,10 @@
                 });
             }
             
+            // Gesell
             if (causa.audienciaGesell) {
                 const fecha = toDate(causa.audienciaGesell);
-                if (fecha) {
+                if (fecha && !isNaN(fecha.getTime())) {
                     eventos.push({ 
                         tipo: "Gesell", 
                         fecha: fecha,
@@ -2663,9 +2784,10 @@
                 }
             }
             
+            // Vencimientos
             if (causa.vencimiento) {
                 const fecha = toDate(causa.vencimiento);
-                if (fecha) {
+                if (fecha && !isNaN(fecha.getTime())) {
                     eventos.push({ 
                         tipo: "Vencimiento", 
                         fecha: fecha,
@@ -2674,9 +2796,10 @@
                 }
             }
             
+            // Vencimiento de recursos
             if (causa.vencimientoRecursos) {
                 const fecha = toDate(causa.vencimientoRecursos);
-                if (fecha) {
+                if (fecha && !isNaN(fecha.getTime())) {
                     eventos.push({ 
                         tipo: "Recurso", 
                         fecha: fecha,
@@ -2685,10 +2808,11 @@
                 }
             }
             
+            // Diligencias
             if (Array.isArray(causa.diligencias)) {
                 causa.diligencias.forEach(dilig => {
                     const fecha = toDate(dilig.fecha);
-                    if (fecha) {
+                    if (fecha && !isNaN(fecha.getTime())) {
                         eventos.push({ 
                             tipo: "Diligencia", 
                             fecha: fecha,
@@ -2699,6 +2823,7 @@
                 });
             }
             
+            // Ordenar por fecha (más reciente primero)
             eventos.sort((a, b) => b.fecha - a.fecha);
             return eventos;
         }
@@ -2796,6 +2921,7 @@
             if (current) filtroUsuario.value = current;
         }
 
+        // FUNCIÓN MODIFICADA PARA SUSCRIBIR CAUSAS (COMPATIBLE CON CHROME)
         function suscribirCausas(reset = true) {
             if (reset) {
                 paginaActual = 1;
@@ -2814,8 +2940,7 @@
             console.log("Construyendo consulta...");
             let query = db.collection("causas");
             
-            // FILTROS DE SERVIDOR (Dropdowns):
-            // Mantenemos estos en el servidor para optimizar la descarga de datos
+            // FILTROS DE SERVIDOR
             const fEstado = filtroEstado.value;
             const fUsuario = filtroUsuario.value;
             const fPrioridad = filtroPrioridad.value;
@@ -2840,8 +2965,6 @@
                 }
             }
             
-            // NOTA: Hemos eliminado el filtro "keywords" del servidor para hacerlo en cliente
-            
             query = query.orderBy("fechaRegistro", "desc");
             
             console.log("Suscribiendo a cambios...");
@@ -2853,7 +2976,7 @@
                         datosCache.push({ id: d.id, ...d.data() });
                     });
                     
-                    // LÓGICA DE FILTRADO EN MEMORIA (Aquí solucionamos tu problema)
+                    // LÓGICA DE FILTRADO EN MEMORIA
                     const busquedaTexto = buscador.value.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     const fDesde = filtroFechaDesde.value;
                     const fHasta = filtroFechaHasta.value;
@@ -2868,7 +2991,7 @@
                             if (!tieneFechaEnRango) return false;
                         }
 
-                        // 2. Filtro de Búsqueda de Texto GLOBAL (Incluye todos los campos importantes)
+                        // 2. Filtro de Búsqueda de Texto GLOBAL
                         if (busquedaTexto) {
                             // Concatenamos todos los campos donde queremos buscar
                             const textoAcumulado = [
@@ -2878,16 +3001,16 @@
                                 d.juzgado,
                                 d.tipoProceso,
                                 d.estado,
-                                d.observaciones,      // Contenido de modal ver
-                                d.datosNnya,          // Contenido de modal ver
-                                d.nnyaGesell,         // Contenido de modal ver
+                                d.observaciones,
+                                d.datosNnya,
+                                d.nnyaGesell,
                                 d.intervencion,
-                                (d.diligencias || []).map(dil => dil.detalle).join(' ') // Detalles de diligencias
+                                (d.diligencias || []).map(dil => dil.detalle).join(' ')
                             ].join(' ').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
                             // Verificamos si el texto buscado está incluido en alguna parte
                             if (!textoAcumulado.includes(busquedaTexto)) {
-                                return false; // Si no encuentra el texto, descarta este registro
+                                return false;
                             }
                         }
                         
@@ -2924,6 +3047,7 @@
                     <button class="button button-secondary editar-detalles" data-id="${id}" title="Editar"><i class="fa fa-pen"></i></button>`;
         }
         
+        // FUNCIÓN MODIFICADA PARA RENDERIZAR TABLAS (MUESTRA EVENTOS CORRECTAMENTE)
         function renderTablas(data){
             tbody.innerHTML = data.length ? "" : "<tr><td colspan='10'>No hay registros que coincidan con los filtros</td></tr>";
             data.forEach(d=>{
@@ -2931,19 +3055,24 @@
                 let eventosHTML = "—";
                 if (todosEventos.length > 0) {
                     eventosHTML = `<div class="eventos-lista">`;
-                    todosEventos.forEach(evento => {
+                    // Mostrar solo los 3 eventos más recientes
+                    const eventosMostrar = todosEventos.slice(0, 3);
+                    eventosMostrar.forEach(evento => {
                         let eventoTexto = `${evento.tipo}: ${formatearFecha(evento.fecha, true)}`;
                         if (evento.tipo === "Diligencia" && evento.detalle) {
-                            eventoTexto += ` - ${evento.detalle}`;
+                            eventoTexto += ` - ${evento.detalle.substring(0, 30)}${evento.detalle.length > 30 ? '...' : ''}`;
                         }
                         eventosHTML += `<div class="evento-tabla ${evento.clase}">${eventoTexto}</div>`;
                     });
+                    if (todosEventos.length > 3) {
+                        eventosHTML += `<div class="evento-tabla">+${todosEventos.length - 3} más</div>`;
+                    }
                     eventosHTML += `</div>`;
                 }
                 tbody.insertAdjacentHTML("beforeend", `
                     <tr>
                         <td>${d.numCausa||""}</td>
-                        <td>${d.caratula||""}</td>
+                        <td>${d.caratula ? (d.caratula.length > 50 ? d.caratula.substring(0, 50) + '...' : d.caratula) : ""}</td>
                         <td>${d.tipoProceso||""}</td>
                         <td>${d.juzgado||""}</td>
                         <td>${d.usuarioAsignado||""}</td>
@@ -2954,8 +3083,11 @@
                         <td class="actions">${accionesHTML(d.id)}</td>
                     </tr>`);
             });
-            document.querySelectorAll(".ver-detalles").forEach(b=>b.onclick=()=>abrirVer(b.dataset.id));
-            document.querySelectorAll(".editar-detalles").forEach(b=>b.onclick=()=>abrirEditar(b.dataset.id));
+            // Reasignar eventos a los botones
+            setTimeout(() => {
+                document.querySelectorAll(".ver-detalles").forEach(b=>b.onclick=()=>abrirVer(b.dataset.id));
+                document.querySelectorAll(".editar-detalles").forEach(b=>b.onclick=()=>abrirEditar(b.dataset.id));
+            }, 0);
         }
         
         function renderPaginacion(totalRecords, recordsOnPage) {
@@ -2985,6 +3117,7 @@
             }
         }
         
+        // FUNCIÓN MODIFICADA PARA RENDERIZAR EVENTOS DE HOY (COMPATIBLE CON CHROME)
         function renderEventosHoy() {
             const hoy = new Date();
             hoy.setHours(0, 0, 0, 0);
@@ -3002,10 +3135,12 @@
             datosCache.forEach(d => {
                 const id = d.numCausa || d.id;
                 const causaId = d.id;
+                
+                // Audiencias
                 if (Array.isArray(d.audiencias)) {
                     d.audiencias.forEach(aud => {
                         const fechaAud = toDate(aud);
-                        if (fechaAud && fechaAud >= hoy && fechaAud < manana) {
+                        if (fechaAud && !isNaN(fechaAud.getTime()) && fechaAud >= hoy && fechaAud < manana) {
                             eventosHoy.audiencias.push({
                                 id: causaId,
                                 numCausa: id,
@@ -3015,37 +3150,45 @@
                         }
                     });
                 }
+                
+                // Gesell
                 const fechaGesell = toDate(d.audienciaGesell);
-                if (fechaGesell && fechaGesell >= hoy && fechaGesell < manana) {
+                if (fechaGesell && !isNaN(fechaGesell.getTime()) && fechaGesell >= hoy && fechaGesell < manana) {
                     eventosHoy.gesell.push({
-                                id: causaId,
-                                numCausa: id,
-                                fecha: fechaGesell,
-                                tipo: 'Cámara Gesell'
-                            });
+                        id: causaId,
+                        numCausa: id,
+                        fecha: fechaGesell,
+                        tipo: 'Cámara Gesell'
+                    });
                 }
+                
+                // Vencimientos
                 const fechaVenc = toDate(d.vencimiento);
-                if (fechaVenc && fechaVenc >= hoy && fechaVenc < manana) {
+                if (fechaVenc && !isNaN(fechaVenc.getTime()) && fechaVenc >= hoy && fechaVenc < manana) {
                     eventosHoy.vencimientos.push({
-                                id: causaId,
-                                numCausa: id,
-                                fecha: fechaVenc,
-                                tipo: 'Vencimiento'
-                            });
+                        id: causaId,
+                        numCausa: id,
+                        fecha: fechaVenc,
+                        tipo: 'Vencimiento'
+                    });
                 }
+                
+                // Vencimiento de recursos
                 const fechaVrec = toDate(d.vencimientoRecursos);
-                if (fechaVrec && fechaVrec >= hoy && fechaVrec < manana) {
+                if (fechaVrec && !isNaN(fechaVrec.getTime()) && fechaVrec >= hoy && fechaVrec < manana) {
                     eventosHoy.recursos.push({
-                                id: causaId,
-                                numCausa: id,
-                                fecha: fechaVrec,
-                                tipo: 'Vencimiento de Recurso'
-                            });
+                        id: causaId,
+                        numCausa: id,
+                        fecha: fechaVrec,
+                        tipo: 'Vencimiento de Recurso'
+                    });
                 }
+                
+                // Diligencias
                 if (Array.isArray(d.diligencias)) {
                     d.diligencias.forEach(dilig => {
                         const fechaDilig = toDate(dilig.fecha);
-                        if (fechaDilig && fechaDilig >= hoy && fechaDilig < manana) {
+                        if (fechaDilig && !isNaN(fechaDilig.getTime()) && fechaDilig >= hoy && fechaDilig < manana) {
                             eventosHoy.diligencias.push({
                                 id: causaId,
                                 numCausa: id,
@@ -3073,7 +3216,7 @@
                         <span class="evento-hora">${formatearFecha(evento.fecha, true)}</span>
                     `;
                     if (tipo === 'diligencias' && evento.detalle) {
-                        contenido += `<span class="evento-detalle" style="font-size:0.8rem;color:var(--text-secondary);">${evento.detalle}</span>`;
+                        contenido += `<span class="evento-detalle" style="font-size:0.8rem;color:var(--text-secondary);">${evento.detalle.substring(0, 30)}${evento.detalle.length > 30 ? '...' : ''}</span>`;
                     }
                     elemento.innerHTML = contenido;
                     target.appendChild(elemento);
@@ -3136,6 +3279,7 @@
             alertModal.style.display = "none";
         };
         
+        // FUNCIÓN MODIFICADA PARA GUARDAR EXPEDIENTE (COMPATIBLE CON CHROME)
         const guardarExpediente = async () => {
             if (!validateForm()) {
                 return;
@@ -3173,6 +3317,7 @@
             btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
             
             try {
+                // Generar keywords para búsqueda
                 const textoParaKeywords = [datos.numCausa, datos.caratula, datos.usuarioAsignado]
                     .join(' ')
                     .toLowerCase()
@@ -3182,11 +3327,13 @@
                     .filter(palabra => palabra.length > 0);
                 datos.keywords = textoParaKeywords;
                 
+                // Generar fechasFiltro para filtrado por fechas
                 const fechasSet = new Set();
                 const agregarFecha = (fecha) => {
                     if (!fecha) return;
+                    // fecha ya es un Timestamp de Firebase
                     const d = toDate(fecha);
-                    if (d && !isNaN(d)) {
+                    if (d && !isNaN(d.getTime())) {
                         fechasSet.add(formatFechaParaInput(d, false));
                     }
                 };
@@ -3204,6 +3351,7 @@
                 datos.fechasFiltro = Array.from(fechasSet);
                 
                 if (modo === "nuevo") {
+                    // Verificar duplicado en el servidor
                     const dupCheck = await db.collection("causas").where("numCausa", "==", $("numCausa").value.trim()).get();
                     if (!dupCheck.empty) {
                         mostrarAlertaFlotante("El N° Expediente ya existe en la base de datos.", 'danger');
@@ -3212,6 +3360,9 @@
                         errorSpan.textContent = "Este número de expediente ya está registrado en el servidor";
                         errorSpan.style.color = "#dc3545";
                         errorSpan.style.fontWeight = "bold";
+                        
+                        btnGuardar.disabled = false;
+                        btnGuardar.innerHTML = '<i class="fa fa-save"></i> Guardar';
                         return;
                     }
                     
@@ -3228,7 +3379,7 @@
                 resetFormCausa();
                 suscribirCausas(true);
             } catch (e) {
-                console.error(e);
+                console.error("Error al guardar:", e);
                 if (modo === "nuevo") {
                     mostrarAlertaFlotante("Fallo al crear el registro: " + e.message, 'danger');
                 } else {
@@ -3259,6 +3410,7 @@
             }
         }
         
+        // FUNCIÓN MODIFICADA PARA ABRIR VISTA DETALLADA (COMPATIBLE CON CHROME)
         async function abrirVer(id){
             causaActualId = id;
             try{
@@ -3305,7 +3457,7 @@
                             });
                         } else if (['fechaInicio', 'fechaRegistro'].includes(k)) {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${formatearFecha(v, false)}</p>`;
-                        } else if (v.seconds) {
+                        } else if (v.seconds || v.toDate) {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong> ${formatearFecha(v, true)}</p>`;
                         } else if (k === "observaciones") {
                             contenidoHTML += `<p><strong>${etiqueta}:</strong></p><div>${v}</div>`;
@@ -3362,7 +3514,7 @@
                     texto: notaTexto, fecha: firebase.firestore.FieldValue.serverTimestamp(), usuario: usuario
                 });
                 notaBitacora.value = "";
-                cargarNotas(causaActualId);
+                await cargarNotas(causaActualId);
                 mostrarAlertaPersonalizada("¡Éxito!", "Nota guardada con éxito.");
             } catch (e) {
                 console.error("Error al guardar la nota:", e);
@@ -3375,14 +3527,12 @@
         $("btnCerrarEventosHoy").onclick = ()=> modalEventosHoy.style.display = "none";
         
         // ================================================================
-        // NUEVAS FUNCIONALIDADES PARA GENERAR RESÚMENES PDF
+        // FUNCIONALIDADES DE GENERACIÓN DE PDF (SIN CAMBIOS)
         // ================================================================
         
-        // Variables para el generador de PDF
         let clienteSeleccionado = null;
         let causasDelCliente = [];
         
-        // Abrir modal para generación de PDF
         function abrirGeneradorPDF() {
             modalPDF.style.display = "flex";
             pdfNombreCliente.value = "";
@@ -3395,7 +3545,6 @@
             pdfNombreCliente.focus();
         }
         
-        // Buscar cliente por nombre y apellido
         function buscarClienteParaPDF() {
             const nombreCompleto = pdfNombreCliente.value.trim();
             if (!nombreCompleto) {
@@ -3406,7 +3555,6 @@
             const tipoBusqueda = document.querySelector('input[name="pdfBusqueda"]:checked').value;
             const partesNombre = nombreCompleto.toLowerCase().split(' ');
             
-            // Buscar causas que contengan el nombre en la carátula o datos NNyA
             causasDelCliente = datosCache.filter(causa => {
                 let textoBusqueda = "";
                 
@@ -3416,7 +3564,6 @@
                     textoBusqueda = (causa.datosNnya || "").toLowerCase();
                 }
                 
-                // Verificar si todas las partes del nombre están en el texto
                 return partesNombre.every(parte => 
                     parte.length > 2 && textoBusqueda.includes(parte)
                 );
@@ -3438,11 +3585,9 @@
             
             clienteSeleccionado = nombreCompleto;
             
-            // Mostrar vista previa
             mostrarVistaPreviaPDF();
         }
         
-        // Mostrar vista previa del resumen
         function mostrarVistaPreviaPDF() {
             pdfPreview.style.display = 'block';
             pdfResultado.style.display = 'none';
@@ -3454,7 +3599,6 @@
                 const eventos = obtenerTodosEventos(causa);
                 const ultimoEvento = eventos.length > 0 ? eventos[0] : null;
                 
-                // Extraer el texto de estado según las condiciones
                 const textoEstado = generarTextoEstado(causa, ultimoEvento);
                 
                 previewHTML = `
@@ -3493,7 +3637,6 @@
             btnGenerarPDFFinal.style.display = 'inline-flex';
         }
         
-        // Generar texto de estado según las condiciones especificadas
         function generarTextoEstado(causa, ultimoEvento) {
             // Verificar si hay audiencias futuras
             if (causa.audiencias && Array.isArray(causa.audiencias)) {
@@ -3537,19 +3680,16 @@
             return 'Actualmente no tiene novedades judiciales';
         }
         
-        // Generar PDF final
         function generarPDF() {
             if (!clienteSeleccionado || causasDelCliente.length === 0) {
                 mostrarAlertaFlotante("No hay datos para generar el PDF.", 'danger');
                 return;
             }
             
-            // Mostrar indicador de carga
             btnGenerarPDFFinal.disabled = true;
             btnGenerarPDFFinal.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando PDF...';
             
             try {
-                // Crear documento PDF
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF({
                     orientation: 'portrait',
@@ -3560,17 +3700,14 @@
                 const fechaActual = new Date();
                 const fechaConsulta = formatearFecha(fechaActual, true);
                 
-                // Configuración de márgenes y estilos
                 const margin = 20;
                 let yPos = margin;
                 
-                // Título del documento
                 doc.setFontSize(18);
                 doc.setFont("helvetica", "bold");
                 doc.text("RESUMEN DE ÚLTIMOS MOVIMIENTOS JUDICIALES", 105, yPos, { align: "center" });
                 yPos += 10;
                 
-                // Información del cliente
                 doc.setFontSize(14);
                 doc.setFont("helvetica", "bold");
                 doc.text("DATOS DEL CLIENTE", margin, yPos);
@@ -3583,9 +3720,7 @@
                 doc.text(`Fecha de consulta: ${fechaConsulta}`, margin, yPos);
                 yPos += 10;
                 
-                // Para cada expediente encontrado
                 causasDelCliente.forEach((causa, index) => {
-                    // Verificar si necesitamos nueva página
                     if (yPos > 250) {
                         doc.addPage();
                         yPos = margin;
@@ -3595,7 +3730,6 @@
                     const ultimoEvento = eventos.length > 0 ? eventos[0] : null;
                     const textoEstado = generarTextoEstado(causa, ultimoEvento);
                     
-                    // Información del expediente
                     doc.setFontSize(14);
                     doc.setFont("helvetica", "bold");
                     doc.text(`EXPEDIENTE ${index + 1}`, margin, yPos);
@@ -3606,7 +3740,6 @@
                     doc.text(`Número: ${causa.numCausa || 'No especificado'}`, margin, yPos);
                     yPos += 6;
                     
-                    // Carátula (puede ser larga, dividir en líneas)
                     const caratulaLines = doc.splitTextToSize(`Carátula: ${causa.caratula || 'No especificada'}`, 170);
                     doc.text(caratulaLines, margin, yPos);
                     yPos += caratulaLines.length * 6;
@@ -3618,7 +3751,6 @@
                     doc.text(`Estado del proceso: ${causa.estado || 'No especificado'}`, margin, yPos);
                     yPos += 6;
                     
-                    // Último movimiento
                     if (ultimoEvento) {
                         doc.text(`Último movimiento: ${ultimoEvento.tipo} - ${formatearFecha(ultimoEvento.fecha, true)}`, margin, yPos);
                     } else {
@@ -3626,19 +3758,16 @@
                     }
                     yPos += 8;
                     
-                    // Estado actual
                     doc.setFont("helvetica", "bold");
                     const estadoLines = doc.splitTextToSize(`Situación actual: ${textoEstado}`, 170);
                     doc.text(estadoLines, margin, yPos);
                     yPos += estadoLines.length * 6 + 10;
                     
-                    // Línea separadora
                     doc.setLineWidth(0.5);
                     doc.line(margin, yPos - 5, 190, yPos - 5);
                     yPos += 5;
                 });
                 
-                // Pie de página
                 const totalPages = doc.internal.getNumberOfPages();
                 for (let i = 1; i <= totalPages; i++) {
                     doc.setPage(i);
@@ -3648,11 +3777,9 @@
                     doc.text(`Fecha de generación: ${fechaConsulta}`, 105, 292, { align: "center" });
                 }
                 
-                // Guardar el PDF
                 const nombreArchivo = `Resumen_${clienteSeleccionado.replace(/\s+/g, '_')}_${formatearFecha(fechaActual, false).replace(/\//g, '-')}.pdf`;
                 doc.save(nombreArchivo);
                 
-                // Mostrar mensaje de éxito
                 pdfResultado.style.display = 'block';
                 pdfResultado.innerHTML = `
                     <div class="pdf-success">
@@ -3678,14 +3805,13 @@
                     </div>
                 `;
             } finally {
-                // Restaurar botón
                 btnGenerarPDFFinal.disabled = false;
                 btnGenerarPDFFinal.innerHTML = '<i class="fas fa-download"></i> Generar PDF';
             }
         }
         
         // ================================================================
-        // ASISTENTE IA - CON INTEGRACIÓN DE GENERACIÓN DE PDF
+        // ASISTENTE IA (SIN CAMBIOS)
         // ================================================================
         
         let conversacionIA = [];
@@ -3693,18 +3819,15 @@
         let vozReconocimientoActivo = false;
         let textToSpeechActivo = false;
         
-        // FUNCIÓN PARA SINTETIZAR VOZ (TEXT-TO-SPEECH)
         function sintetizarVoz(texto, elementoBtn = null) {
             if (!('speechSynthesis' in window)) {
                 console.warn("Text-to-speech no soportado en este navegador");
                 return;
             }
             
-            // Cancelar cualquier síntesis en curso
             speechSynthesis.cancel();
             textToSpeechActivo = true;
             
-            // Si hay un botón, marcarlo como activo
             if (elementoBtn) {
                 elementoBtn.classList.add('speaking');
             }
@@ -3715,7 +3838,6 @@
             utterance.pitch = 1.0;
             utterance.volume = 0.8;
             
-            // Seleccionar voz (intenta buscar una femenina o la predeterminada en español)
             const voces = speechSynthesis.getVoices();
             const vozFemenina = voces.find(voz => voz.lang === 'es-ES' && voz.name.includes('Female'));
             const vozEspanol = voces.find(voz => voz.lang === 'es-ES');
@@ -3753,10 +3875,8 @@
             modalIA.style.display = "flex";
             iaPregunta.focus();
             
-            // Limpiar conversación inicial (sin mensaje de bienvenida)
             iaConversacion.innerHTML = "";
             
-            // Agregar un mensaje inicial simple
             agregarMensajeIA("asistente", 
                 `<strong>Asistente IA de Expedientes</strong><br>
                 Puedo ayudarte a buscar y analizar expedientes judiciales. ¿En qué puedo asistirte?`);
@@ -3766,11 +3886,9 @@
         
         function cerrarAsistenteIA() {
             modalIA.style.display = "none";
-            // Detener reconocimiento de voz si está activo
             if (vozReconocimientoActivo) {
                 detenerVozReconocimiento();
             }
-            // Detener síntesis de voz
             if ('speechSynthesis' in window) {
                 speechSynthesis.cancel();
             }
@@ -3822,26 +3940,21 @@
             iaPregunta.value = "";
             agregarMensajeIA("usuario", pregunta);
             
-            // Simular "pensando"
             const mensajeCarga = agregarMensajeCarga();
             
-            // Pequeño delay para UX
             setTimeout(() => {
                 mensajeCarga.remove();
                 procesarConsultaInteligente(pregunta);
             }, 800);
         }
         
-        // Detectar si la consulta es para generar un resumen PDF
         function procesarConsultaInteligente(pregunta) {
             const texto = pregunta.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
-            // Detectar si es una solicitud de resumen PDF
             const palabrasPDF = ["resumen pdf", "generar pdf", "imprimir resumen", "pdf por nombre", "resumen por cliente"];
             const esSolicitudPDF = palabrasPDF.some(p => texto.includes(p));
             
             if (esSolicitudPDF) {
-                // Extraer nombre del cliente de la pregunta
                 const regexNombre = /(?:de|por|para)\s+([a-záéíóúñ\s]+)/i;
                 const match = pregunta.match(regexNombre);
                 
@@ -3866,22 +3979,16 @@
                 return;
             }
             
-            // Resto de la lógica original del asistente IA...
-            // DETECCIÓN DE REFINAMIENTO
             const palabrasRefinamiento = ["filtrar", "solo", "solamente", "únicamente", "unicamente", "de estos", "entre estos", "dentro de"];
             const esRefinamiento = palabrasRefinamiento.some(p => texto.includes(p)) && ultimoResultadoIA.length > 0;
             
-            // DETECCIÓN DE NEGACIÓN
             const tieneNegacion = texto.includes(" no ") || texto.includes(" sin ") || texto.startsWith("no ") || texto.startsWith("sin ");
             
-            // DETECCIÓN DE FECHAS RELATIVAS
             const rangoFechas = obtenerRangoFechasRelativas(texto);
             
-            // PROCESAR TOKENS
             const stopWords = ["de", "el", "la", "los", "las", "en", "y", "o", "que", "un", "una", "expediente", "expedientes", "causa", "causas", "buscar", "muestrame", "dime", "quiero", "ver", "mostrar"];
             let tokens = texto.split(/\s+/).filter(w => w.length > 2 && !stopWords.includes(w));
             
-            // Procesar negaciones
             tokens = tokens.map(token => {
                 if (token.startsWith("no") && token.length > 4) {
                     return `no_${token.substring(2)}`;
@@ -3897,23 +4004,19 @@
                 return;
             }
             
-            // DETECCIÓN DE ESTADÍSTICAS
             const palabrasEstadistica = ["estadistica", "estadísticas", "resumen", "total", "cuantos", "cuántos", "cuantas", "cuántas", "grafico", "gráfico", "analisis", "análisis", "conteo"];
             const esEstadistica = palabrasEstadistica.some(p => texto.includes(p));
             
             if (esEstadistica && !esRefinamiento) {
                 const respuesta = generarEstadisticasIA();
                 agregarMensajeIA("asistente", respuesta);
-                // Sintetizar voz para estadísticas
                 sintetizarVoz(`Encontré ${datosCache.length} expedientes en total. ${generarResumenEstadistico()}`);
                 return;
             }
             
-            // REALIZAR BÚSQUEDA
             const datosABuscar = esRefinamiento ? ultimoResultadoIA : datosCache;
             const resultados = buscarEnRegistrosMejorado(tokens, datosABuscar, tieneNegacion, rangoFechas);
             
-            // Guardar en memoria de contexto si no es refinamiento
             if (!esRefinamiento) {
                 ultimoResultadoIA = resultados;
                 contextoActivo = true;
@@ -3923,10 +4026,8 @@
                 const respuestaHTML = generarHTMLResultados(resultados, tokens, esRefinamiento, tieneNegacion, rangoFechas);
                 agregarMensajeIA("asistente", `Encontré <strong>${resultados.length}</strong> expedientes que coinciden con tu búsqueda:<br><br>${respuestaHTML}`);
                 
-                // Sintetizar voz para anunciar resultados
                 sintetizarVoz(`Encontré ${resultados.length} expedientes que coinciden con tu búsqueda.`);
                 
-                // Reactivar listeners para los botones "Ver" y "Voz"
                 setTimeout(() => {
                     document.querySelectorAll('.ia-ver-causa').forEach(btn => {
                         btn.onclick = (e) => {
@@ -3944,7 +4045,6 @@
             }
         }
         
-        // Resto de funciones del asistente IA (sin cambios)...
         function obtenerRangoFechasRelativas(expresion) {
             const hoy = new Date();
             hoy.setHours(0, 0, 0, 0);
@@ -3997,7 +4097,6 @@
                 let coincidencias = [];
                 let penalizacion = 0;
                 
-                // Normalizar textos para búsqueda
                 const campos = {
                     numCausa: (causa.numCausa || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
                     caratula: (causa.caratula || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
@@ -4009,7 +4108,6 @@
                     intervencion: (causa.intervencion || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                 };
                 
-                // Verificar filtro por fechas relativas
                 if (rangoFechas) {
                     const fechasCausa = causa.fechasFiltro || [];
                     const tieneFechaEnRango = fechasCausa.some(fecha => {
@@ -4026,7 +4124,6 @@
                     const esNegacion = token.startsWith("no_") || token.startsWith("sin_");
                     const tokenLimpio = esNegacion ? token.substring(3) : token;
                     
-                    // Puntos por campo
                     if (campos.numCausa.includes(tokenLimpio)) {
                         if (esNegacion) {
                             penalizacion += 50;
@@ -4099,7 +4196,6 @@
                         }
                     }
                     
-                    // Búsqueda en observaciones
                     if (causa.observaciones && causa.observaciones.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(tokenLimpio)) {
                         if (esNegacion) {
                             penalizacion += 5;
@@ -4109,7 +4205,6 @@
                         }
                     }
                     
-                    // Detección especial para "Vencimientos"
                     if (tokenLimpio === "vencimiento" || tokenLimpio === "vencimientos" || tokenLimpio === "vencer") {
                         if (causa.vencimiento) {
                             const hoy = new Date();
@@ -4125,17 +4220,14 @@
                     }
                 });
                 
-                // Aplicar penalización por negación
                 if (tieneNegacion) {
                     score -= penalizacion;
                 }
                 
-                // Penalizar si no hay suficientes coincidencias
                 if (coincidencias.length < tokens.length * 0.3) {
                     score -= 10;
                 }
                 
-                // Bonus por prioridad alta
                 if (causa.prioridad === "Alta") {
                     score += 3;
                 }
@@ -4149,7 +4241,6 @@
                 }
             });
             
-            // Ordenar por puntaje
             return resultadosConPuntaje
                 .sort((a, b) => b.score - a.score)
                 .slice(0, 15)
@@ -4172,7 +4263,6 @@
             listaCausas.forEach(causa => {
                 const icono = causa.prioridad === "Alta" ? "🔴" : (causa.prioridad === "Media" ? "🟠" : "🔵");
                 
-                // Resaltar coincidencias en carátula
                 let caratulaHTML = causa.caratula || "Sin carátula";
                 if (tokensResaltar && tokensResaltar.length > 0) {
                     tokensResaltar.forEach(token => {
@@ -4211,11 +4301,9 @@
                 porTipo[c.tipoProceso] = (porTipo[c.tipoProceso] || 0) + 1;
             });
 
-            // Ordenar usuarios
             const topUsuarios = Object.entries(porUsuario).sort((a,b) => b[1] - a[1]).slice(0,5);
             let usuariosHTML = topUsuarios.map(u => `<li>${u[0]}: <strong>${u[1]}</strong></li>`).join("");
             
-            // Ordenar tipos
             const topTipos = Object.entries(porTipo).sort((a,b) => b[1] - a[1]).slice(0,5);
             let tiposHTML = topTipos.map(t => `<li>${t[0]}: <strong>${t[1]}</strong></li>`).join("");
 
@@ -4259,7 +4347,6 @@
             div.className = `ia-mensaje ${rol}`;
             
             if (rol === 'asistente') {
-                // Generar un ID único para este mensaje
                 const mensajeId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
                 
                 div.innerHTML = `
@@ -4276,7 +4363,6 @@
                     </div>
                 `;
                 
-                // Añadir evento al botón de voz
                 setTimeout(() => {
                     const btnVoz = div.querySelector('.ia-btn-voz');
                     if (btnVoz) {
@@ -4332,13 +4418,12 @@
             suscribirCausas(true);
             
             // ============================================================
-            // EVENT LISTENERS ORIGINALES (SIN CAMBIOS)
+            // EVENT LISTENERS
             // ============================================================
             
             $("btnNuevo").onclick = abrirNuevoExpediente;
             $("btnGuardar").onclick = guardarExpediente;
             
-            // Cerrar modal al hacer clic fuera del contenido
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     modal.style.display = "none";
@@ -4358,7 +4443,7 @@
             $("btnPrintFiltrado").onclick = () => window.print();
             $("btnPrintRegistro").onclick = () => window.print();
             
-            // Asistente IA - Event Listeners
+            // Asistente IA
             btnNuevaConsultaIA.onclick = nuevaConsultaIA;
             btnSalirIA.onclick = cerrarAsistenteIA;
             iaEnviar.onclick = enviarPreguntaIA;
@@ -4427,32 +4512,69 @@
                 $("nnyaGesell").disabled = !this.checked;
             });
             
-            // Agregar audiencias y diligencias dinámicas
+            // Agregar audiencias dinámicas - MODIFICADO PARA CHROME
             btnAgregarAudiencia.onclick = function() {
                 const container = audienciasContainer;
                 const div = document.createElement('div');
                 div.className = 'audiencia-item';
-                div.innerHTML = `
-                    <input type="datetime-local" class="audiencia-fecha">
-                    <button type="button" class="btn-eliminar-audiencia"><i class="fa fa-trash"></i></button>
-                `;
+                
+                // Crear input de fecha con formato compatible con Chrome
+                const fechaInput = document.createElement('input');
+                fechaInput.type = 'datetime-local';
+                fechaInput.className = 'audiencia-fecha';
+                
+                // Establecer valor por defecto (hoy, hora actual redondeada a los próximos 15 minutos)
+                const now = new Date();
+                now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15);
+                fechaInput.value = formatFechaParaInput(now, true);
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'btn-eliminar-audiencia';
+                deleteBtn.innerHTML = '<i class="fa fa-trash"></i>';
+                
+                div.appendChild(fechaInput);
+                div.appendChild(deleteBtn);
                 container.appendChild(div);
-                div.querySelector('.btn-eliminar-audiencia').onclick = function() {
+                
+                deleteBtn.onclick = function() {
                     container.removeChild(div);
                 };
             };
             
+            // Agregar diligencias dinámicas - MODIFICADO PARA CHROME
             btnAgregarDiligencia.onclick = function() {
                 const container = diligenciasContainer;
                 const div = document.createElement('div');
                 div.className = 'diligencia-item';
-                div.innerHTML = `
-                    <input type="datetime-local" class="diligencia-fecha">
-                    <input type="text" class="diligencia-detalle" placeholder="Detalle">
-                    <button type="button" class="btn-eliminar-diligencia"><i class="fa fa-trash"></i></button>
-                `;
+                
+                // Fecha
+                const fechaInput = document.createElement('input');
+                fechaInput.type = 'datetime-local';
+                fechaInput.className = 'diligencia-fecha';
+                
+                const now = new Date();
+                now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15);
+                fechaInput.value = formatFechaParaInput(now, true);
+                
+                // Detalle
+                const detalleInput = document.createElement('input');
+                detalleInput.type = 'text';
+                detalleInput.className = 'diligencia-detalle';
+                detalleInput.placeholder = 'Detalle';
+                
+                // Botón eliminar
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'btn-eliminar-diligencia';
+                deleteBtn.innerHTML = '<i class="fa fa-trash"></i>';
+                
+                div.appendChild(fechaInput);
+                div.appendChild(detalleInput);
+                div.appendChild(deleteBtn);
                 container.appendChild(div);
-                div.querySelector('.btn-eliminar-diligencia').onclick = function() {
+                
+                deleteBtn.onclick = function() {
                     container.removeChild(div);
                 };
             };
@@ -4495,29 +4617,20 @@
             setupContadores();
             
             // ============================================================
-            // NUEVOS EVENT LISTENERS PARA GENERACIÓN DE PDF
+            // EVENT LISTENERS PARA GENERACIÓN DE PDF
             // ============================================================
             
-            // Botón para abrir generador de PDF
             btnGenerarPDF.onclick = abrirGeneradorPDF;
-            
-            // Botón para buscar cliente en PDF
             btnBuscarClientePDF.onclick = buscarClienteParaPDF;
-            
-            // Botón para generar PDF final
             btnGenerarPDFFinal.onclick = generarPDF;
-            
-            // Botón para cerrar modal de PDF
             btnCerrarPDF.onclick = () => modalPDF.style.display = "none";
             
-            // Permitir búsqueda con Enter en el campo de nombre
             pdfNombreCliente.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     buscarClienteParaPDF();
                 }
             });
             
-            // Cerrar modal de PDF al hacer clic fuera
             modalPDF.addEventListener('click', function(e) {
                 if (e.target === modalPDF) {
                     modalPDF.style.display = "none";
@@ -4525,74 +4638,74 @@
             });
             
             // ============================================================
-            // FUNCIONES DE VOZ (SIN CAMBIOS)
+            // FUNCIONES DE VOZ MODIFICADAS PARA CHROME
             // ============================================================
             
-            // Función de reconocimiento de voz corregida
             function startDictation(inputId) {
-                // Verificar si el navegador soporta la API
-                if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
-                    
-                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    var recognition = new SpeechRecognition();
-
-                    recognition.continuous = false;
-                    recognition.interimResults = false;
-                    recognition.lang = "es-AR"; // Configurado para español Argentina
-                    
-                    // Indicador visual: Cambiar color del ícono al empezar a escuchar
-                    const icon = document.querySelector(`i[onclick="startDictation('${inputId}')"]`);
-                    if(icon) icon.style.color = "red";
-
-                    recognition.start();
-
-                    recognition.onresult = function(event) {
-                        var transcript = event.results[0][0].transcript;
-                        var input = document.getElementById(inputId);
-                        
-                        if (input) {
-                            // 1. Detectar si es un elemento Editable (DIV contenteditable) como Observaciones
-                            if (input.isContentEditable) {
-                                // Añadir espacio si ya hay texto
-                                const textoActual = input.innerText;
-                                input.innerText = textoActual ? textoActual + " " + transcript : transcript;
-                                
-                                // Disparar evento 'input' para que se actualicen los contadores y campos ocultos
-                                input.dispatchEvent(new Event('input', { bubbles: true }));
-                            } 
-                            // 2. Detectar si es un Input o Textarea normal
-                            else {
-                                input.value = input.value ? input.value + " " + transcript : transcript;
-                                
-                                // Disparar eventos para filtros y validaciones
-                                input.dispatchEvent(new Event('input', { bubbles: true }));
-                                input.dispatchEvent(new Event('change', { bubbles: true }));
-                            }
-                            
-                            // Si es específicamente el campo de búsqueda global, forzar el filtro
-                            if(inputId === 'buscador' && typeof actualizarFiltros === 'function'){
-                                actualizarFiltros();
-                            }
-                        }
-                        if(icon) icon.style.color = ""; // Restaurar color original
-                        recognition.stop();
-                    };
-
-                    recognition.onerror = function(event) {
-                        console.error("Error en reconocimiento de voz:", event.error);
-                        if(icon) icon.style.color = ""; // Restaurar color
-                        recognition.stop();
-                    };
-                    
-                    recognition.onend = function() {
-                         if(icon) icon.style.color = ""; // Restaurar color al terminar
-                    };
-
-                } else {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
                     alert("Tu navegador no soporta reconocimiento de voz. Por favor usa Google Chrome.");
+                    return;
                 }
+                
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = "es-AR";
+                
+                const icon = document.querySelector(`i[onclick="startDictation('${inputId}')"]`);
+                if (icon) {
+                    icon.style.color = "red";
+                    icon.classList.add('listening');
+                }
+                
+                recognition.start();
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const input = document.getElementById(inputId);
+                    
+                    if (input) {
+                        if (input.isContentEditable) {
+                            const textoActual = input.innerText;
+                            input.innerText = textoActual ? textoActual + " " + transcript : transcript;
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                        } else {
+                            input.value = input.value ? input.value + " " + transcript : transcript;
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                        
+                        if (inputId === 'buscador' && typeof actualizarFiltros === 'function') {
+                            actualizarFiltros();
+                        }
+                    }
+                    
+                    if (icon) {
+                        icon.style.color = "";
+                        icon.classList.remove('listening');
+                    }
+                    recognition.stop();
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error("Error en reconocimiento de voz:", event.error);
+                    if (icon) {
+                        icon.style.color = "";
+                        icon.classList.remove('listening');
+                    }
+                    recognition.stop();
+                };
+                
+                recognition.onend = function() {
+                    if (icon) {
+                        icon.style.color = "";
+                        icon.classList.remove('listening');
+                    }
+                };
             }
-
+            
             // Configurar funciones de voz
             function setupFuncionesVoz() {
                 if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -4600,17 +4713,6 @@
                     return;
                 }
                 
-                // Configurar botones de voz existentes para usar startDictation
-                const botonesVoz = {
-                    'Caratula': 'btnVoiceCaratula',
-                    'DatosNnya': 'btnVoiceDatosNnya',
-                    'NnyaGesell': 'btnVoiceNnyaGesell',
-                    'Observaciones': 'btnVoiceObservaciones',
-                    'Nota': 'btnVoiceNota',
-                    'Search': 'btnVoiceSearch'
-                };
-                
-                // Mapeo de IDs de botón a IDs de campo
                 const campoPorBoton = {
                     'btnVoiceCaratula': 'caratula',
                     'btnVoiceDatosNnya': 'datosNnya',
@@ -4620,18 +4722,14 @@
                     'btnVoiceSearch': 'buscador'
                 };
                 
-                Object.keys(botonesVoz).forEach(campo => {
-                    const btn = $(botonesVoz[campo]);
+                Object.keys(campoPorBoton).forEach(botonId => {
+                    const btn = $(botonId);
                     if (btn) {
-                        // Obtener el ID del campo correspondiente
-                        const campoId = campoPorBoton[botonesVoz[campo]];
-                        
-                        // Configurar el botón para usar startDictation
+                        const campoId = campoPorBoton[botonId];
                         btn.onclick = () => startDictation(campoId);
                     }
                 });
                 
-                // Configurar botón de texto a voz en modal de ver
                 const btnTextToSpeech = $('btnTextToSpeech');
                 if (btnTextToSpeech) {
                     btnTextToSpeech.onclick = function() {
@@ -4664,7 +4762,7 @@
         });
 
         // ================================================================
-        // FUNCIÓN PARA MIGRAR DATOS CORREGIDA (SIN CAMBIOS)
+        // FUNCIÓN PARA MIGRAR DATOS (SIN CAMBIOS)
         // ================================================================
         
         window.migrarDatosParaBusqueda = async function() {
@@ -4684,7 +4782,6 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     
-                    // Generar keywords
                     const textoParaKeywords = [
                         data.numCausa || '',
                         data.caratula || '', 
@@ -4699,12 +4796,11 @@
                     .split(/\s+/)
                     .filter(palabra => palabra.length > 0);
                     
-                    // Generar fechasFiltro
                     const fechasSet = new Set();
                     const agregarFecha = (fecha) => {
                         if (!fecha) return;
                         const d = toDate(fecha);
-                        if (d && !isNaN(d)) {
+                        if (d && !isNaN(d.getTime())) {
                             fechasSet.add(formatFechaParaInput(d, false));
                         }
                     };
@@ -4719,7 +4815,6 @@
                         data.diligencias.forEach(dilig => agregarFecha(dilig.fecha));
                     }
                     
-                    // Actualizar documento
                     const ref = db.collection("causas").doc(doc.id);
                     batch.update(ref, {
                         keywords: textoParaKeywords,
@@ -4737,6 +4832,14 @@
                 alert("Error durante la migración: " + error.message);
             }
         };
+        
+        // Función para detener reconocimiento de voz
+        function detenerVozReconocimiento() {
+            if (vozReconocimiento) {
+                vozReconocimiento.stop();
+                vozReconocimientoActivo = false;
+            }
+        }
     </script>
 </body>
 </html>
