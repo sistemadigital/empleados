@@ -2013,7 +2013,7 @@
         </div>
     </div>
 
-    <!-- Modal Formulario Expediente (con restricciones de horario) -->
+    <!-- Modal Formulario Expediente (sin cambios) -->
     <div id="modal">
         <div class="content">
             <div class="modal-header">
@@ -2089,8 +2089,7 @@
                             <div class="field">
                                 <label for="datosNnya">Datos de NNyA (máx. 500 palabras)</label>
                                 <div class="voice-input-container">
-                                    <!-- CAMBIO: Quitamos el atributo disabled para que sea editable -->
-                                    <textarea id="datosNnya"></textarea>
+                                    <textarea id="datosNnya" disabled></textarea>
                                     <button class="voice-input-btn" id="btnVoiceDatosNnya" title="Dictado por voz">
                                         <i class="fas fa-microphone"></i>
                                     </button>
@@ -2099,15 +2098,8 @@
                             </div>
                         </div>
                         <div id="tab2" class="tab-content">
-                            <div class="field">
-                                <label for="fechaInicio">Fecha de Inicio</label>
-                                <input type="date" id="fechaInicio" />
-                            </div>
-                            <div class="field">
-                                <label for="fechaPase">Fecha de Pase *</label>
-                                <input type="datetime-local" id="fechaPase" min="T07:00" max="T12:00" step="300" required />
-                                <span class="error-message hora-error" style="display:none;color:#dc3545;">La hora debe estar entre 7:00 y 12:00</span>
-                            </div>
+                            <div class="field"><label for="fechaInicio">Fecha de Inicio</label><input type="date" id="fechaInicio" /></div>
+                            <div class="field"><label for="fechaPase">Fecha de Pase</label><input type="datetime-local" id="fechaPase" /></div>
                         </div>
                         <div id="tab3" class="tab-content">
                             <div class="field">
@@ -2117,12 +2109,8 @@
                             </div>
                             <div class="field">
                                 <label for="audienciaGesell">Audiencia en Cámara Gesell</label>
-                                <div style="display:flex;align-items:center;gap:8px">
-                                    <input type="checkbox" id="habilitarAudienciaGesell" />
-                                    <span>Habilitar</span>
-                                </div>
-                                <input type="datetime-local" id="audienciaGesell" min="T07:00" max="T12:00" step="300" disabled />
-                                <span class="error-message hora-error" style="display:none;color:#dc3545;">La hora debe estar entre 7:00 y 12:00</span>
+                                <div style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="habilitarAudienciaGesell" /><span>Habilitar</span></div>
+                                <input type="datetime-local" id="audienciaGesell" disabled />
                             </div>
                             <div class="field">
                                 <label for="nnyaGesell">NNyA en Gesell (máx. 400 palabras)</label>
@@ -2136,16 +2124,8 @@
                             </div>
                         </div>
                         <div id="tab4" class="tab-content">
-                            <div class="field">
-                                <label for="vencimiento">Vencimiento</label>
-                                <input type="datetime-local" id="vencimiento" min="T07:00" max="T12:00" step="300" />
-                                <span class="error-message hora-error" style="display:none;color:#dc3545;">La hora debe estar entre 7:00 y 12:00</span>
-                            </div>
-                            <div class="field">
-                                <label for="vencimientoRecursos">Vencimiento de Recursos</label>
-                                <input type="datetime-local" id="vencimientoRecursos" min="T07:00" max="T12:00" step="300" />
-                                <span class="error-message hora-error" style="display:none;color:#dc3545;">La hora debe estar entre 7:00 y 12:00</span>
-                            </div>
+                            <div class="field"><label for="vencimiento">Vencimiento</label><input type="datetime-local" id="vencimiento" /></div>
+                            <div class="field"><label for="vencimientoRecursos">Vencimiento de Recursos</label><input type="datetime-local" id="vencimientoRecursos" /></div>
                         </div>
                         <div id="tab5" class="tab-content">
                             <div class="field">
@@ -2247,7 +2227,7 @@
 
     <script>
         // ================================================================
-        // CÓDIGO ORIGINAL MODIFICADO PARA RESTRICCIÓN DE HORARIO (7-12)
+        // CÓDIGO ORIGINAL MODIFICADO PARA COMPATIBILIDAD CON CHROME
         // ================================================================
         
         const firebaseConfig = {
@@ -2308,10 +2288,6 @@
         // VARIABLES PARA EL ASISTENTE IA (MEMORIA DE CONTEXTO)
         let ultimoResultadoIA = []; // Memoria de contexto
         let contextoActivo = false; // Indica si hay un contexto activo para refinar
-        
-        // CONSTANTES PARA HORARIO
-        const HORA_INICIO = 7; // 7:00 AM
-        const HORA_FIN = 12;   // 12:00 PM
         
         const recordsPerPage = 10;
         const intervencionOptions = [
@@ -2388,49 +2364,6 @@
         const observacionesEditor = $("observaciones-editor");
         const observacionesHidden = $("observaciones");
         
-        // FUNCIÓN PARA VALIDAR HORARIO (7-12)
-        function validarHorario(fechaHora) {
-            if (!fechaHora) return true; // Si no hay fecha, es válido
-            
-            const fecha = toDate(fechaHora);
-            if (!fecha || isNaN(fecha.getTime())) return true;
-            
-            const hora = fecha.getHours();
-            const minutos = fecha.getMinutes();
-            
-            // Convertir a minutos totales para comparación precisa
-            const minutosTotales = hora * 60 + minutos;
-            const inicioMinutos = HORA_INICIO * 60;
-            const finMinutos = HORA_FIN * 60;
-            
-            return minutosTotales >= inicioMinutos && minutosTotales <= finMinutos;
-        }
-        
-        // FUNCIÓN PARA AJUSTAR HORA AL RANGO PERMITIDO (7-12)
-        function ajustarHoraAlRango(fechaHora) {
-            if (!fechaHora) return fechaHora;
-            
-            const fecha = toDate(fechaHora);
-            if (!fecha || isNaN(fecha.getTime())) return fechaHora;
-            
-            const hora = fecha.getHours();
-            const minutos = fecha.getMinutes();
-            
-            // Convertir a minutos totales
-            const minutosTotales = hora * 60 + minutos;
-            const inicioMinutos = HORA_INICIO * 60;
-            const finMinutos = HORA_FIN * 60;
-            
-            // Si está fuera del rango, ajustar al límite más cercano
-            if (minutosTotales < inicioMinutos) {
-                fecha.setHours(HORA_INICIO, 0, 0, 0);
-            } else if (minutosTotales > finMinutos) {
-                fecha.setHours(HORA_FIN, 0, 0, 0);
-            }
-            
-            return fecha;
-        }
-        
         // FUNCIÓN MODIFICADA PARA COMPATIBILIDAD CON CHROME
         const toDate = (v) => {
             if (!v) return null;
@@ -2501,20 +2434,12 @@
             return `${dia}/${mes}/${año} ${horas}:${minutos}`;
         }
         
-        // FUNCIÓN MEJORADA PARA FORMATO DE INPUTS EN CHROME (CON RESTRICCIÓN DE HORARIO)
+        // FUNCIÓN MEJORADA PARA FORMATO DE INPUTS EN CHROME
         function formatFechaParaInput(fecha, conHora = true) {
             if (!fecha) return "";
             
             const fechaObj = toDate(fecha);
             if (!fechaObj || isNaN(fechaObj.getTime())) return "";
-            
-            // Si tiene hora y está fuera del rango, ajustar
-            if (conHora) {
-                const horaValida = validarHorario(fechaObj);
-                if (!horaValida) {
-                    fechaObj = ajustarHoraAlRango(fechaObj);
-                }
-            }
             
             const año = fechaObj.getFullYear();
             const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
@@ -2531,7 +2456,7 @@
             return `${año}-${mes}-${dia}T${horas}:${minutos}`;
         }
         
-        // FUNCIÓN PARA CONVERTIR DATETIME-LOCAL A TIMESTAMP PARA FIREBASE (CON VALIDACIÓN DE HORARIO)
+        // FUNCIÓN PARA CONVERTIR DATETIME-LOCAL A TIMESTAMP PARA FIREBASE
         function parseDateTimeLocalToTimestamp(datetimeLocal) {
             if (!datetimeLocal) return null;
             
@@ -2547,13 +2472,6 @@
             
             // Verificar que la fecha sea válida
             if (isNaN(date.getTime())) return null;
-            
-            // Validar horario
-            if (!validarHorario(date)) {
-                // Si no es válido, ajustar al rango
-                const fechaAjustada = ajustarHoraAlRango(date);
-                return firebase.firestore.Timestamp.fromDate(fechaAjustada);
-            }
             
             return firebase.firestore.Timestamp.fromDate(date);
         }
@@ -2665,37 +2583,7 @@
             }
         }
         
-        // FUNCIÓN PARA VALIDAR HORARIO EN TODOS LOS CAMPOS DE FECHA/HORA
-        function validarHorariosFormulario() {
-            let valido = true;
-            const camposHora = document.querySelectorAll('#formCausa input[type="datetime-local"]');
-            
-            camposHora.forEach(campo => {
-                const errorSpan = campo.parentElement.querySelector('.hora-error');
-                if (campo.value) {
-                    const fecha = new Date(campo.value);
-                    if (!validarHorario(fecha)) {
-                        campo.style.borderColor = '#dc3545';
-                        if (errorSpan) errorSpan.style.display = 'block';
-                        valido = false;
-                        
-                        // Mostrar mensaje específico
-                        const nombreCampo = campo.closest('.field')?.querySelector('label')?.textContent || 'Campo';
-                        mostrarAlertaFlotante(`${nombreCampo}: La hora debe estar entre 7:00 y 12:00`, 'danger');
-                    } else {
-                        campo.style.borderColor = '';
-                        if (errorSpan) errorSpan.style.display = 'none';
-                    }
-                } else {
-                    campo.style.borderColor = '';
-                    if (errorSpan) errorSpan.style.display = 'none';
-                }
-            });
-            
-            return valido;
-        }
-        
-        // FUNCIÓN MODIFICADA PARA RECOLECTAR DATOS (CON VALIDACIÓN DE HORARIO)
+        // FUNCIÓN MODIFICADA PARA RECOLECTAR DATOS (COMPATIBLE CON CHROME)
         function recolectarDatosForm() {
             const datos = {
                 numCausa: $("numCausa").value.trim(),
@@ -2766,14 +2654,6 @@
             $("nnyaGesell").disabled = true;
             $("recursos-opcionales").style.display = 'none';
             
-            // Restablecer estilos de error de horario
-            document.querySelectorAll('.hora-error').forEach(el => {
-                el.style.display = 'none';
-            });
-            document.querySelectorAll('#formCausa input[type="datetime-local"]').forEach(el => {
-                el.style.borderColor = '';
-            });
-            
             tabButtons.forEach(btn => btn.classList.remove('active'));
             tabContents.forEach(content => content.classList.remove('active'));
             tabButtons[0].classList.add('active');
@@ -2786,7 +2666,7 @@
             document.querySelectorAll('.field').forEach(field => field.classList.remove('error'));
         }
 
-        // FUNCIÓN MODIFICADA PARA CARGAR DATOS (CON AJUSTE DE HORARIO)
+        // FUNCIÓN MODIFICADA PARA CARGAR DATOS (COMPATIBLE CON CHROME)
         function cargarDatosEnForm(data) {
             $("numCausa").value = data.numCausa || '';
             $("caratula").value = data.caratula || '';
@@ -2818,9 +2698,8 @@
                     const div = document.createElement('div');
                     div.className = 'audiencia-item';
                     div.innerHTML = `
-                        <input type="datetime-local" class="audiencia-fecha" min="T07:00" max="T12:00" step="300" value="${formatFechaParaInput(toDate(aud), true)}">
+                        <input type="datetime-local" class="audiencia-fecha" value="${formatFechaParaInput(toDate(aud), true)}">
                         <button type="button" class="btn-eliminar-audiencia"><i class="fa fa-trash"></i></button>
-                        <span class="error-message hora-error" style="display:none;color:#dc3545;font-size:0.8rem;margin-top:4px;">Hora fuera de rango (7-12)</span>
                     `;
                     audienciasContainer.appendChild(div);
                     div.querySelector('.btn-eliminar-audiencia').onclick = function() {
@@ -2836,10 +2715,9 @@
                     const div = document.createElement('div');
                     div.className = 'diligencia-item';
                     div.innerHTML = `
-                        <input type="datetime-local" class="diligencia-fecha" min="T07:00" max="T12:00" step="300" value="${formatFechaParaInput(toDate(dilig.fecha), true)}">
+                        <input type="datetime-local" class="diligencia-fecha" value="${formatFechaParaInput(toDate(dilig.fecha), true)}">
                         <input type="text" class="diligencia-detalle" placeholder="Detalle" value="${dilig.detalle || ''}">
                         <button type="button" class="btn-eliminar-diligencia"><i class="fa fa-trash"></i></button>
-                        <span class="error-message hora-error" style="display:none;color:#dc3545;font-size:0.8rem;margin-top:4px;">Hora fuera de rango (7-12)</span>
                     `;
                     diligenciasContainer.appendChild(div);
                     div.querySelector('.btn-eliminar-diligencia').onclick = function() {
@@ -2869,7 +2747,6 @@
             if (data.datosNnya) {
                 const palabrasNnya = data.datosNnya.trim().split(/\s+/).filter(p => p.length > 0);
                 $("counterNnya").textContent = `${palabrasNnya.length}/500`;
-                $("counterNnya").style.display = 'block';
             }
             if (data.nnyaGesell) {
                 const palabrasGesell = data.nnyaGesell.trim().split(/\s+/).filter(p => p.length > 0);
@@ -3366,21 +3243,12 @@
             
             deshabilitarCamposFormulario(false);
             
-            // Establecer valores por defecto en campos de fecha/hora
-            const now = new Date();
-            now.setHours(7, 0, 0, 0); // Hora por defecto: 7:00 AM
-            
-            // Establecer fecha y hora por defecto en campos principales
-            $("fechaPase").value = formatFechaParaInput(now, true);
-            $("vencimiento").value = "";
-            $("vencimientoRecursos").value = "";
-            
             modal.style.display = "flex"; 
         }
         
         function validateForm() {
             let isValid = true;
-            const requiredFields = ["numCausa", "caratula", "tipoProceso", "juzgado", "prioridad", "usuarioAsignado", "fechaPase"];
+            const requiredFields = ["numCausa", "caratula", "tipoProceso", "juzgado", "prioridad", "usuarioAsignado"];
             
             requiredFields.forEach(id => {
                 const field = $(id);
@@ -3393,13 +3261,8 @@
                 }
             });
             
-            // Validar horarios
-            if (!validarHorariosFormulario()) {
-                isValid = false;
-            }
-            
             if (!isValid) {
-                mostrarAlertaFlotante("Complete todos los campos obligatorios marcados con * y verifique los horarios (7:00-12:00)", 'danger');
+                mostrarAlertaFlotante("Complete todos los campos obligatorios marcados con *", 'danger');
                 return false;
             }
             
@@ -3416,7 +3279,7 @@
             alertModal.style.display = "none";
         };
         
-        // FUNCIÓN MODIFICADA PARA GUARDAR EXPEDIENTE (CON VALIDACIÓN DE HORARIO)
+        // FUNCIÓN MODIFICADA PARA GUARDAR EXPEDIENTE (COMPATIBLE CON CHROME)
         const guardarExpediente = async () => {
             if (!validateForm()) {
                 return;
@@ -3441,12 +3304,6 @@
                     
                     return;
                 }
-            }
-            
-            // Validación adicional de horarios
-            if (!validarHorariosFormulario()) {
-                mostrarAlertaFlotante("Hay campos con horarios fuera del rango permitido (7:00-12:00). Por favor, corríjalos.", 'danger');
-                return;
             }
             
             if (!db) {
@@ -4655,23 +4512,20 @@
                 $("nnyaGesell").disabled = !this.checked;
             });
             
-            // Agregar audiencias dinámicas - MODIFICADO PARA RESTRICCIÓN DE HORARIO
+            // Agregar audiencias dinámicas - MODIFICADO PARA CHROME
             btnAgregarAudiencia.onclick = function() {
                 const container = audienciasContainer;
                 const div = document.createElement('div');
                 div.className = 'audiencia-item';
                 
-                // Crear input de fecha con formato compatible con Chrome y restricción de horario
+                // Crear input de fecha con formato compatible con Chrome
                 const fechaInput = document.createElement('input');
                 fechaInput.type = 'datetime-local';
                 fechaInput.className = 'audiencia-fecha';
-                fechaInput.min = "T07:00";
-                fechaInput.max = "T12:00";
-                fechaInput.step = "300"; // 5 minutos
                 
-                // Establecer valor por defecto (hoy, hora 7:00 AM)
+                // Establecer valor por defecto (hoy, hora actual redondeada a los próximos 15 minutos)
                 const now = new Date();
-                now.setHours(7, 0, 0, 0);
+                now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15);
                 fechaInput.value = formatFechaParaInput(now, true);
                 
                 const deleteBtn = document.createElement('button');
@@ -4679,50 +4533,28 @@
                 deleteBtn.className = 'btn-eliminar-audiencia';
                 deleteBtn.innerHTML = '<i class="fa fa-trash"></i>';
                 
-                // Agregar mensaje de error
-                const errorSpan = document.createElement('span');
-                errorSpan.className = 'error-message hora-error';
-                errorSpan.style.cssText = 'display:none;color:#dc3545;font-size:0.8rem;margin-top:4px;';
-                errorSpan.textContent = 'Hora fuera de rango (7-12)';
-                
                 div.appendChild(fechaInput);
                 div.appendChild(deleteBtn);
-                div.appendChild(errorSpan);
                 container.appendChild(div);
-                
-                // Evento para validar horario cuando cambia
-                fechaInput.addEventListener('change', function() {
-                    const fecha = new Date(this.value);
-                    if (!validarHorario(fecha)) {
-                        this.style.borderColor = '#dc3545';
-                        errorSpan.style.display = 'block';
-                    } else {
-                        this.style.borderColor = '';
-                        errorSpan.style.display = 'none';
-                    }
-                });
                 
                 deleteBtn.onclick = function() {
                     container.removeChild(div);
                 };
             };
             
-            // Agregar diligencias dinámicas - MODIFICADO PARA RESTRICCIÓN DE HORARIO
+            // Agregar diligencias dinámicas - MODIFICADO PARA CHROME
             btnAgregarDiligencia.onclick = function() {
                 const container = diligenciasContainer;
                 const div = document.createElement('div');
                 div.className = 'diligencia-item';
                 
-                // Fecha con restricción de horario
+                // Fecha
                 const fechaInput = document.createElement('input');
                 fechaInput.type = 'datetime-local';
                 fechaInput.className = 'diligencia-fecha';
-                fechaInput.min = "T07:00";
-                fechaInput.max = "T12:00";
-                fechaInput.step = "300";
                 
                 const now = new Date();
-                now.setHours(7, 0, 0, 0);
+                now.setMinutes(Math.ceil(now.getMinutes() / 15) * 15);
                 fechaInput.value = formatFechaParaInput(now, true);
                 
                 // Detalle
@@ -4737,29 +4569,10 @@
                 deleteBtn.className = 'btn-eliminar-diligencia';
                 deleteBtn.innerHTML = '<i class="fa fa-trash"></i>';
                 
-                // Agregar mensaje de error
-                const errorSpan = document.createElement('span');
-                errorSpan.className = 'error-message hora-error';
-                errorSpan.style.cssText = 'display:none;color:#dc3545;font-size:0.8rem;margin-top:4px;';
-                errorSpan.textContent = 'Hora fuera de rango (7-12)';
-                
                 div.appendChild(fechaInput);
                 div.appendChild(detalleInput);
                 div.appendChild(deleteBtn);
-                div.appendChild(errorSpan);
                 container.appendChild(div);
-                
-                // Evento para validar horario cuando cambia
-                fechaInput.addEventListener('change', function() {
-                    const fecha = new Date(this.value);
-                    if (!validarHorario(fecha)) {
-                        this.style.borderColor = '#dc3545';
-                        errorSpan.style.display = 'block';
-                    } else {
-                        this.style.borderColor = '';
-                        errorSpan.style.display = 'none';
-                    }
-                });
                 
                 deleteBtn.onclick = function() {
                     container.removeChild(div);
@@ -4822,30 +4635,6 @@
                 if (e.target === modalPDF) {
                     modalPDF.style.display = "none";
                 }
-            });
-            
-            // ============================================================
-            // VALIDACIÓN DE HORARIO EN CAMPOS DE FECHA/HORA
-            // ============================================================
-            
-            // Aplicar validación de horario a todos los campos datetime-local existentes
-            document.querySelectorAll('#formCausa input[type="datetime-local"]').forEach(campo => {
-                campo.addEventListener('change', function() {
-                    const errorSpan = this.parentElement.querySelector('.hora-error');
-                    if (this.value) {
-                        const fecha = new Date(this.value);
-                        if (!validarHorario(fecha)) {
-                            this.style.borderColor = '#dc3545';
-                            if (errorSpan) errorSpan.style.display = 'block';
-                        } else {
-                            this.style.borderColor = '';
-                            if (errorSpan) errorSpan.style.display = 'none';
-                        }
-                    } else {
-                        this.style.borderColor = '';
-                        if (errorSpan) errorSpan.style.display = 'none';
-                    }
-                });
             });
             
             // ============================================================
