@@ -3,437 +3,1237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚖️Sistema Digital - Defensoría 6</title>
+    <title>SistemaDigital-app</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Fuente Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+    
     <style>
+        /* (estilos sin cambios) */
         :root {
-          --background: oklch(1.0000 0 0);
-          --foreground: oklch(0.1884 0.0128 248.5103);
-          --card: oklch(0.9784 0.0011 197.1387);
-          --card-foreground: oklch(0.1884 0.0128 248.5103);
-          --popover: oklch(1.0000 0 0);
-          --popover-foreground: oklch(0.1884 0.0128 248.5103);
-          --primary: oklch(0.6723 0.1606 244.9955);
-          --primary-foreground: oklch(1.0000 0 0);
-          --secondary: oklch(0.1884 0.0128 248.5103);
-          --secondary-foreground: oklch(1.0000 0 0);
-          --muted: oklch(0.9222 0.0013 286.3737);
-          --muted-foreground: oklch(0.1884 0.0128 248.5103);
-          --accent: oklch(0.9392 0.0166 250.8453);
-          --accent-foreground: oklch(0.6723 0.1606 244.9955);
-          --destructive: oklch(0.6188 0.2376 25.7658);
-          --destructive-foreground: oklch(1.0000 0 0);
-          --border: oklch(0.9317 0.0118 231.6594);
-          --radius: 1.3rem;
+            --primary-blue: oklch(0.6723 0.1606 244.9955);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-            color: var(--foreground);
+            background-color: #f5f7fa;
+            color: var(--primary-blue);
         }
 
-        /* NAVBAR FIJA */
-        .navbar {
-            background: var(--card);
-            backdrop-filter: blur(10px);
-            padding: 10px 20px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            position: fixed; /* Fijo para estar siempre visible */
+        /* Encabezado superior */
+        .app-header {
+            background-color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 70px; /* Altura fija para cálculos */
-            z-index: 5000; /* Por encima del iframe */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
+            height: 64px;
+            z-index: 20;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            white-space: nowrap;
         }
 
-        /* Ajuste para que el contenido no quede oculto tras la navbar */
-        .main-content {
-            padding-top: 75px; 
-            width: 100%;
-        }
-
-        .navbar-left { display: flex; align-items: center; gap: 20px; flex-shrink: 1; min-width: 0; }
-        .navbar-right { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
-        .navbar-brand { font-size: 18px; font-weight: bold; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .menu-container { position: relative; }
         .menu-toggle {
-            background: var(--primary);
-            color: var(--primary-foreground);
+            background: none;
             border: none;
-            padding: 8px 16px;
-            border-radius: calc(var(--radius) - 0.5rem);
+            font-size: 1.5rem;
+            color: #334155;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 15px;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
-            min-width: 100px;
             justify-content: center;
+            width: 48px;
+            height: 48px;
         }
 
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 260px;
-            background: var(--popover);
-            border-radius: calc(var(--radius) - 0.5rem);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            z-index: 5100; /* Mayor que la navbar */
-            margin-top: 8px;
-            border: 1px solid var(--border);
+        .menu-toggle:hover {
+            background-color: #f1f5f9;
+        }
+
+        .icon-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
             overflow: hidden;
-            display: none;
-        }
-
-        .dropdown-menu.active { display: block; }
-        .menu-section { padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .menu-items { max-height: 500px; overflow-y: auto; }
-        
-        .menu-item {
-            padding: 12px 16px;
-            display: block;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            font-weight: bold;
-            color: #0056b3; 
-        }
-        .menu-item:hover { background: var(--accent); color: #003d7a; }
-        .menu-section-title { padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; }
-
-        .user-info { display: flex; align-items: center; gap: 12px; }
-        .profile-pic { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); cursor: pointer; }
-        .profile-pic-placeholder { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary-foreground); font-weight: bold; cursor: pointer; }
-        .logout-btn { background: var(--destructive); color: var(--destructive-foreground); border: none; padding: 8px 14px; border-radius: calc(var(--radius) - 0.5rem); cursor: pointer; font-weight: 600; }
-
-        .welcome-screen {
-            padding: 20px 40px;
-            min-height: calc(100vh - 80px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .split-layout {
-            display: flex;
-            width: 100%;
-            max-width: 1500px;
-            gap: 30px;
-            align-items: stretch;
-        }
-
-        .left-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.4);
-            border: 3px solid #0056b3;
-            border-radius: var(--radius);
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-        
-        .mp-logo {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-            display: block;
-        }
-
-        .right-panel {
-            flex: 2.2;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(12px);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: var(--radius);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .module-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            grid-auto-rows: 1fr;
-            gap: 20px;
-            width: 100%;
+            white-space: nowrap;
+            max-width: 0;
+            transition: max-width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             height: 100%;
-            padding: 5px;
         }
 
-        .rect-module {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(8px);
-            border-radius: 12px;
-            padding: 15px;
-            height: 100%; 
-            display: flex;
-            flex-direction: column;
+        .icon-container.open {
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+
+        .icon-container a {
+            display: inline-flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.6);
-            border-left-width: 6px;
-            border-left-style: solid;
-            color: var(--foreground);
+            text-decoration: none;
+            transition: transform 0.2s ease;
+            height: 100%;
+            padding: 0 0.25rem;
+        }
+
+        .icon-container a img {
+            width: 42px;
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+        }
+
+        .icon-container a:hover img {
+            transform: scale(1.2);
+        }
+
+        .typewriter-text {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
             font-weight: 700;
-            font-size: 15px;
-            line-height: 1.3;
+            color: inherit;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid var(--primary-blue);
+            padding-right: 4px;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+            animation: blinkCursor 0.9s step-end infinite;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+            flex-shrink: 1;
+            min-width: 20px;
+            cursor: pointer;
         }
 
-        .rect-module:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        @keyframes blinkCursor {
+            0%, 100% { border-color: var(--primary-blue); }
+            50% { border-color: transparent; }
         }
 
-        .rect-module:nth-child(1) { border-left-color: rgba(239, 68, 68, 0.8); }
-        .rect-module:nth-child(2) { border-left-color: rgba(59, 130, 246, 0.8); }
-        .rect-module:nth-child(3) { border-left-color: rgba(16, 185, 129, 0.8); }
-        .rect-module:nth-child(4) { border-left-color: rgba(245, 158, 11, 0.8); }
-        .rect-module:nth-child(5) { border-left-color: rgba(139, 92, 246, 0.8); }
-        .rect-module:nth-child(6) { border-left-color: rgba(6, 182, 212, 0.8); }
-
-        .iframe-container { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            z-index: 4000; 
-            background: var(--background);
-            flex-direction: column;
-            padding-top: 70px;
+        .header-right-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            color: inherit;
+            margin-left: auto;
+            white-space: nowrap;
+            padding-left: 1rem;
+            font-size: 1rem;
+            cursor: pointer;
         }
 
-        .iframe-header { 
-            background: var(--card); 
-            padding: 0 20px; 
-            height: 50px; 
-            border-bottom: 1px solid var(--border); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+        .btn-salir {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+            transition: transform 0.2s, background-color 0.2s;
+            margin-left: 0.5rem;
             flex-shrink: 0;
         }
 
-        .content-iframe { 
-            width: 100%; 
-            flex: 1; 
-            border: none; 
+        .btn-salir:hover {
+            background-color: #b91c1c;
+            transform: scale(1.1);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 64px);
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(2px);
+            z-index: 15;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease-in-out;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .main-content {
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            background-image: url('https://github.com/sistemadigital/iconos/raw/main/azulfondo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #dynamicContent {
+            width: 100%;
+            flex: 0 0 auto; /* por defecto, solo el contenido */
+            position: relative;
+            min-height: 100px;
+        }
+
+        /* Mensaje de bienvenida con texto a la derecha */
+        .welcome-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            animation: fadeIn 1s ease;
+            background: transparent;
+            padding: 20px 20px 0 20px;
+            width: 100%;
+            position: relative; /* Para posicionar el dropdown absolutamente */
+        }
+
+        .welcome-bar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .welcome-bar:hover {
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        .left-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar-medium, .avatar-placeholder-medium {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-blue);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+
+        .avatar-placeholder-medium {
+            background-color: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        .welcome-message {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            white-space: nowrap;
+        }
+
+        .sistema-digital-text {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        /* Color del reloj ahora con tonalidad celeste gris */
+        #sistemaDigitalClock {
+            color: #7f9eb5; /* celeste gris */
+        }
+
+        .user-dropdown {
+            display: none;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            width: 320px;
+            max-width: 90vw;
+            border: 1px solid #e2e8f0;
+            z-index: 1001;
+            /* Posicionamiento absoluto para que flote */
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            margin-top: 0;
+        }
+
+        .user-dropdown.show {
             display: block;
         }
 
-        .modal { display: none; position: fixed; z-index: 6000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
-        .modal-content { background: var(--popover); margin: 15% auto; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; }
-        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 0.8rem; cursor: pointer; font-weight: bold; }
-        
-        .avatar-option {
-            width: 100px; height: 100px; border-radius: 50%; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 4px solid transparent;
-        }
-        .avatar-option:hover { transform: scale(1.1); border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .avatar-container { display: flex; justify-content: center; gap: 30px; margin: 25px 0; }
-
-        /* AJUSTES PARA MÓVILES */
-        @media (max-width: 850px) {
-            .navbar { padding: 10px; }
-            .navbar-brand { font-size: 14px; white-space: normal; line-height: 1.1; max-width: 150px; }
-            .menu-toggle { padding: 6px 10px; font-size: 13px; min-width: 80px; }
-            .user-info { gap: 8px; }
-            #userName { display: none; } /* Ocultamos el nombre en móvil para dar espacio al botón */
-            .logout-btn { padding: 6px 10px; font-size: 13px; }
-            
-            .split-layout { flex-direction: column; }
-            .left-panel { min-height: 200px; }
-            .right-panel { align-items: center; height: auto; min-height: 400px; }
-            .module-grid { height: auto; }
-        }
-
-        /* MODAL DE LOGOUT */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(3, 74, 117, 0.4); 
-            backdrop-filter: blur(8px);
+        /* Modal de información de la defensoria */
+        .info-modal {
             display: none;
-            justify-content: center;
+            position: fixed;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            width: 350px;
+            max-width: 90vw;
+            border: 1px solid #e2e8f0;
+            z-index: 1002;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .info-modal.show {
+            display: block;
+        }
+
+        .info-modal p {
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .info-modal strong {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .info-modal hr {
+            margin: 1rem 0;
+            border: none;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Imagen izquierda (computadora 3D) - mismo tamaño que el modal */
+        .left-info-image {
+            display: none;
+            position: fixed;
+            width: 350px;
+            max-width: 90vw;
+            height: auto;
+            z-index: 1003;
+            pointer-events: none; /* no interfiere con clics */
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
+            padding: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .left-info-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .dropdown-avatar-img, .dropdown-avatar-placeholder {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-blue);
+        }
+
+        .dropdown-avatar-placeholder {
+            background-color: var(--primary-blue);
+            color: white;
+            display: flex;
             align-items: center;
-            z-index: 6000;
-            animation: fadeIn 0.3s ease;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            border: 2px solid white;
         }
 
-        .modal-content-logout {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255, 255, 255, 1);
+        .avatar-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            justify-content: center;
         }
 
-        .modal-title-logout { color: var(--destructive); font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
-        .modal-text-logout { color: #555; font-size: 1rem; margin-bottom: 25px; font-weight: 500; }
-        
-        .modal-buttons-logout { display: flex; gap: 15px; justify-content: center; }
-        
-        .btn-confirm-logout { 
-            background: var(--destructive); 
-            color: white; 
-            border: none; 
-            padding: 12px 25px; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: 700; 
-            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
-            transition: transform 0.2s; 
+        .avatar-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.2s, transform 0.2s;
+            object-fit: cover;
         }
-        
-        .btn-cancel-logout { 
+
+        .avatar-option:hover {
+            transform: scale(1.1);
+            border-color: var(--primary-blue);
+        }
+
+        .info-item {
+            margin-bottom: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: inherit;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .info-item strong {
+            color: inherit;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 110px;
+        }
+
+        .version-badge {
             background: #e0f2fe;
-            color: #034a75;
-            border: 1px solid transparent;
-            padding: 12px 25px; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: 700; 
+            color: inherit;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .edit-row input {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.375rem;
+            font-size: 0.95rem;
+            flex: 1;
+            margin-right: 0.5rem;
+        }
+        .edit-row button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.375rem;
             transition: background 0.2s;
         }
-
-        .btn-confirm-logout:hover { transform: translateY(-2px); opacity: 0.9; }
-        .btn-cancel-logout:hover { background: #bae6fd; }
+        .save-btn { color: #10b981; }
+        .save-btn:hover { background: #e9f9f1; }
+        .cancel-btn { color: #ef4444; }
+        .cancel-btn:hover { background: #fee2e2; }
+        .edit-icon {
+            cursor: pointer;
+            margin-left: 8px;
+            color: #64748b;
+            transition: color 0.2s;
+        }
+        .edit-icon:hover { color: var(--primary-blue); }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* --- IMAGEN CENTRADA MÁS GRANDE Y CENTRADA --- */
+        .top-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center; /* centrado vertical */
+            width: 100%;
+            flex: 1; /* ocupa el espacio restante después del mensaje */
+            cursor: pointer;
+            margin: 0; /* sin márgenes fijos */
+        }
+
+        .image-large {
+            width: auto;
+            max-width: 90vw;
+            max-height: 70vh; /* altura máxima para que no desborde */
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            padding: 0.75rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-large img {
+            width: 100%;
+            height: auto;
+            max-height: calc(70vh - 1.5rem); /* ajuste por padding */
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Responsive móvil */
+        @media (max-width: 768px) {
+            .welcome-message,
+            .sistema-digital-text {
+                font-size: 1.8rem;
+            }
+            .welcome-bar {
+                padding: 0.5rem 1rem;
+                gap: 0.5rem;
+            }
+            .left-group {
+                gap: 0.5rem;
+            }
+            .image-large {
+                max-height: 60vh;
+            }
+            .btn-salir {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            .info-modal {
+                width: 300px;
+            }
+            .left-info-image {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .image-large {
+                max-height: 50vh;
+            }
+        }
+
+        /* Menú modal en móvil */
+        @media (max-width: 768px) {
+            .icon-container {
+                all: initial;
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 280px;
+                max-width: 90vw;
+                max-height: 80vh;
+                background: white;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 0.25rem;
+                padding: 1rem 0.75rem;
+                overflow-y: auto;
+                border-radius: 1.5rem;
+                z-index: 10000;
+                pointer-events: auto;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            .icon-container.open {
+                display: flex;
+            }
+
+            .icon-container a {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.75rem;
+                border-radius: 0.75rem;
+                text-decoration: none;
+                color: var(--primary-blue);
+                font-weight: 500;
+                font-size: 0.95rem;
+                transition: background-color 0.2s;
+                cursor: pointer;
+            }
+
+            .icon-container a:hover {
+                background-color: #f1f5f9;
+            }
+
+            .icon-container a img {
+                width: 28px;
+                height: auto;
+            }
+
+            .icon-container a::after {
+                content: attr(title);
+                font-size: 0.95rem;
+                color: var(--primary-blue);
+            }
+        }
+
+        /* ========== MODAL DE DETALLE DEL EXPEDIENTE (ELIMINADO ASISTENTE, PERO CONSERVAMOS POR SI SE USA EN OTRO LUGAR) ========== */
+        /* (Este modal se mantiene porque podría ser reutilizado, pero su contenido ahora es estático o no se usa) */
+        .detalle-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 3000;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .detalle-modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        .detalle-modal .modal-header h3 {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+        }
+        .detalle-modal .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .detalle-modal .close-btn:hover {
+            color: #dc3545;
+        }
+        .detalle-contenido {
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+        }
+        .detalle-item {
+            margin-bottom: 0.75rem;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .detalle-item strong {
+            min-width: 140px;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+        .detalle-item span {
+            flex: 1;
+            word-break: break-word;
+        }
+        .detalle-item .fecha {
+            font-family: monospace;
+        }
+        .detalle-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(3px);
+            z-index: 2500;
+        }
+
+        /* ========== MODAL DE CONFIRMACIÓN DE SALIDA (ROJO) ========== */
+        .modal-salir {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-salir-contenido {
+            background-color: #fff;
+            margin: auto;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+            border-left: 6px solid #dc2626;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-salir-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: #dc2626;
+        }
+
+        .modal-salir-header i {
+            font-size: 1.8rem;
+        }
+
+        .modal-salir-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+            color: #1e293b;
+        }
+
+        .modal-salir-contenido p {
+            color: #334155;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .modal-salir-botones {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .modal-salir-botones button {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            font-size: 0.95rem;
+        }
+
+        .btn-cancelar {
+            background-color: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #cbd5e1;
+        }
+
+        .btn-confirmar {
+            background-color: #dc2626;
+            color: white;
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-confirmar:hover {
+            background-color: #b91c1c;
+        }
+
+        @media (max-width: 480px) {
+            .modal-salir-contenido {
+                width: 85%;
+                padding: 1.2rem;
+            }
+            .modal-salir-header h3 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== MODAL DE CUMPLEAÑOS ===== */
+        .birthday-modal {
+            display: none;
+            position: fixed;
+            z-index: 11000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .birthday-modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 2rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid #ff6f61;
+            animation: fadeIn 0.3s;
+            position: relative;
+        }
+
+        .birthday-modal-content .close-birthday {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .birthday-modal-content .close-birthday:hover {
+            color: #ff6f61;
+        }
+
+        .birthday-modal-content i {
+            font-size: 4rem;
+            color: #ff6f61;
+            margin-bottom: 0.5rem;
+        }
+
+        .birthday-modal-content h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        #birthdayList {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        #birthdayList li {
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .btn-cerrar {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.6rem 2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-cerrar:hover {
+            background-color: #1e4a7a;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <nav class="navbar">
-            <div class="navbar-left">
-                <div class="menu-container">
-                    <button class="menu-toggle" id="menuToggleBtn" onclick="toggleMenu()">☰ Menú</button>
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <div class="menu-items">
-                            <div class="menu-section">
-                                <div class="menu-section-title">Sistema Principal</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">Registro de Causas</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">Datos de Partes</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">Notificaciones</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/libros.html', 'Libros')">Libros</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/dictamenes.html', 'Modelos')">Modelos</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/empleados/organismos.html', 'Organismos')">Organismos</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/diligenciadores/', 'Diligenciadores')">Diligenciadores</div>
-                                 <div class="menu-section-title">Herramientas Adicionales</div>
-                                <div class="menu-item" onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados', 'Consultas y Turnos')">Consultas y Turnos</div>
-                                <div class="menu-item" onclick="loadPage('https://defensoriaseis.wixsite.com/asistente', 'Asistente IA')">Asistente IA</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="navbar-brand">Defensoría Civil y Comercial 6</div>
-            </div>
-            <div class="navbar-right">
-                <div class="user-info">
-                    <span id="userName"></span>
-                    <div onclick="openProfileModal()" title="Cambiar Avatar">
-                        <div class="profile-pic-placeholder" id="profilePlaceholder">U</div>
-                        <img class="profile-pic" id="profilePic" style="display: none;">
-                    </div>
-                    <button class="logout-btn" onclick="openLogoutModal()">Salir</button>
-                </div>
-            </div>
-        </nav>
+    <header class="app-header">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="icon-container" id="iconContainer">
+            <!-- 13 iconos -->
+            <a href="#" title="Expedientes"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/equilibrar.gif" alt="Expedientes"></a>
+            <a href="#" title="Clientes"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/cliente.gif" alt="Clientes"></a>
+            <a href="#" title="Eventos agendados"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/calendario.gif" alt="Eventos"></a>
+            <a href="#" title="Libros"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/dictamen.gif" alt="Libros"></a>
+            <a href="#" title="Modelos"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/modelos.gif" alt="Modelos"></a>
+            <a href="#" title="Biblioteca"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/documento.gif" alt="Documento"></a>
+            <a href="#" title="Diligenciadores"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/diligenciadores.gif" alt="Diligenciadores"></a>
+            <a href="#" title="Notificaciones"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/notificacion.gif" alt="Notificaciones"></a>
+            <a href="#" title="Organismos"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/organismos.gif" alt="Organismos"></a>
+            <a href="#" title="Consultas y Turnos"><img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/whatsapp.gif" alt="WhatsApp"></a>
+        </div>
+        <span id="typewriterSpan" class="typewriter-text"></span>
+        <span id="headerRightText" class="header-right-text">Defensoria Civil y Comercial 6 Ministerio Públco de Misiones</span>
+        <button id="btnSalir" class="btn-salir" title="Cerrar sesión">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </header>
 
-        <main class="main-content">
-            <div id="welcomeScreen" class="welcome-screen">
-                <div class="split-layout">
-                    <div class="left-panel">
-                        <img src="https://github.com/sistemadigital/iconos/blob/main/MP.png?raw=true" alt="Ministerio Público" class="mp-logo">
-                    </div>
-                    
-                    <div class="right-panel">
-                        <div class="module-grid">
-                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/causas.html', 'Registro de Causas')">Registro de Causas</div>
-                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/partes.html', 'Datos de Partes')">Datos de Partes</div>
-                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/notificaciones.html', 'Notificaciones')">Notificaciones</div>
-                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/libros.html', 'Libros')">Libros</div>
-                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/empleados/organismos.html', 'Organismos')">Organismos</div>
-                            <div class="rect-module" onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados', 'Consultas y Turnos')">Consultas y Turnos</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-            <div id="iframeContainer" class="iframe-container">
-                <div class="iframe-header">
-                    <div id="iframeTitle" style="font-weight:bold;">Cargando...</div>
-                    <button onclick="closeIframe()" style="background:var(--destructive); color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">✕ Cerrar</button>
-                </div>
-                <iframe id="contentIframe" class="content-iframe"></iframe>
-            </div>
-        </main>
-    </div>
+    <main class="main-content" id="mainContent">
+        <!-- Área dinámica (mensaje de bienvenida) -->
+        <div id="dynamicContent"></div>
 
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <span onclick="closeProfileModal()" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
-            <h3 style="margin-bottom:10px;">Selecciona tu Avatar</h3>
-            <p style="font-size: 0.9em; color: var(--muted-foreground); margin-bottom: 20px;">Elige una imagen para tu perfil</p>
-            <div class="avatar-container">
-                <img src="https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true" class="avatar-option" onclick="saveAvatar('hombre')" alt="Hombre">
-                <img src="https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true" class="avatar-option" onclick="saveAvatar('mujer')" alt="Mujer">
+        <!-- IMAGEN CENTRADA (único elemento en pantalla principal) -->
+        <div class="top-image-container" id="imagenCentralContainer">
+            <div class="image-large">
+                <img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/MP.png" alt="Ministerio Público">
             </div>
-            <button class="btn" onclick="closeProfileModal()" style="background: var(--secondary);">Cancelar</button>
+        </div>
+
+        <!-- Modal de información de la defensoria -->
+        <div id="infoModal" class="info-modal">
+            <p><strong>Defensor Oficial:</strong></p>
+            <div>Dr. Marcelo Gustavo Ramos</div>
+            <p><strong>Secretarios:</strong></p>
+            <div>Dra. Patricia Soledad Riveros</div>
+            <div>Dra. Alicia Mariela Corrales</div>
+            <div>Dr. Enzo Luciano Magnani</div>
+            <p><strong>Teléfono Oficial:</strong></p>
+            <div>+54 376 4446700 interno 1188.</div>
+            <p><strong>Whatsapp Oficial:</strong></p>
+            <div>+54 376 4889359</div>
+        </div>
+
+        <!-- Imagen izquierda (computadora 3D) -->
+        <div id="leftInfoImage" class="left-info-image">
+            <img src="https://raw.githubusercontent.com/sistemadigital/iconos/main/computadora-3d.png" alt="Computadora 3D">
+        </div>
+    </main>
+
+    <!-- ========== MODAL DE DETALLE DEL EXPEDIENTE (se mantiene pero sin funcionalidad IA) ========== -->
+    <div class="detalle-overlay" id="detalleOverlay"></div>
+    <div class="detalle-modal" id="detalleModal">
+        <div class="modal-header">
+            <h3><i class="fas fa-file-alt"></i> Detalle del Expediente</h3>
+            <button class="close-btn" id="closeDetalleModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="detalle-contenido" id="detalleContenido">
+            <!-- Se llenará dinámicamente (actualmente sin uso) -->
         </div>
     </div>
 
-    <div id="logoutModal" class="modal-overlay">
-        <div class="modal-content-logout">
-            <div class="modal-title-logout">Cerrar Sesión</div>
-            <p class="modal-text-logout">¿Estás seguro que deseas salir del sistema?</p>
-            <div class="modal-buttons-logout">
-                <button class="btn-confirm-logout" id="confirmLogoutBtn">Sí, salir</button>
-                <button class="btn-cancel-logout" onclick="closeLogoutModal()">Cancelar</button>
+    <!-- ========== MODAL DE CONFIRMACIÓN DE SALIDA ========== -->
+    <div id="modalSalir" class="modal-salir">
+        <div class="modal-salir-contenido">
+            <div class="modal-salir-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>¿Cerrar sesión?</h3>
+            </div>
+            <p>¿Estás seguro de que deseas salir?</p>
+            <div class="modal-salir-botones">
+                <button id="cancelarSalir" class="btn-cancelar">Cancelar</button>
+                <button id="confirmarSalir" class="btn-confirmar">Sí, salir</button>
             </div>
         </div>
     </div>
 
+    <!-- ========== MODAL DE CUMPLEAÑOS ========== -->
+    <div id="birthdayModal" class="birthday-modal">
+        <div class="birthday-modal-content">
+            <span class="close-birthday">&times;</span>
+            <i class="fas fa-birthday-cake"></i>
+            <h3>🎉 ¡Hoy cumplen años! 🎉</h3>
+            <ul id="birthdayList"></ul>
+            <button id="closeBirthdayBtn" class="btn-cerrar">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Scripts existentes (con modificaciones para cierre global) -->
+    <script>
+        (function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const iconContainer = document.getElementById('iconContainer');
+            const overlay = document.getElementById('sidebarOverlay');
+            const typewriterSpan = document.getElementById('typewriterSpan');
+            const headerRightText = document.getElementById('headerRightText');
+            const dynamicContent = document.getElementById('dynamicContent');
+            const mainContent = document.getElementById('mainContent');
+            const infoModal = document.getElementById('infoModal');
+            const leftImage = document.getElementById('leftInfoImage');
+            const imagenContainer = document.querySelector('.top-image-container');
+            const imagen = document.querySelector('.image-large img');
+
+            const DESKTOP_TYPING = "Haz click para comenzar";
+            const MOBILE_TYPING = "Bienvenido";
+            const DESKTOP_RIGHT = "Defensoria Civil y Comercial 6 Ministerio Públco de Misiones";
+            const MOBILE_RIGHT = "Defensoria 6";
+
+            let typingInterval = null;
+            let currentIndex = 0;
+            let restartTimeout = null;
+            let currentFullText = DESKTOP_TYPING;
+            window.isIframeActive = false;
+
+            function clearAllTimers() {
+                if (typingInterval) { clearInterval(typingInterval); typingInterval = null; }
+                if (restartTimeout) { clearTimeout(restartTimeout); restartTimeout = null; }
+            }
+
+            function stopTyping(clearText = true) {
+                clearAllTimers();
+                if (clearText) { typewriterSpan.textContent = ''; currentIndex = 0; }
+            }
+
+            function startTyping() {
+                stopTyping(true);
+                if (!typewriterSpan.parentNode) return;
+                typingInterval = setInterval(() => {
+                    if (currentIndex < currentFullText.length) {
+                        typewriterSpan.textContent += currentFullText.charAt(currentIndex);
+                        currentIndex++;
+                    } else {
+                        stopTyping(false);
+                        restartTimeout = setTimeout(startTyping, 3000);
+                    }
+                }, 100);
+            }
+
+            function updateResponsiveTexts() {
+                const isMobile = window.innerWidth <= 768;
+                const newText = isMobile ? MOBILE_TYPING : DESKTOP_TYPING;
+                if (newText !== currentFullText) {
+                    currentFullText = newText;
+                    stopTyping(true);
+                    startTyping();
+                }
+                headerRightText.textContent = isMobile ? MOBILE_RIGHT : DESKTOP_RIGHT;
+            }
+
+            function closeMenu() {
+    iconContainer.classList.remove('open');
+    overlay.classList.remove('active');
+    
+    // Esperamos 100ms para que el menú esté casi cerrado antes de mostrar el texto
+    setTimeout(() => {
+        typewriterSpan.style.display = 'inline-block';
+        startTyping();
+    }, 100);
+
+    if (window.innerWidth <= 768) {
+        document.querySelector('.app-header').style.zIndex = '20';
+    }
+}
+
+            // Exponer closeMenu globalmente para que pueda ser llamado desde otros scripts
+            window.closeMenu = closeMenu;
+
+            function openMenu() {
+                iconContainer.classList.add('open');
+                overlay.classList.add('active');
+                typewriterSpan.style.display = 'none';
+                stopTyping(true);
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.app-header').style.zIndex = '2000';
+                }
+            }
+
+            function toggleMenu() {
+                if (iconContainer.classList.contains('open')) closeMenu();
+                else openMenu();
+            }
+
+            menuToggle.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+            overlay.addEventListener('click', closeMenu);
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && iconContainer.classList.contains('open')) closeMenu(); });
+            iconContainer.addEventListener('click', (e) => e.stopPropagation());
+
+            updateResponsiveTexts();
+            window.addEventListener('resize', updateResponsiveTexts);
+
+            typewriterSpan.style.display = 'inline-block';
+            setTimeout(startTyping, 200);
+            if (iconContainer.classList.contains('open')) openMenu();
+
+            function cargarEnPrincipal(url) {
+                window.isIframeActive = true;
+                // Limpiar el intervalo del reloj si existe
+                if (window.clockInterval) {
+                    clearInterval(window.clockInterval);
+                    window.clockInterval = null;
+                }
+                // Cambiar flex de dynamicContent para que ocupe todo el espacio
+                dynamicContent.style.flex = '1';
+                dynamicContent.innerHTML = '';
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                iframe.setAttribute('frameborder', '0');
+                iframe.setAttribute('allowfullscreen', 'true');
+                dynamicContent.appendChild(iframe);
+
+                // Ocultar elementos de la vista principal
+                const topImage = document.querySelector('.top-image-container');
+                if (topImage) topImage.style.display = 'none';
+            }
+
+            window.mostrarHome = function() {};
+
+            // ===== ACTUALIZACIÓN: TODOS LOS ICONOS AHORA CARGAN SU URL CORRESPONDIENTE =====
+            const iconos = document.querySelectorAll('.icon-container a');
+            iconos.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const title = link.getAttribute('title');
+                    // Mapeo de títulos a URLs
+                    const urlMap = {
+                        'Expedientes': 'https://sistemadigital.github.io/defensor-secretarios/tabla.html',
+                        'Eventos agendados': 'https://sistemadigital.github.io/defensor-secretarios/eventos.html',
+                        'Libros': 'https://sistemadigital.github.io/defensor-secretarios/libros.html',
+                        'Clientes': 'https://sistemadigital.github.io/defensor-secretarios/partes.html',
+                        'Modelos': 'https://sistemadigital.github.io/defensor-secretarios/dictamenes.html',
+                        'Biblioteca': 'https://sistemadigital.github.io/defensor-secretarios/documentos.html',
+                        'Organismos': 'https://sistemadigital.github.io/defensor-secretarios/organismos.html',
+                        'Diligenciadores': 'https://sistemadigital.github.io/diligenciadores/',
+                        'Notificaciones': 'https://sistemadigital.github.io/defensor-secretarios/notificaciones.html',
+                        'Consultas y Turnos': 'https://sistemadigital.github.io/consultas-turnos/asignados'
+                    };
+
+                    if (urlMap[title]) {
+                        e.preventDefault();
+                        closeMenu(); // Cierra el menú en móvil
+                        cargarEnPrincipal(urlMap[title]);
+                    } else {
+                        e.preventDefault();
+                        if (window.innerWidth <= 768) closeMenu();
+                    }
+                });
+            });
+
+            // ===== MODAL DE INFORMACIÓN + IMAGEN IZQUIERDA (POSICIONAMIENTO CORREGIDO) =====
+            function posicionarModales() {
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    infoModal.style.left = '50%';
+                    infoModal.style.top = '50%';
+                    infoModal.style.transform = 'translate(-50%, -50%)';
+                    leftImage.style.display = 'none';
+                    return;
+                }
+
+                if (imagen && imagen.offsetParent !== null) {
+                    const imgRect = imagen.getBoundingClientRect();
+
+                    infoModal.style.left = (imgRect.right + 10) + 'px';
+                    infoModal.style.top = (imgRect.top + (imgRect.height / 2) - (infoModal.offsetHeight / 2)) + 'px';
+                    infoModal.style.transform = 'none';
+
+                    leftImage.style.display = 'block';
+                    const leftWidth = leftImage.offsetWidth;
+                    let leftPos = imgRect.left - leftWidth - 10;
+                    if (leftPos < 10) leftPos = 10;
+                    leftImage.style.left = leftPos + 'px';
+                    leftImage.style.top = (imgRect.top + (imgRect.height / 2) - (leftImage.offsetHeight / 2)) + 'px';
+                    leftImage.style.transform = 'none';
+                } else {
+                    infoModal.style.left = '50%';
+                    infoModal.style.top = '50%';
+                    infoModal.style.transform = 'translate(-50%, -50%)';
+                    leftImage.style.display = 'none';
+                }
+            }
+
+            // ===== FUNCIÓN mostrarInfoModal MODIFICADA (con stopPropagation) =====
+            function mostrarInfoModal(event) {
+                event.stopPropagation(); // Evita que el clic llegue al manejador de cierre global inmediatamente
+
+                const userDropdown = document.getElementById('userDropdown');
+                if (userDropdown && userDropdown.classList.contains('show')) {
+                    userDropdown.classList.remove('show');
+                    window.dropdownOpen = false;
+                }
+
+                infoModal.classList.add('show');
+                void infoModal.offsetHeight; // forzar reflow para posicionar bien
+                posicionarModales();
+            }
+
+            window.addEventListener('resize', () => {
+                if (infoModal.classList.contains('show')) {
+                    posicionarModales();
+                }
+            });
+
+            if (headerRightText) {
+                headerRightText.addEventListener('click', mostrarInfoModal);
+            }
+            if (imagenContainer) {
+                imagenContainer.addEventListener('click', mostrarInfoModal);
+            }
+            if (imagen) {
+                imagen.addEventListener('click', mostrarInfoModal);
+            }
+
+            // ===== CIERRE GLOBAL ACTUALIZADO (usa la clase del modal directamente) =====
+            document.addEventListener('click', function(e) {
+                // Cerrar modal de información si está abierto y se hace clic fuera de él
+                if (infoModal.classList.contains('show')) {
+                    if (!infoModal.contains(e.target)) {
+                        infoModal.classList.remove('show');
+                        leftImage.style.display = 'none';
+                    }
+                }
+
+                // Cerrar dropdown de usuario si está abierto
+                const userDropdown = document.getElementById('userDropdown');
+                if (userDropdown && userDropdown.classList.contains('show')) {
+                    const bar = document.getElementById('welcomeBar');
+                    if (!userDropdown.contains(e.target) && !bar.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                        window.dropdownOpen = false;
+                    }
+                }
+            });
+        })();
+    </script>
+
+    <!-- Script Firebase Auth (modular) - Con fecha de nacimiento inline en el dropdown y reloj integrado -->
     <script type="module">
+        // ===== IMPORTS =====
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import confetti from 'https://cdn.skypack.dev/canvas-confetti';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
@@ -446,87 +1246,515 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        window.auth = auth;
+        const dbPerfil = getFirestore(app);
 
-        const AVATAR_HOMBRE = "https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true";
-        const AVATAR_MUJER = "https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true";
+        const AVATAR_HOMBRE = 'https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true';
+        const AVATAR_MUJER = 'https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true';
+
+        let currentUser = null;
+        let dropdownOpen = false;
+        let clickOutsideHandler = null;
+        let clockInterval = null;
+        let birthdayModalShown = false;
+
+        function setupClickOutside(dropdownElement, barElement) {
+            // Ya no es necesario porque el cierre global se encarga
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Desconocido';
+            const date = new Date(timestamp);
+            return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+        }
+
+        async function updateUserAvatar(photoURL) {
+            if (!currentUser) return;
+            try {
+                await updateProfile(currentUser, { photoURL });
+                showWelcomeMessage(currentUser);
+            } catch (error) {
+                console.error('Error al actualizar avatar:', error);
+                alert('No se pudo cambiar la foto.');
+            }
+        }
+
+        async function updateDisplayName(newName) {
+            if (!currentUser || !newName.trim()) return;
+            try {
+                await updateProfile(currentUser, { displayName: newName.trim() });
+                await setDoc(doc(dbPerfil, "usuarios", currentUser.email), {
+                    nombreCompleto: newName.trim()
+                }, { merge: true });
+                showWelcomeMessage(currentUser);
+            } catch (error) {
+                console.error('Error al actualizar nombre:', error);
+                alert('No se pudo cambiar el nombre.');
+            }
+        }
+
+        async function updateFechaNacimiento(newFecha) {
+            if (!currentUser) return;
+            try {
+                await setDoc(doc(dbPerfil, "usuarios", currentUser.email), {
+                    fechaNacimiento: newFecha
+                }, { merge: true });
+                showWelcomeMessage(currentUser);
+            } catch (error) {
+                console.error('Error al actualizar fecha:', error);
+                alert('No se pudo guardar la fecha. Intenta nuevamente.');
+            }
+        }
+
+        function launchConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function actualizarRelojEnBienvenida() {
+            const relojSpan = document.getElementById('sistemaDigitalClock');
+            if (relojSpan) {
+                const ahora = new Date();
+                const dia = ahora.getDate().toString().padStart(2, '0');
+                const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
+                const anio = ahora.getFullYear();
+                const horas = ahora.getHours().toString().padStart(2, '0');
+                const minutos = ahora.getMinutes().toString().padStart(2, '0');
+                const segundos = ahora.getSeconds().toString().padStart(2, '0');
+                relojSpan.textContent = `Sistema Digital  ${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+            }
+        }
+
+        // ===== FUNCIÓN ACTUALIZADA: checkBirthdays =====
+        async function checkBirthdays(isCurrentUserBirthday) {
+            if (!currentUser) return;
+            
+            // Si el usuario actual es el cumpleañero, no mostramos el modal de "otros"
+            if (isCurrentUserBirthday) return; 
+
+            const today = new Date();
+            const dia = String(today.getDate()).padStart(2, '0');
+            const mes = String(today.getMonth() + 1).padStart(2, '0');
+            const hoy = `${dia}/${mes}`;
+
+            try {
+                const q = query(collection(dbPerfil, "usuarios"), where("fechaNacimiento", "==", hoy));
+                const querySnapshot = await getDocs(q);
+                const birthdayUsers = [];
+                
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Evitamos añadir al usuario actual a la lista por si acaso
+                    if (data.email !== currentUser.email) {
+                        birthdayUsers.push(data.nombreCompleto);
+                    }
+                });
+
+                if (birthdayUsers.length > 0 && !birthdayModalShown) {
+                    const modal = document.getElementById('birthdayModal');
+                    const list = document.getElementById('birthdayList');
+                    const tituloModal = modal.querySelector('h3');
+                    
+                    // Personalizamos el título del modal
+                    tituloModal.textContent = "Hoy cumple años:";
+                    
+                    list.innerHTML = '';
+                    birthdayUsers.forEach(nombre => {
+                        const li = document.createElement('li');
+                        li.style.fontSize = "1.2rem";
+                        li.innerHTML = `${nombre}`;
+                        list.appendChild(li);
+                    });
+                    
+                    modal.style.display = 'flex';
+                    birthdayModalShown = true;
+                }
+            } catch (error) {
+                console.error("Error al consultar cumpleaños:", error);
+            }
+        }
+
+        // ===== FUNCIÓN ACTUALIZADA: showWelcomeMessage =====
+        async function showWelcomeMessage(user) {
+            const dynamicContent = document.getElementById('dynamicContent');
+            if (!dynamicContent) return;
+
+            const displayName = user.displayName || user.email.split('@')[0] || 'Usuario';
+            const email = user.email;
+            const photoURL = user.photoURL;
+            const inicial = displayName.charAt(0).toUpperCase();
+
+            let fechaNacimiento = '';
+            let faltaFecha = false;
+            let esCumpleanos = false;
+            let mensajeBienvenida = `¡Hola ${displayName}!`;
+
+            try {
+                const docRef = doc(dbPerfil, "usuarios", email);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    fechaNacimiento = data.fechaNacimiento || '';
+                    if (fechaNacimiento) {
+                        const hoy = new Date();
+                        const dia = String(hoy.getDate()).padStart(2, '0');
+                        const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                        const fechaHoy = `${dia}/${mes}`;
+                        
+                        if (fechaNacimiento === fechaHoy) {
+                            mensajeBienvenida = `¡Feliz Cumpleaños, ${displayName}! 🎉`;
+                            esCumpleanos = true; // El usuario actual cumple años
+                        }
+                    } else {
+                        faltaFecha = true;
+                    }
+                } else {
+                    faltaFecha = true;
+                }
+            } catch (error) {
+                console.error("Error verificando cumpleaños:", error);
+            }
+
+            const creationTime = user.metadata?.creationTime ? new Date(user.metadata.creationTime) : null;
+            const lastLoginAt = user.metadata?.lastLoginAt ? new Date(parseInt(user.metadata.lastLoginAt)) : null;
+            const creationStr = creationTime ? formatDate(creationTime) : 'No disponible';
+            const lastLoginStr = lastLoginAt ? formatDate(lastLoginAt) : 'No disponible';
+
+            let avatarHtml = photoURL ? `<img src="${photoURL}" alt="Avatar" class="avatar-medium" id="avatarClick">` : `<div class="avatar-placeholder-medium" id="avatarClick">${inicial}</div>`;
+
+            let dropdownHeaderHtml = '';
+            let avatarOptionsHtml = '';
+
+            if (photoURL) {
+                dropdownHeaderHtml = `<div style="font-weight:600; font-size:1.2rem; margin-bottom:1rem; color:#1e293b;">Detalle de Usuario</div>`;
+            } else {
+                const dropdownAvatarHtml = `<div class="dropdown-avatar-placeholder">${inicial}</div>`;
+                dropdownHeaderHtml = `<div class="dropdown-avatar">${dropdownAvatarHtml}<div style="font-weight:600; color:#1e293b;">Elige un avatar</div></div>`;
+                avatarOptionsHtml = `<div class="avatar-options"><img src="${AVATAR_HOMBRE}" alt="Hombre" class="avatar-option" id="avatarHombre" title="Hombre"><img src="${AVATAR_MUJER}" alt="Mujer" class="avatar-option" id="avatarMujer" title="Mujer"></div>`;
+            }
+
+            const html = `
+                <div class="welcome-container" id="welcomeContainer">
+                    <div class="welcome-bar" id="welcomeBar">
+                        <div class="left-group">
+                            ${avatarHtml}
+                            <div>
+                                <div class="welcome-message">${mensajeBienvenida}</div>
+                                ${faltaFecha ? `
+                                    <div id="avisoCompletar" style="font-size: 0.75em; color: #d9534f; cursor: pointer; text-decoration: underline;">
+                                        🎉 Completa tu fecha de cumpleaños
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <span class="sistema-digital-text" id="sistemaDigitalClock">Sistema Digital</span>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        ${dropdownHeaderHtml}
+                        ${avatarOptionsHtml}
+                        <div class="info-item" id="nameDisplayRow">
+                            <strong>Nombre:</strong> <span id="displayNameSpan">${displayName}</span>
+                            <i class="fas fa-pencil-alt edit-icon" id="editNameIcon" title="Editar nombre"></i>
+                        </div>
+                        <div class="info-item edit-row" id="nameEditRow" style="display:none;">
+                            <strong>Nombre:</strong> <input type="text" id="nameInput" value="${displayName}" placeholder="Nombre y apellido">
+                            <button id="saveNameBtn" class="save-btn" title="Guardar"><i class="fas fa-check"></i></button>
+                            <button id="cancelNameBtn" class="cancel-btn" title="Cancelar"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="info-item" id="fechaDisplayRow">
+                            <strong>F. Nacimiento:</strong> <span id="fechaSpan">${fechaNacimiento || 'No registrada'}</span>
+                            <i class="fas fa-pencil-alt edit-icon" id="editFechaIcon" title="Editar fecha (DD/MM)"></i>
+                        </div>
+                        <div class="info-item edit-row" id="fechaEditRow" style="display:none;">
+                            <strong>F. Nacimiento:</strong> <input type="text" id="fechaInput" value="${fechaNacimiento}" placeholder="DD/MM" maxlength="5">
+                            <button id="saveFechaBtn" class="save-btn" title="Guardar"><i class="fas fa-check"></i></button>
+                            <button id="cancelFechaBtn" class="cancel-btn" title="Cancelar"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="info-item"><strong>Correo:</strong> ${email}</div>
+                        <div class="info-item"><strong>Último acceso:</strong> ${lastLoginStr}</div>
+                        <div class="info-item"><strong>Registro:</strong> ${creationStr}</div>
+                        <div class="version-badge">Versión 3.0 IA 2026</div>
+                    </div>
+                </div>
+            `;
+            dynamicContent.innerHTML = html;
+
+            if (esCumpleanos && typeof confetti !== 'undefined') {
+                launchConfetti();
+            }
+
+            if (clockInterval) clearInterval(clockInterval);
+            actualizarRelojEnBienvenida();
+            clockInterval = setInterval(actualizarRelojEnBienvenida, 1000);
+
+            const bar = document.getElementById('welcomeBar');
+            const dropdown = document.getElementById('userDropdown');
+
+            bar.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const infoModal = document.getElementById('infoModal');
+                if (infoModal && infoModal.classList.contains('show')) {
+                    infoModal.classList.remove('show');
+                    document.getElementById('leftInfoImage').style.display = 'none';
+                }
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    dropdownOpen = false;
+                } else {
+                    dropdown.classList.add('show');
+                    dropdownOpen = true;
+                }
+            });
+
+            const avatarHombre = document.getElementById('avatarHombre');
+            const avatarMujer = document.getElementById('avatarMujer');
+            if (avatarHombre) avatarHombre.addEventListener('click', () => updateUserAvatar(AVATAR_HOMBRE));
+            if (avatarMujer) avatarMujer.addEventListener('click', () => updateUserAvatar(AVATAR_MUJER));
+
+            const nameDisplayRow = document.getElementById('nameDisplayRow');
+            const nameEditRow = document.getElementById('nameEditRow');
+            const editNameIcon = document.getElementById('editNameIcon');
+            const saveNameBtn = document.getElementById('saveNameBtn');
+            const cancelNameBtn = document.getElementById('cancelNameBtn');
+            const nameInput = document.getElementById('nameInput');
+            const displayNameSpan = document.getElementById('displayNameSpan');
+
+            if (editNameIcon) {
+                editNameIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    nameDisplayRow.style.display = 'none';
+                    nameEditRow.style.display = 'flex';
+                    nameInput.focus();
+                });
+            }
+
+            if (saveNameBtn) {
+                saveNameBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const newName = nameInput.value.trim();
+                    if (newName && newName !== displayName) {
+                        await updateDisplayName(newName);
+                    } else {
+                        nameDisplayRow.style.display = 'flex';
+                        nameEditRow.style.display = 'none';
+                    }
+                });
+            }
+
+            if (cancelNameBtn) {
+                cancelNameBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    nameDisplayRow.style.display = 'flex';
+                    nameEditRow.style.display = 'none';
+                    nameInput.value = displayName;
+                });
+            }
+
+            if (nameInput) {
+                nameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveNameBtn.click();
+                    }
+                });
+            }
+
+            const fechaDisplayRow = document.getElementById('fechaDisplayRow');
+            const fechaEditRow = document.getElementById('fechaEditRow');
+            const editFechaIcon = document.getElementById('editFechaIcon');
+            const saveFechaBtn = document.getElementById('saveFechaBtn');
+            const cancelFechaBtn = document.getElementById('cancelFechaBtn');
+            const fechaInput = document.getElementById('fechaInput');
+            const fechaSpan = document.getElementById('fechaSpan');
+
+            if (editFechaIcon) {
+                editFechaIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fechaDisplayRow.style.display = 'none';
+                    fechaEditRow.style.display = 'flex';
+                    fechaInput.focus();
+                });
+            }
+
+            if (saveFechaBtn) {
+                saveFechaBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const newFecha = fechaInput.value.trim();
+                    const regex = /^\d{2}\/\d{2}$/;
+                    if (!regex.test(newFecha)) {
+                        alert("Formato inválido. Usa DD/MM (ejemplo: 15/03)");
+                        return;
+                    }
+                    if (newFecha !== fechaNacimiento) {
+                        await updateFechaNacimiento(newFecha);
+                    } else {
+                        fechaDisplayRow.style.display = 'flex';
+                        fechaEditRow.style.display = 'none';
+                    }
+                });
+            }
+
+            if (cancelFechaBtn) {
+                cancelFechaBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fechaDisplayRow.style.display = 'flex';
+                    fechaEditRow.style.display = 'none';
+                    fechaInput.value = fechaNacimiento;
+                });
+            }
+
+            if (fechaInput) {
+                fechaInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveFechaBtn.click();
+                    }
+                });
+            }
+
+            if (faltaFecha) {
+                const aviso = document.getElementById('avisoCompletar');
+                if (aviso) {
+                    aviso.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        dropdown.classList.add('show');
+                        dropdownOpen = true;
+                        fechaDisplayRow.style.display = 'none';
+                        fechaEditRow.style.display = 'flex';
+                        fechaInput.focus();
+                    });
+                }
+            }
+
+            // Pasamos el estado de 'esCumpleanos' a la función de chequeo global
+            await checkBirthdays(esCumpleanos);
+        }
+
+        // ===== FUNCIÓN mostrarHome MODIFICADA para cerrar el menú si está abierto =====
+        window.mostrarHome = function() {
+            // Cerrar el menú de iconos si está abierto
+            if (window.closeMenu) {
+                window.closeMenu();
+            }
+            if (currentUser) {
+                if (clockInterval) {
+                    clearInterval(clockInterval);
+                    clockInterval = null;
+                }
+                const dynamicContent = document.getElementById('dynamicContent');
+                dynamicContent.style.flex = '0 0 auto';
+                showWelcomeMessage(currentUser);
+                const topImage = document.querySelector('.top-image-container');
+                if (topImage) topImage.style.display = 'flex';
+                window.isIframeActive = false;
+            } else {
+                window.location.href = 'index.html';
+            }
+        };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                window.currentUser = user;
-                document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
-                if (user.photoURL) {
-                    document.getElementById('profilePic').src = user.photoURL;
-                    document.getElementById('profilePic').style.display = 'block';
-                    document.getElementById('profilePlaceholder').style.display = 'none';
-                }
-            } else { window.location.href = 'index.html'; }
+                currentUser = user;
+                mostrarHome();
+            } else {
+                window.location.href = 'index.html';
+            }
         });
 
-        document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
+        document.getElementById('btnSalir').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('modalSalir').style.display = 'flex';
+        });
+
+        document.getElementById('cancelarSalir').addEventListener('click', () => {
+            document.getElementById('modalSalir').style.display = 'none';
+        });
+
+        document.getElementById('confirmarSalir').addEventListener('click', async () => {
+            document.getElementById('modalSalir').style.display = 'none';
             try {
                 await signOut(auth);
-                window.location.href = 'index.html';
             } catch (error) {
-                console.error("Error al salir:", error);
+                console.error('Error al cerrar sesión:', error);
+                alert('Ocurrió un error al cerrar sesión. Intenta nuevamente.');
             }
         });
 
-        window.saveAvatar = async (tipo) => {
-            const nuevaUrl = (tipo === 'hombre') ? AVATAR_HOMBRE : AVATAR_MUJER;
-            if (window.currentUser) {
-                try {
-                    await updateProfile(window.currentUser, { photoURL: nuevaUrl });
-                    document.getElementById('profilePic').src = nuevaUrl;
-                    document.getElementById('profilePic').style.display = 'block';
-                    document.getElementById('profilePlaceholder').style.display = 'none';
-                    closeProfileModal();
-                } catch (error) { console.error("Error:", error); }
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('modalSalir');
+            if (e.target === modal) {
+                modal.style.display = 'none';
             }
-        };
+        });
+
+        document.getElementById('typewriterSpan').addEventListener('click', () => window.mostrarHome());
+
+        // ===== NUEVO: Clic en la cabecera (área vacía) cierra menú y vuelve al inicio =====
+        document.querySelector('.app-header')?.addEventListener('click', function(e) {
+            // Ignorar clics en elementos interactivos
+            if (e.target.closest('.menu-toggle') ||
+                e.target.closest('.btn-salir') ||
+                e.target.closest('.typewriter-text') ||
+                e.target.closest('#headerRightText') ||
+                e.target.closest('.icon-container')) {
+                return;
+            }
+            // En cualquier otro lugar de la cabecera, ir al inicio (cierra menú y muestra home)
+            window.mostrarHome();
+        });
+
+        const birthdayModal = document.getElementById('birthdayModal');
+        const closeBirthdayBtn = document.getElementById('closeBirthdayBtn');
+        const closeSpan = document.querySelector('.close-birthday');
+
+        function cerrarBirthdayModal() {
+            birthdayModal.style.display = 'none';
+        }
+
+        if (closeBirthdayBtn) closeBirthdayBtn.addEventListener('click', cerrarBirthdayModal);
+        if (closeSpan) closeSpan.addEventListener('click', cerrarBirthdayModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === birthdayModal) {
+                cerrarBirthdayModal();
+            }
+        });
     </script>
 
+    <!-- ===== SCRIPT DEL MODAL DE DETALLE (ELIMINADO ASISTENTE, SOLO CIERRE) ===== -->
     <script>
-        let menuOpen = false;
-        function toggleMenu() {
-            menuOpen = !menuOpen;
-            document.getElementById('dropdownMenu').classList.toggle('active');
-        }
-
-        function loadPage(url, title) {
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('iframeContainer').style.display = 'flex'; 
-            document.getElementById('contentIframe').src = url;
-            document.getElementById('iframeTitle').textContent = title;
-            if(menuOpen) toggleMenu();
-        }
-
-        function loadIframe(url, title) { loadPage(url, title); }
-        function openIframe(title, url) { loadPage(url, title); }
-
-        function closeIframe() {
-            document.getElementById('iframeContainer').style.display = 'none';
-            document.getElementById('contentIframe').src = '';
-            document.getElementById('welcomeScreen').style.display = 'flex';
-        }
-
-        function openProfileModal() { document.getElementById('profileModal').style.display = 'block'; }
-        function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
-
-        function openLogoutModal() { document.getElementById('logoutModal').style.display = 'flex'; }
-        function closeLogoutModal() { document.getElementById('logoutModal').style.display = 'none'; }
-
-        window.onclick = (e) => {
-            const profileModal = document.getElementById('profileModal');
-            if (e.target === profileModal) closeProfileModal();
-            const logoutModal = document.getElementById('logoutModal');
-            if (e.target === logoutModal) closeLogoutModal();
-            const menu = document.getElementById('dropdownMenu');
-            const toggleBtn = document.getElementById('menuToggleBtn');
-            if (menuOpen && !menu.contains(e.target) && e.target !== toggleBtn) {
-                toggleMenu();
-            }
-        }
+        (function() {
+            document.getElementById('closeDetalleModal').addEventListener('click', () => {
+                document.getElementById('detalleModal').style.display = 'none';
+                document.getElementById('detalleOverlay').style.display = 'none';
+            });
+            document.getElementById('detalleOverlay').addEventListener('click', () => {
+                document.getElementById('detalleModal').style.display = 'none';
+                document.getElementById('detalleOverlay').style.display = 'none';
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.getElementById('detalleModal').style.display === 'block') {
+                    document.getElementById('detalleModal').style.display = 'none';
+                    document.getElementById('detalleOverlay').style.display = 'none';
+                }
+            });
+        })();
     </script>
 </body>
 </html>
