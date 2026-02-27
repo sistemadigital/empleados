@@ -8,9 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Fuente Inter -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+    <!-- Preconnect para acelerar la descarga de iconos desde GitHub -->
+    <link rel="preconnect" href="https://raw.githubusercontent.com">
     
     <style>
-        /* (estilos sin cambios) */
+        /* (estilos sin cambios, solo se modifica la transición del icon-container) */
         :root {
             --primary-blue: oklch(0.6723 0.1606 244.9955);
         }
@@ -77,7 +79,7 @@
             overflow: hidden;
             white-space: nowrap;
             max-width: 0;
-            transition: max-width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: max-width 0s; /* Transición instantánea para eliminar lag */
             height: 100%;
         }
 
@@ -981,7 +983,7 @@
         </div>
     </div>
 
-    <!-- Scripts existentes (con modificaciones para cierre global) -->
+    <!-- Scripts existentes (con optimizaciones de lag y toggle de modales) -->
     <script>
         (function() {
             const menuToggle = document.getElementById('menuToggle');
@@ -1018,6 +1020,8 @@
             }
 
             function startTyping() {
+                // No iniciar typing si hay un iframe activo
+                if (window.isIframeActive) return;
                 stopTyping(true);
                 if (!typewriterSpan.parentNode) return;
                 typingInterval = setInterval(() => {
@@ -1043,19 +1047,17 @@
             }
 
             function closeMenu() {
-    iconContainer.classList.remove('open');
-    overlay.classList.remove('active');
-    
-    // Esperamos 100ms para que el menú esté casi cerrado antes de mostrar el texto
-    setTimeout(() => {
-        typewriterSpan.style.display = 'inline-block';
-        startTyping();
-    }, 100);
+                iconContainer.classList.remove('open');
+                overlay.classList.remove('active');
+                
+                // Mostrar el texto inmediatamente (sin retardo)
+                typewriterSpan.style.display = 'inline-block';
+                // No iniciamos typing aquí, se iniciará en mostrarHome si corresponde
 
-    if (window.innerWidth <= 768) {
-        document.querySelector('.app-header').style.zIndex = '20';
-    }
-}
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.app-header').style.zIndex = '20';
+                }
+            }
 
             // Exponer closeMenu globalmente para que pueda ser llamado desde otros scripts
             window.closeMenu = closeMenu;
@@ -1084,6 +1086,7 @@
             window.addEventListener('resize', updateResponsiveTexts);
 
             typewriterSpan.style.display = 'inline-block';
+            // Iniciamos typing al cargar la página
             setTimeout(startTyping, 200);
             if (iconContainer.classList.contains('open')) openMenu();
 
@@ -1134,7 +1137,7 @@
 
                     if (urlMap[title]) {
                         e.preventDefault();
-                        closeMenu(); // Cierra el menú en móvil
+                        closeMenu(); // Cierra el menú en móvil (no inicia typing)
                         cargarEnPrincipal(urlMap[title]);
                     } else {
                         e.preventDefault();
@@ -1176,7 +1179,7 @@
                 }
             }
 
-            // ===== FUNCIÓN mostrarInfoModal MODIFICADA (con stopPropagation) =====
+            // ===== FUNCIÓN mostrarInfoModal (abre el modal) =====
             function mostrarInfoModal(event) {
                 event.stopPropagation(); // Evita que el clic llegue al manejador de cierre global inmediatamente
 
@@ -1191,6 +1194,19 @@
                 posicionarModales();
             }
 
+            // ===== NUEVA FUNCIÓN toggleInfoModal: abre si está cerrado, cierra si está abierto =====
+            function toggleInfoModal(event) {
+                event.stopPropagation();
+                if (infoModal.classList.contains('show')) {
+                    // Cerrar
+                    infoModal.classList.remove('show');
+                    leftImage.style.display = 'none';
+                } else {
+                    // Abrir
+                    mostrarInfoModal(event);
+                }
+            }
+
             window.addEventListener('resize', () => {
                 if (infoModal.classList.contains('show')) {
                     posicionarModales();
@@ -1200,11 +1216,12 @@
             if (headerRightText) {
                 headerRightText.addEventListener('click', mostrarInfoModal);
             }
+            // Cambiamos los listeners de la imagen central para que usen toggleInfoModal
             if (imagenContainer) {
-                imagenContainer.addEventListener('click', mostrarInfoModal);
+                imagenContainer.addEventListener('click', toggleInfoModal);
             }
             if (imagen) {
-                imagen.addEventListener('click', mostrarInfoModal);
+                imagen.addEventListener('click', toggleInfoModal);
             }
 
             // ===== CIERRE GLOBAL ACTUALIZADO (usa la clase del modal directamente) =====
@@ -1230,7 +1247,7 @@
         })();
     </script>
 
-    <!-- Script Firebase Auth (modular) - Con fecha de nacimiento inline en el dropdown y reloj integrado -->
+    <!-- Script Firebase Auth (modular) - Con renderizado inmediato y actualización asíncrona -->
     <script type="module">
         // ===== IMPORTS =====
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -1259,6 +1276,8 @@
         let clickOutsideHandler = null;
         let clockInterval = null;
         let birthdayModalShown = false;
+        // Cache para datos del usuario (fecha de nacimiento)
+        let userDataCache = {};
 
         function setupClickOutside(dropdownElement, barElement) {
             // Ya no es necesario porque el cierre global se encarga
@@ -1274,7 +1293,9 @@
             if (!currentUser) return;
             try {
                 await updateProfile(currentUser, { photoURL });
-                showWelcomeMessage(currentUser);
+                // Actualizar cache
+                userDataCache.photoURL = photoURL;
+                showWelcomeMessage(currentUser, true); // true para usar cache
             } catch (error) {
                 console.error('Error al actualizar avatar:', error);
                 alert('No se pudo cambiar la foto.');
@@ -1288,7 +1309,8 @@
                 await setDoc(doc(dbPerfil, "usuarios", currentUser.email), {
                     nombreCompleto: newName.trim()
                 }, { merge: true });
-                showWelcomeMessage(currentUser);
+                userDataCache.displayName = newName.trim();
+                showWelcomeMessage(currentUser, true);
             } catch (error) {
                 console.error('Error al actualizar nombre:', error);
                 alert('No se pudo cambiar el nombre.');
@@ -1301,7 +1323,8 @@
                 await setDoc(doc(dbPerfil, "usuarios", currentUser.email), {
                     fechaNacimiento: newFecha
                 }, { merge: true });
-                showWelcomeMessage(currentUser);
+                userDataCache.fechaNacimiento = newFecha;
+                showWelcomeMessage(currentUser, true);
             } catch (error) {
                 console.error('Error al actualizar fecha:', error);
                 alert('No se pudo guardar la fecha. Intenta nuevamente.');
@@ -1393,8 +1416,8 @@
             }
         }
 
-        // ===== FUNCIÓN ACTUALIZADA: showWelcomeMessage =====
-        async function showWelcomeMessage(user) {
+        // ===== FUNCIÓN showWelcomeMessage optimizada: renderizado inmediato con datos en memoria =====
+        async function showWelcomeMessage(user, useCache = false) {
             const dynamicContent = document.getElementById('dynamicContent');
             if (!dynamicContent) return;
 
@@ -1403,36 +1426,41 @@
             const photoURL = user.photoURL;
             const inicial = displayName.charAt(0).toUpperCase();
 
-            let fechaNacimiento = '';
+            // Intentar obtener fecha de caché o de Firestore
+            let fechaNacimiento = userDataCache.fechaNacimiento || '';
             let faltaFecha = false;
             let esCumpleanos = false;
             let mensajeBienvenida = `¡Hola ${displayName}!`;
 
-            try {
-                const docRef = doc(dbPerfil, "usuarios", email);
-                const docSnap = await getDoc(docRef);
+            // Si no está en caché y no se fuerza uso de caché, consultar Firestore
+            if (!useCache && !userDataCache.fechaNacimiento) {
+                try {
+                    const docRef = doc(dbPerfil, "usuarios", email);
+                    const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    fechaNacimiento = data.fechaNacimiento || '';
-                    if (fechaNacimiento) {
-                        const hoy = new Date();
-                        const dia = String(hoy.getDate()).padStart(2, '0');
-                        const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-                        const fechaHoy = `${dia}/${mes}`;
-                        
-                        if (fechaNacimiento === fechaHoy) {
-                            mensajeBienvenida = `¡Feliz Cumpleaños, ${displayName}! 🎉`;
-                            esCumpleanos = true; // El usuario actual cumple años
-                        }
-                    } else {
-                        faltaFecha = true;
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        fechaNacimiento = data.fechaNacimiento || '';
+                        userDataCache.fechaNacimiento = fechaNacimiento; // guardar en caché
                     }
-                } else {
-                    faltaFecha = true;
+                } catch (error) {
+                    console.error("Error verificando cumpleaños:", error);
                 }
-            } catch (error) {
-                console.error("Error verificando cumpleaños:", error);
+            }
+
+            // Verificar si es cumpleaños hoy
+            if (fechaNacimiento) {
+                const hoy = new Date();
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                const fechaHoy = `${dia}/${mes}`;
+                
+                if (fechaNacimiento === fechaHoy) {
+                    mensajeBienvenida = `¡Feliz Cumpleaños, ${displayName}! 🎉`;
+                    esCumpleanos = true;
+                }
+            } else {
+                faltaFecha = true;
             }
 
             const creationTime = user.metadata?.creationTime ? new Date(user.metadata.creationTime) : null;
@@ -1650,7 +1678,7 @@
             await checkBirthdays(esCumpleanos);
         }
 
-        // ===== FUNCIÓN mostrarHome MODIFICADA para cerrar el menú si está abierto =====
+        // ===== FUNCIÓN mostrarHome OPTIMIZADA: renderizado inmediato y luego actualización asíncrona =====
         window.mostrarHome = function() {
             // Cerrar el menú de iconos si está abierto
             if (window.closeMenu) {
@@ -1663,10 +1691,18 @@
                 }
                 const dynamicContent = document.getElementById('dynamicContent');
                 dynamicContent.style.flex = '0 0 auto';
-                showWelcomeMessage(currentUser);
+                // Mostrar inmediatamente con datos en memoria (usando caché)
+                showWelcomeMessage(currentUser, true).then(() => {
+                    // Después de mostrar, si no tenemos fecha en caché, actualizar con Firestore
+                    if (!userDataCache.fechaNacimiento) {
+                        showWelcomeMessage(currentUser, false);
+                    }
+                });
                 const topImage = document.querySelector('.top-image-container');
                 if (topImage) topImage.style.display = 'flex';
                 window.isIframeActive = false;
+                // Iniciar typing ahora que no hay iframe
+                if (window.startTyping) window.startTyping();
             } else {
                 window.location.href = 'index.html';
             }
@@ -1675,6 +1711,9 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
+                // Inicializar caché con datos básicos
+                userDataCache.displayName = user.displayName;
+                userDataCache.photoURL = user.photoURL;
                 mostrarHome();
             } else {
                 window.location.href = 'index.html';
