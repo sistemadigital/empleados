@@ -284,6 +284,7 @@
         .badge-varios { background-color: #e8f5e9; color: #2e7d32; }
         .badge-patrocinio { background-color: #e3f2fd; color: #1565c0; }
         .badge-proceso { background-color: #f3e5f5; color: #7b1fa2; }
+        .badge-default { background-color: #e0e0e0; color: #333; }
 
         .quantity-cell {
             font-weight: 600;
@@ -316,12 +317,18 @@
             background-color: var(--white);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .pagination-controls {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            max-width: 100%;
+            padding-bottom: 5px;
         }
 
         .page-btn {
@@ -334,11 +341,27 @@
             border: 1px solid var(--border-color);
             background-color: white;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .page-btn.active {
             background-color: var(--primary-color);
             color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            color: var(--text-light);
+            flex-shrink: 0;
         }
 
         .modal-overlay {
@@ -599,6 +622,14 @@
                             <option value="all">Todos</option>
                             <option value="varios">Varios</option>
                             <option value="patrocinio">Patrocinio</option>
+                            <option value="demanda">Demanda</option>
+                            <option value="contesta_demanda">Contesta demanda</option>
+                            <option value="defensor_ausente">Defensor Ausente</option>
+                            <option value="recurso">Recurso</option>
+                            <option value="contesta_recurso">Contesta Recurso</option>
+                            <option value="vinculacion">Vinculacion</option>
+                            <option value="asume_patrocinio">Asume patrocinio</option>
+                            <option value="otros">Otros</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -644,7 +675,7 @@
                 <div class="pagination-info" id="pagination-info">Mostrando 0 escritos</div>
                 <div class="pagination-controls">
                     <button class="page-btn" id="prev-page"><i class="fas fa-angle-left"></i></button>
-                    <div id="page-numbers"></div>
+                    <div id="page-numbers" style="display: flex; gap: 0.5rem;"></div>
                     <button class="page-btn" id="next-page"><i class="fas fa-angle-right"></i></button>
                 </div>
             </div>
@@ -672,6 +703,14 @@
                                 <select id="writ-type" class="form-control" required>
                                     <option value="varios">Varios</option>
                                     <option value="patrocinio">Patrocinio</option>
+                                    <option value="demanda">Demanda</option>
+                                    <option value="contesta_demanda">Contesta demanda</option>
+                                    <option value="defensor_ausente">Defensor Ausente</option>
+                                    <option value="recurso">Recurso</option>
+                                    <option value="contesta_recurso">Contesta Recurso</option>
+                                    <option value="vinculacion">Vinculacion</option>
+                                    <option value="asume_patrocinio">Asume patrocinio</option>
+                                    <option value="otros">Otros</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -728,7 +767,7 @@
             getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, query, orderBy 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE FIREBASE (Reemplaza con tus credenciales reales)
+        // CONFIGURACIÓN DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBmUQw10DFePlCVF3qqA72480fhQqbkaNM",
             authDomain: "escritos-def6.firebaseapp.com",
@@ -783,29 +822,53 @@
             return dateObj.getMonth() + 1; // 1-12
         }
 
-        // Función para actualizar estadísticas principales
+        // --- FUNCIONES DE FILTRADO ---
+
+        // Filtra aplicando año, tipo y proceso (sin trimestre) para los KPIs
+        function getBaseFilteredData() {
+            const y = document.getElementById('filter-year').value;
+            const t = document.getElementById('filter-type').value;
+            const p = document.getElementById('filter-process').value;
+
+            return writsData.filter(w => {
+                if (y !== 'all' && w.year !== y) return false;
+                if (t !== 'all' && w.type !== t) return false;
+                if (p !== 'all' && w.process !== p) return false;
+                return true;
+            });
+        }
+
+        // Filtra aplicando todos los filtros (incluyendo trimestre) para la tabla
+        function getFilteredData() {
+            const q = document.getElementById('filter-quarter').value;
+            const y = document.getElementById('filter-year').value;
+            const t = document.getElementById('filter-type').value;
+            const p = document.getElementById('filter-process').value;
+
+            return writsData.filter(w => {
+                const dateObj = new Date(w.timestamp);
+                const quarter = Math.floor(dateObj.getMonth() / 3) + 1;
+                
+                if (q !== 'all' && quarter.toString() !== q) return false;
+                if (y !== 'all' && w.year !== y) return false;
+                if (t !== 'all' && w.type !== t) return false;
+                if (p !== 'all' && w.process !== p) return false;
+                return true;
+            });
+        }
+
+        // --- FUNCIONES DE ACTUALIZACIÓN DE KPIs ---
+
         function updateStats() {
-            totalRecords.textContent = writsData.length;
+            const baseFiltered = getBaseFilteredData();
+            totalRecords.textContent = baseFiltered.length;
         }
         
-        // Función para actualizar estadísticas por trimestre
         function updateTrimestreStats() {
             let trim1 = 0, trim2 = 0, trim3 = 0, trim4 = 0;
+            const baseFiltered = getBaseFilteredData();
             
-            // Obtener el año seleccionado en el filtro
-            const selectedYear = document.getElementById('filter-year').value;
-            
-            // Filtrar registros por año si no es "all"
-            let recordsToCheck = writsData;
-            if (selectedYear !== 'all') {
-                recordsToCheck = writsData.filter(writ => {
-                    const dateObj = new Date(writ.timestamp);
-                    return dateObj.getFullYear().toString() === selectedYear;
-                });
-            }
-            
-            // Contar por trimestre
-            recordsToCheck.forEach(writ => {
+            baseFiltered.forEach(writ => {
                 const dateObj = new Date(writ.timestamp);
                 const month = dateObj.getMonth() + 1; // 1-12
                 
@@ -820,41 +883,24 @@
                 }
             });
             
-            // Actualizar los elementos HTML
             trimestre1.textContent = trim1;
             trimestre2.textContent = trim2;
             trimestre3.textContent = trim3;
             trimestre4.textContent = trim4;
         }
         
-        // Función para actualizar estadísticas mensuales
         function updateMonthlyStats() {
             monthlyStatsGrid.innerHTML = '';
-            
-            // Inicializar contadores para cada mes
             const monthCounts = Array(12).fill(0);
+            const baseFiltered = getBaseFilteredData();
             
-            // Obtener el año seleccionado en el filtro
-            const selectedYear = document.getElementById('filter-year').value;
-            
-            // Filtrar registros por año si no es "all"
-            let recordsToCheck = writsData;
-            if (selectedYear !== 'all') {
-                recordsToCheck = writsData.filter(writ => {
-                    const dateObj = new Date(writ.timestamp);
-                    return dateObj.getFullYear().toString() === selectedYear;
-                });
-            }
-            
-            // Contar por mes
-            recordsToCheck.forEach(writ => {
+            baseFiltered.forEach(writ => {
                 const month = getMonthFromTimestamp(writ.timestamp);
                 if (month >= 1 && month <= 12) {
                     monthCounts[month - 1]++;
                 }
             });
             
-            // Crear elementos para cada mes
             monthCounts.forEach((count, index) => {
                 const monthStatItem = document.createElement('div');
                 monthStatItem.className = 'month-stat-item';
@@ -867,7 +913,6 @@
                 monthlyStatsGrid.appendChild(monthStatItem);
             });
             
-            // Mostrar u ocultar la sección de estadísticas mensuales
             const hasData = monthCounts.some(count => count > 0);
             monthlyStats.style.display = hasData ? 'block' : 'none';
         }
@@ -879,7 +924,6 @@
         onSnapshot(q, (snapshot) => {
             writsData = snapshot.docs.map(doc => {
                 const data = doc.data();
-                // Formatear fecha y hora
                 const fechaHora = formatDateTime(data.timestamp);
                 
                 return {
@@ -927,6 +971,9 @@
         function renderTable() {
             const filtered = getFilteredData();
             const totalPages = Math.ceil(filtered.length / recordsPerPage);
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            
             const start = (currentPage - 1) * recordsPerPage;
             const pageData = filtered.slice(start, start + recordsPerPage);
 
@@ -934,11 +981,18 @@
             document.getElementById('empty-state').style.display = filtered.length ? 'none' : 'block';
 
             pageData.forEach(writ => {
+                let badgeClass = 'badge-default';
+                if (writ.type === 'varios') {
+                    badgeClass = 'badge-varios';
+                } else if (writ.type === 'patrocinio') {
+                    badgeClass = 'badge-patrocinio';
+                }
+                
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="quantity-cell">${writ.displayQuantity}</td>
                     <td>${writ.year}</td>
-                    <td><span class="badge ${writ.type === 'varios' ? 'badge-varios' : 'badge-patrocinio'}">${writ.type.toUpperCase()}</span></td>
+                    <td><span class="badge ${badgeClass}">${writ.type.toUpperCase()}</span></td>
                     <td><span class="badge badge-proceso">${writ.process.toUpperCase()}</span></td>
                     <td>${writ.user}</td>
                     <td>${writ.fechaHora}</td>
@@ -951,24 +1005,6 @@
             });
 
             updatePagination(filtered.length, totalPages);
-        }
-
-        function getFilteredData() {
-            const q = document.getElementById('filter-quarter').value;
-            const y = document.getElementById('filter-year').value;
-            const t = document.getElementById('filter-type').value;
-            const p = document.getElementById('filter-process').value;
-
-            return writsData.filter(w => {
-                const dateObj = new Date(w.timestamp);
-                const quarter = Math.floor(dateObj.getMonth() / 3) + 1;
-                
-                if (q !== 'all' && quarter.toString() !== q) return false;
-                if (y !== 'all' && w.year !== y) return false;
-                if (t !== 'all' && w.type !== t) return false;
-                if (p !== 'all' && w.process !== p) return false;
-                return true;
-            });
         }
 
         // --- MANEJO DE MODAL Y FORMULARIO ---
@@ -1031,31 +1067,101 @@
         document.getElementById('close-modal').onclick = closeModal;
         document.getElementById('cancel-btn').onclick = closeModal;
 
-        // Paginación y Filtros
+        // --- PAGINACIÓN ---
+
         function updatePagination(total, totalPages) {
             document.getElementById('pagination-info').textContent = `Total: ${total} escritos`;
             const container = document.getElementById('page-numbers');
             container.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
+
+            const createPageBtn = (pageNum) => {
                 const btn = document.createElement('button');
-                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-                btn.textContent = i;
-                btn.onclick = () => { currentPage = i; renderTable(); };
-                container.appendChild(btn);
+                btn.className = `page-btn ${pageNum === currentPage ? 'active' : ''}`;
+                btn.textContent = pageNum;
+                btn.onclick = () => { currentPage = pageNum; renderTable(); };
+                return btn;
+            };
+
+            if (totalPages === 0) {
+                document.getElementById('prev-page').disabled = true;
+                document.getElementById('next-page').disabled = true;
+                return;
             }
+
+            if (totalPages === 1) {
+                container.appendChild(createPageBtn(1));
+                document.getElementById('prev-page').disabled = true;
+                document.getElementById('next-page').disabled = true;
+                return;
+            }
+
+            container.appendChild(createPageBtn(1));
+
+            let start = Math.max(2, currentPage - 2);
+            let end = Math.min(totalPages - 1, currentPage + 2);
+
+            const maxVisible = 5;
+            const visibleCount = end - start + 1;
+            if (visibleCount < maxVisible - 2) {
+                if (start === 2) {
+                    end = Math.min(totalPages - 1, end + (maxVisible - 2 - visibleCount));
+                } else if (end === totalPages - 1) {
+                    start = Math.max(2, start - (maxVisible - 2 - visibleCount));
+                }
+            }
+
+            if (start > 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'pagination-ellipsis';
+                ellipsis.textContent = '...';
+                container.appendChild(ellipsis);
+            }
+
+            for (let i = start; i <= end; i++) {
+                container.appendChild(createPageBtn(i));
+            }
+
+            if (end < totalPages - 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'pagination-ellipsis';
+                ellipsis.textContent = '...';
+                container.appendChild(ellipsis);
+            }
+
+            container.appendChild(createPageBtn(totalPages));
+
+            document.getElementById('prev-page').disabled = currentPage <= 1;
+            document.getElementById('next-page').disabled = currentPage >= totalPages;
         }
 
-        // Actualizar estadísticas cuando cambian los filtros
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        document.getElementById('next-page').addEventListener('click', () => {
+            const filtered = getFilteredData();
+            const totalPages = Math.ceil(filtered.length / recordsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        // Actualizar estadísticas y tabla cuando cambian los filtros
         document.querySelectorAll('.filters select').forEach(s => {
             s.onchange = () => { 
                 currentPage = 1; 
                 renderTable(); 
+                updateStats();
                 updateTrimestreStats();
                 updateMonthlyStats();
             };
         });
 
-        // Cargar años
+        // Cargar años en el filtro
         const yearSelect = document.getElementById('filter-year');
         const curY = new Date().getFullYear();
         for(let y = 2026; y <= curY + 4; y++) {
@@ -1064,7 +1170,7 @@
             yearSelect.appendChild(opt);
         }
 
-        // Exportar PDF - FIXED CON NUEVAS VERSIONES
+        // Exportar PDF
         document.getElementById('export-pdf-btn').addEventListener('click', () => {
             console.log('Exportar PDF clickeado');
             
@@ -1075,21 +1181,17 @@
                 return;
             }
 
-            // jsPDF ahora está disponible como window.jspdf
             const { jsPDF } = window.jspdf;
             
-            // Configuración del PDF
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
             const margin = 15;
             const tableWidth = pageWidth - (margin * 2);
             
-            // Título principal
             doc.setFontSize(18);
             doc.setFont("helvetica", "bold");
             doc.text("REPORTE DE ESCRITOS JUDICIALES", pageWidth / 2, 20, { align: "center" });
             
-            // Información de filtros aplicados
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
             const filters = {
@@ -1104,13 +1206,11 @@
             yPos += 5;
             doc.text(`Trimestre: ${filters.trimestre} | Año: ${filters.año} | Tipo: ${filters.tipo} | Proceso: ${filters.proceso}`, margin, yPos);
             
-            // Fecha de generación
             const now = new Date();
             const fechaGen = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
             yPos += 5;
             doc.text(`Generado: ${fechaGen} | Total registros: ${filteredData.length}`, margin, yPos);
             
-            // Preparar datos para la tabla (sin acciones)
             const tableData = filteredData.map(w => [
                 w.displayQuantity.toString(),
                 w.year,
@@ -1120,7 +1220,6 @@
                 w.fechaHora
             ]);
             
-            // Configuración de la tabla
             yPos += 10;
             doc.autoTable({
                 head: [['Cant.', 'Año', 'Tipo', 'Proceso', 'Usuario', 'Fecha y Hora']],
@@ -1135,7 +1234,7 @@
                     valign: 'middle'
                 },
                 headStyles: {
-                    fillColor: [66, 133, 244], // Azul
+                    fillColor: [66, 133, 244],
                     textColor: [255, 255, 255],
                     fontStyle: 'bold',
                     fontSize: 10
@@ -1144,15 +1243,14 @@
                     fillColor: [248, 249, 250]
                 },
                 columnStyles: {
-                    0: { cellWidth: 20, halign: 'center' }, // Cantidad
-                    1: { cellWidth: 25, halign: 'center' }, // Año
-                    2: { cellWidth: 30, halign: 'center' }, // Tipo
-                    3: { cellWidth: 35, halign: 'center' }, // Proceso
-                    4: { cellWidth: 50 }, // Usuario
-                    5: { cellWidth: 40, halign: 'center' } // Fecha
+                    0: { cellWidth: 20, halign: 'center' },
+                    1: { cellWidth: 25, halign: 'center' },
+                    2: { cellWidth: 30, halign: 'center' },
+                    3: { cellWidth: 35, halign: 'center' },
+                    4: { cellWidth: 50 },
+                    5: { cellWidth: 40, halign: 'center' }
                 },
                 didDrawPage: function(data) {
-                    // Pie de página
                     doc.setFontSize(8);
                     doc.setTextColor(128, 128, 128);
                     const pageCount = doc.internal.getNumberOfPages();
@@ -1173,7 +1271,6 @@
                 }
             });
             
-            // Guardar el PDF
             const fileName = `reporte_escritos_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}.pdf`;
             doc.save(fileName);
         });
