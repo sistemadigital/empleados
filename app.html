@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚖️Sistema Defensor</title>
+    <title>⚖️Sistema Empleados</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -17,10 +17,10 @@
         body {
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Respaldo para navegadores antiguos */
-            height: 100dvh; /* Solución dinámica para móviles */
+            height: 100vh; 
+            height: 100dvh; 
             background-color: #ffffff;
-            overflow: hidden; /* Evita scroll global */
+            overflow: hidden; 
         }
 
         /* Pantalla Central */
@@ -66,10 +66,9 @@
             box-shadow: 0 -4px 12px rgba(0,31,63,0.2);
             border-top: 2px solid #00BFFF;
             z-index: 3000;
-            cursor: pointer; /* Indica que la zona vacía se puede cliquear */
+            cursor: pointer; 
         }
 
-        /* Evitar cursor pointer general en el contenido interno del footer */
         footer > div, footer > .logout-button {
             cursor: default;
         }
@@ -78,8 +77,8 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            cursor: pointer; /* Área clickeable para volver a home */
-            height: 100%; /* Facilita el clic en la zona vacía */
+            cursor: pointer; 
+            height: 100%; 
         }
 
         .footer-content {
@@ -92,7 +91,7 @@
 
         .footer-content:hover { opacity: 0.8; }
 
-        /* MENÚ DESPLEGABLE (Sin desplazamiento forzado) */
+        /* MENÚ DESPLEGABLE */
         .menu-popup {
             display: none;
             position: absolute;
@@ -151,12 +150,12 @@
         /* Menú Hamburguesa Resaltado Celeste Glass */
         .hamburger-menu { 
             display: flex; flex-direction: column; gap: 5px; margin-right: 15px; 
-            background: rgba(0, 191, 255, 0.15); /* Celeste background */
-            backdrop-filter: blur(8px); /* Glass effect */
-            border: 1px solid rgba(0, 191, 255, 0.6); /* Borde glass celeste */
+            background: rgba(0, 191, 255, 0.15); 
+            backdrop-filter: blur(8px); 
+            border: 1px solid rgba(0, 191, 255, 0.6); 
             padding: 8px 10px; 
             border-radius: 8px; 
-            box-shadow: 0 0 12px rgba(0, 191, 255, 0.5); /* Resaltado */
+            box-shadow: 0 0 12px rgba(0, 191, 255, 0.5); 
             transition: all 0.3s ease;
         }
         .hamburger-menu:hover {
@@ -182,6 +181,16 @@
             padding: 6px 12px; border-radius: 8px; transition: background 0.2s; font-weight: 600;
         }
         .dtw-content:hover { background: rgba(255,255,255,0.2); }
+
+        /* NUEVO ESTILO: Texto Acceso Exclusivo */
+        .exclusive-access-text {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 400;
+            margin-left: 5px;
+            white-space: nowrap;
+            z-index: 10;
+        }
 
         .calendar-popup {
             display: none; position: absolute; bottom: 100%; left: 0; margin-bottom: 15px;
@@ -224,7 +233,7 @@
         .btn-modal.cancelar { background-color: #94a3b8; color: white; box-shadow: none; }
         .btn-modal.cancelar:hover { background-color: #64748b; }
 
-        /* ===== ESTILOS DE BIENVENIDA Y PERFIL COMPLETOS ===== */
+        /* BIENVENIDA Y PERFIL */
         .welcome-container {
             display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
             animation: fadeIn 1s ease; background: transparent; padding: 20px 20px 0 20px; width: 100%; position: relative;
@@ -325,15 +334,13 @@
             .left-info-image { width: 300px; }
             footer { padding: 0 15px; }
             
-            /* Ocultar texto "Salir", dejar el ícono */
             .logout-button span:last-child { display: none; }
             
-            /* Ocultar elementos específicos en móvil para el footer */
             .click-text { display: none; }
             .footer-defensoria { display: none; }
-            .datetime-weather-container { display: none; }
+            /* Se oculta fecha, clima y el texto de acceso exclusivo en móvil */
+            .datetime-weather-container, .exclusive-access-text { display: none; }
             
-            /* Ajustar márgenes ya que no hay texto acompañando el hamburguesa */
             .hamburger-menu { margin-right: 0; }
             
             .footer-left { flex-wrap: nowrap; }
@@ -373,7 +380,7 @@
                 <p><strong>Secretarios:</strong> Dra. Patricia Soledad Riveros, Dra. Alicia Mariela Corrales, Dr. Enzo Luciano Magnani</p>
                 <p><strong>Teléfono Oficial:</strong> +54 376 4446700 interno 1188.</p>
                 <p><strong>Whatsapp Oficial:</strong> +54 376 4889359</p>
-<p><strong>Correo Zimbra:</strong> defensoriacivil6.posadas@mpmisiones.gob.ar</p>
+                <p><strong>Correo Zimbra:</strong> defensoriacivil6.posadas@mpmisiones.gob.ar</p>
             </div>
 
             <div id="leftInfoImage" class="left-info-image">
@@ -430,6 +437,8 @@
                     <div class="calendar-grid" id="calendarGrid"></div>
                 </div>
             </div>
+
+            <span class="exclusive-access-text">Acceso Exclusivo Empleados</span>
         </div>
 
         <div class="footer-right" id="footerRightArea">
@@ -473,7 +482,7 @@
     </div>
 
     <script>
-        // --- CONTROL DE PÁGINAS (IFRAME Y HOME) ---
+        // --- CONTROL DE PÁGINAS ---
         function loadPage(url) {
             const iframe = document.getElementById('appIframe');
             const home = document.getElementById('homeContent');
@@ -501,7 +510,6 @@
             if(dropdown) dropdown.classList.remove('show');
         }
 
-        // --- CLIC GLOBAL PARA CERRAR ---
         document.addEventListener('click', (e) => {
             const isClickInsideMenu = document.getElementById('btnMainMenu')?.contains(e.target);
             const isClickInsideCalendar = document.getElementById('dateTimeWeatherBtn')?.contains(e.target);
@@ -516,19 +524,14 @@
             }
         });
 
-        // --- CLIC EN EL FOOTER PARA VOLVER A HOME ---
         document.getElementById('mainFooter').addEventListener('click', function(e) {
-            // Si hacen clic en los contenedores vacíos del footer, retorna a la bienvenida
             if (e.target === this || e.target.id === 'footerLeftArea' || e.target.id === 'footerRightArea') {
                 window.mostrarHome();
             }
         });
 
-        // Menú Principal
         document.getElementById('btnMainMenu').addEventListener('click', (e) => {
-            // Si el clic viene de un link del menú, no ejecutar la lógica de toggle (evita reapertura accidental)
             if (e.target.closest('a')) return;
-            
             e.stopPropagation();
             const menu = document.getElementById('mainMenuPopup');
             const isShow = menu.classList.contains('show');
@@ -536,7 +539,6 @@
             if(!isShow) menu.classList.add('show');
         });
 
-        // Info Desarrollador Modal
         document.getElementById('btnSistemaInfoText')?.addEventListener('click', (e) => {
             e.stopPropagation();
             const modal = document.getElementById('sistemaInfoModal');
@@ -545,7 +547,6 @@
             if(!isShow) modal.classList.add('show');
         });
 
-        // Calendario y Clima
         const dtwBtn = document.getElementById('dateTimeWeatherBtn');
         const calPopup = document.getElementById('calendarPopup');
 
@@ -559,7 +560,6 @@
             }
         });
 
-        // ===== LÓGICA DE FECHA, HORA Y CALENDARIO =====
         function updateDateTime() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
@@ -596,7 +596,6 @@
         document.getElementById('prevMonth').addEventListener('click', (e) => { e.stopPropagation(); currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(currentMonth, currentYear); });
         document.getElementById('nextMonth').addEventListener('click', (e) => { e.stopPropagation(); currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(currentMonth, currentYear); });
 
-        // ===== LÓGICA DE CLIMA =====
         async function fetchWeather() {
             try {
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-27.3671&longitude=-55.8961&current_weather=true');
@@ -606,12 +605,10 @@
         }
         fetchWeather();
 
-        // Modales de Salida
         const modalSalida = document.getElementById('modalSalida');
         document.getElementById('btnSalir').addEventListener('click', () => { modalSalida.classList.add('active'); });
         document.getElementById('cancelarSalida').addEventListener('click', () => { modalSalida.classList.remove('active'); });
 
-        // Posicionamiento de InfoModal
         const infoModal = document.getElementById('infoModal');
         const leftImage = document.getElementById('leftInfoImage');
         const footerDefensoria = document.getElementById('footerDefensoria');
@@ -790,7 +787,6 @@
             let dropdownHeaderHtml = photoURL ? `<div style="font-weight:600; font-size:1.2rem; margin-bottom:1rem; color:#1e293b;">Detalle de Usuario</div>` : `<div class="dropdown-avatar-placeholder">${inicial}</div><div style="font-weight:600; color:#1e293b; text-align:center;">Elige un avatar</div>`;
             let avatarOptionsHtml = photoURL ? '' : `<div class="avatar-options"><img src="${AVATAR_HOMBRE}" class="avatar-option" id="avatarHombre"><img src="${AVATAR_MUJER}" class="avatar-option" id="avatarMujer"></div>`;
 
-            // ESTA ESTRUCTURA REEMPLAZARÁ INSTANTÁNEAMENTE EL PLACEHOLDER AL CARGAR
             dynamicContent.innerHTML = `
                 <div class="welcome-container" id="welcomeContainer">
                     <div class="welcome-bar" id="welcomeBar">
@@ -835,7 +831,6 @@
 
             if (esCumpleanos && typeof confetti !== 'undefined') launchConfetti();
 
-            // Lógica de UI para los botones y modales generados
             const bar = document.getElementById('welcomeBar');
             const dropdown = document.getElementById('userDropdown');
 
@@ -846,13 +841,11 @@
                 if(!isShow) dropdown.classList.add('show');
             });
 
-            // Evitar que el clic DENTRO del dropdown dispare otras cosas
             dropdown.addEventListener('click', (e) => e.stopPropagation());
 
             document.getElementById('avatarHombre')?.addEventListener('click', () => updateUserAvatar(AVATAR_HOMBRE));
             document.getElementById('avatarMujer')?.addEventListener('click', () => updateUserAvatar(AVATAR_MUJER));
 
-            // Nombre Edit
             document.getElementById('editNameIcon')?.addEventListener('click', () => { document.getElementById('nameDisplayRow').style.display='none'; document.getElementById('nameEditRow').style.display='flex'; document.getElementById('nameInput').focus(); });
             document.getElementById('cancelNameBtn')?.addEventListener('click', () => { document.getElementById('nameDisplayRow').style.display='flex'; document.getElementById('nameEditRow').style.display='none'; document.getElementById('nameInput').value = displayName; });
             document.getElementById('saveNameBtn')?.addEventListener('click', async () => {
@@ -861,7 +854,6 @@
                 else { document.getElementById('nameDisplayRow').style.display='flex'; document.getElementById('nameEditRow').style.display='none'; }
             });
 
-            // Fecha Edit
             document.getElementById('editFechaIcon')?.addEventListener('click', () => { document.getElementById('fechaDisplayRow').style.display='none'; document.getElementById('fechaEditRow').style.display='flex'; document.getElementById('fechaInput').focus(); });
             document.getElementById('cancelFechaBtn')?.addEventListener('click', () => { document.getElementById('fechaDisplayRow').style.display='flex'; document.getElementById('fechaEditRow').style.display='none'; document.getElementById('fechaInput').value = fechaNacimiento; });
             document.getElementById('saveFechaBtn')?.addEventListener('click', async () => {
@@ -883,7 +875,6 @@
                 currentUser = user;
                 userDataCache.displayName = user.displayName;
                 userDataCache.photoURL = user.photoURL;
-                // Al resolver Firebase, reemplaza el Placeholder
                 showWelcomeMessage(currentUser);
             } else {
                 window.location.href = 'index.html';
