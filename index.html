@@ -193,12 +193,30 @@
             font-size: 1rem;
             background-color: #f8fafc;
             transition: all 0.3s;
+            width: 100%;
         }
 
         .grupo-input input:focus {
             outline: none;
             border-color: #00BFFF;
             box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.1);
+        }
+
+        /* Estilo para la casilla de mostrar clave */
+        .mostrar-clave {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            cursor: pointer;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        .mostrar-clave input {
+            cursor: pointer;
+            width: auto;
         }
 
         .btn-ingresar {
@@ -324,20 +342,23 @@
             <div class="formulario-login">
                 <h2>Bienvenido</h2>
 
-                <!-- Contenedor de mensajes de autenticación -->
                 <div id="authMessage" class="auth-message"></div>
 
-                <!-- FORMULARIO DE LOGIN -->
                 <div id="loginForm">
                     <div class="grupo-input">
                         <label>Correo electrónico</label>
-                        <input type="email" id="loginEmail" placeholder="usuario@mpmisiones.gob.ar" required>
+                        <input type="email" id="loginEmail" placeholder="usuario Zimbra o email completo distinto" required>
                     </div>
 
                     <div class="grupo-input">
                         <label>Contraseña</label>
                         <input type="password" id="loginPassword" placeholder="••••••••" required>
                     </div>
+
+                    <label class="mostrar-clave">
+                        <input type="checkbox" onchange="document.getElementById('loginPassword').type = this.checked ? 'text' : 'password'">
+                        Mostrar contraseña
+                    </label>
 
                     <button class="btn-ingresar" onclick="loginUser()">Entrar al sistema</button>
 
@@ -346,22 +367,26 @@
                     <button class="btn-secundario" onclick="showRegisterForm()">Crear cuenta</button>
                 </div>
 
-                <!-- FORMULARIO DE REGISTRO (oculto inicialmente) -->
                 <div id="registerForm" class="hidden">
                     <div class="grupo-input">
                         <label>Nombre completo</label>
-                        <input type="text" id="registerName" placeholder="Tu nombre" required>
+                        <input type="text" id="registerName" placeholder="Tu nombre y apellido" required>
                     </div>
 
                     <div class="grupo-input">
                         <label>Correo electrónico</label>
-                        <input type="email" id="registerEmail" placeholder="usuario@mpmisiones.gob.ar" required>
+                        <input type="email" id="registerEmail" placeholder="usuario Zimbra o email distinto" required>
                     </div>
 
                     <div class="grupo-input">
                         <label>Contraseña</label>
                         <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
                     </div>
+
+                    <label class="mostrar-clave">
+                        <input type="checkbox" onchange="document.getElementById('registerPassword').type = this.checked ? 'text' : 'password'">
+                        Mostrar contraseña
+                    </label>
 
                     <button class="btn-ingresar" onclick="registerUser()">Registrarse</button>
 
@@ -374,7 +399,6 @@
 
     </div>
 
-    <!-- FIREBASE (módulos) -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -391,8 +415,20 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // Dominio institucional por defecto
+        const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
+
         // Bandera para evitar redirección automática durante el registro
         let isRegistering = false;
+
+        // Función para procesar el email (añadir prefijo si falta @)
+        function formatEmail(input) {
+            let email = input.trim();
+            if (email && !email.includes('@')) {
+                email += DEFAULT_DOMAIN;
+            }
+            return email;
+        }
 
         // Función para mostrar mensajes en el panel derecho
         window.showMessage = function(msg, type) {
@@ -405,8 +441,11 @@
 
         // LOGIN
         window.loginUser = async function() {
-            const email = document.getElementById('loginEmail').value;
+            const rawEmail = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+
+            const email = formatEmail(rawEmail);
+
             if (!email || !password) {
                 return showMessage('Completa todos los campos', 'error');
             }
@@ -421,8 +460,11 @@
         // REGISTRO
         window.registerUser = async function() {
             const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
+            const rawEmail = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
+
+            const email = formatEmail(rawEmail);
+
             if (!name || !email || !password) {
                 return showMessage('Completa todos los campos', 'error');
             }
