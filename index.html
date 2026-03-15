@@ -326,8 +326,7 @@
                 <div class="info-institucional">
                     <p>Defensoria Civil y Comercial 6</p>
                     <p>Ministerio Público de Misiones</p>
-                
-                 <p>Empleados</p>
+                    <p>Empleados</p>
                 </div>
          </div>
 
@@ -340,7 +339,13 @@
 
         <div class="panel-derecho">
             <div class="formulario-login">
-                <h2>Bienvenido</h2>
+                <h2>
+                    Bienvenido
+                    <svg id="powerIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="width: 0.9em; height: 0.9em; vertical-align: middle; margin-left: 8px; margin-bottom: 6px; display: inline-block; transition: all 0.4s ease;">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                    </svg>
+                </h2>
 
                 <div id="authMessage" class="auth-message"></div>
 
@@ -415,13 +420,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Dominio institucional por defecto
         const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
 
-        // Bandera para evitar redirección automática durante el registro
         let isRegistering = false;
+        let isLoggingIn = false;
 
-        // Función para procesar el email (añadir prefijo si falta @)
         function formatEmail(input) {
             let email = input.trim();
             if (email && !email.includes('@')) {
@@ -430,7 +433,6 @@
             return email;
         }
 
-        // Función para mostrar mensajes en el panel derecho
         window.showMessage = function(msg, type) {
             const div = document.getElementById('authMessage');
             div.textContent = msg;
@@ -439,7 +441,6 @@
             setTimeout(() => div.style.display = 'none', 4000);
         };
 
-        // LOGIN
         window.loginUser = async function() {
             const rawEmail = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -450,14 +451,27 @@
                 return showMessage('Completa todos los campos', 'error');
             }
             try {
+                isLoggingIn = true;
                 await signInWithEmailAndPassword(auth, email, password);
-                // La redirección la maneja onAuthStateChanged
+                
+                const icon = document.getElementById('powerIcon');
+                if (icon) {
+                    icon.setAttribute('stroke', '#28a745');
+                    icon.setAttribute('stroke-width', '4.5');
+                }
+                
+                showMessage('Acceso concedido. Iniciando sistema...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 3000);
+
             } catch (error) {
+                isLoggingIn = false;
                 showMessage('Credenciales inválidas', 'error');
             }
         };
 
-        // REGISTRO
         window.registerUser = async function() {
             const name = document.getElementById('registerName').value;
             const rawEmail = document.getElementById('registerEmail').value;
@@ -478,7 +492,6 @@
                 const cred = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(cred.user, { displayName: name });
                 showMessage('Cuenta creada con éxito', 'success');
-                // Redirigir manualmente después de guardar el nombre
                 window.location.href = 'app.html';
             } catch (error) {
                 isRegistering = false;
@@ -490,18 +503,15 @@
             }
         };
 
-        // ESTADO DE AUTENTICACIÓN (redirige si ya está logueado)
         onAuthStateChanged(auth, user => {
-            if (user && !isRegistering) {
+            if (user && !isRegistering && !isLoggingIn) {
                 window.location.href = 'app.html';
             }
         });
 
-        // FUNCIONES PARA CAMBIAR ENTRE LOGIN Y REGISTRO
         window.showRegisterForm = function() {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('registerForm').classList.remove('hidden');
-            // Limpiar mensajes
             document.getElementById('authMessage').style.display = 'none';
         };
 
@@ -511,7 +521,6 @@
             document.getElementById('authMessage').style.display = 'none';
         };
 
-        // ENTER para enviar formulario activo
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 const loginHidden = document.getElementById('loginForm').classList.contains('hidden');
@@ -525,7 +534,6 @@
     </script>
 
     <script>
-        // Créditos flotantes (igual que original)
         window.addEventListener('DOMContentLoaded', () => {
             const flotante = document.getElementById('creditos-flotante');
             setTimeout(() => {
