@@ -597,14 +597,36 @@
         document.getElementById('nextMonth').addEventListener('click', (e) => { e.stopPropagation(); currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(currentMonth, currentYear); });
 
         async function fetchWeather() {
-            try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-27.3671&longitude=-55.8961&current_weather=true');
-                const data = await res.json();
-                document.getElementById('currentWeather').innerHTML = `🌤️ ${data.current_weather.temperature}°C`;
-            } catch (error) { document.getElementById('currentWeather').innerHTML = `🌤️ N/A`; }
-        }
-        fetchWeather();
+    try {
+        // La URL ya tiene las coordenadas de Posadas (-27.3671, -55.8961)
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-27.3671&longitude=-55.8961&current_weather=true');
+        const data = await res.json();
+        
+        const temp = data.current_weather.temperature;
+        const code = data.current_weather.weathercode;
+        
+        // Asignar un ícono dinámico según el código meteorológico de la WMO
+        let icon = '🌤️'; // Por defecto
+        if (code === 0) icon = '☀️'; // Despejado
+        else if (code === 1 || code === 2) icon = '⛅'; // Parcialmente nublado
+        else if (code === 3) icon = '☁️'; // Nublado
+        else if (code >= 45 && code <= 48) icon = '🌫️'; // Niebla
+        else if (code >= 51 && code <= 67) icon = '🌧️'; // Lluvia / Llovizna
+        else if (code >= 71 && code <= 77) icon = '❄️'; // Nieve
+        else if (code >= 80 && code <= 82) icon = '🌦️'; // Chubascos
+        else if (code >= 95 && code <= 99) icon = '⛈️'; // Tormenta
+        
+        document.getElementById('currentWeather').innerHTML = `${icon} ${temp}°C`;
+    } catch (error) { 
+        document.getElementById('currentWeather').innerHTML = `🌤️ N/A`; 
+        console.error("Error obteniendo el clima:", error);
+    }
+}
+// Llamar a la función al cargar
+fetchWeather();
 
+// Opcional: Actualizar el clima cada 30 minutos (1800000 ms) para que siempre esté al día
+setInterval(fetchWeather, 1800000);
         const modalSalida = document.getElementById('modalSalida');
         document.getElementById('btnSalir').addEventListener('click', () => { modalSalida.classList.add('active'); });
         document.getElementById('cancelarSalida').addEventListener('click', () => { modalSalida.classList.remove('active'); });
