@@ -556,6 +556,13 @@
             closeAllModals();
             if(!isShow) {
                 calPopup.classList.add('show');
+                
+                // --- NUEVO: Reiniciar a la fecha actual ---
+                const hoy = new Date();
+                currentMonth = hoy.getMonth();
+                currentYear = hoy.getFullYear();
+                // ------------------------------------------
+
                 renderCalendar(currentMonth, currentYear);
             }
         });
