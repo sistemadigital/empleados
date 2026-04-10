@@ -91,7 +91,7 @@
 
         .footer-content:hover { opacity: 0.8; }
 
-        /* MENÚ DESPLEGABLE */
+        /* MENÚ DESPLEGABLE - EFECTO MEJORADO (replicado desde a.html) */
         .menu-popup {
             display: none;
             position: absolute;
@@ -118,7 +118,25 @@
             transition: background 0.2s, color 0.2s; text-align: left;
             cursor: pointer;
         }
-        .menu-popup li a:hover { background-color: #f0faff; color: #00BFFF; }
+
+        /* ---- EFECTO MEJORADO: opacidad en los no seleccionados, fondo oscuro y texto blanco en hover ---- */
+        /* Cuando el menú está abierto y el mouse pasa sobre la lista UL, todos los enlaces se opacan */
+        .menu-popup.show ul:hover li a {
+            opacity: 0.4;
+            transition: opacity 0.2s ease;
+        }
+        /* El enlace específico bajo el cursor: opacidad total, fondo oscuro, texto blanco y resalte adicional */
+        .menu-popup.show ul li a:hover {
+            opacity: 1;
+            background-color: #001f33;   /* fondo oscuro (azul marino) */
+            color: white !important;     /* texto blanco */
+            border-left: 3px solid #00BFFF; /* pequeño detalle para dar énfasis */
+            box-shadow: inset 0 0 0 1px rgba(0,191,255,0.3);
+        }
+        /* Aseguramos que el color por defecto no interfiera */
+        .menu-popup.show ul li a {
+            color: #003366;
+        }
 
         /* Botón de salida y sección derecha */
         .footer-right {
