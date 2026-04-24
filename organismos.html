@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Organismos</title>
   
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
@@ -244,6 +243,11 @@
         opacity: 0.9;
     }
 
+    /* Nuevo Estilo Celeste Oscuro */
+    .btn-celeste-oscuro {
+        background-color: #008db1 !important;
+    }
+
     .button-success {
         background-color: #1e7e34;
     }
@@ -403,7 +407,7 @@
     }
 
     /* MODALES */
-    #organismModal, #policiaModal, #viewModal {
+    #organismModal, #policiaModal, #mapaModal, #viewModal {
         display: none;
         position: fixed;
         inset: 0;
@@ -414,7 +418,7 @@
         z-index: 1000;
     }
     
-    #organismModal .content, #policiaModal .content, #viewModal .content {
+    #organismModal .content, #policiaModal .content, #mapaModal .content, #viewModal .content {
         background: #fff;
         border-radius: 16px;
         max-width: 600px;
@@ -426,14 +430,14 @@
         animation: fadeIn .25s ease;
     }
     
-    #policiaModal .content {
+    #policiaModal .content, #mapaModal .content {
         max-width: 95%;
         max-height: 95vh;
         width: 95%;
         height: 95vh;
     }
     
-    #policiaModal iframe {
+    #policiaModal iframe, #mapaModal iframe {
         width: 100%;
         height: 100%;
         border: none;
@@ -466,7 +470,7 @@
         flex: 1;
     }
     
-    #policiaModal .modal-body {
+    #policiaModal .modal-body, #mapaModal .modal-body {
         padding: 0;
         flex: 1;
         display: flex;
@@ -613,7 +617,7 @@
             min-width: 180px;
         }
 
-        #organismModal .content, #policiaModal .content, #viewModal .content {
+        #organismModal .content, #policiaModal .content, #mapaModal .content, #viewModal .content {
             max-width: 95%;
         }
     }
@@ -685,7 +689,7 @@
             font-size: var(--body-large-size);
         }
 
-        #organismModal .content, #policiaModal .content, #viewModal .content {
+        #organismModal .content, #policiaModal .content, #mapaModal .content, #viewModal .content {
             max-width: 100%;
             max-height: 100vh;
             border-radius: 0;
@@ -708,35 +712,32 @@
   </style>
 </head>
 <body>
-    <!-- Alerta flotante -->
     <div class="floating-alert" id="floating-alert"></div>
 
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="logo">Organismos</div>
             <div class="header-buttons">
+                <button id="btnMapa" class="button">
+                    <i class="fas fa-map-marked-alt"></i> Usar Mapa de Ubicación
+                </button>
                 <button id="btnPolicia" class="button">
                     <i class="fas fa-shield-alt"></i> Policia de Misiones
                 </button>
-                <button id="btnNuevo" class="button">
+                <button id="btnNuevo" class="button btn-celeste-oscuro">
                     <i class="fas fa-plus"></i> Nuevo Organismo
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Contenido principal -->
     <main class="container">
-        <!-- Módulos de categorías -->
         <section class="modules-section">
             <h2 class="modules-title">Selecciona una categoría</h2>
             <div class="modules-grid" id="modulesGrid">
-                <!-- Los módulos se generarán dinámicamente -->
-            </div>
+                </div>
         </section>
 
-        <!-- Filtros -->
         <section class="filters-section" id="filtersSection">
             <h2 class="filters-title">Filtros de Búsqueda</h2>
             <div class="filter-row">
@@ -761,7 +762,6 @@
                 </div>
             </div>
             
-            <!-- Botones de impresión -->
             <div class="action-buttons">
                 <button id="btnPrintModule" class="button button-success">
                     <i class="fas fa-print"></i> Imprimir Módulo
@@ -772,7 +772,6 @@
             </div>
         </section>
 
-        <!-- Controles de paginación superiores -->
         <div id="paginacion-superior" class="pagination-container">
             <div class="page-info" id="pageInfoTop">Mostrando 0 de 0 registros</div>
             <div class="pagination-selector">
@@ -790,7 +789,6 @@
             </div>
         </div>
 
-        <!-- Tabla de datos -->
         <section class="table-section" id="tableSection">
             <div class="table-title">
                 <span id="tableCategory">Organismos</span>
@@ -817,7 +815,6 @@
             </div>
         </section>
 
-        <!-- Controles de paginación inferiores -->
         <div id="paginacion-inferior" class="pagination-container">
             <div class="page-info" id="pageInfoBottom">Mostrando 0 de 0 registros</div>
             <div class="pagination-selector">
@@ -836,7 +833,6 @@
         </div>
     </main>
 
-    <!-- Modal para nuevo/editar organismo -->
     <div id="organismModal">
         <div class="content">
             <div class="modal-header">
@@ -895,7 +891,6 @@
         </div>
     </div>
 
-    <!-- Modal para ver organismo -->
     <div id="viewModal">
         <div class="content">
             <div class="modal-header">
@@ -939,7 +934,6 @@
         </div>
     </div>
 
-    <!-- Modal para Policia de Misiones -->
     <div id="policiaModal">
         <div class="content">
             <div class="modal-header">
@@ -952,6 +946,24 @@
             </div>
             <div class="controls-form">
                 <button class="button button-secondary" type="button" id="btnCerrarPolicia">
+                    <i class="fa fa-xmark"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mapaModal">
+        <div class="content">
+            <div class="modal-header">
+                <i class="fas fa-map-marked-alt"></i>
+                <h2 style="margin:0;">Mapa de Ubicación</h2>
+            </div>
+            <div class="modal-body">
+                <iframe src="https://sistemadigital.github.io/ingreso-sistema/mapa-organismos.html" 
+                        title="Mapa de Ubicación"></iframe>
+            </div>
+            <div class="controls-form">
+                <button class="button button-secondary" type="button" id="btnCerrarMapa">
                     <i class="fa fa-xmark"></i> Cerrar
                 </button>
             </div>
@@ -981,6 +993,7 @@
         const modal = $("organismModal");
         const viewModal = $("viewModal");
         const policiaModal = $("policiaModal");
+        const mapaModal = $("mapaModal");
         const modalTitle = $("modalTitle");
         const buscador = $("buscador");
         const filtroTipo = $("filtroTipo");
@@ -1580,10 +1593,12 @@
             // Asignar eventos
             $("btnNuevo").onclick = abrirNuevo;
             $("btnPolicia").onclick = () => policiaModal.style.display = "flex";
+            $("btnMapa").onclick = () => mapaModal.style.display = "flex";
             $("btnGuardar").onclick = guardarOrganismo;
             $("btnCancelar").onclick = () => modal.style.display = "none";
             $("btnCerrarView").onclick = () => viewModal.style.display = "none";
             $("btnCerrarPolicia").onclick = () => policiaModal.style.display = "none";
+            $("btnCerrarMapa").onclick = () => mapaModal.style.display = "none";
             $("btnPrintModule").onclick = imprimirModulo;
             $("btnPrintListado").onclick = printListado;
             $("btnPrintIndividual").onclick = () => imprimirOrganismoIndividual(viewingId);
@@ -1607,6 +1622,7 @@
                 if (e.target === modal) modal.style.display = "none";
                 if (e.target === viewModal) viewModal.style.display = "none";
                 if (e.target === policiaModal) policiaModal.style.display = "none";
+                if (e.target === mapaModal) mapaModal.style.display = "none";
             });
         }
 
