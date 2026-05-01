@@ -114,20 +114,102 @@
 
         .info-institucional p:first-child { font-weight: 700; color: #000; }
 
-        /* --- IMAGEN 3D --- */
+        /* --- IMAGEN 3D CON ANIMACIÓN MODERNA (RING ROTATORIO Y GLOW) --- */
         .img-container {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1;
+            position: relative;
         }
 
+        /* Wrapper para el anillo animado */
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Anillo giratorio principal (gradiente cónico) */
+        .img-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #00ffff,
+                #0044ff,
+                #ff00cc,
+                #00ffff
+            );
+            opacity: 0.7;
+            z-index: -1;
+            animation: rotateRing 4s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+        }
+
+        /* Segundo anillo externo con blur y rotación inversa */
+        .img-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: -25px;
+            right: -25px;
+            bottom: -25px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 90deg,
+                rgba(0, 255, 255, 0.3),
+                rgba(0, 68, 255, 0.3),
+                rgba(255, 0, 204, 0.3),
+                rgba(0, 255, 255, 0.3)
+            );
+            z-index: -2;
+            animation: rotateRingReverse 6s linear infinite;
+            filter: blur(8px);
+        }
+
+        /* Rotaciones */
+        @keyframes rotateRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rotateRingReverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        /* La imagen permanece igual, con suavizado y brillo */
         .img-3d {
             width: 100%;
             max-width: 420px;
             height: auto;
-            animation: float 6s ease-in-out infinite;
+            display: block;
+            border-radius: 50%;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .img-3d:hover {
+            transform: scale(1.02);
+        }
+
+        /* Pulso suave y flotación combinados */
+        @keyframes softPulse {
+            0% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(0,191,255,0.6)); }
+            100% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
+        }
+
+        .img-wrapper {
+            animation: float 6s ease-in-out infinite, softPulse 3s ease-in-out infinite;
         }
 
         @keyframes float {
@@ -306,6 +388,19 @@
             .img-3d { max-width: 250px; margin-bottom: 20px; }
             .panel-derecho { flex: none; padding: 40px 20px 80px 20px; }
             .formulario-login h2 { text-align: center; }
+            /* Ajuste del anillo en móvil */
+            .img-wrapper::before {
+                top: -10px;
+                left: -10px;
+                right: -10px;
+                bottom: -10px;
+            }
+            .img-wrapper::after {
+                top: -18px;
+                left: -18px;
+                right: -18px;
+                bottom: -18px;
+            }
         }
     </style>
 </head>
@@ -328,12 +423,15 @@
                     <p>Ministerio Público de Misiones</p>
                     <p>Empleados</p>
                 </div>
-         </div>
+            </div>
 
             <div class="img-container">
-                <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" 
-                     alt="Sistema Digital 3D" 
-                     class="img-3d">
+                <!-- Wrapper con animación moderna -->
+                <div class="img-wrapper">
+                    <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" 
+                         alt="Sistema Digital 3D" 
+                         class="img-3d">
+                </div>
             </div>
         </div>
 
