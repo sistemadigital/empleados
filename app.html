@@ -652,7 +652,8 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+        
+        // ELIMINADA la importación estática de confetti que causaba el bloqueo general
 
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
@@ -692,8 +693,9 @@
         async function updateDisplayName(newName) {
             if (!currentUser || !newName.trim()) return;
             try {
+                const safeEmail = currentUser.email || 'anonimo';
                 await updateProfile(currentUser, { displayName: newName.trim() });
-                await setDoc(doc(dbPerfil, "usuarios", currentUser.email), { nombreCompleto: newName.trim() }, { merge: true });
+                await setDoc(doc(dbPerfil, "usuarios", safeEmail), { nombreCompleto: newName.trim() }, { merge: true });
                 userDataCache.displayName = newName.trim();
                 showWelcomeMessage(currentUser, true);
             } catch (error) { console.error('Error al actualizar nombre:', error); }
@@ -702,24 +704,33 @@
         async function updateFechaNacimiento(newFecha) {
             if (!currentUser) return;
             try {
-                await setDoc(doc(dbPerfil, "usuarios", currentUser.email), { fechaNacimiento: newFecha }, { merge: true });
+                const safeEmail = currentUser.email || 'anonimo';
+                await setDoc(doc(dbPerfil, "usuarios", safeEmail), { fechaNacimiento: newFecha }, { merge: true });
                 userDataCache.fechaNacimiento = newFecha;
                 showWelcomeMessage(currentUser, true);
             } catch (error) { console.error('Error al actualizar fecha:', error); }
         }
 
-        function launchConfetti() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
+        // CARGA DINÁMICA DEL CONFETI PARA EVITAR BLOQUEOS
+        async function launchConfetti() {
+            try {
+                const module = await import('https://cdn.skypack.dev/canvas-confetti');
+                const confetti = module.default;
+                
+                var duration = 3 * 1000;
+                var animationEnd = Date.now() + duration;
+                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+                function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+                var interval = setInterval(function() {
+                    var timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) return clearInterval(interval);
+                    var particleCount = 50 * (timeLeft / duration);
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                }, 250);
+            } catch (e) {
+                console.warn("No se pudo cargar la animación de confeti. Ejecución continuada.");
+            }
         }
 
         async function checkBirthdays(isCurrentUserBirthday) {
@@ -730,7 +741,7 @@
                 const q = query(collection(dbPerfil, "usuarios"), where("fechaNacimiento", "==", hoy));
                 const querySnapshot = await getDocs(q);
                 const birthdayUsers = [];
-                querySnapshot.forEach(doc => { if (doc.data().email !== currentUser.email) birthdayUsers.push(doc.data().nombreCompleto); });
+                querySnapshot.forEach(doc => { if (doc.data().email !== (currentUser?.email || '')) birthdayUsers.push(doc.data().nombreCompleto); });
 
                 if (birthdayUsers.length > 0 && !birthdayModalShown) {
                     const list = document.getElementById('birthdayList');
@@ -748,8 +759,10 @@
 
         async function showWelcomeMessage(user, useCache = false) {
             const dynamicContent = document.getElementById('dynamicContent');
-            const displayName = user.displayName || user.email.split('@')[0] || 'Usuario';
-            const email = user.email;
+            
+            // PROTECCIÓN CONTRA CORREOS NULOS Y FALLOS EN SPLIT
+            const email = user.email || ""; 
+            const displayName = user.displayName || (email ? email.split('@')[0] : 'Usuario');
             const photoURL = user.photoURL;
             const inicial = displayName.charAt(0).toUpperCase();
 
@@ -758,7 +771,8 @@
             let esCumpleanos = false;
             let mensajeBienvenida = `¡Hola ${displayName}!`;
 
-            if (!useCache && !userDataCache.fechaNacimiento) {
+            // SOLO CONSULTAR FIRESTORE SI EL USUARIO TIENE UN EMAIL VALIDO
+            if (!useCache && !userDataCache.fechaNacimiento && email) {
                 try {
                     const docRef = doc(dbPerfil, "usuarios", email);
                     const docSnap = await getDoc(docRef);
@@ -766,7 +780,7 @@
                         fechaNacimiento = docSnap.data().fechaNacimiento || '';
                         userDataCache.fechaNacimiento = fechaNacimiento;
                     }
-                } catch (error) {}
+                } catch (error) { console.warn("No se pudo obtener el perfil de usuario:", error); }
             }
 
             if (fechaNacimiento) {
@@ -820,7 +834,7 @@
                             <button id="saveFechaBtn" class="save-btn"><i class="fas fa-check"></i></button>
                             <button id="cancelFechaBtn" class="cancel-btn"><i class="fas fa-times"></i></button>
                         </div>
-                        <div class="info-item"><strong>Correo:</strong> ${email}</div>
+                        <div class="info-item"><strong>Correo:</strong> ${email || 'No asignado'}</div>
                         <div class="info-item"><strong>Último acceso:</strong> ${lastLoginStr}</div>
                         <div class="info-item"><strong>Registro:</strong> ${creationStr}</div>
                         <div class="version-badge">Versión 3.1.2026</div>
@@ -829,7 +843,7 @@
                 </div>
             `;
 
-            if (esCumpleanos && typeof confetti !== 'undefined') launchConfetti();
+            if (esCumpleanos) launchConfetti();
 
             const bar = document.getElementById('welcomeBar');
             const dropdown = document.getElementById('userDropdown');
