@@ -1,940 +1,718 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚖️Sistema Empleados</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#f8fafc">
+  <title>Protocolo Actuacion Defensoria</title>
 
-        body {
-            display: flex;
-            flex-direction: column;
-            height: 100vh; 
-            height: 100dvh; 
-            background-color: #ffffff;
-            overflow: hidden; 
-        }
+  <!-- Tipografía institucional moderna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        /* Pantalla Central */
-        main {
-            flex: 1;
-            background: radial-gradient(circle at 10% 30%, #f0faff 0%, #ffffff 100%);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-y: auto;
-        }
+  <style>
+    :root {
+      --bg-app: #f1f5f9;
+      --bg-panel: rgba(255, 255, 255, 0.82);
+      --border: rgba(30, 41, 59, 0.12);
+      --text-main: #0f172a;
+      --text-sec: #475569;
+      --accent: #1e3a5f;
+      --accent-light: #e2e8f0;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-border: #fca5a5;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --radius: 14px;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --filter-height: 64px;
+    }
 
-        /* Iframe para contenido interno */
-        #appIframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: none;
-            flex: 1;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        #homeContent {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-        }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-app);
+      color: var(--text-main);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-        #dynamicContent {
-            width: 100%;
-            flex-shrink: 0;
-        }
+    /* ===== PANEL SUPERIOR FIJO ===== */
+    .top-bar {
+      height: 60px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(16px, 3vw, 24px);
+      position: relative;
+      z-index: 50;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      flex-shrink: 0;
+    }
 
-        /* Pie de Página */
-        footer {
-            height: 70px;
-            background-color: #001f3f;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            box-shadow: 0 -4px 12px rgba(0,31,63,0.2);
-            border-top: 2px solid #00BFFF;
-            z-index: 3000;
-            cursor: pointer; 
-        }
+    .header-left { display: flex; align-items: center; gap: 12px; position: relative; }
+    .header-title {
+      font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+      font-weight: 600;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
 
-        footer > div, footer > .logout-button {
-            cursor: default;
-        }
+    .menu-btn {
+      padding: 6px 12px;
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 500;
+      color: var(--accent); transition: var(--transition);
+      font-family: inherit;
+    }
+    .menu-btn:hover { background: var(--accent-light); }
 
-        .footer-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            cursor: pointer; 
-            height: 100%; 
-        }
+    .menu-dropdown {
+      position: absolute;
+      top: 100%; left: 0; margin-top: 8px;
+      width: min(90vw, 300px);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 8px;
+      display: flex; flex-direction: column; gap: 2px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: var(--transition);
+      z-index: 60;
+    }
+    .menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
 
-        .footer-content {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            position: relative;
-        }
+    .menu-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: var(--transition);
+      border: none; background: transparent; width: 100%; text-align: left;
+      font-family: inherit;
+    }
+    .menu-item:hover { background: var(--accent-light); color: var(--accent); }
 
-        .footer-content:hover { opacity: 0.8; }
+    .logout-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .logout-btn:hover { background: var(--danger); color: #fff; }
 
-        /* MENÚ DESPLEGABLE - EFECTO MEJORADO (replicado desde a.html) */
-        .menu-popup {
-            display: none;
-            position: absolute;
-            bottom: 100%;
-            left: 0;
-            margin-bottom: 15px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 10px 0;
-            width: 220px;
-            z-index: 2000;
-            border: 1px solid #e2e8f0;
-            animation: fadeIn 0.2s ease-in-out;
-            cursor: default;
-        }
+    /* ===== CONTENIDO PRINCIPAL - OCUPA TODO EL ESPACIO ===== */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: clamp(16px, 3vw, 24px);
+      padding-bottom: calc(80px + var(--filter-height, 64px)); /* espacio extra para el filtro fijo */
+      scroll-behavior: smooth;
+    }
 
-        .menu-popup.show { display: block; }
-        .menu-popup ul { list-style: none; padding: 0; margin: 0; }
-        .menu-popup li { margin: 0; padding: 0; }
-        .menu-popup li a {
-            display: block; padding: 10px 20px; text-decoration: none;
-            color: #003366; font-size: 0.85rem; font-weight: 600;
-            transition: background 0.2s, color 0.2s; text-align: left;
-            cursor: pointer;
-        }
+    /* Ajuste responsive para que el filtro no tape contenido */
+    @media (max-width: 768px) {
+      .main-content {
+        padding-bottom: calc(70px + var(--filter-height, 64px));
+      }
+    }
 
-        /* ---- EFECTO MEJORADO: opacidad en los no seleccionados, fondo oscuro y texto blanco en hover ---- */
-        /* Cuando el menú está abierto y el mouse pasa sobre la lista UL, todos los enlaces se opacan */
-        .menu-popup.show ul:hover li a {
-            opacity: 0.4;
-            transition: opacity 0.2s ease;
-        }
-        /* El enlace específico bajo el cursor: opacidad total, fondo oscuro, texto blanco y resalte adicional */
-        .menu-popup.show ul li a:hover {
-            opacity: 1;
-            background-color: #001f33;   /* fondo oscuro (azul marino) */
-            color: white !important;     /* texto blanco */
-            border-left: 3px solid #00BFFF; /* pequeño detalle para dar énfasis */
-            box-shadow: inset 0 0 0 1px rgba(0,191,255,0.3);
-        }
-        /* Aseguramos que el color por defecto no interfiera */
-        .menu-popup.show ul li a {
-            color: #003366;
-        }
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--accent), #334155);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: clamp(18px, 3vw, 24px);
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(30, 58, 95, 0.15);
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .welcome-banner.hide-banner {
+      display: none;
+    }
+    .welcome-banner h2 { 
+      font-size: clamp(1.1rem, 2.8vw, 1.45rem); 
+      font-weight: 600; 
+      line-height: 1.3;
+      max-width: 800px;
+      margin: 0 auto;
+    }
 
-        /* Botón de salida y sección derecha */
-        .footer-right {
-            display: flex; align-items: center; gap: 20px; z-index: 10; height: 100%; cursor: pointer;
-        }
-        
-        /* Text y Modal del Desarrollador */
-        .sistema-info-text-container { position: relative; display: flex; align-items: center; height: 100%; }
-        .sistema-info-text { color: white; font-weight: bold; cursor: pointer; font-size: 0.95rem; transition: color 0.2s; }
-        .sistema-info-text:hover { color: #00BFFF; }
-        .sistema-info-modal {
-            display: none; position: absolute; bottom: 100%; right: -10px; margin-bottom: 15px;
-            background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 15px 20px; width: max-content; z-index: 2000; border: 1px solid #e2e8f0;
-            text-align: center; animation: fadeIn 0.2s ease-in-out; cursor: default;
-        }
-        .sistema-info-modal.show { display: block; }
-        .sistema-info-modal p { margin: 6px 0; font-size: 0.85rem; color: #334155; font-weight: 500; }
-        .sistema-info-modal p strong { color: #003366; font-size: 0.95rem; font-weight: 700; }
+    /* Contenedor dinámico flexible */
+    #dynamicContainer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
 
-        .logout-button {
-            display: flex; align-items: center; gap: 8px; background-color: transparent;
-            border: 1px solid rgba(255,255,255,0.3); border-radius: 8px;
-            padding: 8px 16px; color: white; cursor: pointer;
-            transition: all 0.2s; font-size: 0.95rem; z-index: 10;
-        }
-        .logout-button:hover { background-color: rgba(0,191,255,0.2); border-color: #00BFFF; }
+    /* Grid de tarjetas */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-auto-rows: 1fr;
+      gap: 20px;
+      width: 100%;
+      flex: 1;
+    }
 
-        /* Menú Hamburguesa Resaltado Celeste Glass */
-        .hamburger-menu { 
-            display: flex; flex-direction: column; gap: 5px; margin-right: 15px; 
-            background: rgba(0, 191, 255, 0.15); 
-            backdrop-filter: blur(8px); 
-            border: 1px solid rgba(0, 191, 255, 0.6); 
-            padding: 8px 10px; 
-            border-radius: 8px; 
-            box-shadow: 0 0 12px rgba(0, 191, 255, 0.5); 
-            transition: all 0.3s ease;
-        }
-        .hamburger-menu:hover {
-            background: rgba(0, 191, 255, 0.25); 
-            box-shadow: 0 0 16px rgba(0, 191, 255, 0.7);
-        }
-        .bar { width: 22px; height: 2px; background-color: white; border-radius: 10px; }
-        .click-text { font-weight: 400; font-size: 0.95rem; letter-spacing: 0.01em; }
+    .content-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: clamp(20px, 4vw, 32px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      border-left: 5px solid transparent;
+      min-height: clamp(130px, 18vh, 180px);
+      height: 100%;
+    }
+    .content-card.hidden { display: none; }
+    .content-card:hover {
+      border-left-color: var(--accent);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+      background: #fafbfc;
+      transform: translateY(-2px);
+    }
+    
+    .content-card h3 {
+      font-size: clamp(1.15rem, 2.8vw, 1.5rem);
+      font-weight: 600;
+      color: var(--text-main);
+      text-align: center;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    .content-card:hover h3 { color: var(--accent); }
 
-        .footer-defensoria {
-            text-align: left; font-size: 0.85rem; color: white;
-            line-height: 1.4; cursor: pointer; z-index: 10;
-        }
-        .footer-defensoria strong { color: #00BFFF; font-weight: 700; }
+    /* ===== PANEL DE CONTENIDO A PANTALLA COMPLETA (CON FILTRO VISIBLE) ===== */
+    .iframe-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      min-height: 0;
+      width: 100%;
+      animation: fadeIn 0.2s ease;
+      margin-bottom: 0;
+    }
 
-        .datetime-weather-container {
-            position: relative; color: white; font-size: 0.85rem;
-            cursor: pointer; margin-left: 10px; padding-left: 15px;
-            border-left: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; z-index: 10;
-        }
-        .dtw-content {
-            display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1);
-            padding: 6px 12px; border-radius: 8px; transition: background 0.2s; font-weight: 600;
-        }
-        .dtw-content:hover { background: rgba(255,255,255,0.2); }
+    .iframe-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: #fefefe;
+      gap: 12px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .iframe-header h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      word-break: break-word;
+    }
+    .back-btn {
+      background: var(--accent-light);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--accent);
+      transition: var(--transition);
+    }
+    .back-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
 
-        /* NUEVO ESTILO: Texto Acceso Exclusivo */
-        .exclusive-access-text {
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 400;
-            margin-left: 5px;
-            white-space: nowrap;
-            z-index: 10;
-        }
+    .iframe-container {
+      flex: 1;
+      position: relative;
+      background: #f8fafc;
+      min-height: 0;
+    }
 
-        .calendar-popup {
-            display: none; position: absolute; bottom: 100%; left: 0; margin-bottom: 15px;
-            background: white; color: #333; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 15px; width: 260px; z-index: 2000; cursor: default; border: 1px solid #e2e8f0;
-            animation: fadeIn 0.2s ease-in-out;
-        }
-        .calendar-popup.show { display: block; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; color: #003366; }
-        .calendar-header button { background: #f0faff; border: 1px solid #00BFFF; color: #003366; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .calendar-header button:hover { background: #00BFFF; color: white; }
-        .calendar-days-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.75rem; font-weight: bold; color: #64748b; margin-bottom: 8px; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.85rem; }
-        .calendar-day { padding: 6px 0; border-radius: 6px; font-weight: 500; }
-        .calendar-day:hover:not(.empty) { background-color: #f1f5f9; cursor: pointer; }
-        .calendar-day.current { background-color: #22c55e; color: white; font-weight: bold; box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4); }
-        .calendar-day.empty { color: transparent; pointer-events: none; }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
 
-        /* MODAL DE CONFIRMACIÓN DE SALIDA */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
-            z-index: 4000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-alerta {
-            background-color: #f1f5f9; color: #d32f2f; border-radius: 12px; padding: 25px 30px;
-            max-width: 320px; width: 90%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            transform: scale(0.9); transition: transform 0.3s; border: 2px solid #d32f2f;
-        }
-        .modal-overlay.active .modal-alerta { transform: scale(1); }
-        .modal-alerta h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; color: #d32f2f; }
-        .modal-alerta p { font-size: 1rem; margin-bottom: 25px; font-weight: 700; color: #d32f2f; }
-        .modal-botones { display: flex; gap: 15px; justify-content: center; }
-        .btn-modal {
-            padding: 10px 20px; border: none; border-radius: 30px; font-weight: 700; font-size: 0.95rem;
-            cursor: pointer; transition: 0.2s; background-color: #d32f2f; color: white; box-shadow: 0 4px 10px rgba(211,47,47,0.3);
-        }
-        .btn-modal:hover { background-color: #b71c1c; transform: translateY(-2px); }
-        .btn-modal.cancelar { background-color: #94a3b8; color: white; box-shadow: none; }
-        .btn-modal.cancelar:hover { background-color: #64748b; }
+    /* Mensaje de contenido en preparación */
+    .preparation-message {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      background: #fefefe;
+    }
+    .preparation-message-content {
+      color: var(--text-sec);
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    .preparation-message svg {
+      margin: 0 auto 1rem;
+      opacity: 0.6;
+    }
+    .preparation-message h3 {
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+    }
 
-        /* BIENVENIDA Y PERFIL */
-        .welcome-container {
-            display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
-            animation: fadeIn 1s ease; background: transparent; padding: 20px 20px 0 20px; width: 100%; position: relative;
-        }
-        .welcome-bar {
-            display: flex; flex-direction: row; align-items: center; gap: 1rem;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(4px); padding: 0.75rem 1.5rem;
-            border-radius: 50px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3);
-            cursor: pointer; transition: background-color 0.2s; width: 100%; justify-content: space-between;
-        }
-        .welcome-bar:hover { background: rgba(255, 255, 255, 0.85); }
-        .left-group { display: flex; align-items: center; gap: 1rem; }
-        .avatar-medium, .avatar-placeholder-medium {
-            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
-            border: 2px solid #00BFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background-color: white;
-        }
-        .avatar-placeholder-medium {
-            background-color: #003366; color: white; display: flex; align-items: center;
-            justify-content: center; font-size: 1.5rem; font-weight: bold; border: 2px solid #00BFFF;
-        }
-        .welcome-message { font-size: 1.8rem; font-weight: 800; color: #003366; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); white-space: nowrap; }
-        .sistema-digital-text { font-size: 1.8rem; font-weight: 800; color: #003366; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); white-space: nowrap; margin-left: auto; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .user-dropdown {
-            display: none; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 1.5rem; width: 320px; max-width: 90vw; border: 1px solid #e2e8f0; z-index: 1001;
-            position: absolute; top: calc(100% + 5px); left: 20px; margin-top: 0;
-        }
-        .user-dropdown.show { display: block; }
-        .dropdown-avatar-placeholder {
-            width: 60px; height: 60px; border-radius: 50%; background-color: #003366; color: white;
-            display: flex; align-items: center; justify-content: center; font-size: 2rem;
-            font-weight: bold; border: 2px solid #00BFFF; margin: 0 auto 10px;
-        }
-        .avatar-options { display: flex; gap: 1rem; margin-top: 0.5rem; justify-content: center; }
-        .avatar-option {
-            width: 60px; height: 60px; border-radius: 50%; cursor: pointer; border: 3px solid transparent;
-            transition: border-color 0.2s, transform 0.2s; object-fit: cover;
-        }
-        .avatar-option:hover { transform: scale(1.1); border-color: #00BFFF; }
-        .info-item {
-            margin-bottom: 0.75rem; font-size: 0.95rem; color: #1e293b; border-bottom: 1px dashed #cbd5e1;
-            padding-bottom: 0.5rem; display: flex; align-items: center; flex-wrap: wrap;
-        }
-        .info-item strong { color: #003366; font-weight: 600; display: inline-block; min-width: 110px; }
-        .version-badge { background: #e0f2fe; color: #003366; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: 0.5rem; }
-        
-        .edit-row input { padding: 0.3rem 0.5rem; border: 1px solid #cbd5e1; border-radius: 0.375rem; font-size: 0.95rem; flex: 1; margin-right: 0.5rem; }
-        .edit-row button { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0.3rem 0.6rem; border-radius: 0.375rem; transition: background 0.2s; }
-        .save-btn { color: #10b981; } .save-btn:hover { background: #e9f9f1; }
-        .cancel-btn { color: #ef4444; } .cancel-btn:hover { background: #fee2e2; }
-        .edit-icon { cursor: pointer; margin-left: 8px; color: #64748b; transition: color 0.2s; }
-        .edit-icon:hover { color: #00BFFF; }
+    /* ===== FILTRO INFERIOR SIEMPRE VISIBLE ===== */
+    .chat-filter {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(92%, 640px);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      z-index: 100;
+      transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+    }
+    /* El filtro siempre visible, sin clase para ocultarlo */
+    .chat-filter input {
+      flex: 1; border: none; outline: none;
+      font-size: 0.95rem; padding: 10px 8px;
+      background: transparent; font-family: inherit;
+      color: var(--text-main);
+    }
+    .chat-filter input::placeholder { color: var(--text-sec); opacity: 0.7; }
+    .chat-filter button {
+      padding: 10px 16px;
+      border-radius: 14px; border: none;
+      background: var(--accent); color: #fff;
+      cursor: pointer; font-size: 0.9rem; font-weight: 500;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    .chat-filter button:hover { background: #16304d; }
 
-        .top-image-container { display: flex; justify-content: center; align-items: center; width: 100%; flex: 1; cursor: pointer; margin: 0; }
-        .image-large {
-            width: auto; max-width: 90vw; max-height: 70vh; background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 1rem;
-            padding: 0.75rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center;
-        }
-        .image-large img { width: 100%; height: auto; max-height: calc(70vh - 1.5rem); object-fit: contain; display: block; }
+    /* ===== MODAL ALERTA ===== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      display: grid; place-items: center;
+      opacity: 0; visibility: hidden; transition: var(--transition);
+      z-index: 200;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
 
-        .info-modal {
-            display: none; position: fixed; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 1.5rem; width: 350px; max-width: 90vw; border: 1px solid #e2e8f0; z-index: 1002; color: #1e293b; line-height: 1.5;
-        }
-        .info-modal.show { display: block; }
-        .info-modal p { margin: 0.5rem 0; font-size: 0.95rem; }
-        .info-modal strong { color: #003366; font-weight: 600; }
+    .modal-card {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: min(90%, 320px);
+      text-align: center;
+      box-shadow: 0 12px 32px rgba(220, 38, 38, 0.15);
+      transform: scale(0.95); transition: var(--transition);
+    }
+    .modal-overlay.open .modal-card { transform: scale(1); }
 
-        .left-info-image {
-            display: none; position: fixed; width: 350px; max-width: 90vw; height: auto; z-index: 1003;
-            pointer-events: none; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); padding: 8px; border: 1px solid rgba(255,255,255,0.3);
-        }
-        .left-info-image img { width: 100%; height: auto; display: block; border-radius: 8px; }
+    .modal-card h2 { color: var(--danger); margin-bottom: 8px; font-size: 1.15rem; font-weight: 600; }
+    .modal-card p { color: #991b1b; margin-bottom: 20px; font-size: 0.9rem; }
 
-        .birthday-modal { display: none; position: fixed; z-index: 11000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .birthday-modal-content { background-color: #fff; margin: auto; padding: 2rem; border-radius: 2rem; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid #ff6f61; animation: fadeIn 0.3s; position: relative; }
-        .birthday-modal-content .close-birthday { position: absolute; top: 10px; right: 15px; font-size: 1.8rem; cursor: pointer; color: #aaa; }
-        .birthday-modal-content .close-birthday:hover { color: #ff6f61; }
-        .birthday-modal-content i { font-size: 4rem; color: #ff6f61; margin-bottom: 0.5rem; }
-        .birthday-modal-content h3 { color: #1e293b; margin-bottom: 1rem; }
-        #birthdayList { list-style: none; padding: 0; margin: 1rem 0; max-height: 200px; overflow-y: auto; color: #334155; font-weight: 500; }
-        #birthdayList li { padding: 0.3rem 0; border-bottom: 1px dashed #e2e8f0; font-size: 1.2rem; }
-        .btn-cerrar { background-color: #003366; color: white; border: none; padding: 0.6rem 2rem; border-radius: 2rem; cursor: pointer; font-weight: 600; transition: background 0.2s; margin-top: 1rem; }
-        .btn-cerrar:hover { background-color: #002244; }
+    .modal-actions { display: flex; gap: 10px; justify-content: center; }
+    .modal-btn {
+      padding: 10px 18px; border-radius: 10px; border: none;
+      font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: var(--transition);
+      flex: 1; max-width: 110px; font-family: inherit;
+    }
+    .btn-cancel { background: #f1f5f9; color: var(--text-main); }
+    .btn-cancel:hover { background: #e2e8f0; }
+    .btn-confirm { background: var(--danger); color: #fff; }
+    .btn-confirm:hover { background: #b91c1c; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Ajustes Mobile */
-        @media (max-width: 768px) {
-            .welcome-message { font-size: 1.4rem; }
-            .sistema-digital-text { display: none; }
-            .left-group { gap: 0.5rem; }
-            .image-large { max-height: 60vh; }
-            .info-modal { width: 300px; }
-            .left-info-image { width: 300px; }
-            footer { padding: 0 15px; }
-            
-            .logout-button span:last-child { display: none; }
-            
-            .click-text { display: none; }
-            .footer-defensoria { display: none; }
-            /* Se oculta fecha, clima y el texto de acceso exclusivo en móvil */
-            .datetime-weather-container, .exclusive-access-text { display: none; }
-            
-            .hamburger-menu { margin-right: 0; }
-            
-            .footer-left { flex-wrap: nowrap; }
-            .footer-right { gap: 10px; }
-            .sistema-info-text { font-size: 0.8rem; }
-        }
-    </style>
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .top-bar { height: 56px; }
+      .header-title { display: none; }
+      .menu-dropdown { width: calc(100vw - 32px); left: 50%; transform: translateX(-50%) translateY(-8px); }
+      .menu-dropdown.open { transform: translateX(-50%) translateY(0); }
+      .chat-filter { width: calc(100% - 24px); bottom: 16px; }
+      .iframe-header h3 { font-size: 1rem; }
+    }
+    @media (max-width: 380px) {
+      .logout-btn { padding: 6px 12px; font-size: 0.85rem; }
+      .menu-btn { padding: 6px 10px; font-size: 0.85rem; }
+      .content-card { padding: 18px 14px; min-height: 110px; }
+      .content-card h3 { font-size: 1.05rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <main id="mainContent">
-        <iframe id="appIframe"></iframe>
-
-        <div id="homeContent">
-            <div id="dynamicContent">
-                <div class="welcome-container" id="welcomeContainerPlaceholder">
-                    <div class="welcome-bar" style="cursor: default;">
-                        <div class="left-group">
-                            <div class="avatar-placeholder-medium" style="background-color: #003366;">...</div>
-                            <div>
-                                <div class="welcome-message">Cargando...</div>
-                            </div>
-                        </div>
-                        <span class="sistema-digital-text">Sistema Digital</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="top-image-container" id="imagenCentralContainer">
-                <div class="image-large">
-                    <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/MP6.png?raw=true" alt="Ministerio Público">
-                </div>
-            </div>
-
-            <div id="infoModal" class="info-modal">
-                <p><strong>Defensor Oficial:</strong> Dr. Marcelo Gustavo Ramos</p>
-                <p><strong>Secretarios:</strong> Dra. Patricia Soledad Riveros, Dra. Alicia Mariela Corrales, Dr. Enzo Luciano Magnani</p>
-                <p><strong>Teléfono Oficial:</strong> +54 376 4446700 interno 1188.</p>
-                <p><strong>Whatsapp Oficial:</strong> +54 376 4889359</p>
-                <p><strong>Correo Zimbra:</strong> defensoriacivil6.posadas@mpmisiones.gob.ar</p>
-            </div>
-
-            <div id="leftInfoImage" class="left-info-image">
-                <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" alt="Computadora 3D">
-            </div>
-        </div>
-    </main>
-
-    <footer id="mainFooter">
-        <div class="footer-left" id="footerLeftArea">
-            <div class="footer-content" id="btnMainMenu">
-                <div class="hamburger-menu">
-                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                </div>
-                <span class="click-text">Haz clic para acceder</span>
-
-                <div class="menu-popup" id="mainMenuPopup">
-                    <ul>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/tabla.html')">Expedientes</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html')">Eventos agendados</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/libros.html')">Libros</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/partes.html')">Clientes</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/dictamenes.html')">Modelos</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/documentos.html')">Biblioteca</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/organismos.html')">Organismos</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/diligenciadores/')">Diligenciadores</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/notificaciones.html')">Notificaciones</a></li>
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados')">Consultas y Turnos</a></li>
-                        <!-- Nuevo ítem: Guía de Actuación -->
-                        <li><a onclick="loadPage('https://sistemadigital.github.io/reporte/guia-modo.html')">Guía de Actuación</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-defensoria" id="footerDefensoria">
-                Defensoria Civil y Comercial 6<br>
-                <strong>Ministerio Público de Misiones</strong>
-            </div>
-
-            <div class="datetime-weather-container" id="dateTimeWeatherBtn">
-                <div class="dtw-content">
-                    <i class="far fa-clock"></i> <span id="currentDateTime">--/--/---- --:--:--</span> 
-                    <span style="color:rgba(255,255,255,0.3)">|</span> 
-                    <span id="currentWeather"><i class="fas fa-spinner fa-spin"></i> Clima</span>
-                </div>
-
-                <div class="calendar-popup" id="calendarPopup">
-                    <div class="calendar-header">
-                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-                        <span id="monthYear"></span>
-                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                    <div class="calendar-days-header">
-                        <div>Do</div><div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div><div>Vi</div><div>Sa</div>
-                    </div>
-                    <div class="calendar-grid" id="calendarGrid"></div>
-                </div>
-            </div>
-
-            <span class="exclusive-access-text">Acceso Exclusivo Empleados</span>
-        </div>
-
-        <div class="footer-right" id="footerRightArea">
-            <div class="sistema-info-text-container" id="btnSistemaInfoContainer">
-                <span class="sistema-info-text" id="btnSistemaInfoText">Sistema Digital 6</span>
-                <div class="sistema-info-modal" id="sistemaInfoModal">
-                    <p><strong>Diseño y Programación</strong></p>
-                    <p>Rómulo Fioravante</p>
-                    <p>Fecha de Creación:</p> 
-                    <p>Septiembre 2025</p>
-                    <p>Versión 3.1.2026</p>
-                </div>
-            </div>
-            
-            <div class="logout-button" id="btnSalir">
-                <span class="logout-icon">⏻</span>
-                <span>Salir</span>
-            </div>
-        </div>
-    </footer>
-
-    <div class="modal-overlay" id="modalSalida">
-        <div class="modal-alerta">
-            <h3>Cerrar sesión</h3>
-            <p>¿Estás seguro de que deseas salir del sistema?</p>
-            <div class="modal-botones">
-                <button class="btn-modal" id="confirmarSalida">Sí, salir</button>
-                <button class="btn-modal cancelar" id="cancelarSalida">Cancelar</button>
-            </div>
-        </div>
+  <header class="top-bar">
+    <div class="header-left">
+      <button class="menu-btn" id="menuBtn">Menú</button>
+      <span class="header-title">Protocolo de Actuación Judicial</span>
+      <nav class="menu-dropdown" id="menuDropdown">
+        <button class="menu-item" data-key="atencion_publico">Cómo atender al público</button>
+        <button class="menu-item" data-key="documentos_previos">Qué revisar antes de empezar</button>
+        <button class="menu-item" data-key="subrogacion">Cuando alguien no está: subrogación</button>
+        <button class="menu-item" data-key="antes_tramitar">Antes de mover un expediente</button>
+        <button class="menu-item" data-key="escribir_documentos">Cómo escribir documentos: Escritos</button>
+        <button class="menu-item" data-key="opiniones_tecnicas">Cómo dar opinión técnica: Dictamen</button>
+        <button class="menu-item" data-key="leyes_utiles">Leyes que vas a usar</button>
+        <button class="menu-item" data-key="situaciones_especiales">Situaciones que requieren atención especial</button>
+        <button class="menu-item" data-key="plazos_vencimientos">Plazos y Vencimientos</button>
+        <button class="menu-item" data-key="modelos_usar">Modelos para usar</button>
+      </nav>
     </div>
+    <button class="logout-btn" id="btnLogout">Salir</button>
+  </header>
 
-    <div id="birthdayModal" class="birthday-modal">
-        <div class="birthday-modal-content">
-            <span class="close-birthday">&times;</span>
-            <i class="fas fa-birthday-cake"></i>
-            <h3>🎉 ¡Hoy cumplen años! 🎉</h3>
-            <ul id="birthdayList"></ul>
-            <button id="closeBirthdayBtn" class="btn-cerrar">Cerrar</button>
-        </div>
+  <main class="main-content" id="mainContent">
+    <div class="welcome-banner" id="welcomeBanner">
+      <h2>Hola, Defensoría Oficial.<br>Seleccioná un tema para ver el contenido completo.</h2>
     </div>
+    <div id="dynamicContainer"></div>
+  </main>
 
-    <script>
-        // --- CONTROL DE PÁGINAS ---
-        function loadPage(url) {
-            const iframe = document.getElementById('appIframe');
-            const home = document.getElementById('homeContent');
-            iframe.src = url;
-            iframe.style.display = 'block';
-            home.style.display = 'none';
-            closeAllModals(); 
-        }
+  <!-- FILTRO INFERIOR: SIEMPRE VISIBLE -->
+  <div class="chat-filter" id="filterBar">
+    <input type="text" id="filterInput" placeholder="Buscar tema..." autocomplete="off">
+    <button id="filterBtn">Buscar</button>
+  </div>
 
-        window.mostrarHome = function() {
-            document.getElementById('appIframe').style.display = 'none';
-            document.getElementById('homeContent').style.display = 'flex';
-            document.getElementById('appIframe').src = '';
-            closeAllModals();
-        };
+  <div class="modal-overlay" id="logoutModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2>¿Cerrar sesión?</h2>
+      <p>Se perderán los filtros activos. Puedes volver a entrar cuando lo necesites.</p>
+      <div class="modal-actions">
+        <button class="modal-btn btn-cancel" id="btnCancelLogout">Cancelar</button>
+        <button class="modal-btn btn-confirm" id="btnConfirmLogout">Confirmar</button>
+      </div>
+    </div>
+  </div>
 
-        // --- CIERRE GLOBAL DE MODALES ---
-        function closeAllModals() {
-            document.getElementById('mainMenuPopup')?.classList.remove('show');
-            document.getElementById('calendarPopup')?.classList.remove('show');
-            document.getElementById('infoModal')?.classList.remove('show');
-            document.getElementById('sistemaInfoModal')?.classList.remove('show');
-            if(document.getElementById('leftInfoImage')) document.getElementById('leftInfoImage').style.display = 'none';
-            const dropdown = document.getElementById('userDropdown');
-            if(dropdown) dropdown.classList.remove('show');
-        }
+  <script>
+    // ========== MAPA DE URLS (Editable) ==========
+    const externalUrls = {
+      atencion_publico: "publico.html",        // archivo local o URL real
+      documentos_previos: "",
+      subrogacion: "",
+      antes_tramitar: "",
+      escribir_documentos: "",
+      opiniones_tecnicas: "",
+      leyes_utiles: "",
+      situaciones_especiales: "",
+      plazos_vencimientos: "",
+      modelos_usar: ""
+    };
 
-        document.addEventListener('click', (e) => {
-            const isClickInsideMenu = document.getElementById('btnMainMenu')?.contains(e.target);
-            const isClickInsideCalendar = document.getElementById('dateTimeWeatherBtn')?.contains(e.target);
-            const isClickInsideInfoDefensoria = document.getElementById('footerDefensoria')?.contains(e.target);
-            const isClickInsideInfoCentral = document.getElementById('imagenCentralContainer')?.contains(e.target);
-            const isClickInsideUser = document.getElementById('welcomeBar')?.contains(e.target) || document.getElementById('userDropdown')?.contains(e.target);
-            const isClickInsideFooter = document.getElementById('mainFooter')?.contains(e.target);
-            const isClickInsideDevInfo = document.getElementById('btnSistemaInfoContainer')?.contains(e.target);
+    // Elementos DOM
+    const mainContent = document.getElementById('mainContent');
+    const dynamicContainer = document.getElementById('dynamicContainer');
+    const filterBar = document.getElementById('filterBar');
+    const filterInput = document.getElementById('filterInput');
+    const filterBtn = document.getElementById('filterBtn');
+    const menuBtn = document.getElementById('menuBtn');
+    const menuDropdown = document.getElementById('menuDropdown');
+    const logoutBtn = document.getElementById('btnLogout');
+    const logoutModal = document.getElementById('logoutModal');
+    const btnCancel = document.getElementById('btnCancelLogout');
+    const btnConfirm = document.getElementById('btnConfirmLogout');
+    const welcomeBanner = document.getElementById('welcomeBanner');
 
-            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo) {
-                closeAllModals();
-            }
-        });
+    let currentIframeActive = false;
 
-        document.getElementById('mainFooter').addEventListener('click', function(e) {
-            if (e.target === this || e.target.id === 'footerLeftArea' || e.target.id === 'footerRightArea') {
-                window.mostrarHome();
-            }
-        });
-
-        document.getElementById('btnMainMenu').addEventListener('click', (e) => {
-            if (e.target.closest('a')) return;
-            e.stopPropagation();
-            const menu = document.getElementById('mainMenuPopup');
-            const isShow = menu.classList.contains('show');
-            closeAllModals();
-            if(!isShow) menu.classList.add('show');
-        });
-
-        document.getElementById('btnSistemaInfoText')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const modal = document.getElementById('sistemaInfoModal');
-            const isShow = modal.classList.contains('show');
-            closeAllModals();
-            if(!isShow) modal.classList.add('show');
-        });
-
-        const dtwBtn = document.getElementById('dateTimeWeatherBtn');
-        const calPopup = document.getElementById('calendarPopup');
-
-        dtwBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isShow = calPopup.classList.contains('show');
-            closeAllModals();
-            if(!isShow) {
-                calPopup.classList.add('show');
-                
-                // --- NUEVO: Reiniciar a la fecha actual ---
-                const hoy = new Date();
-                currentMonth = hoy.getMonth();
-                currentYear = hoy.getFullYear();
-                // ------------------------------------------
-
-                renderCalendar(currentMonth, currentYear);
-            }
-        });
-
-        function updateDateTime() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('currentDateTime').textContent = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-        }
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
-
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-
-        function renderCalendar(month, year) {
-            const grid = document.getElementById('calendarGrid');
-            const monthYearText = document.getElementById('monthYear');
-            grid.innerHTML = '';
-            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            monthYearText.textContent = `${monthNames[month]} ${year}`;
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const today = new Date();
-            for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="calendar-day empty"></div>`; }
-            for (let i = 1; i <= daysInMonth; i++) {
-                const isToday = (i === today.getDate() && month === today.getMonth() && year === today.getFullYear());
-                const classes = isToday ? 'calendar-day current' : 'calendar-day';
-                grid.innerHTML += `<div class="${classes}">${i}</div>`;
-            }
-        }
-
-        document.getElementById('prevMonth').addEventListener('click', (e) => { e.stopPropagation(); currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(currentMonth, currentYear); });
-        document.getElementById('nextMonth').addEventListener('click', (e) => { e.stopPropagation(); currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(currentMonth, currentYear); });
-
-        async function fetchWeather() {
-    try {
-        // La URL ya tiene las coordenadas de Posadas (-27.3671, -55.8961)
-        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-27.3671&longitude=-55.8961&current_weather=true');
-        const data = await res.json();
-        
-        const temp = data.current_weather.temperature;
-        const code = data.current_weather.weathercode;
-        
-        // Asignar un ícono dinámico según el código meteorológico de la WMO
-        let icon = '🌤️'; // Por defecto
-        if (code === 0) icon = '☀️'; // Despejado
-        else if (code === 1 || code === 2) icon = '⛅'; // Parcialmente nublado
-        else if (code === 3) icon = '☁️'; // Nublado
-        else if (code >= 45 && code <= 48) icon = '🌫️'; // Niebla
-        else if (code >= 51 && code <= 67) icon = '🌧️'; // Lluvia / Llovizna
-        else if (code >= 71 && code <= 77) icon = '❄️'; // Nieve
-        else if (code >= 80 && code <= 82) icon = '🌦️'; // Chubascos
-        else if (code >= 95 && code <= 99) icon = '⛈️'; // Tormenta
-        
-        document.getElementById('currentWeather').innerHTML = `${icon} ${temp}°C`;
-    } catch (error) { 
-        document.getElementById('currentWeather').innerHTML = `🌤️ N/A`; 
-        console.error("Error obteniendo el clima:", error);
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
     }
-}
-// Llamar a la función al cargar
-fetchWeather();
 
-// Opcional: Actualizar el clima cada 30 minutos (1800000 ms) para que siempre esté al día
-setInterval(fetchWeather, 1800000);
-        const modalSalida = document.getElementById('modalSalida');
-        document.getElementById('btnSalir').addEventListener('click', () => { modalSalida.classList.add('active'); });
-        document.getElementById('cancelarSalida').addEventListener('click', () => { modalSalida.classList.remove('active'); });
-
-        const infoModal = document.getElementById('infoModal');
-        const leftImage = document.getElementById('leftInfoImage');
-        const footerDefensoria = document.getElementById('footerDefensoria');
-        const imagenContainer = document.getElementById('imagenCentralContainer');
-
-        function posicionarModales() {
-            const isMobile = window.innerWidth <= 768;
-            const imagen = document.querySelector('.image-large img');
-            if (isMobile || !imagen || imagen.offsetParent === null) {
-                infoModal.style.left = '50%'; infoModal.style.top = '50%'; infoModal.style.transform = 'translate(-50%, -50%)'; leftImage.style.display = 'none'; return;
-            }
-            const imgRect = imagen.getBoundingClientRect();
-            infoModal.style.left = (imgRect.right + 10) + 'px';
-            infoModal.style.top = (imgRect.top + (imgRect.height / 2) - (infoModal.offsetHeight / 2)) + 'px';
-            infoModal.style.transform = 'none';
-            leftImage.style.display = 'block';
-            leftImage.style.left = (imgRect.left - leftImage.offsetWidth - 10) + 'px';
-            leftImage.style.top = (imgRect.top + (imgRect.height / 2) - (leftImage.offsetHeight / 2)) + 'px';
-            leftImage.style.transform = 'none';
+    // Cerrar vista detallada y volver al grid (el filtro permanece visible)
+    function closeIframeView() {
+      if (!currentIframeActive) return;
+      
+      rebuildGrid();
+      // El filtro nunca se ocultó, solo aseguramos que el banner vuelva a mostrarse
+      welcomeBanner.classList.remove('hide-banner');
+      
+      // Reaplicar filtro actual para mantener coherencia en el grid
+      if (filterInput.value.trim() !== "") {
+        applyFilter();
+      }
+      
+      currentIframeActive = false;
+    }
+    
+    // Construir el grid principal
+    function rebuildGrid() {
+      const gridHtml = `
+        <div class="content-grid" id="contentGrid">
+          <article class="content-card" data-key="atencion_publico" data-keywords="atencion publico trato personas paciencia escucha activa">
+            <h3>Cómo atender al público</h3>
+          </article>
+          <article class="content-card" data-key="documentos_previos" data-keywords="documentos previos revisar papeles checklist legajo">
+            <h3>Qué revisar antes de empezar</h3>
+          </article>
+          <article class="content-card" data-key="subrogacion" data-keywords="subrogación suplencia ausencia temporal reemplazo">
+            <h3>Cuando alguien no está: Subrogación</h3>
+          </article>
+          <article class="content-card" data-key="antes_tramitar" data-keywords="antes de tramitar revisar expediente competencia firmas">
+            <h3>Antes de mover un expediente</h3>
+          </article>
+          <article class="content-card" data-key="escribir_documentos" data-keywords="escribir documentos claros simples estructura redacción">
+            <h3>Cómo escribir documentos: Escritos</h3>
+          </article>
+          <article class="content-card" data-key="opiniones_tecnicas" data-keywords="opiniones tecnicas analisis conclusiones fundamentar dictamen">
+            <h3>Cómo dar opinión técnica: Dictamen</h3>
+          </article>
+          <article class="content-card" data-key="leyes_utiles" data-keywords="leyes utiles normas consulta rapida codigos">
+            <h3>Leyes que vas a usar</h3>
+          </article>
+          <article class="content-card" data-key="situaciones_especiales" data-keywords="situaciones especiales urgencias excepciones vulnerabilidad">
+            <h3>Situaciones que requieren atención especial</h3>
+          </article>
+          <article class="content-card" data-key="plazos_vencimientos" data-keywords="plazos vencimientos fechas caducidad términos perentorio cómputo">
+            <h3>Plazos y Vencimientos</h3>
+          </article>
+          <article class="content-card" data-key="modelos_usar" data-keywords="modelos formatos plantillas ejemplos documentos escritos redacción">
+            <h3>Modelos para usar</h3>
+          </article>
+        </div>
+      `;
+      dynamicContainer.innerHTML = gridHtml;
+      attachCardEvents();
+    }
+    
+    function attachCardEvents() {
+      const cards = document.querySelectorAll('.content-card');
+      cards.forEach(card => {
+        card.removeEventListener('click', cardClickHandler);
+        card.addEventListener('click', cardClickHandler);
+      });
+    }
+    
+    function cardClickHandler(e) {
+      const card = e.currentTarget;
+      const key = card.dataset.key;
+      const title = card.querySelector('h3')?.innerText || "Protocolo";
+      if (key && externalUrls.hasOwnProperty(key)) {
+        showFullContent(key, title);
+      } else {
+        showFullContent('atencion_publico', title);
+      }
+    }
+    
+    // Mostrar contenido (iframe o mensaje) manteniendo el filtro visible
+    function showFullContent(key, title) {
+      const url = externalUrls[key];
+      const hasValidUrl = url && url.trim() !== "";
+      
+      // Ocultar el banner de bienvenida para maximizar espacio, pero NO ocultamos el filtro
+      welcomeBanner.classList.add('hide-banner');
+      
+      // Limpiar contenedor y crear panel de visualización completa
+      dynamicContainer.innerHTML = '';
+      
+      const panel = document.createElement('div');
+      panel.className = 'iframe-panel';
+      
+      if (hasValidUrl) {
+        panel.innerHTML = `
+          <div class="iframe-header">
+            <h3>${escapeHtml(title)}</h3>
+            <button class="back-btn" id="closeIframeBtn">← Volver a temas</button>
+          </div>
+          <div class="iframe-container">
+            <iframe src="${escapeHtml(url)}" title="${escapeHtml(title)}" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals"></iframe>
+          </div>
+        `;
+      } else {
+        panel.innerHTML = `
+          <div class="iframe-header">
+            <h3>${escapeHtml(title)}</h3>
+            <button class="back-btn" id="closeIframeBtn">← Volver a temas</button>
+          </div>
+          <div class="preparation-message">
+            <div class="preparation-message-content">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              <h3>Contenido en preparación</h3>
+              <p>Próximamente estará disponible el material para <strong>${escapeHtml(title)}</strong>. Por favor, consulte más tarde o coordine con el área de sistemas.</p>
+            </div>
+          </div>
+        `;
+      }
+      
+      dynamicContainer.appendChild(panel);
+      currentIframeActive = true;
+      
+      // Evento para el botón volver
+      const closeBtn = document.getElementById('closeIframeBtn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeIframeView);
+      }
+    }
+    
+    // Filtro de búsqueda (solo afecta al grid cuando está visible)
+    function applyFilter() {
+      const grid = document.getElementById('contentGrid');
+      if (!grid) return; // Solo si la cuadrícula está presente
+      
+      const query = filterInput.value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.content-card');
+      let visibleCount = 0;
+      
+      cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const keywords = card.dataset.keywords ? card.dataset.keywords.toLowerCase() : '';
+        const match = !query || title.includes(query) || keywords.includes(query);
+        card.classList.toggle('hidden', !match);
+        if (match) visibleCount++;
+      });
+      
+      let noResultsMsg = document.getElementById('noResultsMsg');
+      if (visibleCount === 0 && query) {
+        if (!noResultsMsg) {
+          noResultsMsg = document.createElement('p');
+          noResultsMsg.id = 'noResultsMsg';
+          noResultsMsg.style.textAlign = 'center';
+          noResultsMsg.style.color = 'var(--text-sec)';
+          noResultsMsg.style.marginTop = '20px';
+          noResultsMsg.style.fontSize = '0.9rem';
+          noResultsMsg.textContent = 'No se encontró el tema. Prueba con otras palabras o consulta a un compañero.';
+          grid.after(noResultsMsg);
         }
-
-        function toggleInfoModal(e) {
-            e.stopPropagation();
-            const isShow = infoModal.classList.contains('show');
-            closeAllModals();
-            if(!isShow) {
-                infoModal.classList.add('show');
-                setTimeout(posicionarModales, 10);
-            }
+      } else if (noResultsMsg) {
+        noResultsMsg.remove();
+      }
+    }
+    
+    // Eventos del menú
+    function attachMenuEvents() {
+      const menuItems = document.querySelectorAll('.menu-item');
+      menuItems.forEach(item => {
+        item.removeEventListener('click', menuClickHandler);
+        item.addEventListener('click', menuClickHandler);
+      });
+    }
+    
+    function menuClickHandler(e) {
+      e.stopPropagation();
+      const target = e.currentTarget;
+      const key = target.dataset.key;
+      const title = target.innerText.trim();
+      if (key && externalUrls.hasOwnProperty(key)) {
+        showFullContent(key, title);
+        menuDropdown.classList.remove('open');
+      } else {
+        showFullContent('atencion_publico', title);
+        menuDropdown.classList.remove('open');
+      }
+    }
+    
+    // Inicialización
+    function init() {
+      rebuildGrid();
+      // El filtro ya está visible por defecto (sin clase hidden)
+      welcomeBanner.classList.remove('hide-banner');
+      filterInput.value = '';
+      applyFilter();
+      currentIframeActive = false;
+      
+      // Eventos filtro
+      filterInput.addEventListener('input', applyFilter);
+      filterBtn.addEventListener('click', applyFilter);
+      
+      // Menú desplegable
+      menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuDropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!menuDropdown.contains(e.target) && e.target !== menuBtn) {
+          menuDropdown.classList.remove('open');
         }
-        footerDefensoria.addEventListener('click', toggleInfoModal);
-        imagenContainer.addEventListener('click', toggleInfoModal);
-
-        const birthdayModal = document.getElementById('birthdayModal');
-        function cerrarBirthdayModal() { birthdayModal.style.display = 'none'; }
-        document.getElementById('closeBirthdayBtn').addEventListener('click', cerrarBirthdayModal);
-        document.querySelector('.close-birthday').addEventListener('click', cerrarBirthdayModal);
-    </script>
-
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/+esm';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
-            authDomain: "defensoria-empleados.firebaseapp.com",
-            projectId: "defensoria-empleados",
-            storageBucket: "defensoria-empleados.firebasestorage.app",
-            messagingSenderId: "438237217533",
-            appId: "1:438237217533:web:6603123e43a12da00c7494"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const dbPerfil = getFirestore(app);
-
-        const AVATAR_HOMBRE = 'https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true';
-        const AVATAR_MUJER = 'https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true';
-
-        let currentUser = null;
-        let birthdayModalShown = false;
-        let userDataCache = {};
-
-        function formatDate(timestamp) {
-            if (!timestamp) return 'Desconocido';
-            const date = new Date(timestamp);
-            return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+      });
+      attachMenuEvents();
+      
+      // Logout
+      logoutBtn.addEventListener('click', () => logoutModal.classList.add('open'));
+      btnCancel.addEventListener('click', () => logoutModal.classList.remove('open'));
+      btnConfirm.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+      logoutModal.addEventListener('click', (e) => {
+        if (e.target === logoutModal) logoutModal.classList.remove('open');
+      });
+      
+      // Tecla ESC: cierra la vista detallada si está activa
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (currentIframeActive) {
+            closeIframeView();
+          }
+          logoutModal.classList.remove('open');
+          menuDropdown.classList.remove('open');
         }
-
-        async function updateUserAvatar(photoURL) {
-            if (!currentUser) return;
-            try {
-                await updateProfile(currentUser, { photoURL });
-                userDataCache.photoURL = photoURL;
-                showWelcomeMessage(currentUser, true);
-            } catch (error) { console.error('Error al actualizar avatar:', error); }
-        }
-
-        async function updateDisplayName(newName) {
-            if (!currentUser || !newName.trim()) return;
-            try {
-                await updateProfile(currentUser, { displayName: newName.trim() });
-                await setDoc(doc(dbPerfil, "usuarios", currentUser.email), { nombreCompleto: newName.trim() }, { merge: true });
-                userDataCache.displayName = newName.trim();
-                showWelcomeMessage(currentUser, true);
-            } catch (error) { console.error('Error al actualizar nombre:', error); }
-        }
-
-        async function updateFechaNacimiento(newFecha) {
-            if (!currentUser) return;
-            try {
-                await setDoc(doc(dbPerfil, "usuarios", currentUser.email), { fechaNacimiento: newFecha }, { merge: true });
-                userDataCache.fechaNacimiento = newFecha;
-                showWelcomeMessage(currentUser, true);
-            } catch (error) { console.error('Error al actualizar fecha:', error); }
-        }
-
-        function launchConfetti() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
-
-        async function checkBirthdays(isCurrentUserBirthday) {
-            if (!currentUser || isCurrentUserBirthday) return;
-            const today = new Date();
-            const hoy = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}`;
-            try {
-                const q = query(collection(dbPerfil, "usuarios"), where("fechaNacimiento", "==", hoy));
-                const querySnapshot = await getDocs(q);
-                const birthdayUsers = [];
-                querySnapshot.forEach(doc => { if (doc.data().email !== currentUser.email) birthdayUsers.push(doc.data().nombreCompleto); });
-
-                if (birthdayUsers.length > 0 && !birthdayModalShown) {
-                    const list = document.getElementById('birthdayList');
-                    list.innerHTML = '';
-                    birthdayUsers.forEach(nombre => {
-                        const li = document.createElement('li');
-                        li.textContent = nombre;
-                        list.appendChild(li);
-                    });
-                    document.getElementById('birthdayModal').style.display = 'flex';
-                    birthdayModalShown = true;
-                }
-            } catch (error) { console.error("Error al consultar cumpleaños:", error); }
-        }
-
-        async function showWelcomeMessage(user, useCache = false) {
-            const dynamicContent = document.getElementById('dynamicContent');
-            const displayName = user.displayName || user.email.split('@')[0] || 'Usuario';
-            const email = user.email;
-            const photoURL = user.photoURL;
-            const inicial = displayName.charAt(0).toUpperCase();
-
-            let fechaNacimiento = userDataCache.fechaNacimiento || '';
-            let faltaFecha = false;
-            let esCumpleanos = false;
-            let mensajeBienvenida = `¡Hola ${displayName}!`;
-
-            if (!useCache && !userDataCache.fechaNacimiento) {
-                try {
-                    const docRef = doc(dbPerfil, "usuarios", email);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        fechaNacimiento = docSnap.data().fechaNacimiento || '';
-                        userDataCache.fechaNacimiento = fechaNacimiento;
-                    }
-                } catch (error) {}
-            }
-
-            if (fechaNacimiento) {
-                const hoy = new Date();
-                const fechaHoy = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}`;
-                if (fechaNacimiento === fechaHoy) {
-                    mensajeBienvenida = `¡Feliz Cumpleaños, ${displayName}! 🎉`;
-                    esCumpleanos = true;
-                }
-            } else { faltaFecha = true; }
-
-            const creationTime = user.metadata?.creationTime ? new Date(user.metadata.creationTime) : null;
-            const lastLoginAt = user.metadata?.lastLoginAt ? new Date(parseInt(user.metadata.lastLoginAt)) : null;
-            const creationStr = creationTime ? formatDate(creationTime) : 'No disponible';
-            const lastLoginStr = lastLoginAt ? formatDate(lastLoginAt) : 'No disponible';
-
-            let avatarHtml = photoURL ? `<img src="${photoURL}" alt="Avatar" class="avatar-medium">` : `<div class="avatar-placeholder-medium">${inicial}</div>`;
-            let dropdownHeaderHtml = photoURL ? `<div style="font-weight:600; font-size:1.2rem; margin-bottom:1rem; color:#1e293b;">Detalle de Usuario</div>` : `<div class="dropdown-avatar-placeholder">${inicial}</div><div style="font-weight:600; color:#1e293b; text-align:center;">Elige un avatar</div>`;
-            let avatarOptionsHtml = photoURL ? '' : `<div class="avatar-options"><img src="${AVATAR_HOMBRE}" class="avatar-option" id="avatarHombre"><img src="${AVATAR_MUJER}" class="avatar-option" id="avatarMujer"></div>`;
-
-            dynamicContent.innerHTML = `
-                <div class="welcome-container" id="welcomeContainer">
-                    <div class="welcome-bar" id="welcomeBar">
-                        <div class="left-group">
-                            ${avatarHtml}
-                            <div>
-                                <div class="welcome-message">${mensajeBienvenida}</div>
-                                ${faltaFecha ? `<div id="avisoCompletar" style="font-size: 0.75em; color: #d9534f; cursor: pointer; text-decoration: underline;">🎉 Completa tu fecha de cumpleaños</div>` : ''}
-                            </div>
-                        </div>
-                        <span class="sistema-digital-text">Sistema Digital</span>
-                    </div>
-                    <div class="user-dropdown" id="userDropdown">
-                        ${dropdownHeaderHtml}
-                        ${avatarOptionsHtml}
-                        <div class="info-item" id="nameDisplayRow">
-                            <strong>Nombre:</strong> <span id="displayNameSpan">${displayName}</span>
-                            <i class="fas fa-pencil-alt edit-icon" id="editNameIcon"></i>
-                        </div>
-                        <div class="info-item edit-row" id="nameEditRow" style="display:none;">
-                            <strong>Nombre:</strong> <input type="text" id="nameInput" value="${displayName}" placeholder="Nombre y apellido">
-                            <button id="saveNameBtn" class="save-btn"><i class="fas fa-check"></i></button>
-                            <button id="cancelNameBtn" class="cancel-btn"><i class="fas fa-times"></i></button>
-                        </div>
-                        <div class="info-item" id="fechaDisplayRow">
-                            <strong>F. Nacimiento:</strong> <span id="fechaSpan">${fechaNacimiento || 'No registrada'}</span>
-                            <i class="fas fa-pencil-alt edit-icon" id="editFechaIcon"></i>
-                        </div>
-                        <div class="info-item edit-row" id="fechaEditRow" style="display:none;">
-                            <strong>F. Nacimiento:</strong> <input type="text" id="fechaInput" value="${fechaNacimiento}" placeholder="DD/MM" maxlength="5">
-                            <button id="saveFechaBtn" class="save-btn"><i class="fas fa-check"></i></button>
-                            <button id="cancelFechaBtn" class="cancel-btn"><i class="fas fa-times"></i></button>
-                        </div>
-                        <div class="info-item"><strong>Correo:</strong> ${email}</div>
-                        <div class="info-item"><strong>Último acceso:</strong> ${lastLoginStr}</div>
-                        <div class="info-item"><strong>Registro:</strong> ${creationStr}</div>
-                        <div class="version-badge">Versión 3.1.2026</div>
-                        <button onclick="window.mostrarHome()" style="margin-top:10px; padding:8px 15px; cursor:pointer; background:#00BFFF; border:none; border-radius:5px; color:white; font-weight:bold; width:100%;">Volver al Inicio</button>
-                    </div>
-                </div>
-            `;
-
-            if (esCumpleanos && typeof confetti !== 'undefined') launchConfetti();
-
-            const bar = document.getElementById('welcomeBar');
-            const dropdown = document.getElementById('userDropdown');
-
-            bar.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isShow = dropdown.classList.contains('show');
-                closeAllModals();
-                if(!isShow) dropdown.classList.add('show');
-            });
-
-            dropdown.addEventListener('click', (e) => e.stopPropagation());
-
-            document.getElementById('avatarHombre')?.addEventListener('click', () => updateUserAvatar(AVATAR_HOMBRE));
-            document.getElementById('avatarMujer')?.addEventListener('click', () => updateUserAvatar(AVATAR_MUJER));
-
-            document.getElementById('editNameIcon')?.addEventListener('click', () => { document.getElementById('nameDisplayRow').style.display='none'; document.getElementById('nameEditRow').style.display='flex'; document.getElementById('nameInput').focus(); });
-            document.getElementById('cancelNameBtn')?.addEventListener('click', () => { document.getElementById('nameDisplayRow').style.display='flex'; document.getElementById('nameEditRow').style.display='none'; document.getElementById('nameInput').value = displayName; });
-            document.getElementById('saveNameBtn')?.addEventListener('click', async () => {
-                const newName = document.getElementById('nameInput').value.trim();
-                if (newName && newName !== displayName) await updateDisplayName(newName);
-                else { document.getElementById('nameDisplayRow').style.display='flex'; document.getElementById('nameEditRow').style.display='none'; }
-            });
-
-            document.getElementById('editFechaIcon')?.addEventListener('click', () => { document.getElementById('fechaDisplayRow').style.display='none'; document.getElementById('fechaEditRow').style.display='flex'; document.getElementById('fechaInput').focus(); });
-            document.getElementById('cancelFechaBtn')?.addEventListener('click', () => { document.getElementById('fechaDisplayRow').style.display='flex'; document.getElementById('fechaEditRow').style.display='none'; document.getElementById('fechaInput').value = fechaNacimiento; });
-            document.getElementById('saveFechaBtn')?.addEventListener('click', async () => {
-                const newFecha = document.getElementById('fechaInput').value.trim();
-                if (!/^\d{2}\/\d{2}$/.test(newFecha)) return alert("Formato inválido. Usa DD/MM");
-                if (newFecha !== fechaNacimiento) await updateFechaNacimiento(newFecha);
-                else { document.getElementById('fechaDisplayRow').style.display='flex'; document.getElementById('fechaEditRow').style.display='none'; }
-            });
-
-            document.getElementById('avisoCompletar')?.addEventListener('click', () => {
-                dropdown.classList.add('show'); document.getElementById('fechaDisplayRow').style.display='none'; document.getElementById('fechaEditRow').style.display='flex'; document.getElementById('fechaInput').focus();
-            });
-
-            await checkBirthdays(esCumpleanos);
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                userDataCache.displayName = user.displayName;
-                userDataCache.photoURL = user.photoURL;
-                showWelcomeMessage(currentUser);
-            } else {
-                window.location.href = 'index.html';
-            }
-        });
-
-        document.getElementById('confirmarSalida').addEventListener('click', async () => {
-            document.getElementById('modalSalida').classList.remove('active');
-            try { await signOut(auth); } catch (error) { console.error('Error al salir:', error); }
-        });
-
-    </script>
+      });
+    }
+    
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
