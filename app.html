@@ -556,6 +556,11 @@
             closeAllModals();
             if(!isShow) {
                 calPopup.classList.add('show');
+                // Se restablece la fecha al mes y año actuales cada vez que se abre
+                const today = new Date();
+                currentMonth = today.getMonth();
+                currentYear = today.getFullYear();
+                
                 renderCalendar(currentMonth, currentYear);
             }
         });
