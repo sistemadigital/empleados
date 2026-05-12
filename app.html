@@ -170,24 +170,20 @@
         }
         .logout-button:hover { background-color: rgba(0,191,255,0.2); border-color: #00BFFF; }
 
-        /* Menú Hamburguesa Resaltado Celeste Glass */
-        .hamburger-menu { 
-            display: flex; flex-direction: column; gap: 5px; margin-right: 15px; 
-            background: rgba(0, 191, 255, 0.15); 
-            backdrop-filter: blur(8px); 
-            border: 1px solid rgba(0, 191, 255, 0.6); 
-            padding: 8px 10px; 
-            border-radius: 8px; 
-            box-shadow: 0 0 12px rgba(0, 191, 255, 0.5); 
-            transition: all 0.3s ease;
+        /* Nuevo estilo para la imagen del menú (reemplazo del hamburguesa) */
+        .menu-icon-img {
+            width: 32px;
+            height: auto;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
         }
-        .hamburger-menu:hover {
-            background: rgba(0, 191, 255, 0.25); 
-            box-shadow: 0 0 16px rgba(0, 191, 255, 0.7);
+        .menu-icon-img:hover {
+            transform: scale(1.05);
         }
-        .bar { width: 22px; height: 2px; background-color: white; border-radius: 10px; }
-        .click-text { font-weight: 400; font-size: 0.95rem; letter-spacing: 0.01em; }
 
+        /* Se eliminan las clases .hamburger-menu y .bar que ya no se usan, pero se mantienen por compatibilidad si algún otro elemento las usara (no hay) */
+        /* Ajustes para mantener la misma disposición en el footer */
         .footer-defensoria {
             text-align: left; font-size: 0.85rem; color: white;
             line-height: 1.4; cursor: pointer; z-index: 10;
@@ -205,7 +201,6 @@
         }
         .dtw-content:hover { background: rgba(255,255,255,0.2); }
 
-        /* NUEVO ESTILO: Texto Acceso Exclusivo */
         .exclusive-access-text {
             color: white;
             font-size: 0.85rem;
@@ -359,7 +354,7 @@
             
             .logout-button span:last-child { display: none; }
             
-            .click-text { display: none; }
+            /* Se elimina la referencia a .click-text por ser removido */
             .footer-defensoria { display: none; }
             .datetime-weather-container, .exclusive-access-text { display: none; }
             
@@ -367,7 +362,7 @@
             .event-banner { padding: 4px 12px; white-space: normal; text-align: center; max-width: 180px; }
             .event-banner p { font-size: 0.7rem; white-space: normal; line-height: 1.2; }
             
-            .hamburger-menu { margin-right: 0; }
+            .menu-icon-img { width: 28px; }
             .footer-left { flex-wrap: nowrap; }
             .footer-right { gap: 10px; }
             .sistema-info-text { font-size: 0.8rem; }
@@ -376,6 +371,7 @@
         @media (max-width: 480px) {
             .event-banner { max-width: 150px; padding: 3px 8px; }
             .event-banner p { font-size: 0.65rem; }
+            .menu-icon-img { width: 26px; }
         }
     </style>
 </head>
@@ -422,10 +418,9 @@
     <footer id="mainFooter">
         <div class="footer-left" id="footerLeftArea">
             <div class="footer-content" id="btnMainMenu">
-                <div class="hamburger-menu">
-                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                </div>
-                <span class="click-text">Haz clic para acceder</span>
+                <!-- Nuevo ícono de menú: GIF animado en lugar del antiguo ícono hamburguesa -->
+                <img src="https://github.com/sistemadigital/ingreso-sistema/blob/main/menu.gif?raw=true" alt="Menú" class="menu-icon-img">
+                <!-- El texto "Haz clic para acceder" ha sido eliminado según lo solicitado -->
 
                 <div class="menu-popup" id="mainMenuPopup">
                     <ul>
@@ -553,7 +548,7 @@
             const isClickInsideUser = document.getElementById('welcomeBar')?.contains(e.target) || document.getElementById('userDropdown')?.contains(e.target);
             const isClickInsideFooter = document.getElementById('mainFooter')?.contains(e.target);
             const isClickInsideDevInfo = document.getElementById('btnSistemaInfoContainer')?.contains(e.target);
-            const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target); // Evita cerrar modales al tocar banner
+            const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target);
 
             if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner) {
                 closeAllModals();
@@ -561,7 +556,6 @@
         });
 
         document.getElementById('mainFooter').addEventListener('click', function(e) {
-            // Si se hace clic en el banner, no volver al home
             if (e.target.closest('#eventBanner')) return;
             if (e.target === this || e.target.id === 'footerLeftArea' || e.target.id === 'footerRightArea') {
                 window.mostrarHome();
@@ -594,11 +588,9 @@
             closeAllModals();
             if(!isShow) {
                 calPopup.classList.add('show');
-                // Se restablece la fecha al mes y año actuales cada vez que se abre
                 const today = new Date();
                 currentMonth = today.getMonth();
                 currentYear = today.getFullYear();
-                
                 renderCalendar(currentMonth, currentYear);
             }
         });
@@ -690,9 +682,8 @@
         document.getElementById('closeBirthdayBtn').addEventListener('click', cerrarBirthdayModal);
         document.querySelector('.close-birthday').addEventListener('click', cerrarBirthdayModal);
         
-        // --- EVENTO CLICK EN EL BANNER (carga la página de eventos) ---
         document.getElementById('eventBanner')?.addEventListener('click', (e) => {
-            e.stopPropagation();  // Evita que el footer cierre modales o vuelva al home
+            e.stopPropagation();
             loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
         });
     </script>
@@ -702,7 +693,6 @@
         import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         
-        // Configuración de Firebase para AUTENTICACIÓN (defensoria-empleados)
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
@@ -716,7 +706,6 @@
         const auth = getAuth(app);
         const dbPerfil = getFirestore(app);
         
-        // ========== CONFIGURACIÓN SECUNDARIA PARA EVENTOS (causas-defensoria) ==========
         const causasConfig = {
             apiKey: "AIzaSyBDXZYAxWsvMiMGCrPRp3EBVuU0dzuWF4M",
             authDomain: "sistemadefensoria6.firebaseapp.com",
@@ -728,7 +717,6 @@
         const causasApp = initializeApp(causasConfig, "causas");
         const dbEventos = getFirestore(causasApp);
         
-        // Función auxiliar para convertir fechas de Firestore
         function toDate(val) {
             if (!val) return null;
             if (val.toDate) return val.toDate();
@@ -737,7 +725,6 @@
             return new Date(val);
         }
         
-        // Verifica si hoy hay algún evento en la colección "causas"
         async function hayEventosHoy() {
             try {
                 const snapshot = await getDocs(collection(dbEventos, "causas"));
@@ -748,29 +735,24 @@
         
                 for (const docSnap of snapshot.docs) {
                     const causa = docSnap.data();
-                    // Audiencias (array)
                     if (Array.isArray(causa.audiencias)) {
                         for (const fecha of causa.audiencias) {
                             const fechaObj = toDate(fecha);
                             if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
                         }
                     }
-                    // Cámara Gesell
                     if (causa.audienciaGesell) {
                         const fechaObj = toDate(causa.audienciaGesell);
                         if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
                     }
-                    // Vencimiento
                     if (causa.vencimiento) {
                         const fechaObj = toDate(causa.vencimiento);
                         if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
                     }
-                    // Vencimiento de Recursos
                     if (causa.vencimientoRecursos) {
                         const fechaObj = toDate(causa.vencimientoRecursos);
                         if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
                     }
-                    // Diligencias (array con subcampo fecha)
                     if (Array.isArray(causa.diligencias)) {
                         for (const d of causa.diligencias) {
                             const fechaObj = toDate(d.fecha);
@@ -785,7 +767,6 @@
             }
         }
         
-        // Actualiza el banner (texto y color de fondo)
         async function actualizarBannerEventos() {
             const bannerDiv = document.getElementById('eventBanner');
             const bannerText = document.getElementById('bannerText');
@@ -805,7 +786,6 @@
             }
         }
         
-        // Llamar al cargar la página y actualizar cada 30 minutos
         actualizarBannerEventos();
         setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
@@ -852,7 +832,6 @@
             } catch (error) { console.error('Error al actualizar fecha:', error); }
         }
 
-        // CARGA DINÁMICA DEL CONFETI PARA EVITAR BLOQUEOS
         async function launchConfetti() {
             try {
                 const module = await import('https://cdn.skypack.dev/canvas-confetti');
@@ -900,8 +879,6 @@
 
         async function showWelcomeMessage(user, useCache = false) {
             const dynamicContent = document.getElementById('dynamicContent');
-            
-            // PROTECCIÓN CONTRA CORREOS NULOS Y FALLOS EN SPLIT
             const email = user.email || ""; 
             const displayName = user.displayName || (email ? email.split('@')[0] : 'Usuario');
             const photoURL = user.photoURL;
@@ -912,7 +889,6 @@
             let esCumpleanos = false;
             let mensajeBienvenida = `¡Hola ${displayName}!`;
 
-            // SOLO CONSULTAR FIRESTORE SI EL USUARIO TIENE UN EMAIL VALIDO
             if (!useCache && !userDataCache.fechaNacimiento && email) {
                 try {
                     const docRef = doc(dbPerfil, "usuarios", email);
