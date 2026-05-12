@@ -340,6 +340,126 @@
         .btn-cerrar { background-color: #003366; color: white; border: none; padding: 0.6rem 2rem; border-radius: 2rem; cursor: pointer; font-weight: 600; transition: background 0.2s; margin-top: 1rem; }
         .btn-cerrar:hover { background-color: #002244; }
 
+        /* ---- NUEVO MODAL DE RECORDATORIO (BORDE ROJO GLASS) ---- */
+        .reminder-modal {
+            position: fixed;
+            top: 20%;
+            right: 20px;
+            z-index: 10050;
+            max-width: 360px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(12px);
+            border: 2px solid #e63946;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(230, 57, 70, 0.2);
+            padding: 1.5rem 1.5rem 1.8rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease;
+            animation: slideInRight 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .reminder-modal h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #001f3f;
+            border-left: 4px solid #e63946;
+            padding-left: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .reminder-list-modal {
+            margin: 0.5rem 0 1.5rem 1rem;
+            padding-left: 0.5rem;
+        }
+
+        .reminder-list-modal li {
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+            font-weight: 500;
+            color: #1e293b;
+            list-style-type: decimal;
+        }
+
+        .reminder-list-modal li::marker {
+            color: #e63946;
+            font-weight: 800;
+        }
+
+        .reminder-close-btn {
+            background: #001f3f;
+            border: none;
+            color: white;
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .reminder-close-btn:hover {
+            background: #e63946;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(230, 57, 70, 0.3);
+        }
+
+        /* Cierre con X */
+        .reminder-modal .close-x {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+        .reminder-modal .close-x:hover {
+            color: #e63946;
+        }
+
+        /* Responsive: en móvil se ubica centrado en la parte inferior */
+        @media (max-width: 768px) {
+            .reminder-modal {
+                top: auto;
+                bottom: 20px;
+                right: 50%;
+                transform: translateX(50%);
+                width: 90%;
+                max-width: 320px;
+                animation: slideUpFade 0.3s ease-out;
+            }
+            @keyframes slideUpFade {
+                from {
+                    opacity: 0;
+                    transform: translateX(50%) translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(50%) translateY(0);
+                }
+            }
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Ajustes Mobile */
@@ -354,11 +474,9 @@
             
             .logout-button span:last-child { display: none; }
             
-            /* Se elimina la referencia a .click-text por ser removido */
             .footer-defensoria { display: none; }
             .datetime-weather-container, .exclusive-access-text { display: none; }
             
-            /* Ajustes responsive para el banner */
             .event-banner { padding: 4px 12px; white-space: normal; text-align: center; max-width: 180px; }
             .event-banner p { font-size: 0.7rem; white-space: normal; line-height: 1.2; }
             
@@ -511,6 +629,20 @@
         </div>
     </div>
 
+    <!-- NUEVO MODAL FLOTANTE DE RECORDATORIO (BORDE ROJO GLASS) -->
+    <div id="reminderModal" class="reminder-modal" style="display: none;">
+        <span class="close-x" id="reminderCloseX">&times;</span>
+        <h3 style="color: #8b0000;">Recuerda esto:</h3>
+        <ul class="reminder-list-modal">
+            <li>Verifica la cantidad de expedientes pendientes en tu escritorio SIGED</li>
+            <li>Consulta los trámites complejos que requieren fundamentación legal al Secretario/a y/o al Defensor Oficial</li>
+            <li>No dejes pasar los plazos legales de tus causas asignadas</li>
+            <li>Controla las novedades de la causa (Providencias, Resoluciones, Fallo, Escritos de la contraria, Dictámenes)</li>
+            <li>Registra tus expedientes (en especial, audiencias), atención personal o entrevistas diarias del público que atiendas</li>
+        </ul>
+        <button id="reminderAcceptBtn" class="reminder-close-btn">✅ Entendido</button>
+    </div>
+
     <script>
         // --- CONTROL DE PÁGINAS ---
         function loadPage(url) {
@@ -523,10 +655,15 @@
         }
 
         window.mostrarHome = function() {
-            document.getElementById('appIframe').style.display = 'none';
-            document.getElementById('homeContent').style.display = 'flex';
-            document.getElementById('appIframe').src = '';
+            const iframe = document.getElementById('appIframe');
+            const home = document.getElementById('homeContent');
+            iframe.style.display = 'none';
+            home.style.display = 'flex';
+            iframe.src = '';
             closeAllModals();
+            
+            // Mostrar nuevamente el modal de recordatorio al regresar a la pantalla principal
+            showReminderModal();
         };
 
         // --- CIERRE GLOBAL DE MODALES ---
@@ -549,8 +686,9 @@
             const isClickInsideFooter = document.getElementById('mainFooter')?.contains(e.target);
             const isClickInsideDevInfo = document.getElementById('btnSistemaInfoContainer')?.contains(e.target);
             const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target);
+            const isClickInsideReminder = document.getElementById('reminderModal')?.contains(e.target);
 
-            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner) {
+            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner && !isClickInsideReminder) {
                 closeAllModals();
             }
         });
@@ -685,6 +823,45 @@
         document.getElementById('eventBanner')?.addEventListener('click', (e) => {
             e.stopPropagation();
             loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
+        });
+
+        // ---- MANEJO DE MODAL DE RECORDATORIO (con auto cierre a los 30 segundos) ----
+        let reminderTimeout = null;
+
+        function showReminderModal() {
+            const modal = document.getElementById('reminderModal');
+            if (!modal) return;
+            // Limpiar cualquier timeout previo para no superponer cierres
+            if (reminderTimeout) {
+                clearTimeout(reminderTimeout);
+                reminderTimeout = null;
+            }
+            // Mostrar modal
+            modal.style.display = 'block';
+            // Configurar cierre automático después de 30 segundos
+            reminderTimeout = setTimeout(() => {
+                if (modal) modal.style.display = 'none';
+                reminderTimeout = null;
+            }, 30000);
+        }
+
+        function closeReminderModal() {
+            const modal = document.getElementById('reminderModal');
+            if (modal) modal.style.display = 'none';
+            if (reminderTimeout) {
+                clearTimeout(reminderTimeout);
+                reminderTimeout = null;
+            }
+        }
+
+        // Eventos para cerrar el recordatorio (manual)
+        document.getElementById('reminderAcceptBtn')?.addEventListener('click', closeReminderModal);
+        document.getElementById('reminderCloseX')?.addEventListener('click', closeReminderModal);
+        
+        // Mostrar al cargar la página (después de que el contenido principal esté listo)
+        window.addEventListener('load', () => {
+            // Pequeño retardo para que la animación sea más visible
+            setTimeout(showReminderModal, 500);
         });
     </script>
 
