@@ -125,6 +125,29 @@
             display: flex; align-items: center; gap: 20px; z-index: 10; height: 100%; cursor: pointer;
         }
         
+        /* BANNER FIJO CON CAMBIO DE COLOR SEGÚN EVENTOS Y CLICKABLE */
+        .event-banner {
+            border-radius: 40px;
+            padding: 6px 18px;
+            background-color: #1e40af; /* azul por defecto (sin eventos) */
+            transition: background-color 0.3s ease;
+            box-shadow: 0 0 12px rgba(0,0,0,0.3);
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .event-banner.hay-eventos {
+            background-color: #ea580c; /* naranja cuando hay eventos */
+            box-shadow: 0 0 14px rgba(234,88,12,0.6);
+        }
+        .event-banner p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: white;
+            letter-spacing: 0.3px;
+        }
+
         /* Text y Modal del Desarrollador */
         .sistema-info-text-container { position: relative; display: flex; align-items: center; height: 100%; }
         .sistema-info-text { color: white; font-weight: bold; cursor: pointer; font-size: 0.95rem; transition: color 0.2s; }
@@ -338,14 +361,21 @@
             
             .click-text { display: none; }
             .footer-defensoria { display: none; }
-            /* Se oculta fecha, clima y el texto de acceso exclusivo en móvil */
             .datetime-weather-container, .exclusive-access-text { display: none; }
             
-            .hamburger-menu { margin-right: 0; }
+            /* Ajustes responsive para el banner */
+            .event-banner { padding: 4px 12px; white-space: normal; text-align: center; max-width: 180px; }
+            .event-banner p { font-size: 0.7rem; white-space: normal; line-height: 1.2; }
             
+            .hamburger-menu { margin-right: 0; }
             .footer-left { flex-wrap: nowrap; }
             .footer-right { gap: 10px; }
             .sistema-info-text { font-size: 0.8rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .event-banner { max-width: 150px; padding: 3px 8px; }
+            .event-banner p { font-size: 0.65rem; }
         }
     </style>
 </head>
@@ -438,10 +468,15 @@
                 </div>
             </div>
 
-            <span class="exclusive-access-text">Acceso Exclusivo Empleados</span>
+            <span class="exclusive-access-text">Acceso Empleados</span>
         </div>
 
         <div class="footer-right" id="footerRightArea">
+            <!-- BANNER DE EVENTOS (AGREGADO) -->
+            <div class="event-banner" id="eventBanner">
+                <p id="bannerText">Cargando eventos...</p>
+            </div>
+
             <div class="sistema-info-text-container" id="btnSistemaInfoContainer">
                 <span class="sistema-info-text" id="btnSistemaInfoText">Sistema Digital 6</span>
                 <div class="sistema-info-modal" id="sistemaInfoModal">
@@ -518,13 +553,16 @@
             const isClickInsideUser = document.getElementById('welcomeBar')?.contains(e.target) || document.getElementById('userDropdown')?.contains(e.target);
             const isClickInsideFooter = document.getElementById('mainFooter')?.contains(e.target);
             const isClickInsideDevInfo = document.getElementById('btnSistemaInfoContainer')?.contains(e.target);
+            const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target); // Evita cerrar modales al tocar banner
 
-            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo) {
+            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner) {
                 closeAllModals();
             }
         });
 
         document.getElementById('mainFooter').addEventListener('click', function(e) {
+            // Si se hace clic en el banner, no volver al home
+            if (e.target.closest('#eventBanner')) return;
             if (e.target === this || e.target.id === 'footerLeftArea' || e.target.id === 'footerRightArea') {
                 window.mostrarHome();
             }
@@ -651,6 +689,12 @@
         function cerrarBirthdayModal() { birthdayModal.style.display = 'none'; }
         document.getElementById('closeBirthdayBtn').addEventListener('click', cerrarBirthdayModal);
         document.querySelector('.close-birthday').addEventListener('click', cerrarBirthdayModal);
+        
+        // --- EVENTO CLICK EN EL BANNER (carga la página de eventos) ---
+        document.getElementById('eventBanner')?.addEventListener('click', (e) => {
+            e.stopPropagation();  // Evita que el footer cierre modales o vuelva al home
+            loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
+        });
     </script>
 
     <script type="module">
@@ -658,8 +702,7 @@
         import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         
-        // ELIMINADA la importación estática de confetti que causaba el bloqueo general
-
+        // Configuración de Firebase para AUTENTICACIÓN (defensoria-empleados)
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
@@ -672,6 +715,99 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const dbPerfil = getFirestore(app);
+        
+        // ========== CONFIGURACIÓN SECUNDARIA PARA EVENTOS (causas-defensoria) ==========
+        const causasConfig = {
+            apiKey: "AIzaSyBDXZYAxWsvMiMGCrPRp3EBVuU0dzuWF4M",
+            authDomain: "sistemadefensoria6.firebaseapp.com",
+            projectId: "sistemadefensoria6",
+            storageBucket: "sistemadefensoria6.firebasestorage.app",
+            messagingSenderId: "1024631392849",
+            appId: "1:1024631392849:web:1dc13292e690e2ed100670"
+        };
+        const causasApp = initializeApp(causasConfig, "causas");
+        const dbEventos = getFirestore(causasApp);
+        
+        // Función auxiliar para convertir fechas de Firestore
+        function toDate(val) {
+            if (!val) return null;
+            if (val.toDate) return val.toDate();
+            if (val.seconds) return new Date(val.seconds * 1000);
+            if (val instanceof Date) return val;
+            return new Date(val);
+        }
+        
+        // Verifica si hoy hay algún evento en la colección "causas"
+        async function hayEventosHoy() {
+            try {
+                const snapshot = await getDocs(collection(dbEventos, "causas"));
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const manana = new Date(hoy);
+                manana.setDate(manana.getDate() + 1);
+        
+                for (const docSnap of snapshot.docs) {
+                    const causa = docSnap.data();
+                    // Audiencias (array)
+                    if (Array.isArray(causa.audiencias)) {
+                        for (const fecha of causa.audiencias) {
+                            const fechaObj = toDate(fecha);
+                            if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
+                        }
+                    }
+                    // Cámara Gesell
+                    if (causa.audienciaGesell) {
+                        const fechaObj = toDate(causa.audienciaGesell);
+                        if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
+                    }
+                    // Vencimiento
+                    if (causa.vencimiento) {
+                        const fechaObj = toDate(causa.vencimiento);
+                        if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
+                    }
+                    // Vencimiento de Recursos
+                    if (causa.vencimientoRecursos) {
+                        const fechaObj = toDate(causa.vencimientoRecursos);
+                        if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
+                    }
+                    // Diligencias (array con subcampo fecha)
+                    if (Array.isArray(causa.diligencias)) {
+                        for (const d of causa.diligencias) {
+                            const fechaObj = toDate(d.fecha);
+                            if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
+                        }
+                    }
+                }
+                return false;
+            } catch (error) {
+                console.error("Error al consultar eventos:", error);
+                return false;
+            }
+        }
+        
+        // Actualiza el banner (texto y color de fondo)
+        async function actualizarBannerEventos() {
+            const bannerDiv = document.getElementById('eventBanner');
+            const bannerText = document.getElementById('bannerText');
+            if (!bannerDiv || !bannerText) return;
+            try {
+                const hayEventos = await hayEventosHoy();
+                if (hayEventos) {
+                    bannerText.textContent = "📅 Recuerda, hoy tenemos eventos agendados";
+                    bannerDiv.classList.add('hay-eventos');
+                } else {
+                    bannerText.textContent = "📅 Hoy no tenemos nada agendado";
+                    bannerDiv.classList.remove('hay-eventos');
+                }
+            } catch (err) {
+                bannerText.textContent = "📅 No se pudo verificar eventos";
+                bannerDiv.classList.remove('hay-eventos');
+            }
+        }
+        
+        // Llamar al cargar la página y actualizar cada 30 minutos
+        actualizarBannerEventos();
+        setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
         const AVATAR_HOMBRE = 'https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true';
         const AVATAR_MUJER = 'https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true';
