@@ -885,13 +885,14 @@
         const auth = getAuth(app);
         const dbPerfil = getFirestore(app);
         
+        // CORRECCIÓN: Usar la misma base de datos que eventos.html (causas-defensoria)
         const causasConfig = {
-            apiKey: "AIzaSyBDXZYAxWsvMiMGCrPRp3EBVuU0dzuWF4M",
-            authDomain: "sistemadefensoria6.firebaseapp.com",
-            projectId: "sistemadefensoria6",
-            storageBucket: "sistemadefensoria6.firebasestorage.app",
-            messagingSenderId: "1024631392849",
-            appId: "1:1024631392849:web:1dc13292e690e2ed100670"
+            apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
+            authDomain: "causas-defensoria.firebaseapp.com",
+            projectId: "causas-defensoria",
+            storageBucket: "causas-defensoria.appspot.com",
+            messagingSenderId: "186064671470",
+            appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
         };
         const causasApp = initializeApp(causasConfig, "causas");
         const dbEventos = getFirestore(causasApp);
@@ -960,6 +961,7 @@
                     bannerDiv.classList.remove('hay-eventos');
                 }
             } catch (err) {
+                console.error(err);
                 bannerText.textContent = "📅 No se pudo verificar eventos";
                 bannerDiv.classList.remove('hay-eventos');
             }
