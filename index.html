@@ -130,7 +130,9 @@
             position: relative;
             display: inline-block;
             border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            animation: float 6s ease-in-out infinite, softPulse 3s ease-in-out infinite;
+            cursor: pointer;
+            outline: none;
         }
 
         /* Anillo giratorio principal (gradiente cónico) */
@@ -153,6 +155,7 @@
             z-index: -1;
             animation: rotateRing 4s linear infinite;
             box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+            transition: all 0.4s ease;
         }
 
         /* Segundo anillo externo con blur y rotación inversa */
@@ -176,6 +179,60 @@
             filter: blur(8px);
         }
 
+        /* [UX] Dinamismo según estado del Audio */
+        .img-wrapper.cargando::before {
+            animation: rotateRing 1s linear infinite;
+            filter: saturate(1.5);
+        }
+
+        .img-wrapper.reproduciendo::before {
+            animation: rotateRing 2s linear infinite;
+            box-shadow: 0 0 35px rgba(40, 167, 69, 0.7);
+            background: conic-gradient(from 0deg, #00ffff, #28a745, #00ffff);
+        }
+
+        /* [UX] Indicador de Audio Flotante */
+        .audio-badge {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background-color: #001f3f;
+            color: #ffffff;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            z-index: 10;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid #00BFFF;
+        }
+
+        .img-wrapper:hover .audio-badge {
+            transform: scale(1.15);
+            background-color: #003366;
+        }
+
+        .img-wrapper.reproduciendo .audio-badge {
+            background-color: #28a745;
+            border-color: #ffffff;
+            animation: pulseBadge 1.5s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
+        /* Accesibilidad: Indicador visual claro cuando se navega con Tabulador */
+        .img-wrapper:focus-visible {
+            box-shadow: 0 0 0 4px #00BFFF;
+        }
+
         /* Rotaciones */
         @keyframes rotateRing {
             0% { transform: rotate(0deg); }
@@ -196,6 +253,7 @@
             border-radius: 50%;
             box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
             transition: transform 0.3s ease;
+            pointer-events: none;
         }
 
         .img-3d:hover {
@@ -209,16 +267,12 @@
             100% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
         }
 
-        .img-wrapper {
-            animation: float 6s ease-in-out infinite, softPulse 3s ease-in-out infinite;
-        }
-
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
         }
 
-        /* ----- PROTOCOLO DE ACTUACIÓN: UNA SOLA LÍNEA (NUEVO) ----- */
+        /* ----- PROTOCOLO DE ACTUACIÓN: UNA SOLA LÍNEA ----- */
         .protocolo-link {
             text-decoration: none;
             display: inline-block;
@@ -494,6 +548,13 @@
             .protocolo-link {
                 margin-top: 1.5rem;
             }
+            .audio-badge {
+                bottom: 5px;
+                right: 5px;
+                width: 38px;
+                height: 38px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -519,14 +580,19 @@
             </div>
 
             <div class="img-container">
-                <!-- Wrapper con animación moderna -->
-                <div class="img-wrapper">
+                <!-- Wrapper con audio interactivo -->
+                <div class="img-wrapper" id="imagenClickAudio" 
+                     role="button" 
+                     tabindex="0" 
+                     aria-label="Escuchar saludo institucional interactivo" 
+                     title="Haga clic para escuchar o pausar el saludo institucional">
                     <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" 
                          alt="Sistema Digital 3D" 
                          class="img-3d">
+                    <div class="audio-badge" id="audioBadgeState" aria-hidden="true">🔊</div>
                 </div>
 
-                <!-- NUEVO BLOQUE: Protocolo de Actuación Judicial (clickeable, una línea) -->
+                <!-- Protocolo de Actuación Judicial (clickeable, una línea) -->
                 <a href="https://defensorialocal-seis.github.io/protocolo/" 
                    target="_blank" 
                    rel="noopener noreferrer" 
@@ -734,6 +800,82 @@
                 } else {
                     registerUser();
                 }
+            }
+        });
+
+        // --- LÓGICA DE AUDIO INTERACTIVO (tomada de 1index.html) ---
+        let currentAudio = null;
+
+        function toggleSaludo() {
+            const imgWrapper = document.getElementById('imagenClickAudio');
+            const audioBadge = document.getElementById('audioBadgeState');
+            const audioUrl = 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/saludo.mp3';
+
+            // Si el audio está sonando, pausarlo
+            if (currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                return;
+            }
+
+            // Inicializar nueva instancia si no existe
+            if (!currentAudio) {
+                currentAudio = new Audio(audioUrl);
+                currentAudio.preload = 'auto';
+                
+                currentAudio.addEventListener('waiting', () => {
+                    imgWrapper.classList.add('cargando');
+                    audioBadge.textContent = '⏳';
+                });
+                
+                currentAudio.addEventListener('playing', () => {
+                    imgWrapper.classList.remove('cargando');
+                    imgWrapper.classList.add('reproduciendo');
+                    audioBadge.textContent = '⏸️';
+                });
+                
+                currentAudio.addEventListener('pause', () => {
+                    imgWrapper.classList.remove('reproduciendo', 'cargando');
+                    audioBadge.textContent = '🔊';
+                });
+                
+                currentAudio.addEventListener('ended', () => {
+                    imgWrapper.classList.remove('reproduciendo', 'cargando');
+                    audioBadge.textContent = '🔊';
+                    currentAudio.currentTime = 0;
+                });
+                
+                currentAudio.addEventListener('error', (e) => {
+                    imgWrapper.classList.remove('reproduciendo', 'cargando');
+                    audioBadge.textContent = '⚠️';
+                    console.error('Error de carga en la pista de audio:', e);
+                });
+            }
+            
+            imgWrapper.classList.add('cargando');
+            audioBadge.textContent = '⏳';
+            
+            currentAudio.play().catch(error => {
+                imgWrapper.classList.remove('cargando');
+                audioBadge.textContent = '🔊';
+                console.warn('La reproducción automática o directa fue bloqueada por el navegador:', error);
+            });
+        }
+
+        // Asignar eventos de audio al cargar el DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            const imgWrapper = document.getElementById('imagenClickAudio');
+            if (imgWrapper) {
+                imgWrapper.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleSaludo();
+                });
+                imgWrapper.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleSaludo();
+                    }
+                });
             }
         });
     </script>
