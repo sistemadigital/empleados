@@ -471,6 +471,94 @@
             color: #e63946;
         }
 
+        /* ----- MODALES FLOTANTES FESTIVIDADES (Modernizados) ----- */
+        .modal-festividad-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 15000; animation: fadeInFestModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .modal-festividad-contenido {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 2.5rem 2.5rem;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5);
+            width: 90%;
+            max-width: 440px;
+            position: relative;
+            overflow: hidden;
+            animation: slideUpFestModal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-festividad-contenido::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0,191,255,0.08) 0%, transparent 60%);
+            z-index: -1; animation: rotateGlow 15s linear infinite; pointer-events: none;
+        }
+
+        @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
+        @keyframes slideUpFestModal { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        @keyframes fadeInFestModal { from { opacity: 0; } to { opacity: 1; } }
+        
+        .modal-festividad-titulo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #0f172a 0%, #0284c7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+        }
+        
+        .modal-festividad-imagen {
+            width: 100%;
+            max-width: 240px;
+            margin: 0 auto 1.8rem auto;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px -10px rgba(0,0,0,0.2), 0 0 0 4px rgba(255,255,255,0.8);
+            display: block;
+            object-fit: cover;
+            animation: pulseImgFest 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseImgFest {
+            0% { transform: scale(1); box-shadow: 0 15px 35px -10px rgba(0,0,0,0.2), 0 0 0 4px rgba(255,255,255,0.8); }
+            50% { transform: scale(1.05); box-shadow: 0 25px 45px -12px rgba(2,132,199,0.35), 0 0 0 6px rgba(255,255,255,0.9); }
+            100% { transform: scale(1); box-shadow: 0 15px 35px -10px rgba(0,0,0,0.2), 0 0 0 4px rgba(255,255,255,0.8); }
+        }
+        
+        .modal-festividad-fecha {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            background: #f1f5f9;
+            display: inline-block;
+            padding: 0.5rem 1.8rem;
+            border-radius: 999px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 640px) {
+            .modal-festividad-contenido { padding: 2rem 1.8rem; border-radius: 28px; max-width: 90%; }
+            .modal-festividad-titulo { font-size: 1.5rem; margin-bottom: 1.2rem; }
+            .modal-festividad-imagen { max-width: 190px; margin-bottom: 1.5rem; }
+            .modal-festividad-fecha { font-size: 0.95rem; padding: 0.4rem 1.4rem; }
+        }
+        @media (max-width: 480px) {
+            .modal-festividad-contenido { padding: 1.8rem 1.2rem; }
+            .modal-festividad-titulo { font-size: 1.35rem; }
+            .modal-festividad-imagen { max-width: 160px; }
+            .modal-festividad-fecha { font-size: 0.85rem; line-height: 1.4; }
+        }
+
         /* Responsive: en móvil se ubica centrado en la parte inferior */
         @media (max-width: 768px) {
             .reminder-modal {
@@ -729,8 +817,9 @@
             const isClickInsideDevInfo = document.getElementById('btnSistemaInfoContainer')?.contains(e.target);
             const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target);
             const isClickInsideReminder = document.getElementById('reminderModal')?.contains(e.target);
+            const isClickInsideFestModal = e.target.closest('.modal-festividad-overlay');
 
-            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner && !isClickInsideReminder) {
+            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal) {
                 closeAllModals();
             }
         });
@@ -904,6 +993,146 @@
         
         window.addEventListener('load', () => {
             setTimeout(showReminderModalOnce, 500);
+        });
+
+        // ==================== MODALES DE FESTIVIDADES ====================
+        function isMayoWeek() {
+            const hoy = new Date();
+            const mes = hoy.getMonth(); // 4 = Mayo
+            const dia = hoy.getDate();
+            return (mes === 4 && dia >= 18 && dia <= 25);
+        }
+
+        function isNueveJulio() {
+            const hoy = new Date();
+            return (hoy.getMonth() === 6 && hoy.getDate() === 9);
+        }
+
+        function isVeinteJunio() {
+            const hoy = new Date();
+            return (hoy.getMonth() === 5 && hoy.getDate() === 20);
+        }
+
+        function isFinDeAnioRange() {
+            const hoy = new Date();
+            const mes = hoy.getMonth();
+            const dia = hoy.getDate();
+            // Desde 8 diciembre (mes 11, día >=8) hasta 31 diciembre
+            if (mes === 11 && dia >= 8) return true;
+            // Hasta 6 enero (mes 0, día <=6)
+            if (mes === 0 && dia <= 6) return true;
+            return false;
+        }
+
+        function mostrarModalSemanaMayo() {
+            if (document.querySelector('.modal-festividad-overlay')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'modal-festividad-overlay';
+            modalDiv.innerHTML = `
+                <div class="modal-festividad-contenido">
+                    <div class="modal-festividad-titulo">Semana de Mayo</div>
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" 
+                         alt="Argentina" 
+                         class="modal-festividad-imagen"
+                         loading="eager">
+                    <div class="modal-festividad-fecha">18 al 25 de Mayo</div>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            let timeoutId = null;
+            const cerrarModal = () => {
+                if (modalDiv && modalDiv.parentNode) {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    modalDiv.remove();
+                }
+            };
+            modalDiv.addEventListener('click', (e) => { if (e.target === modalDiv) cerrarModal(); });
+            timeoutId = setTimeout(() => cerrarModal(), 5000);
+        }
+
+        function mostrarModalIndependencia() {
+            if (document.querySelector('.modal-festividad-overlay')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'modal-festividad-overlay';
+            modalDiv.innerHTML = `
+                <div class="modal-festividad-contenido">
+                    <div class="modal-festividad-titulo">Día de la Independencia</div>
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" 
+                         alt="Argentina" 
+                         class="modal-festividad-imagen"
+                         loading="eager">
+                    <div class="modal-festividad-fecha">9 de Julio - Argentina</div>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            let timeoutId = null;
+            const cerrarModal = () => {
+                if (modalDiv && modalDiv.parentNode) {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    modalDiv.remove();
+                }
+            };
+            modalDiv.addEventListener('click', (e) => { if (e.target === modalDiv) cerrarModal(); });
+            timeoutId = setTimeout(() => cerrarModal(), 5000);
+        }
+
+        function mostrarModalBandera() {
+            if (document.querySelector('.modal-festividad-overlay')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'modal-festividad-overlay';
+            modalDiv.innerHTML = `
+                <div class="modal-festividad-contenido">
+                    <div class="modal-festividad-titulo">Día de la Bandera</div>
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" 
+                         alt="Argentina" 
+                         class="modal-festividad-imagen"
+                         loading="eager">
+                    <div class="modal-festividad-fecha">20 de Junio - Argentina</div>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            let timeoutId = null;
+            const cerrarModal = () => {
+                if (modalDiv && modalDiv.parentNode) {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    modalDiv.remove();
+                }
+            };
+            modalDiv.addEventListener('click', (e) => { if (e.target === modalDiv) cerrarModal(); });
+            timeoutId = setTimeout(() => cerrarModal(), 5000);
+        }
+
+        function mostrarModalFinDeAnio() {
+            if (document.querySelector('.modal-festividad-overlay')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'modal-festividad-overlay';
+            modalDiv.innerHTML = `
+                <div class="modal-festividad-contenido">
+                    <div class="modal-festividad-titulo">Fiestas de Fin de Año</div>
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/navidad.png?raw=true" 
+                         alt="Navidad" 
+                         class="modal-festividad-imagen"
+                         loading="eager">
+                    <div class="modal-festividad-fecha">Navidad, Año Nuevo y Reyes</div>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            let timeoutId = null;
+            const cerrarModal = () => {
+                if (modalDiv && modalDiv.parentNode) {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    modalDiv.remove();
+                }
+            };
+            modalDiv.addEventListener('click', (e) => { if (e.target === modalDiv) cerrarModal(); });
+            timeoutId = setTimeout(() => cerrarModal(), 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isMayoWeek()) setTimeout(() => mostrarModalSemanaMayo(), 200);
+            if (isNueveJulio()) setTimeout(() => mostrarModalIndependencia(), 250);
+            if (isVeinteJunio()) setTimeout(() => mostrarModalBandera(), 300);
+            if (isFinDeAnioRange()) setTimeout(() => mostrarModalFinDeAnio(), 350);
         });
 
         // ==================== AUDIOS ====================
