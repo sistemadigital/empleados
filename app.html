@@ -910,7 +910,13 @@
         fetchWeather();
 
         const modalSalida = document.getElementById('modalSalida');
-        document.getElementById('btnSalir').addEventListener('click', () => { modalSalida.classList.add('active'); });
+        const audioSalida = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/salida.mp3');
+        
+        // MODIFICACIÓN: al hacer clic en Salir, se abre el modal y se reproduce automáticamente el audio salida.mp3
+        document.getElementById('btnSalir').addEventListener('click', () => {
+            modalSalida.classList.add('active');
+            audioSalida.play().catch(err => console.warn('Audio salida no pudo reproducirse automáticamente:', err));
+        });
         document.getElementById('cancelarSalida').addEventListener('click', () => { modalSalida.classList.remove('active'); });
 
         const infoModal = document.getElementById('infoModal');
@@ -1137,7 +1143,7 @@
 
         // ==================== AUDIOS ====================
         const audioIngreso = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/ingreso.mp3');
-        const audioSalida = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/salida.mp3');
+        // audioSalida ya está declarado arriba
         const audioRecuerda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/recuerda.mp3');
         const audioNoAgenda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/noagenda.mp3');
         const audioSiAgenda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/siagenda.mp3');
@@ -1522,7 +1528,6 @@
             document.getElementById('modalSalida').classList.remove('active');
             try { await signOut(auth); } catch (error) { console.error('Error al salir:', error); }
         });
-
     </script>
 </body>
 </html>
