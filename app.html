@@ -1196,6 +1196,58 @@
             e.stopPropagation();
             playBannerAudio();
         });
+
+        // ==================== NUEVA FUNCIONALIDAD: AUDIOS AL HACER CLIC EN EL MENÚ (solo click, con cooldown) ====================
+        (function agregarAudiosMenuSoloClick() {
+            const ultimaReproduccion = new Map();
+
+            function playAudioWithCooldown(url) {
+                if (!url) return;
+                const ahora = Date.now();
+                const ultima = ultimaReproduccion.get(url) || 0;
+                if (ahora - ultima < 10000) return;
+                ultimaReproduccion.set(url, ahora);
+                const audio = new Audio(url);
+                audio.play().catch(err => console.warn(`No se pudo reproducir audio: ${url}`, err));
+            }
+
+            const audioMap = new Map([
+                ['Expedientes', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/expedientes.mp3'],
+                ['Eventos agendados', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/eventos.mp3'],
+                ['Libros', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/libros.mp3'],
+                ['Clientes', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/clientes.mp3'],
+                ['Modelos', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/modelos.mp3'],
+                ['Biblioteca', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/biblioteca.mp3'],
+                ['Organismos', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/organismos.mp3'],
+                ['Diligenciadores', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/diligenciadores.mp3'],
+                ['Notificaciones', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/notificaciones.mp3'],
+                ['Consultas y Turnos', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/consultas.mp3'],
+                ['Atención al Público', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/atencion.mp3']
+            ]);
+
+            // Ícono del menú (imagen)
+            const menuIcon = document.querySelector('.menu-icon-img');
+            if (menuIcon) {
+                const menuAudioUrl = 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/menu.mp3';
+                menuIcon.addEventListener('click', (e) => {
+                    playAudioWithCooldown(menuAudioUrl);
+                    // No detener propagación para que el listener original de #btnMainMenu funcione (desplegar menú)
+                });
+            }
+
+            // Enlaces del menú desplegable
+            const menuLinks = document.querySelectorAll('#mainMenuPopup ul li a');
+            menuLinks.forEach(link => {
+                const texto = link.textContent.trim();
+                const audioUrl = audioMap.get(texto);
+                if (audioUrl) {
+                    link.addEventListener('click', (e) => {
+                        playAudioWithCooldown(audioUrl);
+                        // No detener propagación, el onclick original ejecuta loadPage y el menú se cierra correctamente
+                    });
+                }
+            });
+        })();
     </script>
 
     <script type="module">
