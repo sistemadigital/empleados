@@ -1141,6 +1141,18 @@
             playBannerAudio();
         });
 
+        // ========== NUEVA FUNCIONALIDAD: AL HACER CLIC EN EL BANNER (SI HAY EVENTOS) ABRIR EVENTOS AGENDADOS ==========
+        if (bannerDiv) {
+            bannerDiv.addEventListener('click', (e) => {
+                // Evitar que se dispare si el clic fue sobre el ícono de audio (el ícono ya tiene stopPropagation, pero por seguridad)
+                if (e.target.closest('.audio-icon')) return;
+                // Si el banner tiene la clase 'hay-eventos' (indica que existen eventos hoy)
+                if (bannerDiv.classList.contains('hay-eventos')) {
+                    loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
+                }
+            });
+        }
+
         // ==================== AUDIOS AL HACER CLIC EN EL MENÚ (solo click, con cooldown) ====================
         (function agregarAudiosMenuSoloClick() {
             const ultimaReproduccion = new Map();
