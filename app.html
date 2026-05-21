@@ -329,28 +329,56 @@
         .edit-icon { cursor: pointer; margin-left: 8px; color: #64748b; transition: color 0.2s; }
         .edit-icon:hover { color: #00BFFF; }
 
-        .top-image-container { display: flex; justify-content: center; align-items: center; width: 100%; flex: 1; cursor: pointer; margin: 0; }
+        /* Contenedor de imagen central: mantiene tamaño original, con luz celeste animada vibrante */
+        .top-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            flex: 1;
+            cursor: pointer;
+            margin: 0;
+        }
         .image-large {
-            width: auto; max-width: 90vw; max-height: 70vh; background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 1rem;
-            padding: 0.75rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center;
+            width: auto;
+            max-width: 90vw;
+            max-height: 70vh;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            /* Luz celeste animada vibrante */
+            animation: celesteGlow 2s infinite ease-in-out;
+            box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.3);
         }
-        .image-large img { width: 100%; height: auto; max-height: calc(70vh - 1.5rem); object-fit: contain; display: block; }
+        .image-large img {
+            width: 100%;
+            height: auto;
+            max-height: calc(70vh - 1.5rem);
+            object-fit: contain;
+            display: block;
+            border-radius: 0.5rem;
+        }
 
-        .info-modal {
-            display: none; position: fixed; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 1.5rem; width: 350px; max-width: 90vw; border: 1px solid #e2e8f0; z-index: 1002; color: #1e293b; line-height: 1.5;
+        @keyframes celesteGlow {
+            0% {
+                box-shadow: 0 0 5px 2px rgba(0, 191, 255, 0.2), 0 0 8px 4px rgba(0, 191, 255, 0.1);
+                border-color: rgba(0, 191, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px 15px rgba(0, 191, 255, 0.7), 0 0 45px 20px rgba(0, 191, 255, 0.4);
+                border-color: rgba(0, 191, 255, 0.9);
+            }
+            100% {
+                box-shadow: 0 0 5px 2px rgba(0, 191, 255, 0.2), 0 0 8px 4px rgba(0, 191, 255, 0.1);
+                border-color: rgba(0, 191, 255, 0.3);
+            }
         }
-        .info-modal.show { display: block; }
-        .info-modal p { margin: 0.5rem 0; font-size: 0.95rem; }
-        .info-modal strong { color: #003366; font-weight: 600; }
-
-        .left-info-image {
-            display: none; position: fixed; width: 350px; max-width: 90vw; height: auto; z-index: 1003;
-            pointer-events: none; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); padding: 8px; border: 1px solid rgba(255,255,255,0.3);
-        }
-        .left-info-image img { width: 100%; height: auto; display: block; border-radius: 8px; }
 
         .birthday-modal { display: none; position: fixed; z-index: 11000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
         .birthday-modal-content { background-color: #fff; margin: auto; padding: 2rem; border-radius: 2rem; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid #ff6f61; animation: fadeIn 0.3s; position: relative; }
@@ -590,8 +618,6 @@
             .sistema-digital-text { display: none; }
             .left-group { gap: 0.5rem; }
             .image-large { max-height: 60vh; }
-            .info-modal { width: 300px; }
-            .left-info-image { width: 300px; }
             footer { padding: 0 15px; }
             
             .logout-button span:last-child { display: none; }
@@ -635,22 +661,11 @@
                 </div>
             </div>
 
+            <!-- IMAGEN CENTRAL: contenedor original con luz celeste animada (sin modales laterales) -->
             <div class="top-image-container" id="imagenCentralContainer">
                 <div class="image-large">
                     <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/MP6.png?raw=true" alt="Ministerio Público">
                 </div>
-            </div>
-
-            <div id="infoModal" class="info-modal">
-                <p><strong>Defensor Oficial:</strong> Dr. Marcelo Gustavo Ramos</p>
-                <p><strong>Secretarios:</strong> Dra. Patricia Soledad Riveros, Dra. Alicia Mariela Corrales, Dr. Enzo Luciano Magnani</p>
-                <p><strong>Teléfono Oficial:</strong> +54 376 4446700 interno 1188.</p>
-                <p><strong>Whatsapp Oficial:</strong> +54 376 4889359</p>
-                <p><strong>Correo Zimbra:</strong> defensoriacivil6.posadas@mpmisiones.gob.ar</p>
-            </div>
-
-            <div id="leftInfoImage" class="left-info-image">
-                <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" alt="Computadora 3D">
             </div>
         </div>
     </main>
@@ -796,13 +811,11 @@
             closeAllModals();
         };
 
-        // --- CIERRE GLOBAL DE MODALES ---
+        // --- CIERRE GLOBAL DE MODALES (sin referencias a modales eliminados) ---
         function closeAllModals() {
             document.getElementById('mainMenuPopup')?.classList.remove('show');
             document.getElementById('calendarPopup')?.classList.remove('show');
-            document.getElementById('infoModal')?.classList.remove('show');
             document.getElementById('sistemaInfoModal')?.classList.remove('show');
-            if(document.getElementById('leftInfoImage')) document.getElementById('leftInfoImage').style.display = 'none';
             const dropdown = document.getElementById('userDropdown');
             if(dropdown) dropdown.classList.remove('show');
         }
@@ -810,16 +823,13 @@
         document.addEventListener('click', (e) => {
             const isClickInsideMenu = document.getElementById('btnMainMenu')?.contains(e.target);
             const isClickInsideCalendar = document.getElementById('dateTimeWeatherBtn')?.contains(e.target);
-            const isClickInsideInfoDefensoria = document.getElementById('footerDefensoria')?.contains(e.target);
-            const isClickInsideInfoCentral = document.getElementById('imagenCentralContainer')?.contains(e.target);
-            const isClickInsideUser = document.getElementById('welcomeBar')?.contains(e.target) || document.getElementById('userDropdown')?.contains(e.target);
             const isClickInsideFooter = document.getElementById('mainFooter')?.contains(e.target);
             const isClickInsideDevInfo = document.getElementById('btnSistemaInfoContainer')?.contains(e.target);
             const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target);
             const isClickInsideReminder = document.getElementById('reminderModal')?.contains(e.target);
             const isClickInsideFestModal = e.target.closest('.modal-festividad-overlay');
 
-            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideInfoDefensoria && !isClickInsideInfoCentral && !isClickInsideUser && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal) {
+            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal) {
                 closeAllModals();
             }
         });
@@ -912,57 +922,22 @@
         const modalSalida = document.getElementById('modalSalida');
         const audioSalida = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/salida.mp3');
         
-        // MODIFICACIÓN: al hacer clic en Salir, se abre el modal y se reproduce automáticamente el audio salida.mp3
         document.getElementById('btnSalir').addEventListener('click', () => {
             modalSalida.classList.add('active');
             audioSalida.play().catch(err => console.warn('Audio salida no pudo reproducirse automáticamente:', err));
         });
         document.getElementById('cancelarSalida').addEventListener('click', () => { modalSalida.classList.remove('active'); });
 
-        const infoModal = document.getElementById('infoModal');
-        const leftImage = document.getElementById('leftInfoImage');
-        const footerDefensoria = document.getElementById('footerDefensoria');
-        const imagenContainer = document.getElementById('imagenCentralContainer');
-
-        function posicionarModales() {
-            const isMobile = window.innerWidth <= 768;
-            const imagen = document.querySelector('.image-large img');
-            if (isMobile || !imagen || imagen.offsetParent === null) {
-                infoModal.style.left = '50%'; infoModal.style.top = '50%'; infoModal.style.transform = 'translate(-50%, -50%)'; leftImage.style.display = 'none'; return;
-            }
-            const imgRect = imagen.getBoundingClientRect();
-            infoModal.style.left = (imgRect.right + 10) + 'px';
-            infoModal.style.top = (imgRect.top + (imgRect.height / 2) - (infoModal.offsetHeight / 2)) + 'px';
-            infoModal.style.transform = 'none';
-            leftImage.style.display = 'block';
-            leftImage.style.left = (imgRect.left - leftImage.offsetWidth - 10) + 'px';
-            leftImage.style.top = (imgRect.top + (imgRect.height / 2) - (leftImage.offsetHeight / 2)) + 'px';
-            leftImage.style.transform = 'none';
-        }
-
-        function toggleInfoModal(e) {
-            e.stopPropagation();
-            const isShow = infoModal.classList.contains('show');
-            closeAllModals();
-            if(!isShow) {
-                infoModal.classList.add('show');
-                setTimeout(posicionarModales, 10);
-            }
-        }
-        // El click sobre el ícono de audio no debe abrir el modal
-        const audioTituloIcon = document.getElementById('audioTituloIcon');
-        if (audioTituloIcon) {
-            audioTituloIcon.addEventListener('click', (e) => e.stopPropagation());
-        }
-        footerDefensoria.addEventListener('click', toggleInfoModal);
-        imagenContainer.addEventListener('click', toggleInfoModal);
+        // Se elimina toda la lógica de infoModal e imagen lateral (modales flotantes)
+        // El footerDefensoria ya no muestra ningún modal, solo el ícono de audio mantiene su funcionalidad.
+        // El contenedor de imagen central ya no tiene asociado ningún modal, sólo la luz decorativa.
 
         const birthdayModal = document.getElementById('birthdayModal');
         function cerrarBirthdayModal() { birthdayModal.style.display = 'none'; }
         document.getElementById('closeBirthdayBtn').addEventListener('click', cerrarBirthdayModal);
         document.querySelector('.close-birthday').addEventListener('click', cerrarBirthdayModal);
         
-        // ========== MODAL DE RECORDATORIO: SOLO UNA VEZ, CON AUDIO QUE MANTIENE ABIERTO Y CIERRE AL TERMINAR ==========
+        // ========== MODAL DE RECORDATORIO ==========
         let reminderShown = false;
         let reminderTimeout = null;
         let isAudioPlaying = false;
@@ -1004,7 +979,7 @@
         // ==================== MODALES DE FESTIVIDADES ====================
         function isMayoWeek() {
             const hoy = new Date();
-            const mes = hoy.getMonth(); // 4 = Mayo
+            const mes = hoy.getMonth();
             const dia = hoy.getDate();
             return (mes === 4 && dia >= 18 && dia <= 25);
         }
@@ -1023,9 +998,7 @@
             const hoy = new Date();
             const mes = hoy.getMonth();
             const dia = hoy.getDate();
-            // Desde 8 diciembre (mes 11, día >=8) hasta 31 diciembre
             if (mes === 11 && dia >= 8) return true;
-            // Hasta 6 enero (mes 0, día <=6)
             if (mes === 0 && dia <= 6) return true;
             return false;
         }
@@ -1037,10 +1010,7 @@
             modalDiv.innerHTML = `
                 <div class="modal-festividad-contenido">
                     <div class="modal-festividad-titulo">Semana de Mayo</div>
-                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" 
-                         alt="Argentina" 
-                         class="modal-festividad-imagen"
-                         loading="eager">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" alt="Argentina" class="modal-festividad-imagen" loading="eager">
                     <div class="modal-festividad-fecha">18 al 25 de Mayo</div>
                 </div>
             `;
@@ -1063,10 +1033,7 @@
             modalDiv.innerHTML = `
                 <div class="modal-festividad-contenido">
                     <div class="modal-festividad-titulo">Día de la Independencia</div>
-                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" 
-                         alt="Argentina" 
-                         class="modal-festividad-imagen"
-                         loading="eager">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" alt="Argentina" class="modal-festividad-imagen" loading="eager">
                     <div class="modal-festividad-fecha">9 de Julio - Argentina</div>
                 </div>
             `;
@@ -1089,10 +1056,7 @@
             modalDiv.innerHTML = `
                 <div class="modal-festividad-contenido">
                     <div class="modal-festividad-titulo">Día de la Bandera</div>
-                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" 
-                         alt="Argentina" 
-                         class="modal-festividad-imagen"
-                         loading="eager">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/argentina.jpg?raw=true" alt="Argentina" class="modal-festividad-imagen" loading="eager">
                     <div class="modal-festividad-fecha">20 de Junio - Argentina</div>
                 </div>
             `;
@@ -1115,10 +1079,7 @@
             modalDiv.innerHTML = `
                 <div class="modal-festividad-contenido">
                     <div class="modal-festividad-titulo">Fiestas de Fin de Año</div>
-                    <img src="https://github.com/sistemadigital/iconos/blob/main/navidad.png?raw=true" 
-                         alt="Navidad" 
-                         class="modal-festividad-imagen"
-                         loading="eager">
+                    <img src="https://github.com/sistemadigital/iconos/blob/main/navidad.png?raw=true" alt="Navidad" class="modal-festividad-imagen" loading="eager">
                     <div class="modal-festividad-fecha">Navidad, Año Nuevo y Reyes</div>
                 </div>
             `;
@@ -1143,7 +1104,6 @@
 
         // ==================== AUDIOS ====================
         const audioIngreso = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/ingreso.mp3');
-        // audioSalida ya está declarado arriba
         const audioRecuerda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/recuerda.mp3');
         const audioNoAgenda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/noagenda.mp3');
         const audioSiAgenda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/siagenda.mp3');
@@ -1197,7 +1157,7 @@
             playBannerAudio();
         });
 
-        // ==================== NUEVA FUNCIONALIDAD: AUDIOS AL HACER CLIC EN EL MENÚ (solo click, con cooldown) ====================
+        // ==================== AUDIOS AL HACER CLIC EN EL MENÚ (solo click, con cooldown) ====================
         (function agregarAudiosMenuSoloClick() {
             const ultimaReproduccion = new Map();
 
@@ -1225,17 +1185,14 @@
                 ['Atención al Público', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/atencion.mp3']
             ]);
 
-            // Ícono del menú (imagen)
             const menuIcon = document.querySelector('.menu-icon-img');
             if (menuIcon) {
                 const menuAudioUrl = 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/menu.mp3';
                 menuIcon.addEventListener('click', (e) => {
                     playAudioWithCooldown(menuAudioUrl);
-                    // No detener propagación para que el listener original de #btnMainMenu funcione (desplegar menú)
                 });
             }
 
-            // Enlaces del menú desplegable
             const menuLinks = document.querySelectorAll('#mainMenuPopup ul li a');
             menuLinks.forEach(link => {
                 const texto = link.textContent.trim();
@@ -1243,7 +1200,6 @@
                 if (audioUrl) {
                     link.addEventListener('click', (e) => {
                         playAudioWithCooldown(audioUrl);
-                        // No detener propagación, el onclick original ejecuta loadPage y el menú se cierra correctamente
                     });
                 }
             });
@@ -1268,7 +1224,6 @@
         const auth = getAuth(app);
         const dbPerfil = getFirestore(app);
         
-        // Base de datos de eventos (causas-defensoria)
         const causasConfig = {
             apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
             authDomain: "causas-defensoria.firebaseapp.com",
