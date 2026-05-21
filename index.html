@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>⚖️Sistema Empleados</title>
+    <title>⚖️ Sistema Digital Defensoría 6</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,12 +19,12 @@
         body, html {
             height: 100%;
             font-family: 'Inter', sans-serif;
-            background-color: #ffffff;
+            background: linear-gradient(145deg, #ffffff 0%, #f5faff 100%);
             overflow-x: hidden;
             color: #001f3f;
         }
 
-        /* --- FLOTANTE DE CRÉDITOS Y VERSIÓN --- */
+        /* CRÉDITO FLOTANTE */
         #creditos-flotante {
             position: fixed;
             top: 20px;
@@ -33,7 +33,7 @@
             color: white;
             padding: 10px 18px;
             border-radius: 8px;
-            z-index: 1000;
+            z-index: 1100;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
@@ -63,69 +63,30 @@
             transform: translateY(-20px) !important;
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
-        .contenedor-principal {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
-
-        /* --- CONTENEDOR IZQUIERDO --- */
-        .panel-izquierdo {
-            flex: 2;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            position: relative;
-            padding: 0 5%;
-            background: radial-gradient(circle at 10% 50%, #f0faff 0%, #ffffff 100%);
-        }
-
-        .brand-container {
+        /* CONTENEDOR PRINCIPAL CENTRADO */
+        .centro-pantalla {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            z-index: 2;
-            max-width: 50%;
-        }
-
-        .titulo-principal {
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            font-weight: 900;
-            line-height: 0.85;
-            letter-spacing: -0.05em;
-            margin-bottom: 20px;
-            color: #001f3f;
-            -webkit-text-fill-color: #001f3f;
-        }
-
-        .subtitulo-azul {
-            font-size: 1.3rem;
-            color: #003366; 
-            font-weight: 700;
-            margin-bottom: 30px;
-        }
-
-        .info-institucional {
-            border-left: 4px solid #00BFFF;
-            padding-left: 20px;
-            font-size: 1.1rem;
-        }
-
-        .info-institucional p:first-child { font-weight: 700; color: #000; }
-
-        /* --- IMAGEN 3D CON ANIMACIÓN MODERNA (RING ROTATORIO Y GLOW) --- */
-        .img-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;      /* Apila verticalmente imagen + protocolo */
-            justify-content: center;
             align-items: center;
-            z-index: 1;
-            position: relative;
+            justify-content: center;
+            padding: 2rem 1.5rem;
         }
 
-        /* Wrapper para el anillo animado */
+        /* TARJETA BLANCA SUTIL CON LUZ CELESTE TENUE */
+        .card-central {
+            max-width: 750px;
+            width: 100%;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 64px;
+            padding: 2rem 2rem 2.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.1), 0 0 0 2px rgba(0, 191, 255, 0.1), 0 0 30px rgba(0, 191, 255, 0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* CONTENEDOR IMAGEN (REDUCIDO Y RESPONSIVO) */
         .img-wrapper {
             position: relative;
             display: inline-block;
@@ -133,9 +94,13 @@
             animation: float 6s ease-in-out infinite, softPulse 3s ease-in-out infinite;
             cursor: pointer;
             outline: none;
+            margin-bottom: 1rem;
+            width: 280px;
+            height: auto;
+            transition: all 0.2s;
         }
 
-        /* Anillo giratorio principal (gradiente cónico) */
+        /* ANILLOS ROTATORIOS */
         .img-wrapper::before {
             content: '';
             position: absolute;
@@ -144,13 +109,7 @@
             right: -15px;
             bottom: -15px;
             border-radius: 50%;
-            background: conic-gradient(
-                from 0deg,
-                #00ffff,
-                #0044ff,
-                #ff00cc,
-                #00ffff
-            );
+            background: conic-gradient(from 0deg, #00ffff, #0044ff, #ff00cc, #00ffff);
             opacity: 0.7;
             z-index: -1;
             animation: rotateRing 4s linear infinite;
@@ -158,7 +117,6 @@
             transition: all 0.4s ease;
         }
 
-        /* Segundo anillo externo con blur y rotación inversa */
         .img-wrapper::after {
             content: '';
             position: absolute;
@@ -167,19 +125,13 @@
             right: -25px;
             bottom: -25px;
             border-radius: 50%;
-            background: conic-gradient(
-                from 90deg,
-                rgba(0, 255, 255, 0.3),
-                rgba(0, 68, 255, 0.3),
-                rgba(255, 0, 204, 0.3),
-                rgba(0, 255, 255, 0.3)
-            );
+            background: conic-gradient(from 90deg, rgba(0, 255, 255, 0.3), rgba(0, 68, 255, 0.3), rgba(255, 0, 204, 0.3), rgba(0, 255, 255, 0.3));
             z-index: -2;
             animation: rotateRingReverse 6s linear infinite;
             filter: blur(8px);
         }
 
-        /* [UX] Dinamismo según estado del Audio */
+        /* Estados de audio (sin icono, solo cambios visuales en anillo) */
         .img-wrapper.cargando::before {
             animation: rotateRing 1s linear infinite;
             filter: saturate(1.5);
@@ -191,63 +143,9 @@
             background: conic-gradient(from 0deg, #00ffff, #28a745, #00ffff);
         }
 
-        /* [UX] Indicador de Audio Flotante */
-        .audio-badge {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background-color: #001f3f;
-            color: #ffffff;
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-            z-index: 10;
-            font-size: 1.1rem;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid #00BFFF;
-        }
-
-        .img-wrapper:hover .audio-badge {
-            transform: scale(1.15);
-            background-color: #003366;
-        }
-
-        .img-wrapper.reproduciendo .audio-badge {
-            background-color: #28a745;
-            border-color: #ffffff;
-            animation: pulseBadge 1.5s infinite;
-        }
-
-        @keyframes pulseBadge {
-            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-        }
-
-        /* Accesibilidad: Indicador visual claro cuando se navega con Tabulador */
-        .img-wrapper:focus-visible {
-            box-shadow: 0 0 0 4px #00BFFF;
-        }
-
-        /* Rotaciones */
-        @keyframes rotateRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes rotateRingReverse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
-        }
-
-        /* La imagen permanece igual, con suavizado y brillo */
         .img-3d {
             width: 100%;
-            max-width: 420px;
+            max-width: 280px;
             height: auto;
             display: block;
             border-radius: 50%;
@@ -256,34 +154,44 @@
             pointer-events: none;
         }
 
-        .img-3d:hover {
-            transform: scale(1.02);
+        @keyframes rotateRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        /* Pulso suave y flotación combinados */
+        @keyframes rotateRingReverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
         @keyframes softPulse {
             0% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
             50% { filter: drop-shadow(0 0 20px rgba(0,191,255,0.6)); }
             100% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
         }
-
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-12px); }
         }
 
-        /* ----- PROTOCOLO DE ACTUACIÓN: UNA SOLA LÍNEA ----- */
+        /* TÍTULO PRINCIPAL: una sola línea */
+        .titulo-sistema {
+            font-size: clamp(2.8rem, 10vw, 5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: -0.03em;
+            color: #001f3f;
+            margin-top: 1.2rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            white-space: nowrap;
+        }
+
+        /* PROTOCOLO ACTUACIÓN (una línea responsiva) */
         .protocolo-link {
             text-decoration: none;
             display: inline-block;
-            margin-top: 1.75rem;
+            margin-top: 1rem;
             transition: transform 0.2s ease, opacity 0.2s;
             border-radius: 60px;
-        }
-
-        .protocolo-link:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
         }
 
         .protocolo-row {
@@ -291,116 +199,98 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 0.9rem;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(2px);
-            padding: 0.6rem 1.2rem;
+            gap: 0.7rem;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 0.5rem 1.2rem;
             border-radius: 60px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
             transition: all 0.2s ease;
-            width: auto;
-            max-width: 100%;
-            cursor: pointer;
-            flex-wrap: nowrap;          /* Evita que los elementos salten a otra línea */
-            white-space: nowrap;        /* Fuerza que el texto no se divida */
+            flex-wrap: nowrap;
+            white-space: nowrap;
         }
 
         .protocolo-texto {
             font-weight: 800;
-            font-size: clamp(0.85rem, 3.2vw, 1.25rem);
-            letter-spacing: -0.01em;
+            font-size: clamp(0.8rem, 3vw, 1rem);
             background: linear-gradient(135deg, #001f3f 0%, #004b8f 100%);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            white-space: nowrap;
         }
 
         .protocolo-icono {
-            height: clamp(32px, 6vw, 48px);
+            height: clamp(28px, 5vw, 38px);
             width: auto;
-            display: inline-block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-            transition: transform 0.2s ease;
             flex-shrink: 0;
         }
 
-        .protocolo-icono:hover {
-            transform: scale(1.05);
-        }
-
-        /* Ajuste para móviles: reducimos padding y fuente para que quepa en una línea */
-        @media (max-width: 640px) {
-            .protocolo-row {
-                gap: 0.6rem;
-                padding: 0.4rem 0.9rem;
-            }
-            .protocolo-texto {
-                font-size: 0.75rem;
-                letter-spacing: -0.01em;
-            }
-            .protocolo-icono {
-                height: 28px;
-            }
-            .protocolo-link {
-                margin-top: 1.2rem;
-            }
-        }
-
-        /* Para pantallas muy estrechas */
-        @media (max-width: 420px) {
-            .protocolo-texto {
-                font-size: 0.7rem;
-            }
-            .protocolo-row {
-                gap: 0.5rem;
-                padding: 0.35rem 0.8rem;
-            }
-            .protocolo-icono {
-                height: 26px;
-            }
-        }
-
-        /* --- CINTAS --- */
-        .panel-izquierdo::before, .panel-izquierdo::after {
-            content: "";
-            position: absolute;
+        /* MODALES FLOTANTES */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
             left: 0;
             width: 100%;
-            height: 12px;
-            background: #001f3f;
-            opacity: 0.20;
-        }
-        .panel-izquierdo::before { top: 30px; }
-        .panel-izquierdo::after { bottom: 30px; }
-
-        /* --- CONTENEDOR DERECHO (Login/Registro) --- */
-        .panel-derecho {
-            flex: 1;
+            height: 100%;
+            background-color: rgba(0, 15, 30, 0.75);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #ffffff;
-            box-shadow: -15px 0 50px rgba(0, 0, 0, 0.04);
-            z-index: 10;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
         }
 
-        .formulario-login {
-            width: 100%;
-            max-width: 320px;
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
         }
 
-        .formulario-login h2 {
-            font-weight: 900;
-            font-size: 2rem;
-            margin-bottom: 25px;
-            letter-spacing: -0.03em;
+        .modal-contenido {
+            background: #ffffff;
+            max-width: 460px;
+            width: 90%;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .modal-overlay.active .modal-contenido {
+            transform: scale(1);
+        }
+
+        .btn-cerrar-modal {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.4rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #888;
+            transition: 0.2s;
+            line-height: 1;
+        }
+
+        .btn-cerrar-modal:hover {
             color: #001f3f;
         }
 
+        .modal-contenido h3 {
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #001f3f;
+            letter-spacing: -0.02em;
+        }
+
         .grupo-input {
-            margin-bottom: 18px;
+            margin-bottom: 1.2rem;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -409,151 +299,122 @@
         .grupo-input label {
             font-size: 0.7rem;
             font-weight: 700;
-            color: #aaa;
+            color: #5a6e82;
             text-transform: uppercase;
         }
 
         .grupo-input input {
             padding: 14px;
-            border: 1px solid #eef0f2;
-            border-radius: 12px;
-            font-size: 1rem;
-            background-color: #f8fafc;
-            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            background-color: #fcfdff;
+            transition: all 0.2s;
             width: 100%;
         }
 
         .grupo-input input:focus {
             outline: none;
             border-color: #00BFFF;
-            box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.2);
         }
 
-        /* Estilo para la casilla de mostrar clave */
         .mostrar-clave {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.85rem;
-            color: #666;
+            font-size: 0.8rem;
+            color: #2c3e50;
+            margin: -5px 0 12px 0;
             cursor: pointer;
-            margin-top: -10px;
-            margin-bottom: 15px;
         }
 
-        .mostrar-clave input {
-            cursor: pointer;
-            width: auto;
-        }
-
-        .btn-ingresar {
+        .btn-modal-primario {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: #001f3f;
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 40px;
+            font-weight: 800;
             font-size: 1rem;
-            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
+            margin-top: 8px;
+            transition: 0.2s;
         }
 
-        .btn-ingresar:hover {
+        .btn-modal-primario:hover {
+            background: #0a2f50;
             transform: translateY(-2px);
         }
 
-        .btn-secundario {
-            width: 100%;
-            padding: 16px;
-            background: transparent;
-            color: #001f3f;
-            border: 2px solid #001f3f;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-
-        .btn-secundario:hover {
-            background: rgba(0, 31, 63, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-            color: #aaa;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #eef0f2;
-            margin: 0 10px;
-        }
-
-        .auth-message {
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+        .enlace-modal {
             text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+        }
+
+        .enlace-modal span {
+            color: #00a3cc;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Mensaje flotante global (toast) */
+        .auth-message-global {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e2a36;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
             font-size: 0.9rem;
+            z-index: 2100;
             display: none;
+            backdrop-filter: blur(8px);
+            background: rgba(0,31,63,0.95);
+            font-weight: 500;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 85vw;
         }
 
-        .error-message {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
+        .auth-message-global.error {
+            background: #c0392b;
         }
 
-        .success-message {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
+        .auth-message-global.success {
+            background: #2c6e2f;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        /* --- RESPONSIVE / MODO MÓVIL --- */
-        @media (max-width: 1024px) {
-            .contenedor-principal { flex-direction: column; height: auto; overflow-y: auto; }
-            .panel-izquierdo { flex: none; padding: 60px 20px; text-align: center; flex-direction: column; }
-            .brand-container { align-items: center; max-width: 100%; margin-bottom: 30px; }
-            .info-institucional { border-left: none; border-top: 3px solid #00BFFF; padding: 15px 0 0 0; }
-            .img-3d { max-width: 250px; margin-bottom: 0; }
-            .panel-derecho { flex: none; padding: 40px 20px 80px 20px; }
-            .formulario-login h2 { text-align: center; }
-            .img-wrapper::before {
-                top: -10px;
-                left: -10px;
-                right: -10px;
-                bottom: -10px;
+        /* RESPONSIVE */
+        @media (max-width: 640px) {
+            .card-central {
+                padding: 1.5rem;
+                border-radius: 48px;
             }
-            .img-wrapper::after {
-                top: -18px;
-                left: -18px;
-                right: -18px;
-                bottom: -18px;
+            .img-wrapper {
+                width: 220px;
             }
-            .protocolo-link {
-                margin-top: 1.5rem;
+            .img-3d {
+                max-width: 220px;
             }
-            .audio-badge {
-                bottom: 5px;
-                right: 5px;
-                width: 38px;
-                height: 38px;
-                font-size: 0.9rem;
+            .titulo-sistema {
+                font-size: 2.2rem;
+                white-space: nowrap;
+            }
+            .protocolo-row {
+                gap: 0.5rem;
+                padding: 0.4rem 0.9rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .titulo-sistema {
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -565,115 +426,94 @@
         <span class="texto-version">Versión 3.1.2026</span>
     </div>
 
-    <div class="contenedor-principal">
-        
-        <div class="panel-izquierdo">
-            <div class="brand-container">
-                <h1 class="titulo-principal">Sistema<br>Digital</h1>
-                <p class="subtitulo-azul">Administración de Causas Judiciales</p>
-                
-                <div class="info-institucional">
-                    <p>Defensoria Civil y Comercial 6</p>
-                    <p>Ministerio Público de Misiones</p>
-                    <p>Empleados</p>
-                </div>
+    <div class="centro-pantalla">
+        <div class="card-central">
+            <!-- Contenedor imagen con audio -->
+            <div class="img-wrapper" id="imagenClickAudio" 
+                 role="button" 
+                 tabindex="0" 
+                 aria-label="Escuchar saludo institucional y abrir inicio de sesión" 
+                 title="Haz clic: audio + acceso al sistema">
+                <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" 
+                     alt="Sistema Digital 3D" 
+                     class="img-3d">
             </div>
 
-            <div class="img-container">
-                <!-- Wrapper con audio interactivo -->
-                <div class="img-wrapper" id="imagenClickAudio" 
-                     role="button" 
-                     tabindex="0" 
-                     aria-label="Escuchar saludo institucional interactivo" 
-                     title="Haga clic para escuchar o pausar el saludo institucional">
-                    <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" 
-                         alt="Sistema Digital 3D" 
-                         class="img-3d">
-                    <div class="audio-badge" id="audioBadgeState" aria-hidden="true">🔊</div>
-                </div>
+            <!-- Título principal en una sola línea -->
+            <h1 class="titulo-sistema">Sistema Digital</h1>
 
-                <!-- Protocolo de Actuación Judicial (clickeable, una línea) -->
-                <a href="https://defensorialocal-seis.github.io/protocolo/" 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   class="protocolo-link">
-                    <div class="protocolo-row">
-                        <span class="protocolo-texto">📋 Protocolo de Actuación Judicial</span>
-                        <img src="https://github.com/defensorialocal-seis/protocolo/blob/main/icono1.png?raw=true" 
-                             alt="Icono Protocolo Judicial" 
-                             class="protocolo-icono"
-                             loading="eager">
-                    </div>
-                </a>
-            </div>
+            <!-- Protocolo de actuación -->
+            <a href="https://defensorialocal-seis.github.io/protocolo/" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="protocolo-link">
+                <div class="protocolo-row">
+                    <span class="protocolo-texto">📋 Protocolo de Actuación Judicial</span>
+                    <img src="https://github.com/defensorialocal-seis/protocolo/blob/main/icono1.png?raw=true" 
+                         alt="Icono Protocolo Judicial" 
+                         class="protocolo-icono"
+                         loading="eager">
+                </div>
+            </a>
         </div>
-
-        <div class="panel-derecho">
-            <div class="formulario-login">
-                <h2>
-                    Bienvenido
-                    <svg id="powerIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#003366" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="width: 0.9em; height: 0.9em; vertical-align: middle; margin-left: 8px; margin-bottom: 6px; display: inline-block; transition: all 0.4s ease;">
-                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-                        <line x1="12" y1="2" x2="12" y2="12"></line>
-                    </svg>
-                </h2>
-
-                <div id="authMessage" class="auth-message"></div>
-
-                <div id="loginForm">
-                    <div class="grupo-input">
-                        <label>Correo electrónico</label>
-                        <input type="email" id="loginEmail" placeholder="usuario Zimbra o email completo distinto" required>
-                    </div>
-
-                    <div class="grupo-input">
-                        <label>Contraseña</label>
-                        <input type="password" id="loginPassword" placeholder="••••••••" required>
-                    </div>
-
-                    <label class="mostrar-clave">
-                        <input type="checkbox" onchange="document.getElementById('loginPassword').type = this.checked ? 'text' : 'password'">
-                        Mostrar contraseña
-                    </label>
-
-                    <button class="btn-ingresar" onclick="loginUser()">Entrar al sistema</button>
-
-                    <div class="divider"><span>¿No tienes cuenta?</span></div>
-
-                    <button class="btn-secundario" onclick="showRegisterForm()">Crear cuenta</button>
-                </div>
-
-                <div id="registerForm" class="hidden">
-                    <div class="grupo-input">
-                        <label>Nombre completo</label>
-                        <input type="text" id="registerName" placeholder="Tu nombre y apellido" required>
-                    </div>
-
-                    <div class="grupo-input">
-                        <label>Correo electrónico</label>
-                        <input type="email" id="registerEmail" placeholder="usuario Zimbra o email distinto" required>
-                    </div>
-
-                    <div class="grupo-input">
-                        <label>Contraseña</label>
-                        <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
-                    </div>
-
-                    <label class="mostrar-clave">
-                        <input type="checkbox" onchange="document.getElementById('registerPassword').type = this.checked ? 'text' : 'password'">
-                        Mostrar contraseña
-                    </label>
-
-                    <button class="btn-ingresar" onclick="registerUser()">Registrarse</button>
-
-                    <div class="divider"><span>¿Ya tienes cuenta?</span></div>
-
-                    <button class="btn-secundario" onclick="showLoginForm()">Volver al login</button>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <!-- MODAL LOGIN -->
+    <div id="modalLogin" class="modal-overlay">
+        <div class="modal-contenido">
+            <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
+            <h3>Bienvenido</h3>
+            <div id="loginFormModal">
+                <div class="grupo-input">
+                    <label>Correo electrónico</label>
+                    <input type="email" id="loginEmail" placeholder="usuario o email@mpmisiones.gob.ar" autocomplete="email">
+                </div>
+                <div class="grupo-input">
+                    <label>Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <label class="mostrar-clave">
+                    <input type="checkbox" id="mostrarLoginPass"> Mostrar contraseña
+                </label>
+                <button class="btn-modal-primario" id="btnLoginAction">Entrar al sistema</button>
+                <div class="enlace-modal">
+                    ¿No tienes cuenta? <span id="cambiarARegistroDesdeLogin">Regístrate aquí</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRO -->
+    <div id="modalRegistro" class="modal-overlay">
+        <div class="modal-contenido">
+            <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
+            <h3>Registro</h3>
+            <div>
+                <div class="grupo-input">
+                    <label>Nombre completo</label>
+                    <input type="text" id="registerName" placeholder="Nombre y apellido" autocomplete="name">
+                </div>
+                <div class="grupo-input">
+                    <label>Correo electrónico</label>
+                    <input type="email" id="registerEmail" placeholder="usuario o email@mpmisiones.gob.ar" autocomplete="email">
+                </div>
+                <div class="grupo-input">
+                    <label>Contraseña</label>
+                    <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+                </div>
+                <label class="mostrar-clave">
+                    <input type="checkbox" id="mostrarRegPass"> Mostrar contraseña
+                </label>
+                <button class="btn-modal-primario" id="btnRegisterAction">Registrarse</button>
+                <div class="enlace-modal">
+                    ¿Ya tienes cuenta? <span id="cambiarALoginDesdeRegistro">Inicia sesión</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de mensajes global -->
+    <div id="globalAuthMessage" class="auth-message-global"></div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -690,7 +530,6 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
         const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
 
         let isRegistering = false;
@@ -704,66 +543,65 @@
             return email;
         }
 
-        window.showMessage = function(msg, type) {
-            const div = document.getElementById('authMessage');
+        function showMessage(msg, type) {
+            const div = document.getElementById('globalAuthMessage');
             div.textContent = msg;
-            div.className = 'auth-message ' + (type === 'error' ? 'error-message' : 'success-message');
+            div.className = 'auth-message-global';
+            if (type === 'error') div.classList.add('error');
+            else if (type === 'success') div.classList.add('success');
             div.style.display = 'block';
-            setTimeout(() => div.style.display = 'none', 4000);
-        };
+            setTimeout(() => {
+                div.style.display = 'none';
+                div.classList.remove('error', 'success');
+            }, 4000);
+        }
 
+        // LOGIN
         window.loginUser = async function() {
             const rawEmail = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-
             const email = formatEmail(rawEmail);
 
             if (!email || !password) {
-                return showMessage('Completa todos los campos', 'error');
+                showMessage('Completa todos los campos', 'error');
+                return;
             }
             try {
                 isLoggingIn = true;
                 await signInWithEmailAndPassword(auth, email, password);
-                
-                const icon = document.getElementById('powerIcon');
-                if (icon) {
-                    icon.setAttribute('stroke', '#28a745');
-                    icon.setAttribute('stroke-width', '4.5');
-                }
-                
-                showMessage('Acceso concedido. Iniciando sistema...', 'success');
-
+                showMessage('Acceso concedido. Redirigiendo...', 'success');
                 setTimeout(() => {
                     window.location.href = 'app.html';
-                }, 3000);
-
+                }, 1800);
             } catch (error) {
                 isLoggingIn = false;
-                showMessage('Credenciales inválidas', 'error');
+                showMessage('Credenciales inválidas o error de conexión', 'error');
             }
         };
 
+        // REGISTRO
         window.registerUser = async function() {
-            const name = document.getElementById('registerName').value;
+            const name = document.getElementById('registerName').value.trim();
             const rawEmail = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
-
             const email = formatEmail(rawEmail);
 
             if (!name || !email || !password) {
-                return showMessage('Completa todos los campos', 'error');
+                showMessage('Completa todos los campos', 'error');
+                return;
             }
             if (password.length < 6) {
-                return showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
             }
-
             isRegistering = true;
-
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(cred.user, { displayName: name });
-                showMessage('Cuenta creada con éxito', 'success');
-                window.location.href = 'app.html';
+                showMessage('Cuenta creada con éxito. Redirigiendo...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 1800);
             } catch (error) {
                 isRegistering = false;
                 if (error.code === 'auth/email-already-in-use') {
@@ -774,121 +612,166 @@
             }
         };
 
+        // Redirección si ya está autenticado
         onAuthStateChanged(auth, user => {
-            if (user && !isRegistering && !isLoggingIn) {
+            if (user && !isRegistering && !isLoggingIn && (window.location.pathname.includes('index.html') || window.location.pathname === '/')) {
                 window.location.href = 'app.html';
             }
         });
 
-        window.showRegisterForm = function() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-            document.getElementById('authMessage').style.display = 'none';
-        };
+        // --- MANEJO DE MODALES ---
+        const modalLogin = document.getElementById('modalLogin');
+        const modalRegistro = document.getElementById('modalRegistro');
 
-        window.showLoginForm = function() {
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('authMessage').style.display = 'none';
-        };
+        function abrirModalLogin() {
+            modalLogin.classList.add('active');
+            document.getElementById('loginEmail').focus();
+        }
+        function cerrarModalLogin() {
+            modalLogin.classList.remove('active');
+        }
+        function abrirModalRegistro() {
+            modalRegistro.classList.add('active');
+            document.getElementById('registerName').focus();
+        }
+        function cerrarModalRegistro() {
+            modalRegistro.classList.remove('active');
+        }
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                const loginHidden = document.getElementById('loginForm').classList.contains('hidden');
-                if (!loginHidden) {
-                    loginUser();
-                } else {
-                    registerUser();
-                }
-            }
+        // Cerrar modales con X
+        document.getElementById('cerrarModalLoginBtn').addEventListener('click', cerrarModalLogin);
+        document.getElementById('cerrarModalRegistroBtn').addEventListener('click', cerrarModalRegistro);
+
+        // Cerrar al hacer clic fuera del contenido
+        modalLogin.addEventListener('click', (e) => {
+            if (e.target === modalLogin) cerrarModalLogin();
+        });
+        modalRegistro.addEventListener('click', (e) => {
+            if (e.target === modalRegistro) cerrarModalRegistro();
         });
 
-        // --- LÓGICA DE AUDIO INTERACTIVO (tomada de 1index.html) ---
+        // Botones acción
+        document.getElementById('btnLoginAction').addEventListener('click', () => loginUser());
+        document.getElementById('btnRegisterAction').addEventListener('click', () => registerUser());
+
+        // Mostrar/ocultar contraseña en modales
+        const mostrarLoginCheck = document.getElementById('mostrarLoginPass');
+        const loginPassInput = document.getElementById('loginPassword');
+        mostrarLoginCheck.addEventListener('change', () => {
+            loginPassInput.type = mostrarLoginCheck.checked ? 'text' : 'password';
+        });
+        const mostrarRegCheck = document.getElementById('mostrarRegPass');
+        const regPassInput = document.getElementById('registerPassword');
+        mostrarRegCheck.addEventListener('change', () => {
+            regPassInput.type = mostrarRegCheck.checked ? 'text' : 'password';
+        });
+
+        // Navegación entre modales mediante enlaces
+        document.getElementById('cambiarARegistroDesdeLogin').addEventListener('click', () => {
+            cerrarModalLogin();
+            abrirModalRegistro();
+        });
+        document.getElementById('cambiarALoginDesdeRegistro').addEventListener('click', () => {
+            cerrarModalRegistro();
+            abrirModalLogin();
+        });
+
+        // --- ENTER PARA LOGIN Y REGISTRO ---
+        // Login: al presionar Enter en los campos del modal login
+        const loginEmailInput = document.getElementById('loginEmail');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const handleLoginEnter = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                loginUser();
+            }
+        };
+        loginEmailInput.addEventListener('keypress', handleLoginEnter);
+        loginPasswordInput.addEventListener('keypress', handleLoginEnter);
+
+        // Registro: al presionar Enter en cualquier campo del modal registro
+        const regNameInput = document.getElementById('registerName');
+        const regEmailInput = document.getElementById('registerEmail');
+        const regPasswordInput = document.getElementById('registerPassword');
+        const handleRegisterEnter = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                registerUser();
+            }
+        };
+        regNameInput.addEventListener('keypress', handleRegisterEnter);
+        regEmailInput.addEventListener('keypress', handleRegisterEnter);
+        regPasswordInput.addEventListener('keypress', handleRegisterEnter);
+
+        // --- LÓGICA DE AUDIO (sin badge visual) ---
         let currentAudio = null;
+        const imgWrapper = document.getElementById('imagenClickAudio');
+        const audioUrl = 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/saludo.mp3';
 
-        function toggleSaludo() {
-            const imgWrapper = document.getElementById('imagenClickAudio');
-            const audioBadge = document.getElementById('audioBadgeState');
-            const audioUrl = 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/saludo.mp3';
+        function toggleSaludoYMostrarLogin() {
+            abrirModalLogin();
 
-            // Si el audio está sonando, pausarlo
             if (currentAudio && !currentAudio.paused) {
                 currentAudio.pause();
                 return;
             }
-
-            // Inicializar nueva instancia si no existe
             if (!currentAudio) {
                 currentAudio = new Audio(audioUrl);
                 currentAudio.preload = 'auto';
                 
                 currentAudio.addEventListener('waiting', () => {
                     imgWrapper.classList.add('cargando');
-                    audioBadge.textContent = '⏳';
                 });
-                
                 currentAudio.addEventListener('playing', () => {
                     imgWrapper.classList.remove('cargando');
                     imgWrapper.classList.add('reproduciendo');
-                    audioBadge.textContent = '⏸️';
                 });
-                
                 currentAudio.addEventListener('pause', () => {
                     imgWrapper.classList.remove('reproduciendo', 'cargando');
-                    audioBadge.textContent = '🔊';
                 });
-                
                 currentAudio.addEventListener('ended', () => {
                     imgWrapper.classList.remove('reproduciendo', 'cargando');
-                    audioBadge.textContent = '🔊';
                     currentAudio.currentTime = 0;
                 });
-                
-                currentAudio.addEventListener('error', (e) => {
+                currentAudio.addEventListener('error', () => {
                     imgWrapper.classList.remove('reproduciendo', 'cargando');
-                    audioBadge.textContent = '⚠️';
-                    console.error('Error de carga en la pista de audio:', e);
                 });
             }
-            
             imgWrapper.classList.add('cargando');
-            audioBadge.textContent = '⏳';
-            
-            currentAudio.play().catch(error => {
+            currentAudio.play().catch(err => {
                 imgWrapper.classList.remove('cargando');
-                audioBadge.textContent = '🔊';
-                console.warn('La reproducción automática o directa fue bloqueada por el navegador:', error);
+                console.warn('Audio bloqueado o error:', err);
             });
         }
 
-        // Asignar eventos de audio al cargar el DOM
-        document.addEventListener('DOMContentLoaded', () => {
-            const imgWrapper = document.getElementById('imagenClickAudio');
-            if (imgWrapper) {
-                imgWrapper.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleSaludo();
-                });
-                imgWrapper.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleSaludo();
-                    }
-                });
+        imgWrapper.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSaludoYMostrarLogin();
+        });
+        imgWrapper.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleSaludoYMostrarLogin();
             }
         });
-    </script>
 
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (modalLogin.classList.contains('active')) cerrarModalLogin();
+                if (modalRegistro.classList.contains('active')) cerrarModalRegistro();
+            }
+        });
+
+        // Fade out créditos flotante
+        setTimeout(() => {
             const flotante = document.getElementById('creditos-flotante');
-            setTimeout(() => {
+            if (flotante) {
                 flotante.classList.add('fade-out');
                 setTimeout(() => flotante.remove(), 1000);
-            }, 5000);
-        });
+            }
+        }, 5000);
     </script>
-
 </body>
 </html>
