@@ -1363,9 +1363,13 @@
                 }
                 const textColor = isDark(r,g,b) ? '#ffffff' : '#1e293b';
                 footer.style.color = textColor;
+                
                 // Aplicar a los elementos internos del footer
                 const footerElements = footer.querySelectorAll('*');
                 footerElements.forEach(el => {
+                    // Excluir elementos dentro de los popups para que no pierdan su formato original
+                    if (el.closest('.calendar-popup') || el.closest('.menu-popup') || el.closest('.sistema-info-modal')) return;
+
                     if (el.classList && (el.classList.contains('event-banner') || el.classList.contains('logout-button') || 
                         el.classList.contains('sistema-info-text') || el.classList.contains('dtw-content') ||
                         el.classList.contains('footer-defensoria') || el.classList.contains('exclusive-access-text'))) {
@@ -1523,7 +1527,6 @@
                             <button id="saveFechaBtn" class="save-btn"><i class="fas fa-check"></i></button>
                             <button id="cancelFechaBtn" class="cancel-btn"><i class="fas fa-times"></i></button>
                         </div>
-                        <!-- Selector de color personalizado (footer y texto bienvenida) -->
                         <div class="info-item">
                             <strong>Color Personal:</strong> 
                             <input type="color" id="colorPicker" value="${colorPersonalizado}" style="cursor: pointer; border: none; width: 40px; height: 30px; border-radius: 4px; padding: 0; background: transparent;">
