@@ -86,7 +86,7 @@
             transition: all 0.3s ease;
         }
 
-        /* CONTENEDOR IMAGEN (REDUCIDO Y RESPONSIVO) */
+        /* CONTENEDOR IMAGEN (REDUCIDO Y RESPONSIVO) - SIN AUDIO */
         .img-wrapper {
             position: relative;
             display: inline-block;
@@ -100,7 +100,7 @@
             transition: all 0.2s;
         }
 
-        /* ANILLOS ROTATORIOS */
+        /* ANILLOS ROTATORIOS DECORATIVOS (solo estéticos) */
         .img-wrapper::before {
             content: '';
             position: absolute;
@@ -129,18 +129,6 @@
             z-index: -2;
             animation: rotateRingReverse 6s linear infinite;
             filter: blur(8px);
-        }
-
-        /* Estados de audio (sin icono, solo cambios visuales en anillo) */
-        .img-wrapper.cargando::before {
-            animation: rotateRing 1s linear infinite;
-            filter: saturate(1.5);
-        }
-
-        .img-wrapper.reproduciendo::before {
-            animation: rotateRing 2s linear infinite;
-            box-shadow: 0 0 35px rgba(40, 167, 69, 0.7);
-            background: conic-gradient(from 0deg, #00ffff, #28a745, #00ffff);
         }
 
         .img-3d {
@@ -423,17 +411,17 @@
 
     <div id="creditos-flotante">
         <span class="texto-autor">Diseño y programación: Rómulo Fioravante</span>
-        <span class="texto-version">Versión 3.1.2026</span>
+        <span class="texto-version">Versión 3.2.2026 - Sin audio</span>
     </div>
 
     <div class="centro-pantalla">
         <div class="card-central">
-            <!-- Contenedor imagen con audio -->
-            <div class="img-wrapper" id="imagenClickAudio" 
+            <!-- Contenedor imagen (sin audio, solo apertura de login) -->
+            <div class="img-wrapper" id="imagenAbrirLogin" 
                  role="button" 
                  tabindex="0" 
-                 aria-label="Escuchar saludo institucional y abrir inicio de sesión" 
-                 title="Haz clic: audio + acceso al sistema">
+                 aria-label="Abrir inicio de sesión" 
+                 title="Haz clic para acceder al sistema">
                 <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" 
                      alt="Sistema Digital 3D" 
                      class="img-3d">
@@ -703,58 +691,25 @@
         regEmailInput.addEventListener('keypress', handleRegisterEnter);
         regPasswordInput.addEventListener('keypress', handleRegisterEnter);
 
-        // --- LÓGICA DE AUDIO (sin badge visual) ---
-        let currentAudio = null;
-        const imgWrapper = document.getElementById('imagenClickAudio');
-        const audioUrl = 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/saludo.mp3';
-
-        function toggleSaludoYMostrarLogin() {
-            abrirModalLogin();
-
-            if (currentAudio && !currentAudio.paused) {
-                currentAudio.pause();
-                return;
-            }
-            if (!currentAudio) {
-                currentAudio = new Audio(audioUrl);
-                currentAudio.preload = 'auto';
-                
-                currentAudio.addEventListener('waiting', () => {
-                    imgWrapper.classList.add('cargando');
-                });
-                currentAudio.addEventListener('playing', () => {
-                    imgWrapper.classList.remove('cargando');
-                    imgWrapper.classList.add('reproduciendo');
-                });
-                currentAudio.addEventListener('pause', () => {
-                    imgWrapper.classList.remove('reproduciendo', 'cargando');
-                });
-                currentAudio.addEventListener('ended', () => {
-                    imgWrapper.classList.remove('reproduciendo', 'cargando');
-                    currentAudio.currentTime = 0;
-                });
-                currentAudio.addEventListener('error', () => {
-                    imgWrapper.classList.remove('reproduciendo', 'cargando');
-                });
-            }
-            imgWrapper.classList.add('cargando');
-            currentAudio.play().catch(err => {
-                imgWrapper.classList.remove('cargando');
-                console.warn('Audio bloqueado o error:', err);
+        // --- CLIC EN IMAGEN: SOLO ABRE MODAL LOGIN (SIN AUDIO) ---
+        const imagenWrapper = document.getElementById('imagenAbrirLogin');
+        if (imagenWrapper) {
+            // Eliminar cualquier clase residual de audio (por si acaso)
+            imagenWrapper.classList.remove('cargando', 'reproduciendo');
+            // Evento click: solo abre login
+            imagenWrapper.addEventListener('click', (e) => {
+                e.stopPropagation();
+                abrirModalLogin();
+            });
+            // Accesibilidad: tecla Enter o Espacio
+            imagenWrapper.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    abrirModalLogin();
+                }
             });
         }
-
-        imgWrapper.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleSaludoYMostrarLogin();
-        });
-        imgWrapper.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleSaludoYMostrarLogin();
-            }
-        });
 
         // Cerrar modales con Escape
         document.addEventListener('keydown', (e) => {

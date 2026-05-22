@@ -151,14 +151,6 @@
             color: white;
             letter-spacing: 0.3px;
         }
-        .event-banner .audio-icon {
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: transform 0.2s;
-        }
-        .event-banner .audio-icon:hover {
-            transform: scale(1.1);
-        }
 
         /* Text y Modal del Desarrollador */
         .sistema-info-text-container { position: relative; display: flex; align-items: center; height: 100%; }
@@ -203,16 +195,6 @@
             gap: 10px;
         }
         .footer-defensoria strong { color: #00BFFF; font-weight: 700; }
-        .footer-defensoria .audio-icon-footer {
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s;
-            color: white;
-        }
-        .footer-defensoria .audio-icon-footer:hover {
-            transform: scale(1.1);
-            color: #00BFFF;
-        }
 
         .datetime-weather-container {
             position: relative; color: white; font-size: 0.85rem;
@@ -392,16 +374,6 @@
             font-family: 'Inter', sans-serif;
             transition: all 0.25s ease;
             animation: slideInRight 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-        .reminder-modal .audio-icon-reminder {
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 1.2rem;
-            color: #e63946;
-            transition: transform 0.2s;
-        }
-        .reminder-modal .audio-icon-reminder:hover {
-            transform: scale(1.1);
         }
         .reminder-modal h3 {
             display: flex;
@@ -674,7 +646,6 @@
                     Defensoria Civil y Comercial 6<br>
                     <strong>Ministerio Público de Misiones</strong>
                 </div>
-                <i class="fas fa-play-circle audio-icon-footer" id="audioTituloIcon"></i>
             </div>
 
             <div class="datetime-weather-container" id="dateTimeWeatherBtn">
@@ -699,14 +670,12 @@
 
             <span class="exclusive-access-text">
                 Acceso Empleados
-                <i class="fas fa-play-circle" id="audioIngresoIcon" style="font-size: 1.1rem; cursor: pointer; margin-left: 6px;"></i>
             </span>
         </div>
 
         <div class="footer-right" id="footerRightArea">
             <div class="event-banner" id="eventBanner">
                 <p id="bannerText">Cargando eventos...</p>
-                <i class="fas fa-volume-up audio-icon" id="bannerAudioIcon"></i>
             </div>
 
             <div class="sistema-info-text-container" id="btnSistemaInfoContainer">
@@ -729,10 +698,7 @@
 
     <div class="modal-overlay" id="modalSalida">
         <div class="modal-alerta">
-            <h3>
-                Cerrar sesión
-                <i class="fas fa-play-circle" id="audioSalidaIcon" style="font-size: 1.2rem; cursor: pointer; margin-left: 10px;"></i>
-            </h3>
+            <h3>Cerrar sesión</h3>
             <p>¿Estás seguro de que deseas salir del sistema?</p>
             <div class="modal-botones">
                 <button class="btn-modal" id="confirmarSalida">Sí, salir</button>
@@ -755,7 +721,6 @@
         <span class="close-x" id="reminderCloseX">&times;</span>
         <h3 style="color: #8b0000;">
             Recuerda esto:
-            <i class="fas fa-play-circle audio-icon-reminder" id="audioRecuerdaIcon"></i>
         </h3>
         <ul class="reminder-list-modal">
             <li>Verifica la cantidad de expedientes pendientes en tu escritorio SIGED</li>
@@ -895,11 +860,9 @@
         fetchWeather();
 
         const modalSalida = document.getElementById('modalSalida');
-        const audioSalida = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/salida.mp3');
         
         document.getElementById('btnSalir').addEventListener('click', () => {
             modalSalida.classList.add('active');
-            audioSalida.play().catch(err => console.warn('Audio salida no pudo reproducirse automáticamente:', err));
         });
         document.getElementById('cancelarSalida').addEventListener('click', () => { modalSalida.classList.remove('active'); });
 
@@ -908,10 +871,9 @@
         document.getElementById('closeBirthdayBtn').addEventListener('click', cerrarBirthdayModal);
         document.querySelector('.close-birthday').addEventListener('click', cerrarBirthdayModal);
         
-        // MODAL DE RECORDATORIO
+        // MODAL DE RECORDATORIO (sin audio)
         let reminderShown = false;
         let reminderTimeout = null;
-        let isAudioPlaying = false;
 
         function closeReminderModal() {
             const modal = document.getElementById('reminderModal');
@@ -920,11 +882,6 @@
                 clearTimeout(reminderTimeout);
                 reminderTimeout = null;
             }
-            if (audioRecuerda && !audioRecuerda.paused) {
-                audioRecuerda.pause();
-                audioRecuerda.currentTime = 0;
-            }
-            isAudioPlaying = false;
         }
 
         function showReminderModalOnce() {
@@ -934,9 +891,7 @@
             reminderShown = true;
             modal.style.display = 'block';
             reminderTimeout = setTimeout(() => {
-                if (!isAudioPlaying) {
-                    closeReminderModal();
-                }
+                closeReminderModal();
             }, 20000);
         }
 
@@ -1073,117 +1028,17 @@
             if (isFinDeAnioRange()) setTimeout(() => mostrarModalFinDeAnio(), 350);
         });
 
-        // AUDIOS
-        const audioIngreso = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/ingreso.mp3');
-        const audioRecuerda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/recuerda.mp3');
-        const audioNoAgenda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/noagenda.mp3');
-        const audioSiAgenda = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/siagenda.mp3');
-        const audioTitulo = new Audio('https://github.com/sistemadigital/iconos/raw/refs/heads/main/titulo.mp3');
-
-        document.getElementById('audioIngresoIcon')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            audioIngreso.play().catch(err => console.warn('Audio ingreso no pudo reproducirse:', err));
-        });
-
-        document.getElementById('audioSalidaIcon')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            audioSalida.play().catch(err => console.warn('Audio salida no pudo reproducirse:', err));
-        });
-
-        document.getElementById('audioTituloIcon')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            audioTitulo.play().catch(err => console.warn('Audio título no pudo reproducirse:', err));
-        });
-
-        const reminderAudioIcon = document.getElementById('audioRecuerdaIcon');
-        if (reminderAudioIcon) {
-            reminderAudioIcon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (reminderTimeout) {
-                    clearTimeout(reminderTimeout);
-                    reminderTimeout = null;
-                }
-                isAudioPlaying = true;
-                audioRecuerda.play().catch(err => console.warn('Audio recuerda no pudo reproducirse:', err));
-            });
-        }
-
-        audioRecuerda.addEventListener('ended', () => {
-            closeReminderModal();
-        });
-
+        // Banner eventos (sin audio)
         const bannerDiv = document.getElementById('eventBanner');
-        const bannerAudioIcon = document.getElementById('bannerAudioIcon');
-        
-        function playBannerAudio() {
-            if (bannerDiv.classList.contains('hay-eventos')) {
-                audioSiAgenda.play().catch(err => console.warn('Audio si agenda no pudo reproducirse:', err));
-            } else {
-                audioNoAgenda.play().catch(err => console.warn('Audio no agenda no pudo reproducirse:', err));
-            }
-        }
-        
-        bannerAudioIcon?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            playBannerAudio();
-        });
-
         if (bannerDiv) {
             bannerDiv.addEventListener('click', (e) => {
-                if (e.target.closest('.audio-icon')) return;
                 if (bannerDiv.classList.contains('hay-eventos')) {
                     loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
                 }
             });
         }
 
-        // AUDIOS AL HACER CLIC EN EL MENÚ
-        (function agregarAudiosMenuSoloClick() {
-            const ultimaReproduccion = new Map();
-
-            function playAudioWithCooldown(url) {
-                if (!url) return;
-                const ahora = Date.now();
-                const ultima = ultimaReproduccion.get(url) || 0;
-                if (ahora - ultima < 10000) return;
-                ultimaReproduccion.set(url, ahora);
-                const audio = new Audio(url);
-                audio.play().catch(err => console.warn(`No se pudo reproducir audio: ${url}`, err));
-            }
-
-            const audioMap = new Map([
-                ['Expedientes', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/expedientes.mp3'],
-                ['Eventos agendados', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/eventos.mp3'],
-                ['Libros', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/libros.mp3'],
-                ['Clientes', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/clientes.mp3'],
-                ['Modelos', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/modelos.mp3'],
-                ['Biblioteca', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/biblioteca.mp3'],
-                ['Organismos', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/organismos.mp3'],
-                ['Diligenciadores', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/diligenciadores.mp3'],
-                ['Notificaciones', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/notificaciones.mp3'],
-                ['Consultas y Turnos', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/consultas.mp3'],
-                ['Atención al Público', 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/atencion.mp3']
-            ]);
-
-            const menuIcon = document.querySelector('.menu-icon-img');
-            if (menuIcon) {
-                const menuAudioUrl = 'https://github.com/sistemadigital/iconos/raw/refs/heads/main/menu.mp3';
-                menuIcon.addEventListener('click', (e) => {
-                    playAudioWithCooldown(menuAudioUrl);
-                });
-            }
-
-            const menuLinks = document.querySelectorAll('#mainMenuPopup ul li a');
-            menuLinks.forEach(link => {
-                const texto = link.textContent.trim();
-                const audioUrl = audioMap.get(texto);
-                if (audioUrl) {
-                    link.addEventListener('click', (e) => {
-                        playAudioWithCooldown(audioUrl);
-                    });
-                }
-            });
-        })();
+        // Eliminamos toda la lógica de audio del menú y de cualquier otro lugar
     </script>
 
     <script type="module">
