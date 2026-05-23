@@ -160,17 +160,31 @@
             50% { transform: translateY(-12px); }
         }
 
-        /* TÍTULO PRINCIPAL: una sola línea */
+        /* TÍTULO PRINCIPAL: EFECTO MAGNÉTICO AZUL */
         .titulo-sistema {
             font-size: clamp(2.8rem, 10vw, 5rem);
             font-weight: 900;
             line-height: 1.2;
             letter-spacing: -0.03em;
-            color: #001f3f;
             margin-top: 1.2rem;
             margin-bottom: 1rem;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.02);
             white-space: nowrap;
+            
+            /* Colores: Azul marino oscuro en los bordes y azul magnético en el centro */
+            background: linear-gradient(90deg, #001f3f 30%, #00BFFF 50%, #001f3f 70%);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            
+            /* Animación rápida (3s) */
+            animation: brilloMagnetico 3s ease-in-out infinite alternate;
+        }
+
+        /* Animación para el movimiento de la luz */
+        @keyframes brilloMagnetico {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
         /* PROTOCOLO ACTUACIÓN (una línea responsiva) */
@@ -416,7 +430,6 @@
 
     <div class="centro-pantalla">
         <div class="card-central">
-            <!-- Contenedor imagen (sin audio, solo apertura de login) -->
             <div class="img-wrapper" id="imagenAbrirLogin" 
                  role="button" 
                  tabindex="0" 
@@ -427,10 +440,8 @@
                      class="img-3d">
             </div>
 
-            <!-- Título principal en una sola línea -->
             <h1 class="titulo-sistema">Sistema Digital</h1>
 
-            <!-- Protocolo de actuación -->
             <a href="https://defensorialocal-seis.github.io/protocolo/" 
                target="_blank" 
                rel="noopener noreferrer" 
@@ -446,7 +457,6 @@
         </div>
     </div>
 
-    <!-- MODAL LOGIN -->
     <div id="modalLogin" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
@@ -471,7 +481,6 @@
         </div>
     </div>
 
-    <!-- MODAL REGISTRO -->
     <div id="modalRegistro" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
@@ -500,7 +509,6 @@
         </div>
     </div>
 
-    <!-- Toast de mensajes global -->
     <div id="globalAuthMessage" class="auth-message-global"></div>
 
     <script type="module">
