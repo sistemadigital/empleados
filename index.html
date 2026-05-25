@@ -162,25 +162,23 @@
             50% { transform: translateY(-12px); }
         }
 
-        /* TÍTULO PRINCIPAL: TRANSICIÓN MODERNA, FLUIDA Y OPTIMIZADA */
+        /* TÍTULO PRINCIPAL */
         .titulo-sistema {
             font-size: clamp(2.8rem, 10vw, 5rem);
             font-weight: 900;
             line-height: 1.2;
             letter-spacing: -0.03em;
             margin-top: 1.2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             white-space: nowrap;
         }
 
         .titulo-sistema span {
             display: inline-block;
-            /* Transición cubic-bezier premium, más rápida en la subida y suave en la caída */
             animation: ondaModerna 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-            will-change: transform, color, text-shadow; /* Optimización hardware para móviles */
+            will-change: transform, color, text-shadow;
         }
 
-        /* Retraso progresivo mucho más continuo (0.06s de diferencia) para una ola perfecta */
         .titulo-sistema span:nth-child(1) { animation-delay: 0.00s; } 
         .titulo-sistema span:nth-child(2) { animation-delay: 0.06s; } 
         .titulo-sistema span:nth-child(3) { animation-delay: 0.12s; } 
@@ -188,7 +186,7 @@
         .titulo-sistema span:nth-child(5) { animation-delay: 0.24s; } 
         .titulo-sistema span:nth-child(6) { animation-delay: 0.30s; } 
         .titulo-sistema span:nth-child(7) { animation-delay: 0.36s; } 
-        .titulo-sistema span:nth-child(8) { animation-delay: 0.48s; } /* Salto en el espacio */
+        .titulo-sistema span:nth-child(8) { animation-delay: 0.48s; } 
         .titulo-sistema span:nth-child(9) { animation-delay: 0.54s; } 
         .titulo-sistema span:nth-child(10) { animation-delay: 0.60s; } 
         .titulo-sistema span:nth-child(11) { animation-delay: 0.66s; } 
@@ -198,17 +196,119 @@
 
         @keyframes ondaModerna {
             0%, 25% { 
-                /* Se mantiene un instante en reposo para que la onda destaque */
                 color: #001f3f; 
                 text-shadow: 0 0 0 rgba(0, 191, 255, 0);
                 transform: translateY(0) scale(1);
             }
             100% {
                 color: #00bfff; 
-                /* Sombra limpia orientada hacia abajo, estilo Apple/Neomorfismo */
                 text-shadow: 0 6px 14px rgba(0, 191, 255, 0.45);
-                /* Elevación y un levísimo zoom */
                 transform: translateY(-5px) scale(1.04);
+            }
+        }
+
+        /* ============================================ */
+        /* KEYPAD - MÁS PEQUEÑO, BRILLO EN BORDE MÁS RÁPIDO (0.8s) */
+        /* ============================================ */
+        .keypad-icon-animated {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            width: auto;
+            max-width: 40px;      /* Tamaño más pequeño */
+            margin: 0.8rem auto 1.2rem;
+            padding: 5px;
+            background: #ffffff;
+            border-radius: 14px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            position: relative;
+            
+            /* Borde inicial sutil */
+            box-shadow: 0 0 0 1px rgba(0, 191, 255, 0.4), 0 2px 6px rgba(0, 0, 0, 0.04);
+            
+            /* Animación de brillo rápida (0.8s) */
+            animation: borderGlowFast 0.8s ease-in-out infinite;
+        }
+
+        @keyframes borderGlowFast {
+            0% {
+                box-shadow: 0 0 0 1px rgba(0, 191, 255, 0.4), 0 0 0 0 rgba(0, 191, 255, 0), 0 2px 6px rgba(0, 0, 0, 0.04);
+            }
+            50% {
+                box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.9), 0 0 8px 2px rgba(0, 191, 255, 0.7), 0 2px 6px rgba(0, 0, 0, 0.06);
+            }
+            100% {
+                box-shadow: 0 0 0 1px rgba(0, 191, 255, 0.4), 0 0 0 0 rgba(0, 191, 255, 0), 0 2px 6px rgba(0, 0, 0, 0.04);
+            }
+        }
+
+        /* Hover: brillo más intenso y rápido */
+        .keypad-icon-animated:hover {
+            transform: translateY(-2px) scale(1.03);
+            animation: borderGlowIntenseFast 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes borderGlowIntenseFast {
+            from {
+                box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.7), 0 0 6px 1px rgba(0, 191, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 0 3px rgba(0, 191, 255, 1), 0 0 14px 4px rgba(0, 191, 255, 0.9);
+            }
+        }
+
+        /* Efecto de clic */
+        .keypad-icon-animated:active {
+            transform: scale(0.94);
+            transition: transform 0.05s linear;
+            animation: none;
+            box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.9), 0 0 12px rgba(0, 191, 255, 0.8);
+        }
+
+        /* PUNTOS: azul oscuro, sólidos, sin brillo */
+        .keypad-dot {
+            width: 5px;
+            height: 5px;
+            background: #0055aa;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+        }
+
+        /* El décimo punto se centra */
+        .keypad-dot:nth-child(10) {
+            grid-column: 2;
+        }
+
+        /* Hover sobre puntos: solo cambia ligeramente el color */
+        .keypad-icon-animated:hover .keypad-dot {
+            background: #0077cc;
+        }
+
+        /* Ajustes responsivos: mantener pequeño */
+        @media (max-width: 640px) {
+            .keypad-icon-animated {
+                max-width: 36px;
+                gap: 2px;
+                padding: 4px;
+                border-radius: 12px;
+            }
+            .keypad-dot {
+                width: 4px;
+                height: 4px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .keypad-icon-animated {
+                max-width: 32px;
+                gap: 2px;
+                padding: 3px;
+            }
+            .keypad-dot {
+                width: 3px;
+                height: 3px;
             }
         }
 
@@ -216,7 +316,7 @@
         .protocolo-link {
             text-decoration: none;
             display: inline-block;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             transition: transform 0.2s ease, opacity 0.2s;
             border-radius: 60px;
         }
@@ -252,7 +352,7 @@
             flex-shrink: 0;
         }
 
-        /* MODALES FLOTANTES */
+        /* MODALES */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -388,7 +488,6 @@
             text-decoration: underline;
         }
 
-        /* Mensaje flotante (toast) */
         .auth-message-global {
             position: fixed;
             bottom: 30px;
@@ -468,6 +567,20 @@
                 <span>S</span><span>i</span><span>s</span><span>t</span><span>e</span><span>m</span><span>a</span>&nbsp;<span>D</span><span>i</span><span>g</span><span>i</span><span>t</span><span>a</span><span>l</span>
             </h1>
 
+            <!-- Icono keypad: tamaño reducido, borde celeste con pulso rápido -->
+            <div class="keypad-icon-animated" id="keypadAbrirLogin" role="button" tabindex="0" aria-label="Abrir inicio de sesión con teclado" title="Haz clic para acceder al sistema">
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+                <div class="keypad-dot"></div>
+            </div>
+
             <a href="https://defensorialocal-seis.github.io/protocolo/" 
                target="_blank" 
                rel="noopener noreferrer" 
@@ -483,6 +596,7 @@
         </div>
     </div>
 
+    <!-- MODALES Y SCRIPTS (sin cambios funcionales) -->
     <div id="modalLogin" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
@@ -720,6 +834,21 @@
                 abrirModalLogin();
             });
             imagenWrapper.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    abrirModalLogin();
+                }
+            });
+        }
+
+        const keypadWrapper = document.getElementById('keypadAbrirLogin');
+        if (keypadWrapper) {
+            keypadWrapper.addEventListener('click', (e) => {
+                e.stopPropagation();
+                abrirModalLogin();
+            });
+            keypadWrapper.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     e.stopPropagation();
