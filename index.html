@@ -73,7 +73,7 @@
             padding: 2rem 1.5rem;
         }
 
-        /* TARJETA BLANCA SUTIL CON LUZ CELESTE TENUE */
+        /* TARJETA BLANCA CON LUZ CELESTE TENUE */
         .card-central {
             max-width: 750px;
             width: 100%;
@@ -86,7 +86,7 @@
             transition: all 0.3s ease;
         }
 
-        /* CONTENEDOR IMAGEN (REDUCIDO Y RESPONSIVO) - SIN AUDIO */
+        /* CONTENEDOR IMAGEN CON ANILLOS */
         .img-wrapper {
             position: relative;
             display: inline-block;
@@ -100,7 +100,6 @@
             transition: all 0.2s;
         }
 
-        /* ANILLOS ROTATORIOS DECORATIVOS (solo estéticos) */
         .img-wrapper::before {
             content: '';
             position: absolute;
@@ -109,7 +108,7 @@
             right: -15px;
             bottom: -15px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, #00ffff, #0044ff, #ff00cc, #00ffff);
+            background: conic-gradient(from 0deg, #00ffff, #0044ff, #00bfff, #00ffff);
             opacity: 0.7;
             z-index: -1;
             animation: rotateRing 4s linear infinite;
@@ -125,7 +124,7 @@
             right: -25px;
             bottom: -25px;
             border-radius: 50%;
-            background: conic-gradient(from 90deg, rgba(0, 255, 255, 0.3), rgba(0, 68, 255, 0.3), rgba(255, 0, 204, 0.3), rgba(0, 255, 255, 0.3));
+            background: conic-gradient(from 90deg, rgba(0, 255, 255, 0.3), rgba(0, 68, 255, 0.3), rgba(0, 191, 255, 0.3), rgba(0, 255, 255, 0.3));
             z-index: -2;
             animation: rotateRingReverse 6s linear infinite;
             filter: blur(8px);
@@ -146,21 +145,24 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
         @keyframes rotateRingReverse {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(-360deg); }
         }
+
         @keyframes softPulse {
             0% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
             50% { filter: drop-shadow(0 0 20px rgba(0,191,255,0.6)); }
             100% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
         }
+
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-12px); }
         }
 
-        /* TÍTULO PRINCIPAL: EFECTO MAGNÉTICO AZUL */
+        /* TÍTULO PRINCIPAL: TRANSICIÓN MODERNA, FLUIDA Y OPTIMIZADA */
         .titulo-sistema {
             font-size: clamp(2.8rem, 10vw, 5rem);
             font-weight: 900;
@@ -169,25 +171,48 @@
             margin-top: 1.2rem;
             margin-bottom: 1rem;
             white-space: nowrap;
-            
-            /* Colores: Azul marino oscuro en los bordes y azul magnético en el centro */
-            background: linear-gradient(90deg, #001f3f 30%, #00BFFF 50%, #001f3f 70%);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            
-            /* Animación rápida (3s) */
-            animation: brilloMagnetico 3s ease-in-out infinite alternate;
         }
 
-        /* Animación para el movimiento de la luz */
-        @keyframes brilloMagnetico {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+        .titulo-sistema span {
+            display: inline-block;
+            /* Transición cubic-bezier premium, más rápida en la subida y suave en la caída */
+            animation: ondaModerna 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+            will-change: transform, color, text-shadow; /* Optimización hardware para móviles */
         }
 
-        /* PROTOCOLO ACTUACIÓN (una línea responsiva) */
+        /* Retraso progresivo mucho más continuo (0.06s de diferencia) para una ola perfecta */
+        .titulo-sistema span:nth-child(1) { animation-delay: 0.00s; } 
+        .titulo-sistema span:nth-child(2) { animation-delay: 0.06s; } 
+        .titulo-sistema span:nth-child(3) { animation-delay: 0.12s; } 
+        .titulo-sistema span:nth-child(4) { animation-delay: 0.18s; } 
+        .titulo-sistema span:nth-child(5) { animation-delay: 0.24s; } 
+        .titulo-sistema span:nth-child(6) { animation-delay: 0.30s; } 
+        .titulo-sistema span:nth-child(7) { animation-delay: 0.36s; } 
+        .titulo-sistema span:nth-child(8) { animation-delay: 0.48s; } /* Salto en el espacio */
+        .titulo-sistema span:nth-child(9) { animation-delay: 0.54s; } 
+        .titulo-sistema span:nth-child(10) { animation-delay: 0.60s; } 
+        .titulo-sistema span:nth-child(11) { animation-delay: 0.66s; } 
+        .titulo-sistema span:nth-child(12) { animation-delay: 0.72s; } 
+        .titulo-sistema span:nth-child(13) { animation-delay: 0.78s; } 
+        .titulo-sistema span:nth-child(14) { animation-delay: 0.84s; } 
+
+        @keyframes ondaModerna {
+            0%, 25% { 
+                /* Se mantiene un instante en reposo para que la onda destaque */
+                color: #001f3f; 
+                text-shadow: 0 0 0 rgba(0, 191, 255, 0);
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                color: #00bfff; 
+                /* Sombra limpia orientada hacia abajo, estilo Apple/Neomorfismo */
+                text-shadow: 0 6px 14px rgba(0, 191, 255, 0.45);
+                /* Elevación y un levísimo zoom */
+                transform: translateY(-5px) scale(1.04);
+            }
+        }
+
+        /* PROTOCOLO ACTUACIÓN */
         .protocolo-link {
             text-decoration: none;
             display: inline-block;
@@ -363,7 +388,7 @@
             text-decoration: underline;
         }
 
-        /* Mensaje flotante global (toast) */
+        /* Mensaje flotante (toast) */
         .auth-message-global {
             position: fixed;
             bottom: 30px;
@@ -392,7 +417,6 @@
             background: #2c6e2f;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 640px) {
             .card-central {
                 padding: 1.5rem;
@@ -440,7 +464,9 @@
                      class="img-3d">
             </div>
 
-            <h1 class="titulo-sistema">Sistema Digital</h1>
+            <h1 class="titulo-sistema">
+                <span>S</span><span>i</span><span>s</span><span>t</span><span>e</span><span>m</span><span>a</span>&nbsp;<span>D</span><span>i</span><span>g</span><span>i</span><span>t</span><span>a</span><span>l</span>
+            </h1>
 
             <a href="https://defensorialocal-seis.github.io/protocolo/" 
                target="_blank" 
@@ -461,7 +487,7 @@
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
             <h3>Bienvenido</h3>
-            <div id="loginFormModal">
+            <div>
                 <div class="grupo-input">
                     <label>Correo electrónico</label>
                     <input type="email" id="loginEmail" placeholder="usuario o email@mpmisiones.gob.ar" autocomplete="email">
@@ -552,7 +578,6 @@
             }, 4000);
         }
 
-        // LOGIN
         window.loginUser = async function() {
             const rawEmail = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -565,17 +590,16 @@
             try {
                 isLoggingIn = true;
                 await signInWithEmailAndPassword(auth, email, password);
-                showMessage('Acceso concedido. Redirigiendo...', 'success');
+                showMessage('Acceso concedido. Iniciando sistema...', 'success');
                 setTimeout(() => {
                     window.location.href = 'app.html';
-                }, 1800);
+                }, 2000);
             } catch (error) {
                 isLoggingIn = false;
-                showMessage('Credenciales inválidas o error de conexión', 'error');
+                showMessage('Credenciales inválidas', 'error');
             }
         };
 
-        // REGISTRO
         window.registerUser = async function() {
             const name = document.getElementById('registerName').value.trim();
             const rawEmail = document.getElementById('registerEmail').value;
@@ -594,10 +618,10 @@
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(cred.user, { displayName: name });
-                showMessage('Cuenta creada con éxito. Redirigiendo...', 'success');
+                showMessage('Cuenta creada con éxito', 'success');
                 setTimeout(() => {
                     window.location.href = 'app.html';
-                }, 1800);
+                }, 2000);
             } catch (error) {
                 isRegistering = false;
                 if (error.code === 'auth/email-already-in-use') {
@@ -608,14 +632,12 @@
             }
         };
 
-        // Redirección si ya está autenticado
         onAuthStateChanged(auth, user => {
-            if (user && !isRegistering && !isLoggingIn && (window.location.pathname.includes('index.html') || window.location.pathname === '/')) {
+            if (user && !isRegistering && !isLoggingIn && (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '')) {
                 window.location.href = 'app.html';
             }
         });
 
-        // --- MANEJO DE MODALES ---
         const modalLogin = document.getElementById('modalLogin');
         const modalRegistro = document.getElementById('modalRegistro');
 
@@ -634,11 +656,9 @@
             modalRegistro.classList.remove('active');
         }
 
-        // Cerrar modales con X
         document.getElementById('cerrarModalLoginBtn').addEventListener('click', cerrarModalLogin);
         document.getElementById('cerrarModalRegistroBtn').addEventListener('click', cerrarModalRegistro);
 
-        // Cerrar al hacer clic fuera del contenido
         modalLogin.addEventListener('click', (e) => {
             if (e.target === modalLogin) cerrarModalLogin();
         });
@@ -646,11 +666,9 @@
             if (e.target === modalRegistro) cerrarModalRegistro();
         });
 
-        // Botones acción
         document.getElementById('btnLoginAction').addEventListener('click', () => loginUser());
         document.getElementById('btnRegisterAction').addEventListener('click', () => registerUser());
 
-        // Mostrar/ocultar contraseña en modales
         const mostrarLoginCheck = document.getElementById('mostrarLoginPass');
         const loginPassInput = document.getElementById('loginPassword');
         mostrarLoginCheck.addEventListener('change', () => {
@@ -662,7 +680,6 @@
             regPassInput.type = mostrarRegCheck.checked ? 'text' : 'password';
         });
 
-        // Navegación entre modales mediante enlaces
         document.getElementById('cambiarARegistroDesdeLogin').addEventListener('click', () => {
             cerrarModalLogin();
             abrirModalRegistro();
@@ -672,8 +689,6 @@
             abrirModalLogin();
         });
 
-        // --- ENTER PARA LOGIN Y REGISTRO ---
-        // Login: al presionar Enter en los campos del modal login
         const loginEmailInput = document.getElementById('loginEmail');
         const loginPasswordInput = document.getElementById('loginPassword');
         const handleLoginEnter = (e) => {
@@ -685,7 +700,6 @@
         loginEmailInput.addEventListener('keypress', handleLoginEnter);
         loginPasswordInput.addEventListener('keypress', handleLoginEnter);
 
-        // Registro: al presionar Enter en cualquier campo del modal registro
         const regNameInput = document.getElementById('registerName');
         const regEmailInput = document.getElementById('registerEmail');
         const regPasswordInput = document.getElementById('registerPassword');
@@ -699,17 +713,12 @@
         regEmailInput.addEventListener('keypress', handleRegisterEnter);
         regPasswordInput.addEventListener('keypress', handleRegisterEnter);
 
-        // --- CLIC EN IMAGEN: SOLO ABRE MODAL LOGIN (SIN AUDIO) ---
         const imagenWrapper = document.getElementById('imagenAbrirLogin');
         if (imagenWrapper) {
-            // Eliminar cualquier clase residual de audio (por si acaso)
-            imagenWrapper.classList.remove('cargando', 'reproduciendo');
-            // Evento click: solo abre login
             imagenWrapper.addEventListener('click', (e) => {
                 e.stopPropagation();
                 abrirModalLogin();
             });
-            // Accesibilidad: tecla Enter o Espacio
             imagenWrapper.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -719,7 +728,6 @@
             });
         }
 
-        // Cerrar modales con Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (modalLogin.classList.contains('active')) cerrarModalLogin();
@@ -727,12 +735,13 @@
             }
         });
 
-        // Fade out créditos flotante
         setTimeout(() => {
             const flotante = document.getElementById('creditos-flotante');
             if (flotante) {
                 flotante.classList.add('fade-out');
-                setTimeout(() => flotante.remove(), 1000);
+                setTimeout(() => {
+                    if (flotante && flotante.remove) flotante.remove();
+                }, 1000);
             }
         }, 5000);
     </script>
