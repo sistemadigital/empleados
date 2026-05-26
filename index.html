@@ -7,49 +7,73 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
     
     <style>
+        /* ---------- RESET Y VARIABLES MODERNAS ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body, html {
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(145deg, #ffffff 0%, #f5faff 100%);
-            overflow-x: hidden;
-            color: #001f3f;
+        :root {
+            --fondo-base: #f8fafc;
+            --fondo-tarjeta: rgba(255, 255, 255, 0.92);
+            --texto-primario: #0a1e2f;
+            --texto-secundario: #2c3e50;
+            --acento: #00b4d8;
+            --acento-oscuro: #0077b6;
+            --sombra-suave: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 180, 216, 0.1);
+            --radius-grande: 2rem;
+            --radius-medio: 1.25rem;
+            --transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
-        /* CRÉDITO FLOTANTE */
+        body, html {
+            height: 100%;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f0fa 100%);
+            overflow-x: hidden;
+            color: var(--texto-primario);
+            font-size: 16px;
+            line-height: 1.5;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* CRÉDITO FLOTANTE (mejor tipografía) */
         #creditos-flotante {
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #001f3f;
+            background: rgba(10, 30, 47, 0.85);
+            backdrop-filter: blur(8px);
             color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
+            padding: 8px 18px;
+            border-radius: 40px;
             z-index: 1100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             animation: fadeIn 0.5s ease-out forwards;
             transition: opacity 1s ease-out, transform 1s ease-out;
+            font-weight: 500;
+            letter-spacing: -0.01em;
         }
 
         .texto-autor {
-            font-size: 0.7rem;
-            font-weight: 400;
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.95;
         }
 
         .texto-version {
             font-size: 0.6rem;
-            opacity: 0.8;
+            opacity: 0.7;
             margin-top: 2px;
         }
 
@@ -73,31 +97,32 @@
             padding: 2rem 1.5rem;
         }
 
-        /* TARJETA BLANCA CON LUZ CELESTE TENUE */
+        /* TARJETA PRINCIPAL - estilo vidrio moderno */
         .card-central {
             max-width: 750px;
             width: 100%;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(2px);
-            border-radius: 64px;
-            padding: 2rem 2rem 2.5rem;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.1), 0 0 0 2px rgba(0, 191, 255, 0.1), 0 0 30px rgba(0, 191, 255, 0.3);
+            background: var(--fondo-tarjeta);
+            backdrop-filter: blur(4px);
+            border-radius: var(--radius-grande);
+            padding: 2rem 2rem 2.8rem;
+            box-shadow: var(--sombra-suave);
             text-align: center;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        /* CONTENEDOR IMAGEN CON ANILLOS */
+        /* IMAGEN CON ANILLOS (mantenemos efecto atractivo) */
         .img-wrapper {
             position: relative;
             display: inline-block;
             border-radius: 50%;
-            animation: float 6s ease-in-out infinite, softPulse 3s ease-in-out infinite;
+            animation: float 5s ease-in-out infinite, softPulse 3s ease-in-out infinite;
             cursor: pointer;
             outline: none;
             margin-bottom: 1rem;
             width: 280px;
             height: auto;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
 
         .img-wrapper::before {
@@ -108,12 +133,11 @@
             right: -15px;
             bottom: -15px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, #00ffff, #0044ff, #00bfff, #00ffff);
+            background: conic-gradient(from 0deg, #00ffff, #0077b6, #00b4d8, #00ffff);
             opacity: 0.7;
             z-index: -1;
             animation: rotateRing 4s linear infinite;
-            box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
-            transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.4);
         }
 
         .img-wrapper::after {
@@ -124,10 +148,10 @@
             right: -25px;
             bottom: -25px;
             border-radius: 50%;
-            background: conic-gradient(from 90deg, rgba(0, 255, 255, 0.3), rgba(0, 68, 255, 0.3), rgba(0, 191, 255, 0.3), rgba(0, 255, 255, 0.3));
+            background: conic-gradient(from 90deg, rgba(0, 255, 255, 0.25), rgba(0, 119, 182, 0.25), rgba(0, 180, 216, 0.25), rgba(0, 255, 255, 0.25));
             z-index: -2;
             animation: rotateRingReverse 6s linear infinite;
-            filter: blur(8px);
+            filter: blur(10px);
         }
 
         .img-3d {
@@ -136,8 +160,8 @@
             height: auto;
             display: block;
             border-radius: 50%;
-            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
+            box-shadow: 0 20px 30px -8px rgba(0, 0, 0, 0.15);
+            transition: transform 0.25s ease;
             pointer-events: none;
         }
 
@@ -152,9 +176,9 @@
         }
 
         @keyframes softPulse {
-            0% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
-            50% { filter: drop-shadow(0 0 20px rgba(0,191,255,0.6)); }
-            100% { filter: drop-shadow(0 0 5px rgba(0,191,255,0.3)); }
+            0% { filter: drop-shadow(0 0 5px rgba(0,180,216,0.3)); }
+            50% { filter: drop-shadow(0 0 18px rgba(0,180,216,0.5)); }
+            100% { filter: drop-shadow(0 0 5px rgba(0,180,216,0.3)); }
         }
 
         @keyframes float {
@@ -162,128 +186,80 @@
             50% { transform: translateY(-12px); }
         }
 
-        /* TÍTULO PRINCIPAL */
+        /* ----- TÍTULO PRINCIPAL MODERNO (gradiente animado + tracking) ----- */
         .titulo-sistema {
-            font-size: clamp(2.8rem, 10vw, 5rem);
-            font-weight: 900;
+            font-size: clamp(2.5rem, 8vw, 4.2rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
             line-height: 1.2;
-            letter-spacing: -0.03em;
-            margin-top: 1.2rem;
-            margin-bottom: 0.5rem;
-            white-space: nowrap;
+            margin: 1rem 0 0.5rem;
+            background: linear-gradient(135deg, #0a2b3e 0%, #0077b6 40%, #00b4d8 80%, #0a2b3e 100%);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: shimmer 5s ease infinite;
+            text-wrap: balance;
         }
 
-        .titulo-sistema span {
-            display: inline-block;
-            animation: ondaModerna 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-            will-change: transform, color, text-shadow;
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .titulo-sistema span:nth-child(1) { animation-delay: 0.00s; } 
-        .titulo-sistema span:nth-child(2) { animation-delay: 0.06s; } 
-        .titulo-sistema span:nth-child(3) { animation-delay: 0.12s; } 
-        .titulo-sistema span:nth-child(4) { animation-delay: 0.18s; } 
-        .titulo-sistema span:nth-child(5) { animation-delay: 0.24s; } 
-        .titulo-sistema span:nth-child(6) { animation-delay: 0.30s; } 
-        .titulo-sistema span:nth-child(7) { animation-delay: 0.36s; } 
-        .titulo-sistema span:nth-child(8) { animation-delay: 0.48s; } 
-        .titulo-sistema span:nth-child(9) { animation-delay: 0.54s; } 
-        .titulo-sistema span:nth-child(10) { animation-delay: 0.60s; } 
-        .titulo-sistema span:nth-child(11) { animation-delay: 0.66s; } 
-        .titulo-sistema span:nth-child(12) { animation-delay: 0.72s; } 
-        .titulo-sistema span:nth-child(13) { animation-delay: 0.78s; } 
-        .titulo-sistema span:nth-child(14) { animation-delay: 0.84s; } 
-
-        @keyframes ondaModerna {
-            0%, 25% { 
-                color: #001f3f; 
-                text-shadow: 0 0 0 rgba(0, 191, 255, 0);
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                color: #00bfff; 
-                text-shadow: 0 6px 14px rgba(0, 191, 255, 0.45);
-                transform: translateY(-5px) scale(1.04);
-            }
-        }
-
-        /* ============================================ */
-        /* HUELLA - EFECTO CELESTE */
-        /* ============================================ */
+        /* HUELLA DACTILAR - estilo refinado */
         .huella-icon-animated {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 48px;
-            height: 48px;
-            margin: 0.8rem auto 1.2rem;
-            background: #ffffff;
-            border-radius: 14px;
+            width: 52px;
+            height: 52px;
+            margin: 1rem auto 1.2rem;
+            background: #ffffffcc;
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
             cursor: pointer;
             outline: none;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            position: relative;
-            
-            /* Borde inicial celeste */
-            box-shadow: 0 0 0 1px #00bfff, 0 2px 6px rgba(0, 0, 0, 0.04);
-            
-            /* Animación de brillo celeste */
-            animation: borderGlowCeleste 1.2s ease-in-out infinite alternate;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 180, 216, 0.4);
+            animation: borderGlowCeleste 1.4s ease-in-out infinite alternate;
         }
 
         .huella-svg {
-            stroke: #00bfff;
-            transition: all 0.3s ease;
-            filter: drop-shadow(0 0 2px rgba(0, 191, 255, 0.4));
+            stroke: #0077b6;
+            transition: var(--transition);
+            filter: drop-shadow(0 0 2px rgba(0, 180, 216, 0.5));
+            width: 30px;
+            height: 30px;
         }
 
         @keyframes borderGlowCeleste {
             0% {
-                box-shadow: 0 0 0 1px #00bfff, 0 0 5px rgba(0, 191, 255, 0.2);
+                box-shadow: 0 0 0 1px rgba(0, 180, 216, 0.5), 0 2px 6px rgba(0,0,0,0.04);
             }
             100% {
-                box-shadow: 0 0 0 2px #00ffff, 0 0 14px 2px rgba(0, 255, 255, 0.6);
+                box-shadow: 0 0 0 2px #00b4d8, 0 0 12px 2px rgba(0, 180, 216, 0.5);
             }
         }
 
-        /* Hover: brillo celeste más intenso */
         .huella-icon-animated:hover {
-            transform: translateY(-2px) scale(1.05);
-            animation: none;
-            box-shadow: 0 0 0 2px #00bfff, 0 0 18px rgba(0, 191, 255, 0.8);
+            transform: translateY(-3px) scale(1.02);
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 180, 216, 0.25), 0 0 0 2px #00b4d8;
         }
 
-        .huella-icon-animated:hover .huella-svg {
-            stroke: #0099cc; /* Un tono ligeramente más oscuro para contraste al iluminar el fondo */
-            filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.7));
-        }
-
-        /* Efecto de clic */
         .huella-icon-animated:active {
-            transform: scale(0.94);
+            transform: scale(0.95);
             transition: transform 0.05s linear;
-            box-shadow: 0 0 0 2px #0088cc, 0 0 12px #00bfff;
         }
 
-        /* Ajustes responsivos para la huella */
-        @media (max-width: 640px) {
-            .huella-icon-animated {
-                width: 42px;
-                height: 42px;
-                border-radius: 12px;
-            }
-            .huella-svg {
-                width: 24px;
-                height: 24px;
-            }
-        }
-
-        /* PROTOCOLO ACTUACIÓN */
+        /* PROTOCOLO ACTUACIÓN - tipografía más legible */
         .protocolo-link {
             text-decoration: none;
             display: inline-block;
-            margin-top: 0.5rem;
-            transition: transform 0.2s ease, opacity 0.2s;
+            margin-top: 0.8rem;
+            transition: var(--transition);
             border-radius: 60px;
         }
 
@@ -292,41 +268,47 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 0.7rem;
-            background: rgba(255, 255, 255, 0.7);
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(4px);
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.5rem;
             border-radius: 60px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            transition: all 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,180,216,0.2);
+            transition: var(--transition);
             flex-wrap: nowrap;
-            white-space: nowrap;
         }
 
         .protocolo-texto {
-            font-weight: 800;
-            font-size: clamp(0.8rem, 3vw, 1rem);
-            background: linear-gradient(135deg, #001f3f 0%, #004b8f 100%);
+            font-weight: 700;
+            font-size: clamp(0.8rem, 3.5vw, 0.95rem);
+            background: linear-gradient(135deg, #0a2b3e, #0077b6);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
+            letter-spacing: -0.2px;
         }
 
         .protocolo-icono {
-            height: clamp(28px, 5vw, 38px);
+            height: clamp(28px, 5vw, 36px);
             width: auto;
             flex-shrink: 0;
         }
 
-        /* MODALES */
+        .protocolo-link:hover .protocolo-row {
+            background: white;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px #00b4d8;
+            transform: translateY(-2px);
+        }
+
+        /* ----- MODALES CON MEJOR TIPOGRAFÍA ----- */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 15, 30, 0.75);
-            backdrop-filter: blur(5px);
+            background-color: rgba(10, 30, 47, 0.75);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -343,14 +325,15 @@
 
         .modal-contenido {
             background: #ffffff;
-            max-width: 460px;
+            max-width: 480px;
             width: 90%;
             border-radius: 2rem;
             padding: 2rem 1.8rem;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
             position: relative;
-            transform: scale(0.95);
+            transform: scale(0.96);
             transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(0, 180, 216, 0.2);
         }
 
         .modal-overlay.active .modal-contenido {
@@ -365,20 +348,24 @@
             border: none;
             font-size: 1.8rem;
             cursor: pointer;
-            color: #888;
+            color: #8ba0b5;
             transition: 0.2s;
             line-height: 1;
+            font-weight: 300;
         }
 
         .btn-cerrar-modal:hover {
-            color: #001f3f;
+            color: #0a2b3e;
         }
 
         .modal-contenido h3 {
-            font-weight: 900;
+            font-weight: 800;
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
-            color: #001f3f;
+            background: linear-gradient(135deg, #0a2b3e, #0077b6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             letter-spacing: -0.02em;
         }
 
@@ -392,24 +379,33 @@
         .grupo-input label {
             font-size: 0.7rem;
             font-weight: 700;
-            color: #5a6e82;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4a627a;
         }
 
         .grupo-input input {
-            padding: 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
+            padding: 14px 16px;
+            border: 1.5px solid #e2edf7;
+            border-radius: 20px;
             font-size: 0.95rem;
-            background-color: #fcfdff;
+            font-family: 'Inter', monospace;
+            background-color: #ffffff;
             transition: all 0.2s;
             width: 100%;
+            font-weight: 450;
+            color: #0a2b3e;
         }
 
         .grupo-input input:focus {
             outline: none;
-            border-color: #00BFFF;
-            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.2);
+            border-color: #00b4d8;
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
+        }
+
+        .grupo-input input::placeholder {
+            color: #b9cee8;
+            font-weight: 400;
         }
 
         .mostrar-clave {
@@ -417,7 +413,8 @@
             align-items: center;
             gap: 8px;
             font-size: 0.8rem;
-            color: #2c3e50;
+            font-weight: 500;
+            color: #2c4c6e;
             margin: -5px 0 12px 0;
             cursor: pointer;
         }
@@ -425,67 +422,80 @@
         .btn-modal-primario {
             width: 100%;
             padding: 14px;
-            background: #001f3f;
+            background: #0a2b3e;
             color: white;
             border: none;
             border-radius: 40px;
-            font-weight: 800;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
             margin-top: 8px;
-            transition: 0.2s;
+            transition: all 0.2s;
+            letter-spacing: -0.2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         .btn-modal-primario:hover {
-            background: #0a2f50;
+            background: #005f8c;
             transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 120, 180, 0.25);
         }
 
         .enlace-modal {
             text-align: center;
             margin-top: 1.2rem;
             font-size: 0.85rem;
+            font-weight: 500;
+            color: #4a627a;
         }
 
         .enlace-modal span {
-            color: #00a3cc;
+            color: #0077b6;
             font-weight: 700;
             cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .enlace-modal span:hover {
+            color: #00b4d8;
             text-decoration: underline;
         }
 
+        /* MENSAJE GLOBAL (toast) */
         .auth-message-global {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1e2a36;
+            background: #0a2b3e;
             color: white;
             padding: 12px 24px;
             border-radius: 60px;
             font-size: 0.9rem;
+            font-weight: 500;
             z-index: 2100;
             display: none;
-            backdrop-filter: blur(8px);
-            background: rgba(0,31,63,0.95);
-            font-weight: 500;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+            backdrop-filter: blur(12px);
+            background: rgba(10, 43, 62, 0.95);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
             text-align: center;
             max-width: 85vw;
+            letter-spacing: -0.2px;
         }
 
         .auth-message-global.error {
-            background: #c0392b;
+            background: #bc4742;
         }
 
         .auth-message-global.success {
-            background: #2c6e2f;
+            background: #2a9d8f;
         }
 
         @media (max-width: 640px) {
             .card-central {
                 padding: 1.5rem;
-                border-radius: 48px;
+                border-radius: 2rem;
             }
             .img-wrapper {
                 width: 220px;
@@ -494,12 +504,19 @@
                 max-width: 220px;
             }
             .titulo-sistema {
-                font-size: 2.2rem;
-                white-space: nowrap;
+                font-size: 2rem;
             }
             .protocolo-row {
                 gap: 0.5rem;
-                padding: 0.4rem 0.9rem;
+                padding: 0.4rem 1rem;
+            }
+            .huella-icon-animated {
+                width: 46px;
+                height: 46px;
+            }
+            .huella-svg {
+                width: 26px;
+                height: 26px;
             }
         }
 
@@ -529,9 +546,8 @@
                      class="img-3d">
             </div>
 
-            <h1 class="titulo-sistema">
-                <span>S</span><span>i</span><span>s</span><span>t</span><span>e</span><span>m</span><span>a</span>&nbsp;<span>D</span><span>i</span><span>g</span><span>i</span><span>t</span><span>a</span><span>l</span>
-            </h1>
+            <!-- TÍTULO MODERNIZADO: gradiente + animación sutil -->
+            <h1 class="titulo-sistema">Sistema Digital</h1>
 
             <div class="huella-icon-animated" id="huellaAbrirLogin" role="button" tabindex="0" aria-label="Abrir inicio de sesión con huella" title="Haz clic para acceder al sistema">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="huella-svg">
@@ -558,6 +574,7 @@
         </div>
     </div>
 
+    <!-- MODALES (LOGIN / REGISTRO) -->
     <div id="modalLogin" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
@@ -565,7 +582,7 @@
             <div>
                 <div class="grupo-input">
                     <label>Correo electrónico</label>
-                    <input type="email" id="loginEmail" placeholder="usuario o email@mpmisiones.gob.ar" autocomplete="email">
+                    <input type="email" id="loginEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email">
                 </div>
                 <div class="grupo-input">
                     <label>Contraseña</label>
@@ -593,7 +610,7 @@
                 </div>
                 <div class="grupo-input">
                     <label>Correo electrónico</label>
-                    <input type="email" id="registerEmail" placeholder="usuario o email@mpmisiones.gob.ar" autocomplete="email">
+                    <input type="email" id="registerEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email">
                 </div>
                 <div class="grupo-input">
                     <label>Contraseña</label>
@@ -803,7 +820,6 @@
             });
         }
 
-        // Eventos actualizados para la huella dactilar
         const huellaWrapper = document.getElementById('huellaAbrirLogin');
         if (huellaWrapper) {
             huellaWrapper.addEventListener('click', (e) => {
