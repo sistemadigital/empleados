@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://upload-widget.cloudinary.com/latest/global/all.js"></script>
     <style>
-        /* Variables CSS de causas.html */
+        /* Variables CSS */
         :root {
             --primary-blue: #007bff;
             --primary-light-blue: #e7f4ff;
@@ -22,7 +22,6 @@
             --status-info: #17a2b8;
             --text-primary: #212529;
             --text-secondary: #6c757d;
-            --text-link: #007bff;
             --text-light: #ffffff;
             --background-default: #ffffff;
             --background-card: #ffffff;
@@ -55,7 +54,6 @@
             --shadow: 0 4px 15px rgba(0,0,0,.08);
         }
 
-        /* Estilos base */
         * {
             margin: 0;
             padding: 0;
@@ -95,7 +93,25 @@
             color: var(--primary-blue);
         }
 
-        /* Contenedor principal */
+        .btn-biblioteca {
+            background-color: transparent;
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: var(--spacing-s) var(--spacing-m);
+            border-radius: var(--border-radius-pill);
+            font-size: var(--body-regular-size);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-biblioteca:hover {
+            background-color: var(--primary-blue);
+            color: var(--text-light);
+            border-color: var(--primary-blue);
+        }
+
         .container {
             max-width: 1800px;
             margin: 0 auto;
@@ -119,90 +135,83 @@
             font-weight: var(--font-weight-semibold);
             font-size: var(--h2-size);
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: var(--spacing-s);
+        }
+
+        .btn-upload {
+            background-color: var(--primary-dark-blue);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            font-family: var(--font-family);
+        }
+
+        .btn-upload:hover {
+            background-color: #004494;
+            transform: translateY(-1px);
+        }
+
+        .btn-upload:active {
+            transform: translateY(1px);
         }
 
         .card-body {
             padding: var(--spacing-m);
         }
 
-        /* Upload Section */
-        .upload-zone {
-            border: 2px dashed var(--border-default);
-            border-radius: var(--border-radius-default);
-            padding: var(--spacing-xl) var(--spacing-m);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: var(--secondary-light-gray);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .upload-zone:hover {
-            border-color: var(--primary-blue);
-            background-color: var(--primary-light-blue);
-        }
-
-        .upload-zone i {
-            font-size: 3rem;
-            color: var(--primary-blue);
-            margin-bottom: var(--spacing-m);
-        }
-
-        .upload-zone h3 {
-            font-size: var(--h2-size);
-            font-weight: var(--font-weight-semibold);
-            color: var(--text-primary);
-            margin-bottom: var(--spacing-s);
-        }
-
-        .upload-zone p {
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-m);
-        }
-
-        .upload-buttons {
-            display: flex;
-            gap: var(--spacing-m);
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* Buttons */
+        /* Botones modernos (tabla y paginación) */
         .button {
             background-color: var(--primary-blue);
             color: var(--text-light);
             border: none;
-            border-radius: var(--border-radius-default);
-            padding: var(--spacing-s) var(--spacing-m);
-            font-size: var(--body-regular-size);
+            border-radius: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: var(--font-family);
             cursor: pointer;
-            transition: background-color 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-xs);
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .button:hover {
-            opacity: 0.9;
+            background-color: var(--primary-dark-blue);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+
+        .button:active {
+            transform: translateY(1px);
         }
 
         .button-success {
             background-color: var(--status-success);
         }
 
+        .button-success:hover {
+            background-color: #218838;
+        }
+
         .button-secondary {
             background-color: var(--secondary-dark-gray);
         }
 
-        .button-sm {
-            padding: var(--spacing-xs) var(--spacing-s);
-            font-size: var(--caption-size);
+        .button-secondary:hover {
+            background-color: #5a6268;
         }
 
-        /* Controls */
+        .button-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+
+        /* Controles */
         .controls {
             display: flex;
             justify-content: space-between;
@@ -243,7 +252,7 @@
             color: var(--text-secondary);
         }
 
-        /* Messages */
+        /* Mensajes */
         .message-container {
             margin-bottom: var(--spacing-m);
         }
@@ -299,7 +308,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Table */
+        /* Tabla */
         .table-container {
             overflow-x: auto;
         }
@@ -385,7 +394,6 @@
             color: var(--secondary-dark-gray);
         }
 
-        /* Hidden file input */
         #fileInput {
             display: none;
         }
@@ -404,11 +412,7 @@
                 gap: var(--spacing-s);
                 text-align: center;
             }
-            
-            .upload-buttons {
-                flex-direction: column;
-            }
-            
+
             .controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -419,7 +423,14 @@
             }
             
             .actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .card-header {
                 flex-direction: column;
+                gap: var(--spacing-s);
+                text-align: center;
             }
         }
 
@@ -433,22 +444,19 @@
                 padding: var(--spacing-s);
             }
             
-            .upload-zone {
-                padding: var(--spacing-m) var(--spacing-s);
-            }
-            
-            .upload-zone i {
-                font-size: 2rem;
-            }
-            
-            .table-title,
-            .card-header {
-                font-size: var(--body-large-size);
-            }
-            
             th, 
             td {
                 padding: var(--spacing-s);
+            }
+
+            .btn-biblioteca {
+                font-size: var(--caption-size);
+                padding: var(--spacing-xs) var(--spacing-s);
+            }
+
+            .btn-upload {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.8rem;
             }
         }
     </style>
@@ -456,34 +464,13 @@
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-book"></i> Biblioteca de Documentos
-            </div>
+            <div class="logo">Biblioteca</div>
+            <a href="https://experiencia-ia.github.io/biblioteca-doctrina-jurisprudencia/" class="btn-biblioteca" target="_self">Biblioteca de Doctrina y Jurisprudencia</a>
         </div>
     </header>
 
     <main class="container">
-        <div class="card">
-            <div class="card-header">
-                <i class="fas fa-cloud-upload-alt"></i> Subir Documentos
-            </div>
-            <div class="card-body">
-                <div class="upload-zone" id="fileDropZone">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <h3>Arrastra y suelta tus archivos aquí</h3>
-                    <p>O haz clic para seleccionar archivos (PDF, DOC, DOCX)</p>
-                    <div class="upload-buttons">
-                        <button class="button" onclick="document.getElementById('fileInput').click()">
-                            <i class="fas fa-folder-open"></i> Seleccionar Archivos
-                        </button>
-                        <button class="button button-secondary" id="cloudinaryUpload">
-                            <i class="fas fa-cloud"></i> Subir con Cloudinary
-                        </button>
-                    </div>
-                </div>
-                <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx">
-            </div>
-        </div>
+        <!-- Panel de subida eliminado -->
 
         <div id="messageContainer" class="message-container"></div>
 
@@ -494,7 +481,8 @@
 
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-list"></i> Documentos Almacenados
+                <span>Documentos de la Biblioteca de la Defensoría</span>
+                <button class="btn-upload" id="uploadButton">Subir nuevo documento</button>
             </div>
             <div class="card-body">
                 <div class="controls">
@@ -502,17 +490,11 @@
                         <input type="text" id="searchInput" placeholder="Buscar documentos...">
                     </div>
                     <div class="pagination">
-                        <button class="button button-secondary button-sm" id="prevPage">
-                            <i class="fas fa-chevron-left"></i> Anterior
-                        </button>
+                        <button class="button button-secondary button-sm" id="prevPage">Anterior</button>
                         <span class="pagination-info" id="pageInfo">Página 1 de 1</span>
-                        <button class="button button-secondary button-sm" id="nextPage">
-                            Siguiente <i class="fas fa-chevron-right"></i>
-                        </button>
+                        <button class="button button-secondary button-sm" id="nextPage">Siguiente</button>
                     </div>
-                    <button class="button button-success button-sm" onclick="documentManager.printDocumentList()">
-                        <i class="fas fa-print"></i> Imprimir
-                    </button>
+                    <button class="button button-success button-sm" onclick="documentManager.printDocumentList()">Imprimir</button>
                 </div>
 
                 <div class="table-container">
@@ -530,7 +512,7 @@
                                 <td colspan="4" class="no-documents">
                                     <i class="fas fa-folder-open"></i>
                                     <p>No hay documentos almacenados</p>
-                                    <small>Sube tu primer documento usando el área de arriba</small>
+                                    <small>Sube tu primer documento usando el botón de arriba</small>
                                 </td>
                             </tr>
                         </tbody>
@@ -542,6 +524,8 @@
                 </div>
             </div>
         </div>
+
+        <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx">
     </main>
 
     <script type="module">
@@ -614,13 +598,12 @@
             return iconMap[ext] || { icon: 'fa-file', class: 'default' };
         }
 
-        // Gestor de documentos mejorado
+        // Gestor de documentos
         class DocumentManager {
             constructor() {
                 this.documents = [];
                 this.filteredDocuments = [];
                 this.collectionRef = collection(db, "documents");
-                this.cloudinaryWidget = null;
                 this.currentPage = 1;
                 this.itemsPerPage = 10;
                 this.searchTerm = '';
@@ -631,7 +614,6 @@
                 try {
                     await this.loadDocuments();
                     this.setupFileUpload();
-                    this.setupCloudinary();
                     this.setupSearch();
                     this.setupPagination();
                     showMessage('Sistema inicializado correctamente', 'success');
@@ -707,7 +689,7 @@
                 const totalElements = this.filteredDocuments.length;
                 
                 document.getElementById('pageInfo').textContent = 
-                    `Página ${this.currentPage} de ${totalPages}`;
+                    `Página ${this.currentPage} de ${totalPages || 1}`;
                 document.getElementById('totalElements').textContent = 
                     `Total: ${totalElements} elementos`;
                 
@@ -716,26 +698,13 @@
             }
 
             setupFileUpload() {
-                const dropZone = document.getElementById("fileDropZone");
+                const uploadBtn = document.getElementById("uploadButton");
                 const fileInput = document.getElementById("fileInput");
-
-                dropZone.addEventListener("click", () => fileInput.click());
-
-                dropZone.addEventListener("dragover", (e) => {
-                    e.preventDefault();
-                    dropZone.classList.add('drag-over');
+                
+                uploadBtn.addEventListener("click", () => {
+                    fileInput.click();
                 });
-
-                dropZone.addEventListener("dragleave", () => {
-                    dropZone.classList.remove('drag-over');
-                });
-
-                dropZone.addEventListener("drop", (e) => {
-                    e.preventDefault();
-                    dropZone.classList.remove('drag-over');
-                    this.handleFileSelection(e.dataTransfer.files);
-                });
-
+                
                 fileInput.addEventListener("change", (e) => {
                     this.handleFileSelection(e.target.files);
                 });
@@ -744,7 +713,6 @@
             async handleFileSelection(files) {
                 if (!files.length) return;
 
-                // Filtrar solo archivos PDF y DOC
                 const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
                 const validFiles = Array.from(files).filter(file => 
                     allowedTypes.includes(file.type) || 
@@ -815,61 +783,6 @@
                         console.error('Error en Cloudinary:', error);
                         reject(error);
                     });
-                });
-            }
-
-            setupCloudinary() {
-                if (typeof cloudinary === 'undefined') {
-                    console.error('Cloudinary SDK no está disponible');
-                    return;
-                }
-
-                this.cloudinaryWidget = cloudinary.createUploadWidget(
-                    {
-                        cloudName: CLOUDINARY_CONFIG.cloudName,
-                        uploadPreset: CLOUDINARY_CONFIG.uploadPreset,
-                        multiple: true,
-                        maxFiles: 10,
-                        clientAllowedFormats: ["pdf", "doc", "docx"],
-                        maxFileSize: 10000000, // 10MB
-                        sources: ['local', 'url'],
-                        showAdvancedOptions: true,
-                        cropping: false,
-                        folder: 'documentos'
-                    },
-                    async (error, result) => {
-                        if (error) {
-                            console.error('Error en Cloudinary Widget:', error);
-                            showMessage('Error al subir archivo con Cloudinary', 'error');
-                            return;
-                        }
-
-                        if (result.event === "success") {
-                            try {
-                                const docData = {
-                                    name: result.info.original_filename + '.' + result.info.format,
-                                    description: 'Subido con Cloudinary Widget',
-                                    size: result.info.bytes,
-                                    uploadedAt: new Date().toISOString(),
-                                    url: result.info.secure_url,
-                                    cloudinaryId: result.info.public_id,
-                                    fileType: result.info.resource_type,
-                                    format: result.info.format
-                                };
-
-                                await addDoc(this.collectionRef, docData);
-                                await this.loadDocuments();
-                                showMessage(`${docData.name} subido exitosamente`, 'success');
-                            } catch (error) {
-                                console.error('Error al guardar en Firestore:', error);
-                                showMessage('Error al guardar el documento', 'error');
-                            }
-                        }
-                    }
-                );
-
-                document.getElementById("cloudinaryUpload").addEventListener("click", () => {
-                    this.cloudinaryWidget.open();
                 });
             }
 
@@ -986,7 +899,7 @@
                             <td colspan="4" class="no-documents">
                                 <i class="fas fa-folder-open"></i>
                                 <p>No hay documentos almacenados</p>
-                                <small>Sube tu primer documento usando el área de arriba</small>
+                                <small>Sube tu primer documento usando el botón de arriba</small>
                             </td>
                         </tr>
                     `;
@@ -1039,7 +952,6 @@
             }
         }
 
-        // Inicializar cuando el DOM esté listo
         window.addEventListener("DOMContentLoaded", () => {
             window.documentManager = new DocumentManager();
         });
