@@ -16,7 +16,7 @@
             box-sizing: border-box;
         }
 
-        /* ========== CINTAS DE BANDERAS (más grandes y responsivas) ========== */
+        /* ========== CINTAS DE BANDERAS ========== */
         .cinta-bandera {
             position: fixed;
             left: 0;
@@ -60,8 +60,6 @@
             padding-top: 18px;
             padding-bottom: 18px;
         }
-
-        /* ========== FIN CINTAS ========== */
 
         /* ========== FONDO BLANCO MEJORADO ========== */
         body, html {
@@ -149,6 +147,7 @@
             transition: all 0.2s ease;
         }
 
+        /* ========== ANIMACIÓN MODERNA, INNOVADORA Y CREATIVA ========== */
         .img-wrapper {
             position: relative;
             display: inline-block;
@@ -157,69 +156,179 @@
             outline: none;
             width: 280px;
             height: auto;
-            transition: transform 0.2s;
-            animation: float 5s ease-in-out infinite;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2), filter 0.3s ease;
+            will-change: transform;
+            animation: floatSuper 5s ease-in-out infinite;
         }
 
+        /* Efecto hover: elevación y aceleración de los anillos */
+        .img-wrapper:hover {
+            transform: scale(1.02) translateY(-5px);
+        }
+        
+        .img-wrapper:hover::before {
+            animation: rotateGradient 2.5s linear infinite, neonShift 0.8s ease-in-out infinite alternate;
+            filter: blur(12px);
+        }
+        
+        .img-wrapper:hover::after {
+            animation: spinRingReverse 1.8s linear infinite, colorPulse 0.9s ease-in-out infinite alternate;
+        }
+        
+        .img-wrapper:hover .img-3d {
+            filter: brightness(1.05) contrast(1.05);
+            box-shadow: 0 0 35px rgba(0, 200, 255, 0.7), 0 20px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        /* PRIMER ANILLO: Gradiente neón giratorio con cambio de colores */
         .img-wrapper::before {
             content: '';
             position: absolute;
-            top: -12px;
-            left: -12px;
-            right: -12px;
-            bottom: -12px;
+            top: -14px;
+            left: -14px;
+            right: -14px;
+            bottom: -14px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, #0a1e2f, #0077b6, #00b4d8, #0077b6, #0a1e2f);
-            opacity: 0.6;
-            z-index: -1;
-            animation: rotateRing 3.5s linear infinite;
+            background: conic-gradient(from 0deg, 
+                #00f2fe, #4facfe, #f093fb, #f5576c, #4facfe, #00f2fe);
+            opacity: 0.85;
+            z-index: -2;
+            animation: rotateGradient 6s linear infinite, neonBreathing 3s ease-in-out infinite alternate;
+            filter: blur(14px);
+            transition: all 0.3s ease;
         }
 
+        /* SEGUNDO ANILLO: anillo sólido con partículas de puntos y rotación inversa */
         .img-wrapper::after {
             content: '';
             position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
+            top: -24px;
+            left: -24px;
+            right: -24px;
+            bottom: -24px;
             border-radius: 50%;
-            background: conic-gradient(from 90deg, rgba(10,30,47,0.2), rgba(0,180,216,0.3), rgba(10,30,47,0.2));
-            z-index: -2;
-            animation: rotateRingReverse 5s linear infinite;
-            filter: blur(10px);
+            background: radial-gradient(circle, transparent 60%, rgba(0, 212, 255, 0.25) 80%);
+            border: 2px dashed rgba(0, 180, 255, 0.6);
+            z-index: -3;
+            animation: spinRingReverse 12s linear infinite, borderGlow 2s ease-in-out infinite alternate;
+            pointer-events: none;
+            box-shadow: 0 0 18px rgba(0, 160, 255, 0.3);
         }
 
+        /* Imagen con efecto glassmorphism, brillo interno y resplandor pulsante */
         .img-3d {
             width: 100%;
             max-width: 280px;
             height: auto;
             display: block;
             border-radius: 50%;
-            box-shadow: 0 0 25px rgba(0, 119, 182, 0.3);
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4), 0 12px 28px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            animation: modernGlowAdvanced 3s ease-in-out infinite, subtleScale 4s ease-in-out infinite;
             pointer-events: none;
-            animation: pulseGlow 4s ease-in-out infinite;
+            backdrop-filter: blur(0px);
+            will-change: transform, box-shadow;
         }
 
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 25px rgba(0, 119, 182, 0.3); }
-            50% { box-shadow: 0 0 45px rgba(0, 180, 216, 0.5); }
+        /* ANIMACIONES CLAVE - EFECTOS DE PRÓXIMA GENERACIÓN */
+
+        /* Rotación del anillo de neón principal */
+        @keyframes rotateGradient {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        @keyframes rotateRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Rotación inversa del anillo punteado */
+        @keyframes spinRingReverse {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(-360deg);
+            }
         }
 
-        @keyframes rotateRingReverse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
+        /* Flotado hiper-suave con curva de bezier orgánica */
+        @keyframes floatSuper {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-9px);
+            }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+        /* Resplandor avanzado con cambio de intensidad y color (cyan a violeta) */
+        @keyframes modernGlowAdvanced {
+            0% {
+                box-shadow: 0 0 12px rgba(0, 200, 255, 0.3), 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 38px rgba(0, 230, 250, 0.7), 0 18px 32px rgba(0, 119, 182, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 12px rgba(100, 0, 255, 0.4), 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
         }
 
+        /* Latido de brillo para el anillo exterior */
+        @keyframes neonBreathing {
+            0% {
+                opacity: 0.6;
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                filter: blur(18px);
+            }
+        }
+
+        /* Efecto de cambio de color del borde punteado */
+        @keyframes borderGlow {
+            0% {
+                border-color: rgba(0, 180, 255, 0.4);
+                box-shadow: 0 0 5px rgba(0, 160, 255, 0.2);
+            }
+            100% {
+                border-color: rgba(0, 255, 200, 0.9);
+                box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
+            }
+        }
+
+        /* Escala sutil de la imagen para dar sensación de vida */
+        @keyframes subtleScale {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.01);
+            }
+        }
+
+        /* Cambio cromático rápido en hover para el gradiente */
+        @keyframes neonShift {
+            0% {
+                background: conic-gradient(from 0deg, #00f2fe, #4facfe, #f093fb, #f5576c);
+            }
+            100% {
+                background: conic-gradient(from 30deg, #f5576c, #f093fb, #4facfe, #00f2fe);
+            }
+        }
+
+        @keyframes colorPulse {
+            0% {
+                border-color: rgba(0, 180, 255, 0.5);
+            }
+            100% {
+                border-color: rgba(255, 100, 200, 0.8);
+            }
+        }
+
+        /* El resto del CSS permanece intacto y sin modificaciones */
         .dynamic-area {
             display: flex;
             flex-direction: column;
@@ -238,12 +347,11 @@
             line-height: 1.3;
         }
 
-        /* ESTILO PARA EL NÚMERO 6 QUE APARECE CON PULSO (mismo color que el texto) */
         .numero-seis-pulse {
             display: inline-block;
-            font-size: 1.65em;      /* más grande pero responsivo */
+            font-size: 1.65em;
             font-weight: 900;
-            color: inherit;          /* hereda el color del texto padre (#0a2b3e) */
+            color: inherit;
             text-decoration: inherit;
             background: none;
             -webkit-background-clip: unset;
@@ -257,7 +365,6 @@
             line-height: 1;
         }
 
-        /* Animación de pulso suave y notable */
         @keyframes gentlePulse {
             0% {
                 transform: scale(1);
@@ -271,15 +378,13 @@
             }
         }
 
-        /* Ajuste responsivo para pantallas chicas: el 6 sigue siendo grande pero proporcionado */
         @media (max-width: 640px) {
             .numero-seis-pulse {
-                font-size: 1.7em;   /* un pelín más relativo en móvil para buena visibilidad */
+                font-size: 1.7em;
                 animation: gentlePulse 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) 3;
             }
         }
 
-        /* Resto de estilos del protocolo y modales intactos */
         .protocolo-link {
             text-decoration: none;
             transition: all 0.2s ease;
@@ -664,7 +769,7 @@
         let currentState = 'idle';
         let typingInterval = null;
         let modalTimeout = null;
-        let pendingSixTransformation = null;   // Para manejar el setTimeout del 6
+        let pendingSixTransformation = null;
 
         function resetToInitial() {
             if (typingInterval) {
@@ -700,45 +805,36 @@
             }, 4000);
         }
 
-        // NUEVA FUNCIÓN: aplica el efecto de pulso al "6" después de 2 segundos
         function applyPulseToSix(titleElement) {
             if (!titleElement || !document.body.contains(titleElement)) return;
             const currentText = titleElement.textContent;
-            // Verificamos que termine con '6' (exactamente el último carácter)
             if (currentText && currentText.endsWith('6')) {
                 const prefix = currentText.slice(0, -1);
-                // Reemplazamos el último '6' por un span con la clase especial de pulso (mismo color)
                 titleElement.innerHTML = prefix + '<span class="numero-seis-pulse">6</span>';
             }
         }
 
-        // Modificación principal: al finalizar el tipeo, esperar 2 segundos para activar el pulso
         async function typeWriterEffect(element, fullText, speed = 45) {
             return new Promise((resolve) => {
                 let i = 0;
                 element.textContent = '';
-                // Eliminamos cualquier timer anterior por si acaso
                 if (pendingSixTransformation) {
                     clearTimeout(pendingSixTransformation);
                     pendingSixTransformation = null;
                 }
                 typingInterval = setInterval(() => {
                     if (i < fullText.length) {
-                        // Escribimos carácter por carácter (texto plano, sin estilos aún)
                         element.textContent += fullText.charAt(i);
                         i++;
                     } else {
                         clearInterval(typingInterval);
                         typingInterval = null;
-                        // Texto completo está escrito (incluye el '6' como carácter común)
-                        // Esperamos 2 segundos y entonces aplicamos la transformación con animación de pulso
                         pendingSixTransformation = setTimeout(() => {
-                            // Verificamos que el elemento siga existiendo y no haya sido reseteado
                             if (element && document.body.contains(element) && currentState !== 'idle') {
                                 applyPulseToSix(element);
                             }
                             pendingSixTransformation = null;
-                        }, 2000); // 2 segundos exactos
+                        }, 2000);
                         resolve();
                     }
                 }, speed);
@@ -758,7 +854,6 @@
             titleEl.className = 'typewriter-title';
             dynamicArea.appendChild(titleEl);
             
-            // Se escribe el texto completo (incluyendo el 6 al final)
             await typeWriterEffect(titleEl, 'Sistema Digital Defensoría 6', 40);
             
             const protocoloLink = document.createElement('a');
