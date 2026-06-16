@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>⚖️ Sistema Digital Defensoría 6</title>
 
-    <!-- Precarga de la imagen principal para que aparezca rápidamente -->
     <link rel="preload" as="image" href="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" fetchpriority="high" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,7 +19,7 @@
             box-sizing: border-box;
         }
 
-        /* ── BARRAS GLASS (SUPERIOR E INFERIOR) ── */
+        /* ── BARRAS GLASS (Top y Bottom) ── */
         .cinta-glass {
             position: fixed;
             left: 0;
@@ -47,12 +46,11 @@
             background: linear-gradient(to left, #004e92, #00b4d8, #0077b6);
         }
 
-        /* ── FONDO Y ESTRUCTURA ── */
+        /* ── FONDO MODERNO WEB JUDICIAL ── */
         body,
         html {
             height: 100%;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #ffffff;
             position: relative;
             overflow-x: hidden;
             color: #0a1e2f;
@@ -60,49 +58,20 @@
             line-height: 1.5;
             padding-top: 10px;
             padding-bottom: 120px;
-        }
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            /* Fondo de degradado de malla sutil */
+            background-color: #f8fafc;
             background-image:
-                radial-gradient(circle at 15% 30%, rgba(0, 180, 216, 0.02) 1px, transparent 1px),
-                radial-gradient(circle at 70% 85%, rgba(0, 119, 182, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px, 60px 60px;
+                radial-gradient(at 40% 20%, rgba(0, 119, 182, 0.06) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(0, 180, 216, 0.06) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, rgba(0, 78, 146, 0.04) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, rgba(0, 119, 182, 0.06) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(0, 180, 216, 0.06) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, rgba(0, 78, 146, 0.04) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, rgba(0, 119, 182, 0.06) 0px, transparent 50%);
         }
 
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            background-image:
-                repeating-linear-gradient(0deg, rgba(0, 119, 182, 0.04) 0px, rgba(0, 119, 182, 0.04) 1px, transparent 1px, transparent 32px),
-                repeating-linear-gradient(90deg, rgba(0, 119, 182, 0.04) 0px, rgba(0, 119, 182, 0.04) 1px, transparent 1px, transparent 32px);
-        }
-
-        .bg-silk {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            background: radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 1) 0%, rgba(250, 252, 255, 0.96) 100%);
-        }
-
-        /* ── TEXTO INSTITUCIONAL FIJO (más grande) ── */
+        /* ── TEXTO INSTITUCIONAL FIJO ── */
         .header-institucional {
             position: fixed;
             top: 10px;
@@ -110,12 +79,13 @@
             width: 100%;
             z-index: 100;
             text-align: center;
-            padding: 8px 1rem 6px;
+            padding: 12px 1rem 8px;
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             border-bottom: 1px solid rgba(0, 180, 216, 0.15);
             pointer-events: none;
+            box-sizing: border-box;
         }
 
         .header-institucional * {
@@ -142,7 +112,7 @@
             line-height: 1.3;
         }
 
-        /* ── CENTRO DE PANTALLA: SOLO LA IMAGEN (SIEMPRE CENTRADA) ── */
+        /* ── CENTRO DE PANTALLA: IMAGEN AUMENTADA ── */
         .centro-pantalla {
             position: fixed;
             top: 0;
@@ -166,23 +136,20 @@
             height: 100%;
         }
 
-        /* ── IMAGEN CON BORDE ANIMADO (SIN EFECTOS ADICIONALES) ── */
         .img-wrapper {
             position: relative;
             display: inline-block;
             border-radius: 50%;
             cursor: pointer;
             outline: none;
-            width: 340px;
+            width: 420px; /* Aumentado de 340px */
             height: auto;
             pointer-events: auto;
             transition: transform 0.2s ease, filter 0.2s ease;
             will-change: transform;
-            border-radius: 50%;
             overflow: visible;
         }
 
-        /* Borde animado (solo el gradiente giratorio) */
         .img-wrapper::before {
             content: '';
             position: absolute;
@@ -212,7 +179,7 @@
 
         .img-3d {
             width: 100%;
-            max-width: 340px;
+            max-width: 420px; /* Aumentado de 340px */
             height: auto;
             display: block;
             border-radius: 50%;
@@ -225,7 +192,7 @@
             fetchpriority: high;
         }
 
-        /* ── FOOTER FIJO (TÍTULO SISTEMA DIGITAL MÁS PEQUEÑO) ── */
+        /* ── FOOTER FIJO ── */
         .footer-info {
             position: fixed;
             bottom: 18px;
@@ -283,7 +250,7 @@
             border-color: #00b4d8;
         }
 
-        /* ── CRÉDITOS: ESQUINA SUPERIOR DERECHA ── */
+        /* ── CRÉDITOS ── */
         #creditos-flotante {
             position: fixed;
             top: 14px;
@@ -516,10 +483,10 @@
         /* ── RESPONSIVE ── */
         @media (max-width: 640px) {
             .img-wrapper {
-                width: 260px;
+                width: 320px; /* Aumentado de 260px */
             }
             .img-3d {
-                max-width: 260px;
+                max-width: 320px; /* Aumentado de 260px */
             }
             .cinta-glass {
                 height: 8px;
@@ -530,7 +497,7 @@
             }
             .header-institucional {
                 top: 8px;
-                padding: 6px 0.8rem 4px;
+                padding: 10px 0.8rem 6px;
             }
             .titulo-institucional {
                 font-size: clamp(1.2rem, 3.5vw, 1.8rem);
@@ -557,17 +524,17 @@
 
         @media (max-width: 480px) {
             .img-wrapper {
-                width: 200px;
+                width: 250px; /* Aumentado de 200px */
             }
             .img-3d {
-                max-width: 200px;
+                max-width: 250px; /* Aumentado de 200px */
             }
             body {
                 padding-bottom: 140px;
             }
             .header-institucional {
                 top: 8px;
-                padding: 4px 0.5rem 2px;
+                padding: 8px 0.5rem 4px;
             }
             .titulo-institucional {
                 font-size: 1.1rem;
@@ -594,303 +561,295 @@
 </head>
 <body>
 
-    <!-- BARRAS GLASS -->
     <div class="cinta-glass cinta-top" aria-hidden="true"></div>
     <div class="cinta-glass cinta-bottom" aria-hidden="true"></div>
 
-    <div class="bg-silk"></div>
-
-    <!-- TEXTO INSTITUCIONAL FIJO -->
     <div class="header-institucional">
         <div class="titulo-institucional">Defensoria Civil y Comercial 6</div>
         <div class="subtitulo-institucional">Ministerio Público de Misiones</div>
     </div>
 
-    <!-- CRÉDITOS: ESQUINA SUPERIOR DERECHA -->
     <div id="creditos-flotante">
         <span>Diseño y programación: Rómulo Fioravante</span>
         <span class="texto-version">Versión 5.0.2026</span>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL: SOLO LA IMAGEN CENTRADA -->
     <div class="centro-pantalla">
         <div class="contenedor-dinamico" id="contenedorDinamico">
             <div class="img-wrapper" id="imagenPrincipal" role="button" tabindex="0" aria-label="Activar sistema">
                 <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true"
-                     alt="Sistema Digital"
-                     class="img-3d"
-                     loading="eager"
-                     fetchpriority="high" />
+                alt="Sistema Digital"
+                class="img-3d"
+                loading="eager"
+                fetchpriority="high" />
             </div>
         </div>
     </div>
 
-    <!-- FOOTER FIJO (TÍTULO SISTEMA DIGITAL + BOTÓN) -->
     <div class="footer-info">
         <span class="footer-titulo">Sistema Digital</span>
         <a href="https://defensorialocal-seis.github.io/protocolo/"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="protocolo-footer-link">
-            📋 Protocolo de actuación judicial
-        </a>
-    </div>
+        target="_blank"
+        rel="noopener noreferrer"
+        class="protocolo-footer-link">
+        📋 Protocolo de actuación judicial
+    </a>
+</div>
 
-    <!-- MODALES -->
-    <div id="modalLogin" class="modal-overlay">
-        <div class="modal-contenido">
-            <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
-            <h3>Bienvenido</h3>
-            <div>
-                <div class="grupo-input">
-                    <label>Correo electrónico</label>
-                    <input type="email" id="loginEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
-                </div>
-                <div class="grupo-input">
-                    <label>Contraseña</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
-                </div>
-                <label class="mostrar-clave">
-                    <input type="checkbox" id="mostrarLoginPass" /> Mostrar contraseña
-                </label>
-                <button class="btn-modal-primario" id="btnLoginAction">Entrar al sistema</button>
-                <div class="enlace-modal">
-                    ¿No tienes cuenta? <span id="cambiarARegistroDesdeLogin">Regístrate aquí</span>
-                </div>
+<div id="modalLogin" class="modal-overlay">
+    <div class="modal-contenido">
+        <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
+        <h3>Bienvenido</h3>
+        <div>
+            <div class="grupo-input">
+                <label>Correo electrónico</label>
+                <input type="email" id="loginEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
+            </div>
+            <div class="grupo-input">
+                <label>Contraseña</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <label class="mostrar-clave">
+                <input type="checkbox" id="mostrarLoginPass" /> Mostrar contraseña
+            </label>
+            <button class="btn-modal-primario" id="btnLoginAction">Entrar al sistema</button>
+            <div class="enlace-modal">
+                ¿No tienes cuenta? <span id="cambiarARegistroDesdeLogin">Regístrate aquí</span>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="modalRegistro" class="modal-overlay">
-        <div class="modal-contenido">
-            <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
-            <h3>Registro</h3>
-            <div>
-                <div class="grupo-input">
-                    <label>Nombre completo</label>
-                    <input type="text" id="registerName" placeholder="Nombre y apellido" autocomplete="name" />
-                </div>
-                <div class="grupo-input">
-                    <label>Correo electrónico</label>
-                    <input type="email" id="registerEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
-                </div>
-                <div class="grupo-input">
-                    <label>Contraseña</label>
-                    <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
-                </div>
-                <label class="mostrar-clave">
-                    <input type="checkbox" id="mostrarRegPass" /> Mostrar contraseña
-                </label>
-                <button class="btn-modal-primario" id="btnRegisterAction">Registrarse</button>
-                <div class="enlace-modal">
-                    ¿Ya tienes cuenta? <span id="cambiarALoginDesdeRegistro">Inicia sesión</span>
-                </div>
+<div id="modalRegistro" class="modal-overlay">
+    <div class="modal-contenido">
+        <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
+        <h3>Registro</h3>
+        <div>
+            <div class="grupo-input">
+                <label>Nombre completo</label>
+                <input type="text" id="registerName" placeholder="Nombre y apellido" autocomplete="name" />
+            </div>
+            <div class="grupo-input">
+                <label>Correo electrónico</label>
+                <input type="email" id="registerEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
+            </div>
+            <div class="grupo-input">
+                <label>Contraseña</label>
+                <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+            </div>
+            <label class="mostrar-clave">
+                <input type="checkbox" id="mostrarRegPass" /> Mostrar contraseña
+            </label>
+            <button class="btn-modal-primario" id="btnRegisterAction">Registrarse</button>
+            <div class="enlace-modal">
+                ¿Ya tienes cuenta? <span id="cambiarALoginDesdeRegistro">Inicia sesión</span>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="globalAuthMessage" class="auth-message-global"></div>
+<div id="globalAuthMessage" class="auth-message-global"></div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
+    const firebaseConfig = {
+        apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
             projectId: "defensoria-empleados",
             storageBucket: "defensoria-empleados.firebasestorage.app",
             messagingSenderId: "438237217533",
             appId: "1:438237217533:web:6603123e43a12da00c7494"
-        };
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
 
-        const imagenWrapper = document.getElementById('imagenPrincipal');
-        const modalLogin = document.getElementById('modalLogin');
-        const modalRegistro = document.getElementById('modalRegistro');
+    const imagenWrapper = document.getElementById('imagenPrincipal');
+    const modalLogin = document.getElementById('modalLogin');
+    const modalRegistro = document.getElementById('modalRegistro');
 
-        let currentState = 'idle';
+    let currentState = 'idle';
 
-        function resetToInitial() {
-            if (imagenWrapper) imagenWrapper.style.display = 'block';
-            modalLogin.classList.remove('active');
-            modalRegistro.classList.remove('active');
-            currentState = 'idle';
+    function resetToInitial() {
+        if (imagenWrapper) imagenWrapper.style.display = 'block';
+        modalLogin.classList.remove('active');
+        modalRegistro.classList.remove('active');
+        currentState = 'idle';
+    }
+
+    function abrirLogin() {
+        if (currentState === 'idle') {
+            imagenWrapper.style.display = 'none';
+            modalLogin.classList.add('active');
+            currentState = 'modalOpen';
+            document.getElementById('loginEmail').focus();
         }
+    }
 
-        function abrirLogin() {
-            if (currentState === 'idle') {
-                imagenWrapper.style.display = 'none';
+    function handleCloseModalAndReset() {
+        if (currentState === 'modalOpen') {
+            resetToInitial();
+        }
+    }
+
+    function setupModalEvents() {
+        const cerrarLogin = document.getElementById('cerrarModalLoginBtn');
+        const cerrarRegistro = document.getElementById('cerrarModalRegistroBtn');
+        cerrarLogin.addEventListener('click', handleCloseModalAndReset);
+        cerrarRegistro.addEventListener('click', handleCloseModalAndReset);
+
+        modalLogin.addEventListener('click', (e) => {
+            if (e.target === modalLogin) handleCloseModalAndReset();
+        });
+        modalRegistro.addEventListener('click', (e) => {
+            if (e.target === modalRegistro) handleCloseModalAndReset();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && currentState === 'modalOpen') {
+                handleCloseModalAndReset();
+            }
+        });
+
+        const switchToReg = document.getElementById('cambiarARegistroDesdeLogin');
+        const switchToLogin = document.getElementById('cambiarALoginDesdeRegistro');
+        switchToReg.addEventListener('click', () => {
+            if (currentState === 'modalOpen') {
+                modalLogin.classList.remove('active');
+                modalRegistro.classList.add('active');
+                document.getElementById('registerName').focus();
+            }
+        });
+        switchToLogin.addEventListener('click', () => {
+            if (currentState === 'modalOpen') {
+                modalRegistro.classList.remove('active');
                 modalLogin.classList.add('active');
-                currentState = 'modalOpen';
                 document.getElementById('loginEmail').focus();
             }
-        }
-
-        function handleCloseModalAndReset() {
-            if (currentState === 'modalOpen') {
-                resetToInitial();
-            }
-        }
-
-        function setupModalEvents() {
-            const cerrarLogin = document.getElementById('cerrarModalLoginBtn');
-            const cerrarRegistro = document.getElementById('cerrarModalRegistroBtn');
-            cerrarLogin.addEventListener('click', handleCloseModalAndReset);
-            cerrarRegistro.addEventListener('click', handleCloseModalAndReset);
-
-            modalLogin.addEventListener('click', (e) => {
-                if (e.target === modalLogin) handleCloseModalAndReset();
-            });
-            modalRegistro.addEventListener('click', (e) => {
-                if (e.target === modalRegistro) handleCloseModalAndReset();
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && currentState === 'modalOpen') {
-                    handleCloseModalAndReset();
-                }
-            });
-
-            const switchToReg = document.getElementById('cambiarARegistroDesdeLogin');
-            const switchToLogin = document.getElementById('cambiarALoginDesdeRegistro');
-            switchToReg.addEventListener('click', () => {
-                if (currentState === 'modalOpen') {
-                    modalLogin.classList.remove('active');
-                    modalRegistro.classList.add('active');
-                    document.getElementById('registerName').focus();
-                }
-            });
-            switchToLogin.addEventListener('click', () => {
-                if (currentState === 'modalOpen') {
-                    modalRegistro.classList.remove('active');
-                    modalLogin.classList.add('active');
-                    document.getElementById('loginEmail').focus();
-                }
-            });
-        }
-
-        function formatEmail(input) {
-            let email = input.trim();
-            if (email && !email.includes('@')) email += DEFAULT_DOMAIN;
-            return email;
-        }
-
-        function showMessage(msg, type) {
-            const div = document.getElementById('globalAuthMessage');
-            div.textContent = msg;
-            div.className = 'auth-message-global';
-            if (type === 'error') div.classList.add('error');
-            else if (type === 'success') div.classList.add('success');
-            div.style.display = 'block';
-            setTimeout(() => {
-                div.style.display = 'none';
-                div.classList.remove('error', 'success');
-            }, 4000);
-        }
-
-        window.loginUser = async function() {
-            const rawEmail = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const email = formatEmail(rawEmail);
-            if (!email || !password) {
-                showMessage('Completa todos los campos', 'error');
-                return;
-            }
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                showMessage('Acceso concedido. Iniciando sistema...', 'success');
-                setTimeout(() => window.location.href = 'app.html', 2000);
-            } catch (error) {
-                showMessage('Credenciales inválidas', 'error');
-            }
-        };
-
-        window.registerUser = async function() {
-            const name = document.getElementById('registerName').value.trim();
-            const rawEmail = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const email = formatEmail(rawEmail);
-            if (!name || !email || !password) {
-                showMessage('Completa todos los campos', 'error');
-                return;
-            }
-            if (password.length < 6) {
-                showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(cred.user, { displayName: name });
-                showMessage('Cuenta creada con éxito', 'success');
-                setTimeout(() => window.location.href = 'app.html', 2000);
-            } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    showMessage('El correo ya está registrado', 'error');
-                } else {
-                    showMessage('Error al crear la cuenta', 'error');
-                }
-            }
-        };
-
-        document.getElementById('btnLoginAction').addEventListener('click', () => loginUser());
-        document.getElementById('btnRegisterAction').addEventListener('click', () => registerUser());
-
-        const mostrarLogin = document.getElementById('mostrarLoginPass');
-        const loginPass = document.getElementById('loginPassword');
-        mostrarLogin.addEventListener('change', () => {
-            loginPass.type = mostrarLogin.checked ? 'text' : 'password';
         });
-        const mostrarReg = document.getElementById('mostrarRegPass');
-        const regPass = document.getElementById('registerPassword');
-        mostrarReg.addEventListener('change', () => {
-            regPass.type = mostrarReg.checked ? 'text' : 'password';
-        });
+    }
 
-        const loginEmail = document.getElementById('loginEmail');
-        const loginPassInput = document.getElementById('loginPassword');
-        const handleLoginEnter = (e) => { if (e.key === 'Enter') loginUser(); };
-        loginEmail.addEventListener('keypress', handleLoginEnter);
-        loginPassInput.addEventListener('keypress', handleLoginEnter);
+    function formatEmail(input) {
+        let email = input.trim();
+        if (email && !email.includes('@')) email += DEFAULT_DOMAIN;
+        return email;
+    }
 
-        const regName = document.getElementById('registerName');
-        const regEmail = document.getElementById('registerEmail');
-        const regPassword = document.getElementById('registerPassword');
-        const handleRegEnter = (e) => { if (e.key === 'Enter') registerUser(); };
-        regName.addEventListener('keypress', handleRegEnter);
-        regEmail.addEventListener('keypress', handleRegEnter);
-        regPassword.addEventListener('keypress', handleRegEnter);
-
-        imagenWrapper.addEventListener('click', (e) => {
-            e.stopPropagation();
-            abrirLogin();
-        });
-        imagenWrapper.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                abrirLogin();
-            }
-        });
-
-        onAuthStateChanged(auth, (user) => {
-            if (user && (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '')) {
-                window.location.href = 'app.html';
-            }
-        });
-
+    function showMessage(msg, type) {
+        const div = document.getElementById('globalAuthMessage');
+        div.textContent = msg;
+        div.className = 'auth-message-global';
+        if (type === 'error') div.classList.add('error');
+        else if (type === 'success') div.classList.add('success');
+        div.style.display = 'block';
         setTimeout(() => {
-            const cred = document.getElementById('creditos-flotante');
-            if (cred) {
-                cred.classList.add('fade-out');
-                setTimeout(() => cred.remove(), 1000);
-            }
-        }, 5000);
+            div.style.display = 'none';
+            div.classList.remove('error', 'success');
+        }, 4000);
+    }
 
-        resetToInitial();
-        setupModalEvents();
-    </script>
+    window.loginUser = async function() {
+        const rawEmail = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const email = formatEmail(rawEmail);
+        if (!email || !password) {
+            showMessage('Completa todos los campos', 'error');
+            return;
+        }
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            showMessage('Acceso concedido. Iniciando sistema...', 'success');
+            setTimeout(() => window.location.href = 'app.html', 2000);
+        } catch (error) {
+            showMessage('Credenciales inválidas', 'error');
+        }
+    };
+
+    window.registerUser = async function() {
+        const name = document.getElementById('registerName').value.trim();
+        const rawEmail = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const email = formatEmail(rawEmail);
+        if (!name || !email || !password) {
+            showMessage('Completa todos los campos', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+            return;
+        }
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(cred.user, { displayName: name });
+            showMessage('Cuenta creada con éxito', 'success');
+            setTimeout(() => window.location.href = 'app.html', 2000);
+        } catch (error) {
+            if (error.code === 'auth/email-already-in-use') {
+                showMessage('El correo ya está registrado', 'error');
+            } else {
+                showMessage('Error al crear la cuenta', 'error');
+            }
+        }
+    };
+
+    document.getElementById('btnLoginAction').addEventListener('click', () => loginUser());
+    document.getElementById('btnRegisterAction').addEventListener('click', () => registerUser());
+
+    const mostrarLogin = document.getElementById('mostrarLoginPass');
+    const loginPass = document.getElementById('loginPassword');
+    mostrarLogin.addEventListener('change', () => {
+        loginPass.type = mostrarLogin.checked ? 'text' : 'password';
+    });
+    const mostrarReg = document.getElementById('mostrarRegPass');
+    const regPass = document.getElementById('registerPassword');
+    mostrarReg.addEventListener('change', () => {
+        regPass.type = mostrarReg.checked ? 'text' : 'password';
+    });
+
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassInput = document.getElementById('loginPassword');
+    const handleLoginEnter = (e) => { if (e.key === 'Enter') loginUser(); };
+    loginEmail.addEventListener('keypress', handleLoginEnter);
+    loginPassInput.addEventListener('keypress', handleLoginEnter);
+
+    const regName = document.getElementById('registerName');
+    const regEmail = document.getElementById('registerEmail');
+    const regPassword = document.getElementById('registerPassword');
+    const handleRegEnter = (e) => { if (e.key === 'Enter') registerUser(); };
+    regName.addEventListener('keypress', handleRegEnter);
+    regEmail.addEventListener('keypress', handleRegEnter);
+    regPassword.addEventListener('keypress', handleRegEnter);
+
+    imagenWrapper.addEventListener('click', (e) => {
+        e.stopPropagation();
+        abrirLogin();
+    });
+    imagenWrapper.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            abrirLogin();
+        }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+        if (user && (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '')) {
+            window.location.href = 'app.html';
+        }
+    });
+
+    setTimeout(() => {
+        const cred = document.getElementById('creditos-flotante');
+        if (cred) {
+            cred.classList.add('fade-out');
+            setTimeout(() => cred.remove(), 1000);
+        }
+    }, 5000);
+
+    resetToInitial();
+    setupModalEvents();
+</script>
 </body>
 </html>
