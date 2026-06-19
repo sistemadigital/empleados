@@ -872,6 +872,16 @@
         document.getElementById('closeBirthdayBtn').addEventListener('click', cerrarBirthdayModal);
         document.querySelector('.close-birthday').addEventListener('click', cerrarBirthdayModal);
         
+        // --- NUEVA LÓGICA: CERRAR MODAL DE CUMPLEAÑOS AL HACER CLIC AFUERA ---
+        if (birthdayModal) {
+            birthdayModal.addEventListener('click', (e) => {
+                if (e.target === birthdayModal) {
+                    cerrarBirthdayModal();
+                }
+            });
+        }
+        // ---------------------------------------------------------------------
+        
         // MODAL DE RECORDATORIO (sin audio)
         let reminderShown = false;
         let reminderTimeout = null;
