@@ -23,7 +23,7 @@
     body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--secondary-gray); color: var(--text-primary); line-height: 1.5; }
 
     /* Header */
-    .header { background: white; border-bottom: 1px solid var(--border-default); padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); sticky: top; z-index: 100; }
+    .header { background: white; border-bottom: 1px solid var(--border-default); padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
     .logo { font-size: 22px; font-weight: bold; color: var(--primary-blue); text-align: center; }
 
     .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
@@ -100,8 +100,8 @@
     .data-table tr:hover td { background: #fcfcfc; }
 
     /* Paginación Visual */
-    .pagination-container { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; }
-    .pagination-controls { display: flex; gap: 5px; }
+    .pagination-container { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; flex-wrap: wrap; gap: 10px; }
+    .pagination-controls { display: flex; gap: 5px; flex-wrap: wrap; }
     .page-btn { 
         padding: 6px 12px; 
         border: 1px solid var(--border-default); 
@@ -146,8 +146,12 @@
       </div>
     </div>
 
-    <!-- Grid 2x2 -->
+    <!-- Grid 2x2 con Escritos primero, luego Civil, Familia, Violencia, Laboral, Paz -->
     <div class="cards-grid" id="mainCards">
+      <div class="category-card" id="card-Escritos" onclick="openCategory('escritosSection')">
+        <h3>Escritos</h3>
+        <span class="card-badge" id="cardEscritosCount">0</span>
+      </div>
       <div class="category-card" id="card-Civil" onclick="openCategory('civilSection')">
         <h3>Civil</h3>
         <span class="card-badge" id="cardCivilCount">0</span>
@@ -160,9 +164,13 @@
         <h3>Violencia Familiar</h3>
         <span class="card-badge" id="cardViolenciaCount">0</span>
       </div>
-      <div class="category-card" id="card-Escritos" onclick="openCategory('escritosSection')">
-        <h3>Escritos</h3>
-        <span class="card-badge" id="cardEscritosCount">0</span>
+      <div class="category-card" id="card-Laboral" onclick="openCategory('laboralSection')">
+        <h3>Laboral</h3>
+        <span class="card-badge" id="cardLaboralCount">0</span>
+      </div>
+      <div class="category-card" id="card-Paz" onclick="openCategory('pazSection')">
+        <h3>Paz</h3>
+        <span class="card-badge" id="cardPazCount">0</span>
       </div>
     </div>
 
@@ -170,6 +178,18 @@
     <div id="categoryViews">
       <button class="button button-outline" onclick="closeCategory()">← Volver a Categorías</button>
       
+      <!-- Escritos (primero) -->
+      <section class="section" id="escritosSection">
+        <div class="section-header"><h2>Escritos</h2></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Nombre</th><th>Fecha</th><th>Temática</th><th>Detalle</th><th>Acciones</th></tr></thead>
+            <tbody id="escritosDocuments"></tbody>
+          </table>
+        </div>
+        <div class="pagination-container" id="pager-Escritos"></div>
+      </section>
+
       <!-- Civil -->
       <section class="section" id="civilSection">
         <div class="section-header"><h2>Civil</h2></div>
@@ -206,16 +226,28 @@
         <div class="pagination-container" id="pager-Violencia"></div>
       </section>
 
-      <!-- Escritos -->
-      <section class="section" id="escritosSection">
-        <div class="section-header"><h2>Escritos</h2></div>
+      <!-- Laboral (nuevo) -->
+      <section class="section" id="laboralSection">
+        <div class="section-header"><h2>Laboral</h2></div>
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>Nombre</th><th>Fecha</th><th>Temática</th><th>Detalle</th><th>Acciones</th></tr></thead>
-            <tbody id="escritosDocuments"></tbody>
+            <tbody id="laboralDocuments"></tbody>
           </table>
         </div>
-        <div class="pagination-container" id="pager-Escritos"></div>
+        <div class="pagination-container" id="pager-Laboral"></div>
+      </section>
+
+      <!-- Paz (nuevo) -->
+      <section class="section" id="pazSection">
+        <div class="section-header"><h2>Paz</h2></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Nombre</th><th>Fecha</th><th>Temática</th><th>Detalle</th><th>Acciones</th></tr></thead>
+            <tbody id="pazDocuments"></tbody>
+          </table>
+        </div>
+        <div class="pagination-container" id="pager-Paz"></div>
       </section>
     </div>
   </div>
@@ -235,10 +267,12 @@
           <div class="form-group">
             <label>Categoría</label>
             <select id="docCategory">
+              <option value="Escritos">Escritos</option>
               <option value="Civil">Civil</option>
               <option value="Familia">Familia</option>
               <option value="Violencia Familiar">Violencia Familiar</option>
-              <option value="Escritos">Escritos</option>
+              <option value="Laboral">Laboral</option>
+              <option value="Paz">Paz</option>
             </select>
           </div>
           <div class="form-group">
@@ -279,13 +313,24 @@
     // --- ESTADO ---
     let documents = [];
     const itemsPerPage = 10;
-    const pages = { "Civil": 1, "Familia": 1, "Violencia Familiar": 1, "Escritos": 1 };
+    // Incluimos todas las categorías en el orden deseado
+    let pages = {
+      "Escritos": 1,
+      "Civil": 1,
+      "Familia": 1,
+      "Violencia Familiar": 1,
+      "Laboral": 1,
+      "Paz": 1
+    };
 
+    // Configuración de cada categoría: mapea nombres de categoría a elementos del DOM
     const categoryConfig = {
+      "Escritos": { container: "escritosDocuments", card: "card-Escritos", badge: "cardEscritosCount", section: "escritosSection", pager: "pager-Escritos" },
       "Civil": { container: "civilDocuments", card: "card-Civil", badge: "cardCivilCount", section: "civilSection", pager: "pager-Civil" },
       "Familia": { container: "familiaDocuments", card: "card-Familia", badge: "cardFamiliaCount", section: "familiaSection", pager: "pager-Familia" },
       "Violencia Familiar": { container: "violenciaDocuments", card: "card-Violencia", badge: "cardViolenciaCount", section: "violenciaSection", pager: "pager-Violencia" },
-      "Escritos": { container: "escritosDocuments", card: "card-Escritos", badge: "cardEscritosCount", section: "escritosSection", pager: "pager-Escritos" }
+      "Laboral": { container: "laboralDocuments", card: "card-Laboral", badge: "cardLaboralCount", section: "laboralSection", pager: "pager-Laboral" },
+      "Paz": { container: "pazDocuments", card: "card-Paz", badge: "cardPazCount", section: "pazSection", pager: "pager-Paz" }
     };
 
     // --- NAVEGACIÓN ---
@@ -434,10 +479,12 @@
     };
 
     // --- MODAL LOGIC ---
-    function openModal(url, name, id = "") {
+    // Ahora acepta categoría para precargar en edición
+    function openModal(url, name, id = "", category = "") {
       document.getElementById('docId').value = id;
       document.getElementById('docUrl').value = url;
       document.getElementById('docName').value = name;
+      if (category) document.getElementById('docCategory').value = category;
       document.getElementById('docModal').style.display = "flex";
     }
 
@@ -445,7 +492,7 @@
 
     function editDoc(id) {
       const d = documents.find(x => x.id === id);
-      if (d) openModal(d.url, d.name, d.id);
+      if (d) openModal(d.url, d.name, d.id, d.category);
     }
 
     document.getElementById('docForm').onsubmit = e => {
