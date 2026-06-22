@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>⚖️ Sistema Digital Defensoría 6</title>
+
+    <link rel="preload" as="image" href="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true" fetchpriority="high" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ── RESET ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ── BARRAS GLASS (Top y Bottom) ── */
+        .cinta-glass {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            z-index: 9999;
+            background: linear-gradient(to right, #004e92, #00b4d8, #0077b6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 0 18px rgba(0, 100, 200, 0.25);
+            border-bottom: 1px solid rgba(0, 180, 216, 0.3);
+            pointer-events: none;
+        }
+
+        .cinta-top {
+            top: 0;
+            border-bottom: 2px solid rgba(0, 200, 255, 0.3);
+        }
+
+        .cinta-bottom {
+            bottom: 0;
+            border-bottom: none;
+            border-top: 2px solid rgba(0, 200, 255, 0.3);
+            background: linear-gradient(to left, #004e92, #00b4d8, #0077b6);
+        }
+
+        /* ── FONDO MODERNO WEB JUDICIAL ── */
+        body,
+        html {
+            height: 100%;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            color: #0a1e2f;
+            font-size: 16px;
+            line-height: 1.5;
+            padding-top: 10px;
+            padding-bottom: 120px;
+
+            background-color: #f8fafc;
+            background-image:
+                radial-gradient(at 40% 20%, rgba(0, 119, 182, 0.06) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(0, 180, 216, 0.06) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, rgba(0, 78, 146, 0.04) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, rgba(0, 119, 182, 0.06) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(0, 180, 216, 0.06) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, rgba(0, 78, 146, 0.04) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, rgba(0, 119, 182, 0.06) 0px, transparent 50%);
+        }
+
+        /* ── TEXTO INSTITUCIONAL FIJO ── */
+        .header-institucional {
+            position: fixed;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            text-align: center;
+            padding: 12px 1rem 8px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-bottom: 1px solid rgba(0, 180, 216, 0.15);
+            pointer-events: none;
+            box-sizing: border-box;
+        }
+
+        .header-institucional * {
+            pointer-events: none;
+        }
+
+        .titulo-institucional {
+            font-size: clamp(1.4rem, 3.6vw, 2.4rem);
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #003d66, #0077b6, #00b4d8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .subtitulo-institucional {
+            font-size: clamp(0.9rem, 2.2vw, 1.4rem);
+            font-weight: 700;
+            color: #005f8c;
+            letter-spacing: 0.2px;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        /* ── CENTRO DE PANTALLA: IMAGEN AUMENTADA ── */
+        .centro-pantalla {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 1rem;
+            pointer-events: none;
+        }
+
+        .contenedor-dinamico {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            cursor: pointer;
+            outline: none;
+            width: 420px;
+            height: auto;
+            pointer-events: auto;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            will-change: transform;
+            overflow: visible;
+        }
+
+        .img-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg,
+                    rgba(0, 180, 216, 0.9),
+                    rgba(0, 230, 255, 0.6),
+                    rgba(255, 255, 255, 0.9),
+                    rgba(0, 200, 255, 0.7),
+                    rgba(0, 180, 216, 0.9));
+            animation: rotateBorder 6s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .img-3d {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            display: block;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            pointer-events: none;
+            background: #ffffff;
+            position: relative;
+            z-index: 1;
+            border: 4px solid transparent;
+            fetchpriority: high;
+        }
+
+        /* ── FOOTER FIJO ── */
+        .footer-info {
+            position: fixed;
+            bottom: 18px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 100;
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        .footer-info * {
+            pointer-events: auto;
+        }
+
+        .footer-titulo {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #003d66, #00b4d8, #0077b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 30px rgba(0, 180, 216, 0.3);
+            line-height: 1.1;
+        }
+
+        .protocolo-footer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: clamp(1rem, 2.4vw, 1.3rem);
+            font-weight: 700;
+            color: #0a2b3e;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            padding: 10px 28px 10px 20px;
+            border-radius: 60px;
+            border: 1.5px solid rgba(0, 180, 216, 0.3);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            transition: all 0.25s ease;
+            letter-spacing: -0.2px;
+            margin-top: 2px;
+        }
+
+        .protocolo-footer-link:hover {
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 180, 216, 0.2);
+            transform: translateY(-2px);
+            border-color: #00b4d8;
+        }
+
+        /* ── CRÉDITOS ── */
+        #creditos-flotante {
+            position: fixed;
+            top: 14px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            color: #0077b6;
+            padding: 6px 16px;
+            border-radius: 40px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            animation: fadeIn 0.5s ease-out;
+            font-weight: 600;
+            font-size: 0.7rem;
+            border: 1px solid rgba(0, 119, 182, 0.2);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            line-height: 1.3;
+        }
+
+        .texto-version {
+            font-size: 0.55rem;
+            opacity: 0.7;
+            margin-top: 1px;
+            color: #005f8c;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-out {
+            opacity: 0 !important;
+            transform: translateY(-20px) !important;
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        /* ── MODALES (login / registro / bobo) ── */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 30, 47, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-contenido {
+            background: #ffffff;
+            max-width: 480px;
+            width: 90%;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: scale(0.96);
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-contenido {
+            transform: scale(1);
+        }
+
+        /* ─── Contenedor para la imagen "bobo" ─── */
+        .bobo-contenido {
+            max-width: 400px;
+            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+            border: 1px solid rgba(0, 180, 216, 0.15);
+        }
+        .bobo-contenido img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 1.2rem;
+        }
+
+        .btn-cerrar-modal {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.4rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #8ba0b5;
+            transition: 0.2s;
+            line-height: 1;
+        }
+
+        .btn-cerrar-modal:hover {
+            color: #0a2b3e;
+        }
+
+        .modal-contenido h3 {
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #0a2b3e, #0077b6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .grupo-input {
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .grupo-input label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4a627a;
+        }
+
+        .grupo-input input {
+            padding: 14px 16px;
+            border: 1.5px solid #e2edf7;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-family: 'Inter', monospace;
+            background: white;
+            transition: all 0.2s;
+            width: 100%;
+            max-width: 320px;
+            color: #0a2b3e;
+            text-align: center;
+        }
+
+        .grupo-input input:focus {
+            outline: none;
+            border-color: #00b4d8;
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
+        }
+
+        .mostrar-clave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #2c4c6e;
+            margin: -5px 0 12px 0;
+            cursor: pointer;
+        }
+
+        .btn-modal-primario {
+            width: 100%;
+            max-width: 320px;
+            padding: 14px;
+            background: #0a2b3e;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-primario:hover {
+            background: #005f8c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 120, 180, 0.25);
+        }
+
+        .enlace-modal {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4a627a;
+        }
+
+        .enlace-modal span {
+            color: #0077b6;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .enlace-modal span:hover {
+            text-decoration: underline;
+        }
+
+        .auth-message-global {
+            position: fixed;
+            bottom: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0a2b3e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 2100;
+            display: none;
+            backdrop-filter: blur(12px);
+            background: rgba(10, 43, 62, 0.95);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 85vw;
+        }
+
+        .auth-message-global.error {
+            background: #bc4742;
+        }
+
+        .auth-message-global.success {
+            background: #2a9d8f;
+        }
+
+        /* ── MODAL CANCHA (FONDO TRANSPARENTE, MÁS GRANDE Y BORDE LUMINOSO) ── */
+        .modal-cancha {
+            z-index: 2500;
+            background: transparent;
+            backdrop-filter: none;
+            pointer-events: none;
+        }
+        .modal-cancha.active {
+            pointer-events: auto;
+        }
+        .modal-cancha .cancha-modal-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            pointer-events: none;
+        }
+        .modal-cancha .cancha-modal-wrapper #game-container-cancha {
+            pointer-events: auto;
+        }
+
+        /* ===== ESTILOS DE LA CANCHA ===== */
+        .cancha-modal-wrapper #game-container-cancha {
+            position: relative;
+            width: 100%;
+            max-width: 820px;
+            aspect-ratio: 16 / 9;
+            background: #2e7d32;
+            border-radius: 28px;
+            box-shadow:
+                0 0 40px rgba(0, 180, 255, 0.6),
+                0 0 80px rgba(0, 180, 255, 0.3),
+                0 30px 80px rgba(0, 0, 0, 0.5),
+                inset 0 0 60px rgba(0, 180, 255, 0.1);
+            overflow: hidden;
+            border: 3px solid rgba(0, 200, 255, 0.7);
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+        .cancha-modal-wrapper #game-container-cancha:hover {
+            box-shadow:
+                0 0 60px rgba(0, 180, 255, 0.8),
+                0 0 100px rgba(0, 180, 255, 0.4),
+                0 40px 100px rgba(0, 0, 0, 0.6),
+                inset 0 0 80px rgba(0, 180, 255, 0.15);
+            border-color: rgba(0, 220, 255, 0.9);
+        }
+
+        /* Césped mejorado */
+        .cancha-modal-wrapper #pitch {
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(90deg,
+                    rgba(46, 125, 50, 0.5) 0px,
+                    rgba(46, 125, 50, 0.5) 8px,
+                    rgba(56, 142, 60, 0.5) 8px,
+                    rgba(56, 142, 60, 0.5) 16px),
+                radial-gradient(circle at 30% 20%, #66bb6a, #1b5e20 80%);
+            z-index: 0;
+            background-blend-mode: overlay, normal;
+        }
+
+        /* ─── BANDERA ARGENTINA CON TRES ESTRELLAS DORADAS ─── */
+        .cancha-modal-wrapper #flag-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 16%;
+            z-index: 20;
+            background: linear-gradient(to bottom,
+                    #74ACDF 33.33%,
+                    #ffffff 33.33%,
+                    #ffffff 66.66%,
+                    #74ACDF 66.66%);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* Estrellas doradas */
+        .cancha-modal-wrapper .star {
+            color: #fbc02d;
+            font-size: clamp(1.6rem, 4vw, 2.8rem);
+            text-shadow:
+                0 0 20px rgba(251, 192, 45, 0.9),
+                0 0 40px rgba(251, 192, 45, 0.5),
+                0 0 60px rgba(251, 192, 45, 0.3);
+            line-height: 1;
+            user-select: none;
+        }
+
+        /* Líneas del campo más nítidas */
+        .cancha-modal-wrapper .pitch-line {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.85);
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        }
+        .cancha-modal-wrapper .center-line {
+            width: 0;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            border-left: 2px solid rgba(255, 255, 255, 0.85);
+        }
+        .cancha-modal-wrapper .center-circle {
+            width: 16%;
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255, 255, 255, 0.85);
+        }
+        .cancha-modal-wrapper .penalty-area {
+            width: 18%;
+            height: 46%;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border-right: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-right: none;
+            z-index: 1;
+        }
+
+        /* Arco con red realista */
+        .cancha-modal-wrapper #goal {
+            position: absolute;
+            width: 10%;
+            height: 34%;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            border: 5px solid #ffffff;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            background:
+                repeating-linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.3) 0px,
+                    rgba(255, 255, 255, 0.3) 3px,
+                    transparent 3px,
+                    transparent 8px),
+                repeating-linear-gradient(-45deg,
+                    rgba(255, 255, 255, 0.3) 0px,
+                    rgba(255, 255, 255, 0.3) 3px,
+                    transparent 3px,
+                    transparent 8px);
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow:
+                inset 0 0 40px rgba(255, 255, 255, 0.08),
+                0 0 30px rgba(0, 0, 0, 0.4);
+            transition: box-shadow 0.2s;
+        }
+        .cancha-modal-wrapper #goal::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, transparent 50%, rgba(255, 255, 255, 0.15) 100%);
+            pointer-events: none;
+        }
+        .cancha-modal-wrapper #goal::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(6px);
+            z-index: -1;
+        }
+
+        /* ─── PELOTA SÓLIDA (sin transparencia) ─── */
+        .cancha-modal-wrapper #ball {
+            position: absolute;
+            font-size: clamp(2.8rem, 6vw, 4.2rem);
+            z-index: 11;
+            top: calc(50% - 0.5em);
+            left: calc(50% - 0.5em);
+            filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.6)) drop-shadow(0 -2px 4px rgba(255,255,255,0.2));
+            transition: transform 0.1s;
+            line-height: 1;
+            user-select: none;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transform: scale(1);
+            opacity: 1 !important; /* Siempre sólida */
+        }
+
+        .cancha-modal-wrapper .animate-ball {
+            animation: shootBall 1.8s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+        }
+
+        @keyframes shootBall {
+            0% {
+                left: calc(50% - 0.5em);
+                top: calc(50% - 0.5em);
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.6));
+                opacity: 1;
+            }
+            30% {
+                top: calc(25% - 0.5em);
+                transform: scale(1.4) rotate(400deg);
+                filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.7));
+                opacity: 1;
+            }
+            85% {
+                left: calc(100% - 12% - 0.5em);
+                top: calc(50% - 0.5em + 6px);
+                transform: scale(0.9) rotate(1400deg);
+                filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
+                opacity: 1;
+            }
+            100% {
+                left: calc(100% - 10% - 0.5em);
+                top: calc(50% - 0.5em + 14px);
+                transform: scale(0.7) rotate(1600deg);
+                filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.3));
+                opacity: 1; /* Sólida siempre */
+            }
+        }
+
+        /* ─── MENSAJE DE GOL: TEXTO BLANCO SÓLIDO Y BRILLANTE ─── */
+        .cancha-modal-wrapper #message-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            z-index: 100;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            width: 90%;
+        }
+        .cancha-modal-wrapper #message-container.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .cancha-modal-wrapper #goal-text {
+            color: #ffffff !important; /* Blanco sólido */
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-shadow:
+                0 0 30px rgba(255, 255, 255, 0.8),
+                0 0 60px rgba(255, 255, 255, 0.5),
+                0 0 90px rgba(255, 255, 255, 0.3),
+                0 8px 30px rgba(0, 0, 0, 0.6);
+            line-height: 1.1;
+            text-transform: uppercase;
+            -webkit-text-fill-color: #ffffff; /* Fuerza blanco */
+            background: none; /* Elimina el gradiente transparente */
+        }
+
+        .cancha-modal-wrapper #sub-text {
+            font-size: clamp(1.8rem, 5vw, 3.2rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 0.1em;
+            color: #ffffff !important; /* Blanco sólido */
+            text-shadow:
+                0 0 30px rgba(255, 255, 255, 0.8),
+                0 0 60px rgba(255, 255, 255, 0.5),
+                0 0 90px rgba(255, 255, 255, 0.3),
+                0 4px 15px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.1em;
+            -webkit-text-fill-color: #ffffff;
+            background: none;
+        }
+        .cancha-modal-wrapper #sub-text.show {
+            opacity: 1;
+        }
+
+        .cancha-modal-wrapper #typed-text {
+            display: inline;
+            color: #ffffff !important;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        .cancha-modal-wrapper #cursor {
+            display: inline-block;
+            width: 0.06em;
+            height: 1em;
+            background: #ffffff;
+            margin-left: 0.05em;
+            animation: blink 0.8s step-end infinite;
+            border-radius: 2px;
+            box-shadow: 0 0 12px #ffffff;
+        }
+
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Confeti colorido */
+        .cancha-modal-wrapper .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            opacity: 0;
+            z-index: 50;
+            border-radius: 2px;
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(calc(100vh)) rotate(720deg) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        /* Vibración del arco */
+        .cancha-modal-wrapper #goal.shake {
+            animation: goalShake 0.5s ease;
+        }
+        @keyframes goalShake {
+            0% {
+                transform: translateY(-50%) rotate(0deg);
+            }
+            20% {
+                transform: translateY(-47%) rotate(3deg);
+            }
+            40% {
+                transform: translateY(-53%) rotate(-3deg);
+            }
+            60% {
+                transform: translateY(-49%) rotate(2deg);
+            }
+            80% {
+                transform: translateY(-51%) rotate(-1deg);
+            }
+            100% {
+                transform: translateY(-50%) rotate(0deg);
+            }
+        }
+
+        /* Responsive del modal cancha */
+        @media (max-width: 900px) {
+            .cancha-modal-wrapper #game-container-cancha {
+                max-width: 90vw;
+                aspect-ratio: 16 / 10;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .cancha-modal-wrapper #game-container-cancha {
+                max-width: 95vw;
+                aspect-ratio: 4 / 3;
+                border-radius: 20px;
+            }
+            .cancha-modal-wrapper .star {
+                font-size: clamp(1.2rem, 3.5vw, 2rem);
+            }
+            .cancha-modal-wrapper #goal {
+                border-width: 4px;
+            }
+            .cancha-modal-wrapper .penalty-area {
+                width: 20%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cancha-modal-wrapper #game-container-cancha {
+                max-width: 98vw;
+                aspect-ratio: 1 / 1;
+                border-radius: 16px;
+            }
+            .cancha-modal-wrapper .star {
+                font-size: clamp(1rem, 4vw, 1.6rem);
+            }
+            .cancha-modal-wrapper #goal {
+                border-width: 3px;
+            }
+        }
+
+        /* ── RESPONSIVE GENERAL ── */
+        @media (max-width: 640px) {
+            .img-wrapper {
+                width: 320px;
+            }
+            .img-3d {
+                max-width: 320px;
+            }
+            .cinta-glass {
+                height: 8px;
+            }
+            body {
+                padding-top: 8px;
+                padding-bottom: 130px;
+            }
+            .header-institucional {
+                top: 8px;
+                padding: 10px 0.8rem 6px;
+            }
+            .titulo-institucional {
+                font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            }
+            .subtitulo-institucional {
+                font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+            }
+            .footer-titulo {
+                font-size: clamp(2.2rem, 8vw, 3.8rem);
+            }
+            .protocolo-footer-link {
+                font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+                padding: 8px 20px 8px 16px;
+                gap: 8px;
+                border-width: 1.5px;
+            }
+            #creditos-flotante {
+                top: 12px;
+                right: 12px;
+                font-size: 0.65rem;
+                padding: 4px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .img-wrapper {
+                width: 250px;
+            }
+            .img-3d {
+                max-width: 250px;
+            }
+            body {
+                padding-bottom: 140px;
+            }
+            .header-institucional {
+                top: 8px;
+                padding: 8px 0.5rem 4px;
+            }
+            .titulo-institucional {
+                font-size: 1.1rem;
+            }
+            .subtitulo-institucional {
+                font-size: 0.7rem;
+            }
+            .footer-titulo {
+                font-size: 2rem;
+            }
+            .protocolo-footer-link {
+                font-size: 0.85rem;
+                padding: 6px 14px;
+                gap: 6px;
+            }
+            #creditos-flotante {
+                top: 10px;
+                right: 10px;
+                font-size: 0.6rem;
+                padding: 4px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cinta-glass cinta-top" aria-hidden="true"></div>
+    <div class="cinta-glass cinta-bottom" aria-hidden="true"></div>
+
+    <div class="header-institucional">
+        <div class="titulo-institucional">Defensoria Civil y Comercial 6</div>
+        <div class="subtitulo-institucional">Ministerio Público de Misiones</div>
+    </div>
+
+    <div id="creditos-flotante">
+        <span>Diseño y programación: Rómulo Fioravante</span>
+        <span class="texto-version">Versión 5.0.2026</span>
+    </div>
+
+    <div class="centro-pantalla">
+        <div class="contenedor-dinamico" id="contenedorDinamico">
+            <div class="img-wrapper" id="imagenPrincipal" role="button" tabindex="0" aria-label="Activar sistema">
+                <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/pc.png?raw=true"
+                alt="Sistema Digital"
+                class="img-3d"
+                loading="eager"
+                fetchpriority="high" />
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <span class="footer-titulo">Sistema Digital</span>
+        <a href="https://defensorialocal-seis.github.io/protocolo/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="protocolo-footer-link">
+        📋 Protocolo de actuación judicial
+    </a>
+</div>
+
+<!-- ─── MODAL CANCHA ─── -->
+<div id="modalCancha" class="modal-overlay modal-cancha">
+    <div class="cancha-modal-wrapper">
+        <div id="game-container-cancha">
+            <div id="pitch"></div>
+
+            <!-- Bandera con tres estrellas doradas -->
+            <div id="flag-banner">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+
+            <div class="pitch-line center-line"></div>
+            <div class="pitch-line center-circle"></div>
+            <div class="pitch-line penalty-area"></div>
+
+            <div id="goal"></div>
+
+            <div id="ball">⚽</div>
+
+            <div id="message-container">
+                <div id="goal-text">Mundial 2026</div>
+                <div id="sub-text">
+                    <span id="typed-text"></span>
+                    <span id="cursor"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── MODAL BOBO (NUEVO) ─── -->
+<div id="modalBobo" class="modal-overlay">
+    <div class="modal-contenido bobo-contenido">
+        <img src="https://github.com/sistemadigital/iconos/blob/main/bobo.png?raw=true" alt="Bobo" />
+    </div>
+</div>
+
+<!-- ─── MODAL LOGIN ─── -->
+<div id="modalLogin" class="modal-overlay">
+    <div class="modal-contenido">
+        <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
+        <h3>Bienvenido</h3>
+        <div>
+            <div class="grupo-input">
+                <label>Correo electrónico</label>
+                <input type="email" id="loginEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
+            </div>
+            <div class="grupo-input">
+                <label>Contraseña</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <label class="mostrar-clave">
+                <input type="checkbox" id="mostrarLoginPass" /> Mostrar contraseña
+            </label>
+            <button class="btn-modal-primario" id="btnLoginAction">Entrar al sistema</button>
+            <div class="enlace-modal">
+                ¿No tienes cuenta? <span id="cambiarARegistroDesdeLogin">Regístrate aquí</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── MODAL REGISTRO ─── -->
+<div id="modalRegistro" class="modal-overlay">
+    <div class="modal-contenido">
+        <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
+        <h3>Registro</h3>
+        <div>
+            <div class="grupo-input">
+                <label>Nombre completo</label>
+                <input type="text" id="registerName" placeholder="Nombre y apellido" autocomplete="name" />
+            </div>
+            <div class="grupo-input">
+                <label>Correo electrónico</label>
+                <input type="email" id="registerEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
+            </div>
+            <div class="grupo-input">
+                <label>Contraseña</label>
+                <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+            </div>
+            <label class="mostrar-clave">
+                <input type="checkbox" id="mostrarRegPass" /> Mostrar contraseña
+            </label>
+            <button class="btn-modal-primario" id="btnRegisterAction">Registrarse</button>
+            <div class="enlace-modal">
+                ¿Ya tienes cuenta? <span id="cambiarALoginDesdeRegistro">Inicia sesión</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="globalAuthMessage" class="auth-message-global"></div>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
+            authDomain: "defensoria-empleados.firebaseapp.com",
+            projectId: "defensoria-empleados",
+            storageBucket: "defensoria-empleados.firebasestorage.app",
+            messagingSenderId: "438237217533",
+            appId: "1:438237217533:web:6603123e43a12da00c7494"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
+
+    // ─── ELEMENTOS ───
+    const imagenWrapper = document.getElementById('imagenPrincipal');
+    const modalLogin = document.getElementById('modalLogin');
+    const modalRegistro = document.getElementById('modalRegistro');
+    const modalCancha = document.getElementById('modalCancha');
+    const modalBobo = document.getElementById('modalBobo'); // Nuevo
+
+    let currentState = 'idle';
+
+    // ─── FUNCIONES DE NAVEGACIÓN ───
+    function resetToInitial() {
+        if (imagenWrapper) imagenWrapper.style.display = 'block';
+        modalLogin.classList.remove('active');
+        modalRegistro.classList.remove('active');
+        modalBobo.classList.remove('active'); // Asegurar cierre
+        currentState = 'idle';
+    }
+
+    function abrirLogin() {
+        if (currentState === 'idle') {
+            imagenWrapper.style.display = 'none';
+            modalLogin.classList.add('active');
+            currentState = 'modalOpen';
+            document.getElementById('loginEmail').focus();
+        }
+    }
+
+    function handleCloseModalAndReset() {
+        if (currentState === 'modalOpen' || currentState === 'boboOpen') {
+            resetToInitial();
+        }
+    }
+
+    // ─── CONFIGURACIÓN DE MODALES (login / registro) ───
+    function setupModalEvents() {
+        const cerrarLogin = document.getElementById('cerrarModalLoginBtn');
+        const cerrarRegistro = document.getElementById('cerrarModalRegistroBtn');
+        cerrarLogin.addEventListener('click', handleCloseModalAndReset);
+        cerrarRegistro.addEventListener('click', handleCloseModalAndReset);
+
+        modalLogin.addEventListener('click', (e) => {
+            if (e.target === modalLogin) handleCloseModalAndReset();
+        });
+        modalRegistro.addEventListener('click', (e) => {
+            if (e.target === modalRegistro) handleCloseModalAndReset();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && (currentState === 'modalOpen' || currentState === 'boboOpen')) {
+                handleCloseModalAndReset();
+            }
+        });
+
+        const switchToReg = document.getElementById('cambiarARegistroDesdeLogin');
+        const switchToLogin = document.getElementById('cambiarALoginDesdeRegistro');
+        switchToReg.addEventListener('click', () => {
+            if (currentState === 'modalOpen') {
+                modalLogin.classList.remove('active');
+                modalRegistro.classList.add('active');
+                document.getElementById('registerName').focus();
+            }
+        });
+        switchToLogin.addEventListener('click', () => {
+            if (currentState === 'modalOpen') {
+                modalRegistro.classList.remove('active');
+                modalLogin.classList.add('active');
+                document.getElementById('loginEmail').focus();
+            }
+        });
+    }
+
+    // ─── HELPERS DE AUTENTICACIÓN ───
+    function formatEmail(input) {
+        let email = input.trim();
+        if (email && !email.includes('@')) email += DEFAULT_DOMAIN;
+        return email;
+    }
+
+    function showMessage(msg, type) {
+        const div = document.getElementById('globalAuthMessage');
+        div.textContent = msg;
+        div.className = 'auth-message-global';
+        if (type === 'error') div.classList.add('error');
+        else if (type === 'success') div.classList.add('success');
+        div.style.display = 'block';
+        setTimeout(() => {
+            div.style.display = 'none';
+            div.classList.remove('error', 'success');
+        }, 4000);
+    }
+
+    window.loginUser = async function() {
+        const rawEmail = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const email = formatEmail(rawEmail);
+        if (!email || !password) {
+            showMessage('Completa todos los campos', 'error');
+            return;
+        }
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            showMessage('Acceso concedido. Iniciando sistema...', 'success');
+            setTimeout(() => window.location.href = 'app.html', 2000);
+        } catch (error) {
+            showMessage('Credenciales inválidas', 'error');
+        }
+    };
+
+    window.registerUser = async function() {
+        const name = document.getElementById('registerName').value.trim();
+        const rawEmail = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const email = formatEmail(rawEmail);
+        if (!name || !email || !password) {
+            showMessage('Completa todos los campos', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+            return;
+        }
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(cred.user, { displayName: name });
+            showMessage('Cuenta creada con éxito', 'success');
+            setTimeout(() => window.location.href = 'app.html', 2000);
+        } catch (error) {
+            if (error.code === 'auth/email-already-in-use') {
+                showMessage('El correo ya está registrado', 'error');
+            } else {
+                showMessage('Error al crear la cuenta', 'error');
+            }
+        }
+    };
+
+    document.getElementById('btnLoginAction').addEventListener('click', () => loginUser());
+    document.getElementById('btnRegisterAction').addEventListener('click', () => registerUser());
+
+    const mostrarLogin = document.getElementById('mostrarLoginPass');
+    const loginPass = document.getElementById('loginPassword');
+    mostrarLogin.addEventListener('change', () => {
+        loginPass.type = mostrarLogin.checked ? 'text' : 'password';
+    });
+    const mostrarReg = document.getElementById('mostrarRegPass');
+    const regPass = document.getElementById('registerPassword');
+    mostrarReg.addEventListener('change', () => {
+        regPass.type = mostrarReg.checked ? 'text' : 'password';
+    });
+
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassInput = document.getElementById('loginPassword');
+    const handleLoginEnter = (e) => { if (e.key === 'Enter') loginUser(); };
+    loginEmail.addEventListener('keypress', handleLoginEnter);
+    loginPassInput.addEventListener('keypress', handleLoginEnter);
+
+    const regName = document.getElementById('registerName');
+    const regEmail = document.getElementById('registerEmail');
+    const regPassword = document.getElementById('registerPassword');
+    const handleRegEnter = (e) => { if (e.key === 'Enter') registerUser(); };
+    regName.addEventListener('keypress', handleRegEnter);
+    regEmail.addEventListener('keypress', handleRegEnter);
+    regPassword.addEventListener('keypress', handleRegEnter);
+
+    // ─── LÓGICA DE LA CANCHA ───
+    let canchaInstance = null;
+
+    function setupCancha() {
+        const container = document.getElementById('game-container-cancha');
+        if (!container) return null;
+
+        const ball = container.querySelector('#ball');
+        const goal = container.querySelector('#goal');
+        const msgContainer = container.querySelector('#message-container');
+        const subText = container.querySelector('#sub-text');
+        const typedSpan = container.querySelector('#typed-text');
+        const cursor = container.querySelector('#cursor');
+        const FULL_TEXT = 'Vamos Argentina';
+        let textIndex = 0;
+        let typingTimer = null;
+        let restartTimer = null;
+
+        function clearAllTimers() {
+            if (typingTimer) { clearTimeout(typingTimer);
+                typingTimer = null; }
+            if (restartTimer) { clearTimeout(restartTimer);
+                restartTimer = null; }
+        }
+
+        function createConfetti(count = 160) {
+            const colors = ['#fbc02d', '#74ACDF', '#ffffff', '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#1abc9c', '#9b59b6'];
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                el.style.backgroundColor = color;
+                const size = 6 + Math.random() * 10;
+                el.style.width = size + 'px';
+                el.style.height = (size * (0.6 + Math.random() * 0.8)) + 'px';
+                el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                el.style.left = Math.random() * 100 + '%';
+                el.style.top = '-10%';
+                const duration = 1.8 + Math.random() * 2.2;
+                const delay = Math.random() * 0.6;
+                el.style.animation = `confettiFall ${duration}s ease-out ${delay}s forwards`;
+                el.style.transform = `rotate(${Math.random() * 360}deg)`;
+                fragment.appendChild(el);
+            }
+            container.appendChild(fragment);
+        }
+
+        function typeWriter() {
+            if (textIndex < FULL_TEXT.length) {
+                typedSpan.textContent += FULL_TEXT.charAt(textIndex);
+                textIndex++;
+                typingTimer = setTimeout(typeWriter, 70);
+            } else {
+                cursor.style.display = 'none';
+            }
+        }
+
+        function celebrateGoal() {
+            goal.classList.add('shake');
+            msgContainer.classList.add('show');
+            createConfetti(160);
+            setTimeout(() => {
+                subText.classList.add('show');
+                subText.style.opacity = '1';
+                typeWriter();
+            }, 350);
+        }
+
+        function cleanup() {
+            clearAllTimers();
+            container.querySelectorAll('.confetti').forEach(el => el.remove());
+            msgContainer.classList.remove('show');
+            subText.classList.remove('show');
+            typedSpan.textContent = '';
+            textIndex = 0;
+            cursor.style.display = 'inline-block';
+            subText.style.opacity = '0';
+            ball.classList.remove('animate-ball');
+            ball.style.opacity = '1';
+            ball.style.left = 'calc(50% - 0.5em)';
+            ball.style.top = 'calc(50% - 0.5em)';
+            goal.classList.remove('shake');
+            void ball.offsetWidth;
+        }
+
+        function startAnimation() {
+            cleanup();
+            setTimeout(() => {
+                ball.classList.add('animate-ball');
+            }, 300);
+        }
+
+        ball.addEventListener('animationend', (e) => {
+            if (e.animationName === 'shootBall') {
+                celebrateGoal();
+            }
+        });
+
+        return {
+            start: startAnimation,
+            destroy: function() {
+                cleanup();
+            }
+        };
+    }
+
+    // ─── CLIC EN LA IMAGEN (FLUJO MODIFICADO) ───
+    let procesoActivo = false;
+
+    function iniciarFlujoCanchaYLogin() {
+        if (procesoActivo) return;
+        procesoActivo = true;
+
+        if (!canchaInstance) {
+            canchaInstance = setupCancha();
+        }
+
+        modalCancha.classList.add('active');
+        currentState = 'canchaOpen';
+
+        canchaInstance.start();
+
+        // Paso 1: Cerrar cancha después de 5s
+        setTimeout(() => {
+            modalCancha.classList.remove('active');
+            canchaInstance.destroy();
+            currentState = 'idle';
+
+            // Paso 2: Mostrar modal bobo
+            modalBobo.classList.add('active');
+            currentState = 'boboOpen';
+
+            // Paso 3: Después de 2s, cerrar bobo y abrir login
+            setTimeout(() => {
+                modalBobo.classList.remove('active');
+                currentState = 'idle';
+                abrirLogin();
+                procesoActivo = false;
+            }, 3000); // 2 segundos visible
+
+        }, 5000); // 5 segundos de cancha
+    }
+
+    imagenWrapper.addEventListener('click', (e) => {
+        e.stopPropagation();
+        iniciarFlujoCanchaYLogin();
+    });
+
+    imagenWrapper.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            iniciarFlujoCanchaYLogin();
+        }
+    });
+
+    // ─── MONITOREO DE AUTENTICACIÓN ───
+    onAuthStateChanged(auth, (user) => {
+        if (user && (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '')) {
+            window.location.href = 'app.html';
+        }
+    });
+
+    // ─── CRÉDITOS ───
+    setTimeout(() => {
+        const cred = document.getElementById('creditos-flotante');
+        if (cred) {
+            cred.classList.add('fade-out');
+            setTimeout(() => cred.remove(), 1000);
+        }
+    }, 5000);
+
+    // ─── INICIALIZACIÓN ───
+    resetToInitial();
+    setupModalEvents();
+</script>
+</body>
+</html>
