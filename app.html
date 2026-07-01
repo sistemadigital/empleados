@@ -312,7 +312,7 @@
         .edit-icon { cursor: pointer; margin-left: 8px; color: #64748b; transition: color 0.2s; }
         .edit-icon:hover { color: #00BFFF; }
 
-        /* Contenedor de imagen central */
+        /* Contenedor de imagen central - NUEVO ESTILO COMO EN APP.HTML */
         .top-image-container {
             display: flex;
             justify-content: center;
@@ -321,29 +321,70 @@
             flex: 1;
             cursor: pointer;
             margin: 0;
+            padding: 10px 20px 20px 20px;
         }
+
+        .image-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 65vw;
+            max-height: 50vh;
+        }
+
+        .image-header,
+        .image-footer {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            text-align: center;
+            color: #003366;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.2;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            transition: color 0.3s ease;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .image-header {
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .image-footer {
+            margin-top: 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
         .image-large {
-            width: auto;
-            max-width: 90vw;
-            max-height: 70vh;
+            width: 100%;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 191, 255, 0.6);
-            border-radius: 1rem;
-            padding: 0.75rem;
+            border: 3px solid #00BFFF;
+            border-radius: 0;
+            padding: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.3);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 20px 8px rgba(0, 191, 255, 0.3);
+            border-top: 3px solid #00BFFF;
+            border-bottom: 3px solid #00BFFF;
         }
+
         .image-large img {
             width: 100%;
             height: auto;
-            max-height: calc(70vh - 1.5rem);
+            max-height: calc(50vh - 4rem);
             object-fit: contain;
             display: block;
-            border-radius: 0.5rem;
+            border-radius: 0.25rem;
         }
 
         .birthday-modal { display: none; position: fixed; z-index: 11000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
@@ -571,23 +612,49 @@
             .welcome-message { font-size: 1.4rem; }
             .sistema-digital-text { display: none; }
             .left-group { gap: 0.5rem; }
-            .image-large { max-height: 60vh; }
-            footer { padding: 0 15px; }
-            .logout-button span:last-child { display: none; }
-            .footer-defensoria { display: none; }
-            .datetime-weather-container, .exclusive-access-text { display: none; }
-            .event-banner { padding: 4px 12px; white-space: normal; text-align: center; max-width: 180px; }
-            .event-banner p { font-size: 0.7rem; white-space: normal; line-height: 1.2; }
+            .top-image-container { padding: 5px 12px 12px 12px; }
+            .image-wrapper { max-width: 85vw; max-height: 45vh; }
+            .image-header, .image-footer { font-size: 1.4rem; padding: 0.2rem 0.4rem; }
+            .image-large { padding: 0.3rem; border-width: 2px; }
+            .image-large img { max-height: calc(45vh - 3rem); }
+            
+            footer {
+                height: auto;
+                min-height: 56px;
+                padding: 6px 12px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: nowrap;
+                gap: 6px;
+            }
+            .footer-left { display: flex; align-items: center; gap: 6px; flex: 1 1 auto; justify-content: flex-start; flex-wrap: nowrap; width: auto; min-width: 0; }
+            .footer-content { display: flex; align-items: center; gap: 4px; flex-shrink: 1; min-width: 0; }
             .menu-icon-img { width: 28px; }
-            .footer-left { flex-wrap: nowrap; }
-            .footer-right { gap: 10px; }
-            .sistema-info-text { font-size: 0.8rem; }
+            .footer-defensoria { display: none; }
+            .datetime-weather-container { display: none; }
+            .exclusive-access-text { display: none; }
+            .footer-right { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; width: auto; justify-content: flex-end; flex-shrink: 0; }
+            .event-banner { padding: 4px 12px; white-space: normal; text-align: center; max-width: 140px; }
+            .event-banner p { font-size: 0.7rem; white-space: normal; line-height: 1.2; }
+            .sistema-info-text-container { display: flex; align-items: center; flex-shrink: 1; min-width: 0; }
+            .sistema-info-text { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+            .logout-button { padding: 5px 10px; font-size: 0.85rem; gap: 4px; flex-shrink: 0; }
+            .menu-popup { width: 200px; left: 0; right: auto; }
+            .calendar-popup { width: 240px; left: 0; right: auto; }
+            .sistema-info-modal { width: 200px; right: 0; left: auto; }
         }
-        
-        @media (max-width: 480px) {
-            .event-banner { max-width: 150px; padding: 3px 8px; }
-            .event-banner p { font-size: 0.65rem; }
+
+        @media (max-width: 360px) {
+            .sistema-info-text { font-size: 0.75rem; max-width: 90px; }
+            .logout-button { padding: 4px 8px; font-size: 0.75rem; }
             .menu-icon-img { width: 26px; }
+            .event-banner { max-width: 120px; padding: 3px 8px; }
+            .event-banner p { font-size: 0.65rem; }
+            .image-wrapper { max-width: 92vw; max-height: 40vh; }
+            .image-header, .image-footer { font-size: 1.2rem; }
+            .image-large img { max-height: calc(40vh - 2.5rem); }
         }
     </style>
 </head>
@@ -612,8 +679,12 @@
             </div>
 
             <div class="top-image-container" id="imagenCentralContainer">
-                <div class="image-large">
-                    <img src="https://github.com/sistema-secretarios/imagenes-sistema/blob/main/MP6.png?raw=true" alt="Ministerio Público">
+                <div class="image-wrapper">
+                    <div class="image-header">Defensoría Oficial Civil y Comercial</div>
+                    <div class="image-large">
+                        <img src="https://github.com/sistemadigital/iconos/blob/main/1.png?raw=true" alt="Ministerio Público">
+                    </div>
+                    <div class="image-footer">Ministerio Público de Misiones</div>
                 </div>
             </div>
         </div>
