@@ -61,7 +61,7 @@
             justify-content: space-between;
             padding: 0 30px;
             box-shadow: 0 -4px 12px rgba(0,31,63,0.2);
-            border-top: 2px solid #00BFFF;
+            border-top: 3px solid #00BFFF;
             z-index: 3000;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -706,7 +706,6 @@
             color: #00BFFF;
         }
 
-        /* ─── CONTENEDOR DE IMAGEN CIRCULAR (AJUSTADO COMO APP) ─── */
         .top-image-container {
             flex: 1;
             display: flex;
@@ -1090,7 +1089,6 @@
             }
         }
 
-        /* RESPONSIVE MÓVIL (AJUSTADO PARA NUEVO CONTENEDOR) */
         @media (max-width: 768px) {
             .welcome-message {
                 font-size: 1.4rem;
@@ -1395,6 +1393,7 @@
     </div>
 
     <script>
+        // ================= FUNCIONES GLOBALES =================
         function loadPage(url) {
             const iframe = document.getElementById('appIframe');
             const home = document.getElementById('homeContent');
@@ -1716,23 +1715,24 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, signOut, onAuthStateChanged, updateProfile, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
-            authDomain: "defensoria-empleados.firebaseapp.com",
-            projectId: "defensoria-empleados",
-            storageBucket: "defensoria-empleados.firebasestorage.app",
-            messagingSenderId: "438237217533",
-            appId: "1:438237217533:web:6603123e43a12da00c7494"
+        // ========== CONFIG PERFIL (empleados) ==========
+        const firebaseConfigPerfil = {
+            apiKey: "AIzaSyBDXZYAxWsvMiMGCrPRp3EBVuU0dzuWF4M",
+            authDomain: "sistemadefensoria6.firebaseapp.com",
+            projectId: "sistemadefensoria6",
+            storageBucket: "sistemadefensoria6.firebasestorage.app",
+            messagingSenderId: "1024631392849",
+            appId: "1:1024631392849:web:1dc13292e690e2ed100670"
         };
-
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfigPerfil);
         const auth = getAuth(app);
         const dbPerfil = getFirestore(app);
 
-        const causasConfig = {
+        // ========== CONFIG BASES DE EVENTOS (histórica + nueva) ==========
+        const causasConfigHistorica = {
             apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
             authDomain: "causas-defensoria.firebaseapp.com",
             projectId: "causas-defensoria",
@@ -1740,66 +1740,125 @@
             messagingSenderId: "186064671470",
             appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
         };
-        const causasApp = initializeApp(causasConfig, "causas");
-        const dbEventos = getFirestore(causasApp);
+        const causasConfigNueva = {
+            apiKey: "AIzaSyBevCwkh4iOWVqhp3gG2ae1eCUMkFpnr6I",
+            authDomain: "causas-2defensoria.firebaseapp.com",
+            projectId: "causas-2defensoria",
+            storageBucket: "causas-2defensoria.firebasestorage.app",
+            messagingSenderId: "663905632804",
+            appId: "1:663905632804:web:4f686a88004dc642ad0eb1"
+        };
 
+        let dbHistorica, dbNueva;
+        try {
+            const appHistorica = initializeApp(causasConfigHistorica, "historica");
+            const appNueva = initializeApp(causasConfigNueva, "nueva");
+            dbHistorica = getFirestore(appHistorica);
+            dbNueva = getFirestore(appNueva);
+            console.log("Bases de eventos inicializadas correctamente");
+            // Autenticación anónima para evitar problemas de permisos
+            const authHistorica = getAuth(appHistorica);
+            signInAnonymously(authHistorica).catch(e => console.warn("Auth anónima histórica:", e));
+            const authNueva = getAuth(appNueva);
+            signInAnonymously(authNueva).catch(e => console.warn("Auth anónima nueva:", e));
+        } catch (e) {
+            console.error("Error al inicializar bases de eventos:", e);
+        }
+
+        // ========== FUNCIÓN toDate MEJORADA ==========
         function toDate(val) {
             if (!val) return null;
             if (val.toDate) return val.toDate();
-            if (val.seconds) return new Date(val.seconds * 1000);
+            if (val.seconds !== undefined) return new Date(val.seconds * 1000);
             if (val instanceof Date) return val;
-            return new Date(val);
+            if (typeof val === 'string') {
+                // DD/MM/YYYY o DD/MM/YY
+                const match = val.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}|\d{2})$/);
+                if (match) {
+                    let year = parseInt(match[3]);
+                    if (year < 100) year += 2000;
+                    return new Date(year, parseInt(match[2]) - 1, parseInt(match[1]));
+                }
+                // YYYY-MM-DD
+                const matchIso = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+                if (matchIso) {
+                    return new Date(parseInt(matchIso[1]), parseInt(matchIso[2]) - 1, parseInt(matchIso[3]));
+                }
+                const d = new Date(val);
+                if (!isNaN(d)) return d;
+            }
+            if (typeof val === 'object' && val !== null && 'fecha' in val) {
+                return toDate(val.fecha);
+            }
+            return null;
         }
 
+        // ========== DETECCIÓN DE EVENTOS HOY (ambas bases) ==========
         async function hayEventosHoy() {
             try {
-                const snapshot = await getDocs(collection(dbEventos, "causas"));
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                const manana = new Date(hoy);
-                manana.setDate(manana.getDate() + 1);
+                if (!dbHistorica || !dbNueva) {
+                    console.warn("Bases de datos de eventos no inicializadas");
+                    return false;
+                }
 
-                for (const docSnap of snapshot.docs) {
-                    const causa = docSnap.data();
+                const [snapHistorica, snapNueva] = await Promise.all([
+                    getDocs(collection(dbHistorica, "causas")),
+                    getDocs(collection(dbNueva, "causas"))
+                ]);
+
+                const hoy = new Date();
+                const year = hoy.getFullYear();
+                const month = hoy.getMonth();
+                const day = hoy.getDate();
+
+                function esHoy(fecha) {
+                    if (!fecha) return false;
+                    const d = toDate(fecha);
+                    if (!d) return false;
+                    return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+                }
+
+                function procesarCausa(causa) {
                     if (Array.isArray(causa.audiencias)) {
-                        for (const fecha of causa.audiencias) {
-                            const fechaObj = toDate(fecha);
-                            if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
+                        for (const item of causa.audiencias) {
+                            if (esHoy(item)) return true;
                         }
                     }
-                    if (causa.audienciaGesell) {
-                        const fechaObj = toDate(causa.audienciaGesell);
-                        if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
-                    }
-                    if (causa.vencimiento) {
-                        const fechaObj = toDate(causa.vencimiento);
-                        if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
-                    }
-                    if (causa.vencimientoRecursos) {
-                        const fechaObj = toDate(causa.vencimientoRecursos);
-                        if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
-                    }
+                    if (causa.audienciaGesell && esHoy(causa.audienciaGesell)) return true;
+                    if (causa.vencimiento && esHoy(causa.vencimiento)) return true;
+                    if (causa.vencimientoRecursos && esHoy(causa.vencimientoRecursos)) return true;
                     if (Array.isArray(causa.diligencias)) {
                         for (const d of causa.diligencias) {
-                            const fechaObj = toDate(d.fecha);
-                            if (fechaObj && fechaObj >= hoy && fechaObj < manana) return true;
+                            if (d.fecha && esHoy(d.fecha)) return true;
                         }
                     }
+                    return false;
                 }
+
+                for (const docSnap of snapHistorica.docs) {
+                    if (procesarCausa(docSnap.data())) return true;
+                }
+                for (const docSnap of snapNueva.docs) {
+                    if (procesarCausa(docSnap.data())) return true;
+                }
+
                 return false;
             } catch (error) {
-                console.error("Error al consultar eventos:", error);
+                console.error("Error en hayEventosHoy:", error);
                 return false;
             }
         }
 
+        // ========== ACTUALIZAR BANNER ==========
         async function actualizarBannerEventos() {
             const bannerDiv = document.getElementById('eventBanner');
             const bannerText = document.getElementById('bannerText');
             if (!bannerDiv || !bannerText) return;
+
             try {
-                const hayEventos = await hayEventosHoy();
-                if (hayEventos) {
+                const hay = await hayEventosHoy();
+                console.log("¿Hay eventos hoy?", hay);
+                if (hay) {
                     bannerText.textContent = "📅 Recuerda, hoy tenemos eventos agendados";
                     bannerDiv.classList.add('hay-eventos');
                 } else {
@@ -1807,15 +1866,17 @@
                     bannerDiv.classList.remove('hay-eventos');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Error en actualizarBannerEventos:", err);
                 bannerText.textContent = "📅 No se pudo verificar eventos";
                 bannerDiv.classList.remove('hay-eventos');
             }
         }
 
+        // Ejecutar al cargar y cada 30 min
         actualizarBannerEventos();
         setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
+        // ========== RESTO DEL CÓDIGO DE PERFIL (sin cambios significativos) ==========
         const AVATAR_HOMBRE = 'https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true';
         const AVATAR_MUJER = 'https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true';
 
@@ -1890,7 +1951,6 @@
                 const footerElements = footer.querySelectorAll('*');
                 footerElements.forEach(el => {
                     if (el.closest('.calendar-popup') || el.closest('.menu-popup') || el.closest('.sistema-info-modal')) return;
-
                     if (el.classList && (el.classList.contains('event-banner') || el.classList.contains('logout-button') ||
                             el.classList.contains('sistema-info-text') || el.classList.contains('dtw-content') ||
                             el.classList.contains('footer-defensoria') || el.classList.contains('exclusive-access-text'))) {
@@ -1915,6 +1975,17 @@
                 }
             }
 
+            // Aplicar color a la imagen central (borde y sombra)
+            const imgContainer = document.querySelector('.image-large');
+            if (imgContainer) {
+                imgContainer.style.borderColor = color;
+                imgContainer.style.boxShadow = `0 0 30px ${color}66`;
+            }
+            const header = document.querySelector('.image-header');
+            const footerText = document.querySelector('.image-footer');
+            if (header) header.style.color = color;
+            if (footerText) footerText.style.color = color;
+
             const welcomeMsg = document.querySelector('.welcome-message');
             const sistemaDigital = document.querySelector('.sistema-digital-text');
             if (welcomeMsg) welcomeMsg.style.color = color;
@@ -1925,11 +1996,9 @@
             try {
                 const module = await import('https://cdn.skypack.dev/canvas-confetti');
                 const confetti = module.default;
-
                 var duration = 3 * 1000;
                 var animationEnd = Date.now() + duration;
                 var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
                 function randomInRange(min, max) { return Math.random() * (max - min) + min; }
                 var interval = setInterval(function() {
                     var timeLeft = animationEnd - Date.now();
