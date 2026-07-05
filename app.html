@@ -25,7 +25,7 @@
 
         main {
             flex: 1;
-            background: #d4eafc; /* Color sólido como en a.html */
+            background: #d4eafc;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -45,7 +45,7 @@
             flex-direction: column;
             height: 100%;
             width: 100%;
-            position: relative; /* Necesario para el módulo absoluto */
+            position: relative;
         }
 
         #dynamicContent {
@@ -730,7 +730,7 @@
             display: block;
         }
 
-        /* ─── MÓDULO DE BOTONES SUPERIOR DERECHA (como en a.html) ─── */
+        /* ─── MÓDULO DE BOTONES SUPERIOR DERECHA ─── */
         .module-botones {
             position: absolute;
             top: 80px;
@@ -748,7 +748,8 @@
             transition: background 0.2s, border-color 0.2s;
         }
 
-        .module-botones a {
+        .module-botones a,
+        .pase-digital-btn {
             display: inline-block;
             padding: 0.4rem 1rem;
             background: white;
@@ -761,14 +762,46 @@
             transition: all 0.2s;
             white-space: nowrap;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
         }
 
-        .module-botones a:hover {
+        .module-botones a:hover,
+        .pase-digital-btn:hover {
             background: #f0faff;
             border-color: #00BFFF;
             color: #00BFFF;
             transform: translateY(-1px);
             box-shadow: 0 4px 10px rgba(0,191,255,0.2);
+        }
+
+        .pase-digital-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .pase-digital-popup {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 2000;
+            width: 240px;
+            text-align: center;
+            font-weight: 500;
+            color: #d32f2f;
+            white-space: normal;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .pase-digital-popup.show {
+            display: block;
         }
 
         .birthday-modal {
@@ -1106,7 +1139,6 @@
                 border-width: 3px;
             }
 
-            /* Módulo de botones en móvil */
             .module-botones {
                 top: 70px;
                 right: 10px;
@@ -1114,7 +1146,8 @@
                 gap: 0.4rem;
                 border-radius: 10px;
             }
-            .module-botones a {
+            .module-botones a,
+            .pase-digital-btn {
                 padding: 0.3rem 0.7rem;
                 font-size: 0.75rem;
             }
@@ -1245,7 +1278,8 @@
                 padding: 0.3rem 0.4rem;
                 gap: 0.3rem;
             }
-            .module-botones a {
+            .module-botones a,
+            .pase-digital-btn {
                 padding: 0.2rem 0.5rem;
                 font-size: 0.65rem;
             }
@@ -1258,9 +1292,15 @@
         <iframe id="appIframe"></iframe>
 
         <div id="homeContent">
-            <!-- Módulo de botones superior derecha (debajo del panel de bienvenida) -->
+            <!-- Módulo de botones superior derecha -->
             <div class="module-botones">
-                <a href="https://defensoria6.github.io/pase-digital/index2" target="_blank">Pase Digital</a>
+                <!-- Pase Digital con popup -->
+                <div class="pase-digital-wrapper">
+                    <span class="pase-digital-btn" id="btnPaseDigital">Pase Digital</span>
+                    <div class="pase-digital-popup" id="paseDigitalPopup">
+                        Requiere habilitación oficial para acceder
+                    </div>
+                </div>
                 <a href="https://defensorialocal-seis.github.io/protocolo/" target="_blank">Protocolo de Actuación</a>
             </div>
 
@@ -1310,8 +1350,6 @@
                     </ul>
                 </div>
             </div>
-
-            <!-- Eliminado el bloque footer-defensoria que contenía los textos -->
 
             <div class="datetime-weather-container" id="dateTimeWeatherBtn">
                 <div class="dtw-content">
@@ -1421,6 +1459,7 @@
             document.getElementById('mainMenuPopup')?.classList.remove('show');
             document.getElementById('calendarPopup')?.classList.remove('show');
             document.getElementById('sistemaInfoModal')?.classList.remove('show');
+            document.getElementById('paseDigitalPopup')?.classList.remove('show');
             const dropdown = document.getElementById('userDropdown');
             if (dropdown) dropdown.classList.remove('show');
         }
@@ -1433,8 +1472,11 @@
             const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target);
             const isClickInsideReminder = document.getElementById('reminderModal')?.contains(e.target);
             const isClickInsideFestModal = e.target.closest('.modal-festividad-overlay');
+            const isClickInsidePase = document.getElementById('btnPaseDigital')?.contains(e.target) ||
+                                      document.getElementById('paseDigitalPopup')?.contains(e.target);
 
-            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideFooter && !isClickInsideDevInfo && !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal) {
+            if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideFooter && !isClickInsideDevInfo &&
+                !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal && !isClickInsidePase) {
                 closeAllModals();
             }
         });
@@ -1716,6 +1758,33 @@
                 }
             });
         }
+
+        // ================= CONTROL DEL POPUP PASE DIGITAL =================
+        (function() {
+            const btnPase = document.getElementById('btnPaseDigital');
+            const popupPase = document.getElementById('paseDigitalPopup');
+
+            if (btnPase && popupPase) {
+                btnPase.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isVisible = popupPase.classList.contains('show');
+                    closeAllModals(); // cierra otros popups
+                    if (!isVisible) {
+                        popupPase.classList.add('show');
+                    } else {
+                        popupPase.classList.remove('show');
+                    }
+                });
+
+                // Cerrar al hacer clic fuera (ya se maneja en el event listener global)
+                // Pero también cerramos si se hace clic en otro elemento que no sea el botón o el popup
+                document.addEventListener('click', function(e) {
+                    if (!btnPase.contains(e.target) && !popupPase.contains(e.target)) {
+                        popupPase.classList.remove('show');
+                    }
+                });
+            }
+        })();
     </script>
 
     <script type="module">
@@ -1761,7 +1830,6 @@
             dbHistorica = getFirestore(appHistorica);
             dbNueva = getFirestore(appNueva);
             console.log("Bases de eventos inicializadas correctamente");
-            // Autenticación anónima para evitar problemas de permisos
             const authHistorica = getAuth(appHistorica);
             signInAnonymously(authHistorica).catch(e => console.warn("Auth anónima histórica:", e));
             const authNueva = getAuth(appNueva);
@@ -1777,14 +1845,12 @@
             if (val.seconds !== undefined) return new Date(val.seconds * 1000);
             if (val instanceof Date) return val;
             if (typeof val === 'string') {
-                // DD/MM/YYYY o DD/MM/YY
                 const match = val.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}|\d{2})$/);
                 if (match) {
                     let year = parseInt(match[3]);
                     if (year < 100) year += 2000;
                     return new Date(year, parseInt(match[2]) - 1, parseInt(match[1]));
                 }
-                // YYYY-MM-DD
                 const matchIso = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
                 if (matchIso) {
                     return new Date(parseInt(matchIso[1]), parseInt(matchIso[2]) - 1, parseInt(matchIso[3]));
@@ -1877,11 +1943,10 @@
             }
         }
 
-        // Ejecutar al cargar y cada 30 min
         actualizarBannerEventos();
         setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
-        // ========== RESTO DEL CÓDIGO DE PERFIL (sin cambios significativos) ==========
+        // ========== RESTO DEL CÓDIGO DE PERFIL ==========
         const AVATAR_HOMBRE = 'https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true';
         const AVATAR_MUJER = 'https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true';
 
@@ -1980,7 +2045,6 @@
                 }
             }
 
-            // Aplicar color a la imagen central (borde y sombra)
             const imgContainer = document.querySelector('.image-large');
             if (imgContainer) {
                 imgContainer.style.borderColor = color;
