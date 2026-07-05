@@ -1946,6 +1946,16 @@
         actualizarBannerEventos();
         setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
+        // ========== FUNCIONES AUXILIARES PARA COLORES ==========
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
         // ========== RESTO DEL CÓDIGO DE PERFIL ==========
         const AVATAR_HOMBRE = 'https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true';
         const AVATAR_MUJER = 'https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true';
@@ -1953,6 +1963,9 @@
         let currentUser = null;
         let birthdayModalShown = false;
         let userDataCache = {};
+
+        const DEFAULT_FOOTER_COLOR = '#001f3f';
+        const DEFAULT_BACKGROUND = '#d4eafc';
 
         function formatDate(timestamp) {
             if (!timestamp) return 'Desconocido';
@@ -2055,6 +2068,24 @@
             const sistemaDigital = document.querySelector('.sistema-digital-text');
             if (welcomeMsg) welcomeMsg.style.color = color;
             if (sistemaDigital) sistemaDigital.style.color = color;
+
+            // ===== NUEVO: Cambiar el fondo de <main> con un tono suave =====
+            const mainEl = document.querySelector('main');
+            if (mainEl) {
+                if (color === DEFAULT_FOOTER_COLOR) {
+                    // Color por defecto: restaurar fondo original
+                    mainEl.style.backgroundColor = DEFAULT_BACKGROUND;
+                } else {
+                    const rgb = hexToRgb(color);
+                    if (rgb) {
+                        // Mezclar con blanco (85% blanco) para obtener un pastel suave
+                        const lightR = Math.round(rgb.r + (255 - rgb.r) * 0.85);
+                        const lightG = Math.round(rgb.g + (255 - rgb.g) * 0.85);
+                        const lightB = Math.round(rgb.b + (255 - rgb.b) * 0.85);
+                        mainEl.style.backgroundColor = `rgb(${lightR}, ${lightG}, ${lightB})`;
+                    }
+                }
+            }
         }
 
         async function launchConfetti() {
