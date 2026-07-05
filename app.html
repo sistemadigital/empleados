@@ -25,7 +25,7 @@
 
         main {
             flex: 1;
-            background: radial-gradient(circle at 10% 30%, #f0faff 0%, #ffffff 100%);
+            background: #d4eafc; /* Color sólido como en a.html */
             display: flex;
             flex-direction: column;
             position: relative;
@@ -45,6 +45,7 @@
             flex-direction: column;
             height: 100%;
             width: 100%;
+            position: relative; /* Necesario para el módulo absoluto */
         }
 
         #dynamicContent {
@@ -261,23 +262,6 @@
 
         .menu-icon-img:hover {
             transform: scale(1.05);
-        }
-
-        .footer-defensoria {
-            text-align: left;
-            font-size: 0.85rem;
-            color: white;
-            line-height: 1.4;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .footer-defensoria strong {
-            color: #00BFFF;
-            font-weight: 700;
         }
 
         .datetime-weather-container {
@@ -726,36 +710,6 @@
             justify-content: center;
         }
 
-        .image-header,
-        .image-footer {
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            font-size: 1.8rem;
-            text-align: center;
-            color: #003366;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(4px);
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            width: 100%;
-            box-sizing: border-box;
-            line-height: 1.2;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-            transition: color 0.3s ease;
-            white-space: normal;
-            word-break: break-word;
-        }
-
-        .image-header {
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .image-footer {
-            margin-top: 0.5rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
         .image-large {
             width: 100%;
             max-width: 420px;
@@ -774,6 +728,47 @@
             height: 100%;
             object-fit: cover;
             display: block;
+        }
+
+        /* ─── MÓDULO DE BOTONES SUPERIOR DERECHA (como en a.html) ─── */
+        .module-botones {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            z-index: 500;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            flex-direction: row;
+            gap: 0.6rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .module-botones a {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: white;
+            border: 1px solid #94a3b8;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #003366;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .module-botones a:hover {
+            background: #f0faff;
+            border-color: #00BFFF;
+            color: #00BFFF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,191,255,0.2);
         }
 
         .birthday-modal {
@@ -1106,14 +1101,22 @@
                 max-width: 85vw;
                 max-height: 75vh;
             }
-            .image-header,
-            .image-footer {
-                font-size: 1.4rem;
-                padding: 0.2rem 0.4rem;
-            }
             .image-large {
                 max-width: 320px;
                 border-width: 3px;
+            }
+
+            /* Módulo de botones en móvil */
+            .module-botones {
+                top: 70px;
+                right: 10px;
+                padding: 0.4rem 0.6rem;
+                gap: 0.4rem;
+                border-radius: 10px;
+            }
+            .module-botones a {
+                padding: 0.3rem 0.7rem;
+                font-size: 0.75rem;
             }
 
             footer {
@@ -1146,9 +1149,6 @@
             }
             .menu-icon-img {
                 width: 28px;
-            }
-            .footer-defensoria {
-                display: none;
             }
             .datetime-weather-container {
                 display: none;
@@ -1235,13 +1235,19 @@
                 max-width: 92vw;
                 max-height: 70vh;
             }
-            .image-header,
-            .image-footer {
-                font-size: 1.2rem;
-            }
             .image-large {
                 max-width: 250px;
                 border-width: 3px;
+            }
+            .module-botones {
+                top: 60px;
+                right: 6px;
+                padding: 0.3rem 0.4rem;
+                gap: 0.3rem;
+            }
+            .module-botones a {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.65rem;
             }
         }
     </style>
@@ -1252,6 +1258,12 @@
         <iframe id="appIframe"></iframe>
 
         <div id="homeContent">
+            <!-- Módulo de botones superior derecha (debajo del panel de bienvenida) -->
+            <div class="module-botones">
+                <a href="https://defensoria6.github.io/pase-digital/index2" target="_blank">Pase Digital</a>
+                <a href="https://defensorialocal-seis.github.io/protocolo/" target="_blank">Protocolo de Actuación</a>
+            </div>
+
             <div id="dynamicContent">
                 <div class="welcome-container" id="welcomeContainerPlaceholder">
                     <div class="welcome-bar" style="cursor: default;">
@@ -1268,11 +1280,9 @@
 
             <div class="top-image-container" id="imagenCentralContainer">
                 <div class="image-wrapper">
-                    <div class="image-header">Defensoría Oficial Civil y Comercial</div>
                     <div class="image-large">
                         <img src="https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true" alt="Ministerio Público">
                     </div>
-                    <div class="image-footer">Ministerio Público de Misiones</div>
                 </div>
             </div>
         </div>
@@ -1301,12 +1311,7 @@
                 </div>
             </div>
 
-            <div class="footer-defensoria" id="footerDefensoria">
-                <div>
-                    Defensoria Civil y Comercial 6<br>
-                    <strong>Ministerio Público de Misiones</strong>
-                </div>
-            </div>
+            <!-- Eliminado el bloque footer-defensoria que contenía los textos -->
 
             <div class="datetime-weather-container" id="dateTimeWeatherBtn">
                 <div class="dtw-content">
@@ -1953,7 +1958,7 @@
                     if (el.closest('.calendar-popup') || el.closest('.menu-popup') || el.closest('.sistema-info-modal')) return;
                     if (el.classList && (el.classList.contains('event-banner') || el.classList.contains('logout-button') ||
                             el.classList.contains('sistema-info-text') || el.classList.contains('dtw-content') ||
-                            el.classList.contains('footer-defensoria') || el.classList.contains('exclusive-access-text'))) {
+                            el.classList.contains('exclusive-access-text'))) {
                         el.style.color = textColor;
                     } else if (el.tagName === 'I' || el.tagName === 'SPAN' || el.tagName === 'DIV') {
                         el.style.color = textColor;
@@ -1981,10 +1986,6 @@
                 imgContainer.style.borderColor = color;
                 imgContainer.style.boxShadow = `0 0 30px ${color}66`;
             }
-            const header = document.querySelector('.image-header');
-            const footerText = document.querySelector('.image-footer');
-            if (header) header.style.color = color;
-            if (footerText) footerText.style.color = color;
 
             const welcomeMsg = document.querySelector('.welcome-message');
             const sistemaDigital = document.querySelector('.sistema-digital-text');
