@@ -92,7 +92,7 @@
             font-family: 'Montserrat', 'Inter', sans-serif;
             font-weight: 800;
             font-size: clamp(1.2rem, 2.5vw, 2rem);
-            color: #00b4d8; /* CELESTE */
+            color: #00b4d8;
             opacity: 0;
             transition: opacity 0.3s ease;
             white-space: nowrap;
@@ -167,10 +167,12 @@
         .right-col {
             flex: 1;
             display: flex;
+            flex-direction: row;          /* ← fila para alinear imagen y textos */
             align-items: center;
             justify-content: center;
             height: 100%;
             padding: 0;
+            gap: 2rem;                    /* separación entre imagen y textos */
         }
 
         .image-rotator {
@@ -187,6 +189,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex: 0 0 auto;               /* no se estira, toma su tamaño natural */
         }
 
         .image-rotator img {
@@ -197,6 +200,57 @@
             display: block;
             background: white;
             transition: opacity 0.3s ease;
+        }
+
+        /* ── CONTENEDOR DE TEXTOS LATERALES ── */
+        .textos-laterales {
+            flex: 1;                      /* ocupa el espacio restante */
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem 1.2rem;
+            padding: 0.5rem;
+            max-width: 300px;
+            min-width: 180px;
+        }
+
+        /* Clases para los distintos tamaños y tipografías */
+        .txt-xl {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 2.8rem;
+            line-height: 1.1;
+            color: #0a2b3e;
+            letter-spacing: -0.02em;
+        }
+        .txt-lg {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            line-height: 1.2;
+            color: #0077b6;
+        }
+        .txt-md {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.3;
+            color: #1e4b6e;
+        }
+        .txt-sm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 1.2rem;
+            line-height: 1.4;
+            color: #2c5f82;
+        }
+        .txt-xs {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #4a6f8a;
         }
 
         /* ── MODALES ── */
@@ -455,6 +509,15 @@
             .texto-lateral {
                 font-size: clamp(1rem, 2.2vw, 1.6rem);
             }
+            .textos-laterales {
+                max-width: 200px;
+                gap: 0.4rem 0.8rem;
+            }
+            .txt-xl { font-size: 2.2rem; }
+            .txt-lg { font-size: 1.6rem; }
+            .txt-md { font-size: 1.2rem; }
+            .txt-sm { font-size: 1rem; }
+            .txt-xs { font-size: 0.9rem; }
         }
 
         @media (max-width: 900px) {
@@ -516,6 +579,8 @@
                 height: auto;
                 max-height: 60vh;
                 padding: 0;
+                flex-direction: column;    /* en móvil apilamos imagen y textos */
+                gap: 1rem;
             }
 
             .image-rotator {
@@ -524,10 +589,16 @@
                 aspect-ratio: 1 / 1;
                 border-width: 3px;
                 border-radius: 1.5rem;
+                flex: 0 0 auto;
             }
 
             .image-rotator img {
                 padding: 1rem;
+            }
+
+            /* Ocultamos los textos laterales en móvil */
+            .textos-laterales {
+                display: none;
             }
         }
 
@@ -590,7 +661,7 @@
             <div class="description">
                 Defensoría Civil y Comercial 6<br />
                 Ministerio Publico de Misiones<br />
-                <span class="bold">Acceso Empleados</span>
+                <span class="bold">Acceso Defensor Oficial y Secretarios</span>
             </div>
             <button class="btn-email" id="btnAbrirLoginDirecto">Ingresar con correo electrónico</button>
             <div class="register-link">
@@ -598,10 +669,25 @@
             </div>
         </div>
 
-        <!-- Columna derecha: rotador de imágenes -->
+        <!-- Columna derecha: rotador de imágenes + textos laterales -->
         <div class="right-col">
             <div class="image-rotator" id="imageRotator">
                 <img id="rotatingImage" src="https://github.com/sistemadigital/iconos/blob/main/logo/logo.png?raw=true" alt="Logo Defensoría" />
+            </div>
+
+            <!-- NUEVO: textos laterales (solo escritorio) -->
+            <div class="textos-laterales">
+                <span class="txt-xl">Expedientes</span>
+                <span class="txt-lg">Seguimiento</span>
+                <span class="txt-md">Audiencias</span>
+                <span class="txt-xl">Vencimientos</span>
+                <span class="txt-lg">Recursos</span>
+                <span class="txt-md">Escritos</span>
+                <span class="txt-xl">Modelos</span>
+                <span class="txt-lg">Dictámenes</span>
+                <span class="txt-md">Oficios</span>
+                <span class="txt-xl">Cédulas</span>
+                <span class="txt-lg">Bus Federal</span>
             </div>
         </div>
     </div>
