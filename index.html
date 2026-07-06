@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <title>⚖️ Sistema Digital Defensoría 6</title>
-
-    <link rel="preload" as="image" href="https://github.com/sistemadigital/iconos/blob/main/1.png?raw=true" fetchpriority="high" />
-
+    <title>⚖️ Sistema Digital 6</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=Montserrat:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800;900&family=Montserrat:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
     <style>
         /* ── RESET ── */
         * {
@@ -19,149 +15,191 @@
             box-sizing: border-box;
         }
 
-        /* ── BARRAS GLASS (Top y Bottom) ── */
-        .cinta-glass {
-            position: fixed;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            z-index: 9999;
-            background: linear-gradient(to right, #004e92, #00b4d8, #0077b6);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            box-shadow: 0 0 18px rgba(0, 100, 200, 0.25);
-            border-bottom: 1px solid rgba(0, 180, 216, 0.3);
-            pointer-events: none;
-        }
-
-        .cinta-top {
-            top: 0;
-            border-bottom: 2px solid rgba(0, 200, 255, 0.3);
-        }
-
-        .cinta-bottom {
-            bottom: 0;
-            border-bottom: none;
-            border-top: 2px solid rgba(0, 200, 255, 0.3);
-            background: linear-gradient(to left, #004e92, #00b4d8, #0077b6);
-        }
-
-        /* ── FONDO MODERNO WEB JUDICIAL ── */
-        body,
-        html {
+        html,
+        body {
             height: 100%;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            position: relative;
-            overflow-x: hidden;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #dceaf5;
             color: #0a1e2f;
             font-size: 16px;
             line-height: 1.5;
-            padding-top: 10px;
-            padding-bottom: 60px;
-            background-color: #d4eafc; /* Celeste suave sólido */
+            overflow: hidden;
         }
 
-        /* ── TEXTO SUPERIOR FIJO ── */
-        .texto-superior {
-            position: fixed;
-            top: 16px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            z-index: 50;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: clamp(2rem, 6vw, 3.4rem);
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #003d66, #00b4d8, #0077b6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 4px 20px rgba(0, 180, 216, 0.2);
-            pointer-events: none;
-        }
-
-        /* ── TEXTO INFERIOR FIJO ── */
-        .texto-inferior {
-            position: fixed;
-            bottom: 16px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            z-index: 50;
-            font-family: 'Montserrat', sans-serif;
-            pointer-events: none;
-            line-height: 1.4;
-        }
-
-        .texto-inferior .defensoria {
-            font-weight: 700;
-            font-size: clamp(0.9rem, 2vw, 1.2rem);
-            color: #0a2b3e;
-            letter-spacing: 0.3px;
-            opacity: 0.9;
-        }
-
-        .texto-inferior .ministerio {
-            font-weight: 400;
-            font-size: clamp(0.8rem, 1.6vw, 1rem);
-            color: #2c4c6e;
-            opacity: 0.8;
-        }
-
-        /* ── CENTRO DE PANTALLA: IMAGEN AUMENTADA ── */
-        .centro-pantalla {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        /* ── CONTENEDOR PRINCIPAL ── */
+        .main-container {
             display: flex;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
-            z-index: 10;
-            padding: 1rem;
-            pointer-events: none;
+            height: 100vh;
+            width: 100%;
+            padding: 2rem 5rem;
+            gap: 4rem;
+            background: #dceaf5;
         }
 
-        .contenedor-dinamico {
+        /* ── COLUMNA IZQUIERDA ── */
+        .left-col {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0;
+            max-width: 600px;
+        }
+
+        /* ── CONTENEDOR DEL CÍRCULO + TEXTO LATERAL ── */
+        .circulo-con-texto {
             display: flex;
             align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            width: 100%;
-            height: 100%;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
-        .img-wrapper {
-            position: relative;
-            display: inline-block;
+        /* ── CONTENEDOR CIRCULAR PARA LA IMAGEN DECORATIVA ── */
+        .imagen-decorativa-wrapper {
+            width: clamp(140px, 30vw, 240px);
+            height: clamp(140px, 30vw, 240px);
             border-radius: 50%;
-            cursor: pointer;
-            outline: none;
-            width: 420px;
-            height: auto;
-            pointer-events: auto;
-            transition: transform 0.2s ease, filter 0.2s ease;
-            will-change: transform;
-            overflow: visible;
-        }
-
-        .img-3d {
-            width: 100%;
-            max-width: 420px;
-            height: auto;
-            display: block;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-            pointer-events: none;
+            overflow: hidden;
             background: #ffffff;
-            position: relative;
-            z-index: 1;
-            fetchpriority: high;
+            box-shadow: 0 8px 24px rgba(0, 100, 200, 0.15);
+            border: 3px solid rgba(0, 180, 216, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        /* ── MODALES (login / registro) ── */
+        .imagen-decorativa-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0.9;
+            transition: transform 0.3s ease;
+        }
+
+        .imagen-decorativa-wrapper:hover img {
+            transform: scale(1.05);
+        }
+
+        /* ── TEXTO LATERAL (AHORA EN CELESTE) ── */
+        .texto-lateral {
+            font-family: 'Montserrat', 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            color: #00b4d8; /* CELESTE */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .texto-lateral.visible {
+            opacity: 1;
+        }
+
+        /* ── TEXTO DE LA COLUMNA IZQUIERDA ── */
+        .left-col .greeting {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            color: #0077b6;
+            margin-bottom: 0.8rem;
+            line-height: 1.2;
+        }
+
+        .left-col .description {
+            font-size: clamp(1rem, 1.2vw, 1.2rem);
+            color: #0a2b3e;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .left-col .description .bold {
+            font-weight: 700;
+        }
+
+        .left-col .btn-email {
+            background: #0a2b3e;
+            border: none;
+            border-radius: 60px;
+            padding: 0.9rem 2.2rem;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 4px 12px rgba(10, 43, 62, 0.15);
+            text-align: center;
+        }
+
+        .left-col .btn-email:hover {
+            background: #005f8c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 95, 140, 0.25);
+        }
+
+        .left-col .register-link {
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
+            color: #0a2b3e;
+        }
+
+        .left-col .register-link a {
+            color: #0077b6;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .left-col .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── COLUMNA DERECHA ── */
+        .right-col {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0;
+        }
+
+        .image-rotator {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 700px;
+            max-height: 100%;
+            border: 4px solid #00b4d8;
+            border-radius: 2rem;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0, 100, 200, 0.12);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-rotator img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1.5rem;
+            display: block;
+            background: white;
+            transition: opacity 0.3s ease;
+        }
+
+        /* ── MODALES ── */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -186,7 +224,7 @@
 
         .modal-contenido {
             background: #ffffff;
-            max-width: 480px;
+            max-width: 460px;
             width: 90%;
             border-radius: 2rem;
             padding: 2rem 1.8rem;
@@ -226,6 +264,14 @@
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
+        }
+
+        .modal-contenido .modal-sub {
+            color: #4a627a;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
         }
 
         .grupo-input {
@@ -344,93 +390,7 @@
             background: #2a9d8f;
         }
 
-        /* ── ELEMENTOS DE ANIMACIÓN (PELOTA Y TEXTO) ── */
-        #ball-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5000;
-            display: none;
-        }
-
-        #ball-overlay.active {
-            display: block;
-        }
-
-        #ball-element {
-            position: absolute;
-            font-size: clamp(2.8rem, 6vw, 4.5rem);
-            line-height: 1;
-            user-select: none;
-            filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5));
-            transition: none;
-            will-change: transform, left, top;
-            left: 5%;
-            top: 85%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-        }
-
-        /* Texto de celebración – todo en azul vibrante */
-        #celebration-text {
-            position: fixed;
-            left: 50%;
-            top: 100%;
-            transform: translateX(-50%);
-            z-index: 5001;
-            pointer-events: none;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            gap: 0.3em;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: clamp(1.8rem, 4vw, 3rem);
-            white-space: nowrap;
-            letter-spacing: -0.02em;
-            color: #0055ff; /* Azul vibrante para todo el texto */
-            text-shadow: 0 2px 10px rgba(0, 85, 255, 0.3);
-            opacity: 0;
-            transition: top 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-        }
-
-        #celebration-text.show {
-            opacity: 1;
-        }
-
-        #celebration-text .line1,
-        #celebration-text .line2 {
-            display: inline;
-        }
-
-        /* ── CONFETI ── */
-        .confetti-piece {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            opacity: 0;
-            z-index: 5002;
-            pointer-events: none;
-            border-radius: 2px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        @keyframes confettiRain {
-            0% {
-                transform: translateY(-10vh) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(110vh) rotate(720deg) scale(0.2);
-                opacity: 0;
-            }
-        }
-
-        /* ─── NUEVO: CRÉDITOS CON ANIMACIÓN ─── */
+        /* ── CRÉDITOS ── */
         .creditos-footer {
             position: fixed;
             bottom: 20px;
@@ -449,12 +409,10 @@
             pointer-events: none;
             user-select: none;
             max-width: 200px;
-
-            /* Estado inicial */
             opacity: 0;
             transform: translateX(120%) scale(0.9);
             transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .creditos-footer.mostrar {
@@ -482,47 +440,127 @@
         }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 640px) {
-            .img-wrapper {
-                width: 320px;
+        @media (max-width: 1024px) {
+            .main-container {
+                padding: 2rem 3rem;
+                gap: 3rem;
             }
-            .img-3d {
-                max-width: 320px;
+            .image-rotator {
+                max-width: 600px;
             }
-            .cinta-glass {
-                height: 8px;
+            .imagen-decorativa-wrapper {
+                width: clamp(120px, 28vw, 200px);
+                height: clamp(120px, 28vw, 200px);
             }
-            body {
-                padding-top: 8px;
-                padding-bottom: 60px;
+            .texto-lateral {
+                font-size: clamp(1rem, 2.2vw, 1.6rem);
             }
-            .texto-superior {
-                top: 14px;
-                font-size: clamp(1.6rem, 5vw, 2.4rem);
-            }
-            .texto-inferior {
-                bottom: 14px;
+        }
+
+        @media (max-width: 900px) {
+            html, body {
+                overflow: auto;
             }
 
-            /* ---- MODO MÓVIL: texto en dos líneas ---- */
-            #celebration-text {
-                flex-direction: column;
-                gap: 0.1em;
-                white-space: normal;
-                font-size: clamp(1.6rem, 6vw, 2.4rem);
-                max-width: 90vw;
+            .main-container {
+                flex-direction: column-reverse;
+                height: auto;
+                min-height: 100vh;
+                padding: 2rem 1.5rem;
+                gap: 2rem;
+                justify-content: center;
+            }
+
+            .left-col {
+                align-items: center;
                 text-align: center;
-                padding: 0 10px;
+                max-width: 100%;
+                padding: 0;
             }
 
-            #celebration-text .line1 {
-                font-size: 1.4em;
-                font-weight: 900;
+            .circulo-con-texto {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
             }
 
-            #celebration-text .line2 {
-                font-size: 0.8em;
-                font-weight: 700;
+            .left-col .greeting {
+                font-size: 2rem;
+            }
+
+            .left-col .description {
+                max-width: 100%;
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .left-col .btn-email {
+                max-width: 100%;
+            }
+
+            .imagen-decorativa-wrapper {
+                width: clamp(120px, 35vw, 200px);
+                height: clamp(120px, 35vw, 200px);
+                margin-bottom: 0;
+            }
+
+            .texto-lateral {
+                font-size: clamp(1rem, 4vw, 1.6rem);
+                white-space: normal;
+            }
+
+            .right-col {
+                width: 100%;
+                max-width: 450px;
+                margin: 0 auto;
+                height: auto;
+                max-height: 60vh;
+                padding: 0;
+            }
+
+            .image-rotator {
+                max-width: 100%;
+                height: 100%;
+                aspect-ratio: 1 / 1;
+                border-width: 3px;
+                border-radius: 1.5rem;
+            }
+
+            .image-rotator img {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .left-col .greeting {
+                font-size: 1.6rem;
+            }
+
+            .left-col .description {
+                font-size: 0.95rem;
+            }
+
+            .btn-email {
+                font-size: 0.9rem;
+                padding: 0.8rem 1.2rem;
+            }
+
+            .right-col {
+                max-width: 100%;
+            }
+
+            .imagen-decorativa-wrapper {
+                width: clamp(100px, 40vw, 160px);
+                height: clamp(100px, 40vw, 160px);
+            }
+
+            .texto-lateral {
+                font-size: clamp(0.9rem, 5vw, 1.2rem);
             }
 
             .creditos-footer {
@@ -533,79 +571,42 @@
                 max-width: 160px;
             }
         }
-
-        @media (max-width: 480px) {
-            .img-wrapper {
-                width: 250px;
-            }
-            .img-3d {
-                max-width: 250px;
-            }
-            body {
-                padding-bottom: 60px;
-            }
-            .texto-superior {
-                top: 12px;
-                font-size: clamp(1.4rem, 4.5vw, 2rem);
-            }
-            .texto-inferior {
-                bottom: 12px;
-            }
-            .texto-inferior .defensoria {
-                font-size: clamp(0.7rem, 1.8vw, 0.9rem);
-            }
-            .texto-inferior .ministerio {
-                font-size: clamp(0.6rem, 1.4vw, 0.8rem);
-            }
-
-            #celebration-text {
-                font-size: clamp(1.2rem, 5vw, 1.8rem);
-                max-width: 92vw;
-            }
-            #celebration-text .line1 {
-                font-size: 1.3em;
-            }
-            #celebration-text .line2 {
-                font-size: 0.75em;
-            }
-
-            .creditos-footer {
-                bottom: 8px;
-                right: 8px;
-                padding: 4px 10px;
-                font-size: 0.5rem;
-                max-width: 140px;
-            }
-        }
     </style>
 </head>
 <body>
+    <!-- ─── CONTENEDOR PRINCIPAL ─── -->
+    <div class="main-container">
+        <!-- Columna izquierda -->
+        <div class="left-col">
+            <!-- Contenedor del círculo y el texto lateral -->
+            <div class="circulo-con-texto">
+                <div class="imagen-decorativa-wrapper">
+                    <img id="imagenIzquierda" src="https://github.com/sistemadigital/iconos/blob/main/1.png?raw=true" alt="decoración" />
+                </div>
+                <span id="textoLateral" class="texto-lateral"></span>
+            </div>
 
-    <div class="cinta-glass cinta-top" aria-hidden="true"></div>
-    <div class="cinta-glass cinta-bottom" aria-hidden="true"></div>
+            <div class="greeting">Hola, ingresa tus credenciales para comenzar</div>
+            <div class="description">
+                Defensoría Civil y Comercial 6<br />
+                Ministerio Publico de Misiones<br />
+                <span class="bold">Acceso Empleados</span>
+            </div>
+            <button class="btn-email" id="btnAbrirLoginDirecto">Ingresar con correo electrónico</button>
+            <div class="register-link">
+                ¿No tienes cuenta? <a id="abrirRegistroDirecto">Regístrate aquí</a>
+            </div>
+        </div>
 
-    <div class="centro-pantalla">
-        <div class="contenedor-dinamico" id="contenedorDinamico">
-            <div class="img-wrapper" id="imagenPrincipal" role="button" tabindex="0" aria-label="Activar sistema">
-                <img src="https://github.com/sistemadigital/iconos/blob/main/1.png?raw=true"
-                alt="Sistema Digital"
-                class="img-3d"
-                loading="eager"
-                fetchpriority="high" />
+        <!-- Columna derecha: rotador de imágenes -->
+        <div class="right-col">
+            <div class="image-rotator" id="imageRotator">
+                <img id="rotatingImage" src="https://github.com/sistemadigital/iconos/blob/main/logo/logo.png?raw=true" alt="Logo Defensoría" />
             </div>
         </div>
     </div>
 
-    <!-- ─── ELEMENTOS DE ANIMACIÓN ─── -->
-    <div id="ball-overlay">
-        <div id="ball-element">⚽</div>
-    </div>
-    <div id="celebration-text">
-        <span class="line1">Mundial 2026</span>
-        <span class="line2">Vamos Argentina</span>
-    </div>
-
-    <!-- ─── NUEVO: CRÉDITOS EN ESQUINA INFERIOR DERECHA ─── -->
+    <!-- ─── CRÉDITOS ─── -->
     <div class="creditos-footer" id="creditosFooter">
         <div class="nombre">Diseño y Programación: Rómulo Fioravante</div>
         <div class="version">Versión 5.1.2026</div>
@@ -615,8 +616,8 @@
     <div id="modalLogin" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
-            <h3 style="margin-bottom: 0.2rem;">Sistema Digital</h3>
-            <p style="color: #4a627a; font-weight: 600; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.4;">Defensoría Oficial Civil y Comercial 6<br><span style="font-weight: 400; font-size: 0.85rem;">Ministerio Público de Misiones</span></p>
+            <h3>Sistema Digital</h3>
+            <p class="modal-sub">Defensoría Oficial Civil y Comercial 6<br><span style="font-weight:400;font-size:0.85rem;">Ministerio Público de Misiones</span></p>
             <div>
                 <div class="grupo-input">
                     <label>Correo electrónico</label>
@@ -641,8 +642,8 @@
     <div id="modalRegistro" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
-            <h3 style="margin-bottom: 0.2rem;">Sistema Digital</h3>
-            <p style="color: #4a627a; font-weight: 600; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.4;">Defensoría Oficial Civil y Comercial 6<br><span style="font-weight: 400; font-size: 0.85rem;">Ministerio Público de Misiones</span></p>
+            <h3>Sistema Digital</h3>
+            <p class="modal-sub">Defensoría Oficial Civil y Comercial 6<br><span style="font-weight:400;font-size:0.85rem;">Ministerio Público de Misiones</span></p>
             <div>
                 <div class="grupo-input">
                     <label>Nombre completo</label>
@@ -686,57 +687,109 @@
         const auth = getAuth(app);
         const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
 
-        // ─── ELEMENTOS ───
-        const imagenWrapper = document.getElementById('imagenPrincipal');
+        // ─── ELEMENTOS DOM ───
+        const rotatingImg = document.getElementById('rotatingImage');
         const modalLogin = document.getElementById('modalLogin');
         const modalRegistro = document.getElementById('modalRegistro');
-        const ballOverlay = document.getElementById('ball-overlay');
-        const ballElement = document.getElementById('ball-element');
-        const celebrationText = document.getElementById('celebration-text');
         const creditosFooter = document.getElementById('creditosFooter');
 
-        let currentState = 'idle';
-        let animationFrame = null;
-        let procesoActivo = false;
+        // ─── LISTA DE IMÁGENES PARA EL ROTADOR DE LA DERECHA ───
+        const imageList = [
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo1.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo2.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo3.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo4.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo5.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo6.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/logo7.png?raw=true'
+        ];
 
-        // ─── ANIMACIÓN Y AUTO-DESAPARICIÓN DE CRÉDITOS ───
+        let currentIndex = 0;
+        let rotatorInterval = null;
+
+        function startImageRotation() {
+            if (rotatorInterval) clearInterval(rotatorInterval);
+            rotatorInterval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % imageList.length;
+                rotatingImg.src = imageList[currentIndex];
+            }, 2000);
+        }
+        startImageRotation();
+
+        // ─── ROTADOR PARA EL CÍRCULO IZQUIERDO CON TEXTO DINÁMICO ───
+        const imagenIzquierda = document.getElementById('imagenIzquierda');
+        const textoLateral = document.getElementById('textoLateral');
+        const imageListIzquierda = [
+            'https://github.com/sistemadigital/iconos/blob/main/1.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/pelota.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/logo/ar.png?raw=true'
+        ];
+        // Textos asociados a cada imagen (vacío para la primera)
+        const textos = ['', 'Mundial 2026', 'Vamos Argentina'];
+        let currentIndexIzquierda = 0;
+        let rotatorIntervalIzquierda = null;
+
+        function actualizarTextoLateral(index) {
+            const texto = textos[index];
+            if (texto) {
+                textoLateral.textContent = texto;
+                textoLateral.classList.add('visible');
+            } else {
+                textoLateral.textContent = '';
+                textoLateral.classList.remove('visible');
+            }
+        }
+
+        function startLeftRotation() {
+            if (rotatorIntervalIzquierda) clearInterval(rotatorIntervalIzquierda);
+            // Inicializar con el primer estado
+            actualizarTextoLateral(0);
+            rotatorIntervalIzquierda = setInterval(() => {
+                currentIndexIzquierda = (currentIndexIzquierda + 1) % imageListIzquierda.length;
+                imagenIzquierda.src = imageListIzquierda[currentIndexIzquierda];
+                actualizarTextoLateral(currentIndexIzquierda);
+            }, 2000);
+        }
+        startLeftRotation();
+
+        // ─── ESTADO ───
+        let currentState = 'idle';
+
+        // ─── CRÉDITOS ───
         function gestionarCreditos() {
             setTimeout(() => {
                 creditosFooter.classList.add('mostrar');
             }, 300);
-
             setTimeout(() => {
                 creditosFooter.classList.remove('mostrar');
                 creditosFooter.classList.add('ocultar');
                 setTimeout(() => {
                     creditosFooter.style.display = 'none';
-                }, 600); 
-            }, 4300); 
+                }, 600);
+            }, 4300);
         }
 
         // ─── FUNCIONES DE NAVEGACIÓN ───
         function resetToInitial() {
-            if (imagenWrapper) imagenWrapper.style.display = 'block';
             modalLogin.classList.remove('active');
             modalRegistro.classList.remove('active');
-            ballOverlay.classList.remove('active');
-            celebrationText.classList.remove('show');
-            celebrationText.style.top = '100%';
-            document.querySelectorAll('.confetti-piece').forEach(el => el.remove());
-            if (animationFrame) {
-                cancelAnimationFrame(animationFrame);
-                animationFrame = null;
-            }
             currentState = 'idle';
-            procesoActivo = false;
         }
 
         function abrirLogin() {
             if (currentState === 'idle') {
-                imagenWrapper.style.display = 'none';
                 modalLogin.classList.add('active');
                 currentState = 'modalOpen';
                 document.getElementById('loginEmail').focus();
+            }
+        }
+
+        function abrirRegistro() {
+            if (currentState === 'idle') {
+                modalRegistro.classList.add('active');
+                currentState = 'modalOpen';
+                document.getElementById('registerName').focus();
             }
         }
 
@@ -781,6 +834,15 @@
                     modalLogin.classList.add('active');
                     document.getElementById('loginEmail').focus();
                 }
+            });
+
+            document.getElementById('btnAbrirLoginDirecto').addEventListener('click', () => {
+                if (currentState === 'idle') abrirLogin();
+            });
+
+            document.getElementById('abrirRegistroDirecto').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentState === 'idle') abrirRegistro();
             });
         }
 
@@ -876,119 +938,6 @@
         regEmail.addEventListener('keypress', handleRegEnter);
         regPassword.addEventListener('keypress', handleRegEnter);
 
-        // ─── LÓGICA DE ANIMACIÓN (PELOTA + TEXTO + CONFETI) ───
-        function iniciarAnimacion() {
-            if (procesoActivo) return;
-            procesoActivo = true;
-
-            ballOverlay.classList.add('active');
-            ballElement.style.left = '5%';
-            ballElement.style.top = '85%';
-            ballElement.style.transform = 'translate(-50%, -50%)';
-
-            let x = 0.05;
-            let y = 0.85;
-            let vx = 0.008;
-            let vy = -0.02;
-            const gravity = 0.0006;
-            const bounce = 0.75;
-            const groundY = 0.88;
-            const ceilingY = 0.12;
-            const goalX = 0.88;
-            let celebrating = false;
-            let startTime = null;
-
-            function createConfetti(count = 350) {
-                const colors = ['#fbc02d', '#74ACDF', '#ffffff', '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#1abc9c', '#9b59b6', '#e67e22', '#2ecc71', '#e74c3c'];
-                const fragment = document.createDocumentFragment();
-                for (let i = 0; i < count; i++) {
-                    const el = document.createElement('div');
-                    el.className = 'confetti-piece';
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    el.style.backgroundColor = color;
-                    const size = 6 + Math.random() * 12;
-                    el.style.width = size + 'px';
-                    el.style.height = (size * (0.5 + Math.random() * 0.8)) + 'px';
-                    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                    el.style.left = Math.random() * 100 + '%';
-                    el.style.top = '-5%';
-                    const duration = 2 + Math.random() * 4; 
-                    const delay = Math.random() * 2;
-                    el.style.animation = `confettiRain ${duration}s ease-out ${delay}s forwards`;
-                    el.style.transform = `rotate(${Math.random() * 360}deg)`;
-                    fragment.appendChild(el);
-                }
-                document.body.appendChild(fragment);
-            }
-
-            function celebrate() {
-                if (celebrating) return;
-                celebrating = true;
-
-                const ballRect = ballElement.getBoundingClientRect();
-                const ballBottom = ballRect.bottom;
-
-                celebrationText.style.left = '50%';
-                celebrationText.style.top = (ballBottom + 20) + 'px';
-                celebrationText.style.transform = 'translateX(-50%)';
-                celebrationText.classList.add('show');
-
-                createConfetti(350); 
-
-                setTimeout(() => {
-                    resetToInitial();
-                    abrirLogin();
-                }, 4500);
-            }
-
-            function animate(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const delta = Math.min((timestamp - startTime) / 16, 3);
-                startTime = timestamp;
-
-                x += vx * delta;
-                vy += gravity * delta;
-                y += vy * delta;
-
-                if (y > groundY) {
-                    y = groundY;
-                    vy = -vy * bounce;
-                }
-                if (y < ceilingY) {
-                    y = ceilingY;
-                    vy = -vy * bounce;
-                }
-
-                x = Math.min(x, 0.98);
-                y = Math.min(Math.max(y, 0.02), 0.98);
-
-                ballElement.style.left = (x * 100) + '%';
-                ballElement.style.top = (y * 100) + '%';
-
-                if (x >= goalX && !celebrating) {
-                    celebrate();
-                    return;
-                }
-
-                animationFrame = requestAnimationFrame(animate);
-            }
-
-            animationFrame = requestAnimationFrame(animate);
-        }
-
-        // ─── CLIC EN IMAGEN ───
-        imagenWrapper.addEventListener('click', (e) => {
-            e.stopPropagation();
-            iniciarAnimacion();
-        });
-
-        imagenWrapper.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                iniciarAnimacion();
-            }
-        });
-
         // ─── MONITOREO DE AUTENTICACIÓN ───
         onAuthStateChanged(auth, (user) => {
             if (user && (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '')) {
@@ -999,8 +948,6 @@
         // ─── INICIALIZACIÓN ───
         resetToInitial();
         setupModalEvents();
-
-        // ─── INICIAR ANIMACIÓN DE CRÉDITOS ───
         gestionarCreditos();
     </script>
 </body>
