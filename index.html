@@ -748,6 +748,24 @@
 
         let currentState = 'idle';
 
+        // ─── FUNCIÓN PARA NORMALIZAR EL CORREO (SOLO DOMINIO mpmisiones.gob.ar) ───
+        function normalizeEmail(input) {
+            input = input.trim();
+            if (!input) return null;
+            // Si contiene '@', verificamos que el dominio sea el permitido
+            if (input.includes('@')) {
+                const parts = input.split('@');
+                if (parts.length === 2 && parts[1].toLowerCase() === 'mpmisiones.gob.ar') {
+                    return input.toLowerCase();
+                } else {
+                    return null; // dominio no permitido
+                }
+            } else {
+                // Es solo el prefijo, agregamos el dominio
+                return input.toLowerCase() + '@mpmisiones.gob.ar';
+            }
+        }
+
         // ─── FUNCIONES DE UI ───
         function resetToInitial() {
             modalLogin.classList.remove('active');
@@ -814,11 +832,17 @@
 
         // ─── LOGIN ───
         window.loginUser = function() {
-            const email = document.getElementById('loginEmail').value.trim();
+            const rawEmail = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
 
-            if (!email || !password) {
+            if (!rawEmail || !password) {
                 showMessage('Completa todos los campos', 'error');
+                return;
+            }
+
+            const email = normalizeEmail(rawEmail);
+            if (!email) {
+                showMessage('Solo se permiten correos con dominio @mpmisiones.gob.ar', 'error');
                 return;
             }
 
@@ -854,15 +878,21 @@
         // ─── REGISTRO ───
         window.registerUser = function() {
             const name = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
+            const rawEmail = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value.trim();
 
-            if (!name || !email || !password) {
+            if (!name || !rawEmail || !password) {
                 showMessage('Completa todos los campos', 'error');
                 return;
             }
             if (password.length < 6) {
                 showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+
+            const email = normalizeEmail(rawEmail);
+            if (!email) {
+                showMessage('Solo se permiten correos con dominio @mpmisiones.gob.ar', 'error');
                 return;
             }
 
