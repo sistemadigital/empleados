@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>⚖️ Sistema Digital</title>
+    <title>⚖️ Sistema Digital Defensoria 6</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
@@ -252,6 +252,40 @@
 
         .version-text:hover {
             color: #00bfff;
+        }
+
+        /* Estilos para fecha y el botón de hora */
+        .fecha-actual {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+
+        .btn-hora {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            padding: 0.3rem 0.9rem;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-hora:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #00bfff;
+        }
+
+        .hora-actual {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 0.95rem;
+            white-space: nowrap;
         }
 
         /* ========== MODALES ========== */
@@ -531,6 +565,16 @@
                 justify-content: center;
                 height: auto;
                 padding: 4px 0;
+                flex-direction: column;
+            }
+            .fecha-actual {
+                margin-left: 0;
+                margin-top: 10px;
+                font-size: 0.85rem;
+            }
+            .btn-hora {
+                margin-left: 0;
+                margin-top: 8px;
             }
             .footer-left .btn-credenciales {
                 font-size: 0.85rem;
@@ -614,7 +658,6 @@
 
     <main>
         <div id="homeContent">
-            <!-- Header de bienvenida -->
             <div id="dynamicContent">
                 <div class="welcome-container">
                     <div class="welcome-bar" id="welcomeBar">
@@ -628,7 +671,6 @@
                 </div>
             </div>
 
-            <!-- Imagen central -->
             <div class="top-image-container">
                 <div class="image-wrapper">
                     <div class="image-large">
@@ -639,10 +681,11 @@
         </div>
     </main>
 
-    <!-- ===== FOOTER ===== -->
     <footer id="mainFooter">
         <div class="footer-left">
             <button class="btn-credenciales" id="btnFooterCredenciales">Ingresa tus credenciales para comenzar</button>
+            <span class="fecha-actual" id="currentDateText"></span>
+            <button class="btn-hora"><span class="hora-actual" id="currentTimeText"></span></button>
         </div>
         <div class="footer-center">
             <span class="institucional">Defensoría Civil y Comercial 6 – Ministerio Público de Misiones</span>
@@ -653,8 +696,6 @@
         </div>
     </footer>
 
-    <!-- ===== MODALES ===== -->
-    <!-- MODAL LOGIN -->
     <div id="modalLogin" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
@@ -680,7 +721,6 @@
         </div>
     </div>
 
-    <!-- MODAL REGISTRO -->
     <div id="modalRegistro" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
@@ -710,16 +750,13 @@
         </div>
     </div>
 
-    <!-- Mensaje global -->
     <div id="globalAuthMessage" class="auth-message-global"></div>
 
-    <!-- Popup de versión -->
     <div id="versionInfoPopup" class="version-info-popup">
         <div class="titulo">Diseño y Programación:</div>
         <div class="nombre">Rómulo Fioravante</div>
     </div>
 
-    <!-- ===== SCRIPTS ===== -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
@@ -752,11 +789,9 @@
         function normalizeEmail(input) {
             input = input.trim();
             if (!input) return null;
-            // Si contiene '@', lo devolvemos en minúsculas sin restricción de dominio
             if (input.includes('@')) {
                 return input.toLowerCase();
             } else {
-                // Si no tiene '@', asumimos que es solo el prefijo y agregamos el dominio institucional por defecto
                 return input.toLowerCase() + '@mpmisiones.gob.ar';
             }
         }
@@ -784,17 +819,9 @@
             }
         }
 
-        function handleCloseModalAndReset() {
-            if (currentState === 'modalOpen') {
-                resetToInitial();
-            }
-        }
-
         // ─── ACTUALIZAR UI SEGÚN USUARIO ───
         function updateUI(user) {
             if (user) {
-                // Este caso ya no se usa porque redirigimos a app.html,
-                // pero lo dejamos por si acaso.
                 const displayName = user.displayName || user.email || 'Usuario';
                 welcomeMessage.textContent = `Hola, ${displayName}`;
                 btnFooter.textContent = 'Cerrar sesión';
@@ -804,7 +831,6 @@
                     });
                 };
             } else {
-                // Estado sin autenticar
                 welcomeMessage.textContent = 'Hola, Defensoría Oficial';
                 btnFooter.textContent = 'Ingresa tus credenciales para comenzar';
                 btnFooter.onclick = abrirLogin;
@@ -845,7 +871,6 @@
                 .then(() => {
                     showMessage('✅ Inicio de sesión exitoso', 'success');
                     resetToInitial();
-                    // Redirigir a app.html
                     window.location.href = 'app.html';
                 })
                 .catch((error) => {
@@ -897,7 +922,6 @@
                     return user.updateProfile({ displayName: name }).then(() => {
                         showMessage('✅ Registro exitoso. ¡Bienvenido!', 'success');
                         resetToInitial();
-                        // Redirigir a app.html
                         window.location.href = 'app.html';
                     });
                 })
@@ -936,14 +960,13 @@
             regPass.type = mostrarReg.checked ? 'text' : 'password';
         });
 
-        // Enter en login
+        // Enter en login y registro
         const loginEmail = document.getElementById('loginEmail');
         const loginPassInput = document.getElementById('loginPassword');
         const handleLoginEnter = (e) => { if (e.key === 'Enter') window.loginUser(); };
         loginEmail.addEventListener('keypress', handleLoginEnter);
         loginPassInput.addEventListener('keypress', handleLoginEnter);
 
-        // Enter en registro
         const regName = document.getElementById('registerName');
         const regEmail = document.getElementById('registerEmail');
         const regPassword = document.getElementById('registerPassword');
@@ -995,6 +1018,11 @@
         function setupModalEvents() {
             const cerrarLogin = document.getElementById('cerrarModalLoginBtn');
             const cerrarRegistro = document.getElementById('cerrarModalRegistroBtn');
+            
+            const handleCloseModalAndReset = () => {
+                if (currentState === 'modalOpen') resetToInitial();
+            };
+
             cerrarLogin.addEventListener('click', handleCloseModalAndReset);
             cerrarRegistro.addEventListener('click', handleCloseModalAndReset);
 
@@ -1035,16 +1063,35 @@
                 if (!auth.currentUser) abrirLogin();
             });
         }
+        
+        // ─── FECHA Y HORA EN EL FOOTER ───
+        function actualizarFechaYHora() {
+            const ahora = new Date();
+            
+            // Formatear Fecha
+            const opcionesFecha = { day: '2-digit', month: 'long', year: 'numeric' };
+            let fechaString = ahora.toLocaleDateString('es-ES', opcionesFecha);
+            const partesFecha = fechaString.split(' de ');
+            if (partesFecha.length === 3) {
+                 partesFecha[1] = partesFecha[1].charAt(0).toUpperCase() + partesFecha[1].slice(1);
+            }
+            document.getElementById('currentDateText').textContent = partesFecha.join(' de ');
+
+            // Formatear Hora
+            const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const horaString = ahora.toLocaleTimeString('es-ES', opcionesHora);
+            document.getElementById('currentTimeText').textContent = horaString;
+        }
+        
+        setInterval(actualizarFechaYHora, 1000);
+        actualizarFechaYHora();
 
         // ─── OBSERVADOR DE AUTENTICACIÓN ───
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // Si el usuario está autenticado, redirigir a app.html
                 window.location.href = 'app.html';
             } else {
-                // No autenticado: mostrar la UI de inicio
                 updateUI(null);
-                // Si algún modal quedó abierto, lo cerramos
                 if (currentState === 'modalOpen') {
                     resetToInitial();
                 }
@@ -1054,8 +1101,19 @@
         // ─── INICIALIZACIÓN ───
         resetToInitial();
         setupModalEvents();
-        // Aseguramos que la UI esté en estado inicial (por si no se disparó el observer)
         updateUI(null);
+
+        // ─── INTERCAMBIO DE IMAGEN CENTRAL CADA 2 SEGUNDOS ───
+        const imgElement = document.querySelector('.image-large img');
+        const imageUrls = [
+            'https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true',
+            'https://github.com/sistemadigital/iconos/blob/main/arr.png?raw=true'
+        ];
+        let currentIndex = 0;
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % imageUrls.length;
+            imgElement.src = imageUrls[currentIndex];
+        }, 2000);
     </script>
 
 </body>
