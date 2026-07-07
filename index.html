@@ -663,7 +663,7 @@
             <div>
                 <div class="grupo-input">
                     <label>Correo electrónico</label>
-                    <input type="email" id="loginEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
+                    <input type="email" id="loginEmail" placeholder="usuario@ejemplo.com" autocomplete="email" />
                 </div>
                 <div class="grupo-input">
                     <label>Contraseña</label>
@@ -693,7 +693,7 @@
                 </div>
                 <div class="grupo-input">
                     <label>Correo electrónico</label>
-                    <input type="email" id="registerEmail" placeholder="usuario@mpmisiones.gob.ar" autocomplete="email" />
+                    <input type="email" id="registerEmail" placeholder="usuario@ejemplo.com" autocomplete="email" />
                 </div>
                 <div class="grupo-input">
                     <label>Contraseña</label>
@@ -748,20 +748,15 @@
 
         let currentState = 'idle';
 
-        // ─── FUNCIÓN PARA NORMALIZAR EL CORREO (SOLO DOMINIO mpmisiones.gob.ar) ───
+        // ─── FUNCIÓN PARA NORMALIZAR EL CORREO (ACEPTA CUALQUIER DOMINIO) ───
         function normalizeEmail(input) {
             input = input.trim();
             if (!input) return null;
-            // Si contiene '@', verificamos que el dominio sea el permitido
+            // Si contiene '@', lo devolvemos en minúsculas sin restricción de dominio
             if (input.includes('@')) {
-                const parts = input.split('@');
-                if (parts.length === 2 && parts[1].toLowerCase() === 'mpmisiones.gob.ar') {
-                    return input.toLowerCase();
-                } else {
-                    return null; // dominio no permitido
-                }
+                return input.toLowerCase();
             } else {
-                // Es solo el prefijo, agregamos el dominio
+                // Si no tiene '@', asumimos que es solo el prefijo y agregamos el dominio institucional por defecto
                 return input.toLowerCase() + '@mpmisiones.gob.ar';
             }
         }
@@ -842,7 +837,7 @@
 
             const email = normalizeEmail(rawEmail);
             if (!email) {
-                showMessage('Solo se permiten correos con dominio @mpmisiones.gob.ar', 'error');
+                showMessage('Correo electrónico inválido', 'error');
                 return;
             }
 
@@ -892,7 +887,7 @@
 
             const email = normalizeEmail(rawEmail);
             if (!email) {
-                showMessage('Solo se permiten correos con dominio @mpmisiones.gob.ar', 'error');
+                showMessage('Correo electrónico inválido', 'error');
                 return;
             }
 
