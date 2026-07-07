@@ -301,6 +301,24 @@
             z-index: 10;
         }
 
+        /* --- NUEVO: Estilos para el bloque Defensoría (copiado de app.html) --- */
+        .footer-defensoria {
+            text-align: left;
+            font-size: 0.85rem;
+            color: white;
+            line-height: 1.4;
+            cursor: pointer;
+            z-index: 10;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .footer-defensoria strong {
+            color: #00BFFF;
+            font-weight: 700;
+        }
+        /* --- fin nuevo --- */
+
         .calendar-popup {
             display: none;
             position: absolute;
@@ -1189,6 +1207,10 @@
             .exclusive-access-text {
                 display: none;
             }
+            /* Ocultar el bloque Defensoría en móviles (como en app.html) */
+            .footer-defensoria {
+                display: none;
+            }
             .footer-right {
                 display: flex;
                 align-items: center;
@@ -1348,6 +1370,14 @@
                         <li><a onclick="loadPage('https://sistemadigital.github.io/operador/atencion-publico.html')">Atención al Público</a></li>
                         <li><a onclick="loadPage('https://sistemadigital.github.io/ingreso-sistema/runnai-defensoria.html')">Registro NNyAI Defensoria</a></li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- NUEVO: Bloque Defensoría (copiado de app.html) -->
+            <div class="footer-defensoria" id="footerDefensoria">
+                <div>
+                    Defensoria Civil y Comercial 6<br>
+                    <strong>Ministerio Público de Misiones</strong>
                 </div>
             </div>
 
@@ -2036,7 +2066,7 @@
                     if (el.closest('.calendar-popup') || el.closest('.menu-popup') || el.closest('.sistema-info-modal')) return;
                     if (el.classList && (el.classList.contains('event-banner') || el.classList.contains('logout-button') ||
                             el.classList.contains('sistema-info-text') || el.classList.contains('dtw-content') ||
-                            el.classList.contains('exclusive-access-text'))) {
+                            el.classList.contains('exclusive-access-text') || el.classList.contains('footer-defensoria'))) {
                         el.style.color = textColor;
                     } else if (el.tagName === 'I' || el.tagName === 'SPAN' || el.tagName === 'DIV') {
                         el.style.color = textColor;
@@ -2069,16 +2099,14 @@
             if (welcomeMsg) welcomeMsg.style.color = color;
             if (sistemaDigital) sistemaDigital.style.color = color;
 
-            // ===== NUEVO: Cambiar el fondo de <main> con un tono suave =====
+            // Cambiar el fondo de <main> con un tono suave
             const mainEl = document.querySelector('main');
             if (mainEl) {
                 if (color === DEFAULT_FOOTER_COLOR) {
-                    // Color por defecto: restaurar fondo original
                     mainEl.style.backgroundColor = DEFAULT_BACKGROUND;
                 } else {
                     const rgb = hexToRgb(color);
                     if (rgb) {
-                        // Mezclar con blanco (85% blanco) para obtener un pastel suave
                         const lightR = Math.round(rgb.r + (255 - rgb.r) * 0.85);
                         const lightG = Math.round(rgb.g + (255 - rgb.g) * 0.85);
                         const lightB = Math.round(rgb.b + (255 - rgb.b) * 0.85);
