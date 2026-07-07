@@ -301,7 +301,6 @@
             z-index: 10;
         }
 
-        /* --- NUEVO: Estilos para el bloque Defensoría (copiado de app.html) --- */
         .footer-defensoria {
             text-align: left;
             font-size: 0.85rem;
@@ -317,7 +316,6 @@
             color: #00BFFF;
             font-weight: 700;
         }
-        /* --- fin nuevo --- */
 
         .calendar-popup {
             display: none;
@@ -748,7 +746,6 @@
             display: block;
         }
 
-        /* ─── MÓDULO DE BOTONES SUPERIOR DERECHA ─── */
         .module-botones {
             position: absolute;
             top: 80px;
@@ -1207,7 +1204,6 @@
             .exclusive-access-text {
                 display: none;
             }
-            /* Ocultar el bloque Defensoría en móviles (como en app.html) */
             .footer-defensoria {
                 display: none;
             }
@@ -1373,7 +1369,6 @@
                 </div>
             </div>
 
-            <!-- NUEVO: Bloque Defensoría (copiado de app.html) -->
             <div class="footer-defensoria" id="footerDefensoria">
                 <div>
                     Defensoria Civil y Comercial 6<br>
@@ -1780,14 +1775,10 @@
             if (isFinDeAnioRange()) setTimeout(() => mostrarModalFinDeAnio(), 350);
         });
 
-        const bannerDiv = document.getElementById('eventBanner');
-        if (bannerDiv) {
-            bannerDiv.addEventListener('click', (e) => {
-                if (bannerDiv.classList.contains('hay-eventos')) {
-                    loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
-                }
-            });
-        }
+        // ===== BANNER DE EVENTOS: SIEMPRE ABRE EVENTOS AGENDADOS (como en app(1)) =====
+        document.getElementById('eventBanner')?.addEventListener('click', (e) => {
+            loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
+        });
 
         // ================= CONTROL DEL POPUP PASE DIGITAL =================
         (function() {
@@ -1798,7 +1789,7 @@
                 btnPase.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const isVisible = popupPase.classList.contains('show');
-                    closeAllModals(); // cierra otros popups
+                    closeAllModals();
                     if (!isVisible) {
                         popupPase.classList.add('show');
                     } else {
@@ -1806,8 +1797,6 @@
                     }
                 });
 
-                // Cerrar al hacer clic fuera (ya se maneja en el event listener global)
-                // Pero también cerramos si se hace clic en otro elemento que no sea el botón o el popup
                 document.addEventListener('click', function(e) {
                     if (!btnPase.contains(e.target) && !popupPase.contains(e.target)) {
                         popupPase.classList.remove('show');
