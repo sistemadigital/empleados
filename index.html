@@ -2,258 +2,259 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <title>⚖️ Sistema Digital 6</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800;900&family=Montserrat:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>⚖️ Sistema Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ── RESET ── */
+        /* ========== ESTILOS PRINCIPALES (sin cambios) ========== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
-        html,
         body {
-            height: 100%;
-            font-family: 'Inter', system-ui, sans-serif;
-            background: #dceaf5;
-            color: #0a1e2f;
-            font-size: 16px;
-            line-height: 1.5;
-            overflow: hidden;
-        }
-
-        /* ── CONTENEDOR PRINCIPAL ── */
-        .main-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            width: 100%;
-            padding: 2rem 5rem;
-            gap: 4rem;
-            background: #dceaf5;
-        }
-
-        /* ── COLUMNA IZQUIERDA ── */
-        .left-col {
-            flex: 1.2;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 0;
-            max-width: 600px;
-        }
-
-        /* ── CONTENEDOR DEL CÍRCULO + TEXTO LATERAL ── */
-        .circulo-con-texto {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        /* ── CONTENEDOR CIRCULAR PARA LA IMAGEN DECORATIVA ── */
-        .imagen-decorativa-wrapper {
-            width: clamp(140px, 30vw, 240px);
-            height: clamp(140px, 30vw, 240px);
-            border-radius: 50%;
+            height: 100vh;
+            height: 100dvh;
+            background-color: #ffffff;
             overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 8px 24px rgba(0, 100, 200, 0.15);
-            border: 3px solid rgba(0, 180, 216, 0.3);
+        }
+
+        main {
+            flex: 1;
+            background: #d4eafc;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            padding-bottom: 0;
+        }
+
+        #homeContent {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #dynamicContent {
+            width: 100%;
             flex-shrink: 0;
         }
 
-        .imagen-decorativa-wrapper img {
+        /* Bienvenida */
+        .welcome-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            animation: fadeIn 1s ease;
+            background: transparent;
+            padding: 10px 20px 0 20px;
+            width: 100%;
+            position: relative;
+        }
+
+        .welcome-bar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .welcome-bar:hover {
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        .left-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .welcome-message {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #003366;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+        }
+
+        .sistema-digital-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #003366;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        /* Contenedor de la imagen central */
+        .top-image-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .image-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 80%;
+            max-height: 80%;
+            justify-content: center;
+        }
+
+        .image-large {
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #00bfff;
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.3);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: #ffffff;
+            flex-shrink: 0;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        .image-large img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            opacity: 0.9;
-            transition: transform 0.3s ease;
         }
 
-        .imagen-decorativa-wrapper:hover img {
-            transform: scale(1.05);
+        @keyframes glowPulse {
+            0% {
+                box-shadow: 0 0 20px rgba(0, 191, 255, 0.2), 0 0 40px rgba(0, 191, 255, 0.1);
+                border-color: #00bfff;
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 191, 255, 0.6), 0 0 80px rgba(0, 191, 255, 0.3);
+                border-color: #66d9ff;
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(0, 191, 255, 0.2), 0 0 40px rgba(0, 191, 255, 0.1);
+                border-color: #00bfff;
+            }
         }
 
-        /* ── TEXTO LATERAL (AHORA EN CELESTE) ── */
-        .texto-lateral {
-            font-family: 'Montserrat', 'Inter', sans-serif;
-            font-weight: 800;
-            font-size: clamp(1.2rem, 2.5vw, 2rem);
-            color: #00b4d8;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        /* ========== FOOTER ========== */
+        footer {
+            height: 70px;
+            background-color: #001f3f;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 -4px 12px rgba(0, 31, 63, 0.2);
+            border-top: 3px solid #00bfff;
+            z-index: 3000;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            flex-shrink: 0;
+        }
+
+        .footer-left .btn-credenciales {
+            background: #00bfff;
+            border: none;
+            border-radius: 40px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #001f3f;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
             white-space: nowrap;
         }
 
-        .texto-lateral.visible {
-            opacity: 1;
+        .footer-left .btn-credenciales:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 191, 255, 0.4);
         }
 
-        /* ── TEXTO DE LA COLUMNA IZQUIERDA ── */
-        .left-col .greeting {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-            color: #0077b6;
-            margin-bottom: 0.8rem;
-            line-height: 1.2;
+        .footer-center {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            min-width: 150px;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        .left-col .description {
-            font-size: clamp(1rem, 1.2vw, 1.2rem);
-            color: #0a2b3e;
-            margin-bottom: 2.5rem;
-            line-height: 1.6;
-            font-weight: 400;
-        }
-
-        .left-col .description .bold {
+        .footer-center .institucional {
             font-weight: 700;
+            font-size: 0.85rem;
+            color: #00bfff;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
         }
 
-        .left-col .btn-email {
-            background: #0a2b3e;
-            border: none;
-            border-radius: 60px;
-            padding: 0.9rem 2.2rem;
+        .footer-center .mundial-text {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.85rem;
+            color: #ffdd57;
+            text-shadow: 0 0 8px rgba(255, 220, 87, 0.3);
+            white-space: nowrap;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 100%;
+            flex-shrink: 0;
+        }
+
+        .version-text {
+            font-weight: 600;
+            font-size: 0.95rem;
             color: white;
             cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            max-width: 360px;
-            box-shadow: 0 4px 12px rgba(10, 43, 62, 0.15);
-            text-align: center;
+            transition: color 0.2s;
+            letter-spacing: 0.3px;
+            user-select: none;
+            white-space: nowrap;
         }
 
-        .left-col .btn-email:hover {
-            background: #005f8c;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 95, 140, 0.25);
+        .version-text:hover {
+            color: #00bfff;
         }
 
-        .left-col .register-link {
-            margin-top: 1.2rem;
-            font-size: 0.9rem;
-            color: #0a2b3e;
-        }
-
-        .left-col .register-link a {
-            color: #0077b6;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .left-col .register-link a:hover {
-            text-decoration: underline;
-        }
-
-        /* ── COLUMNA DERECHA ── */
-        .right-col {
-            flex: 1;
-            display: flex;
-            flex-direction: row;          /* ← fila para alinear imagen y textos */
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 0;
-            gap: 2rem;                    /* separación entre imagen y textos */
-        }
-
-        .image-rotator {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 700px;
-            max-height: 100%;
-            border: 4px solid #00b4d8;
-            border-radius: 2rem;
-            background: white;
-            box-shadow: 0 20px 40px rgba(0, 100, 200, 0.12);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;               /* no se estira, toma su tamaño natural */
-        }
-
-        .image-rotator img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 1.5rem;
-            display: block;
-            background: white;
-            transition: opacity 0.3s ease;
-        }
-
-        /* ── CONTENEDOR DE TEXTOS LATERALES ── */
-        .textos-laterales {
-            flex: 1;                      /* ocupa el espacio restante */
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem 1.2rem;
-            padding: 0.5rem;
-            max-width: 300px;
-            min-width: 180px;
-        }
-
-        /* Clases para los distintos tamaños y tipografías */
-        .txt-xl {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 2.8rem;
-            line-height: 1.1;
-            color: #0a2b3e;
-            letter-spacing: -0.02em;
-        }
-        .txt-lg {
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 2rem;
-            line-height: 1.2;
-            color: #0077b6;
-        }
-        .txt-md {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            font-size: 1.5rem;
-            line-height: 1.3;
-            color: #1e4b6e;
-        }
-        .txt-sm {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 1.2rem;
-            line-height: 1.4;
-            color: #2c5f82;
-        }
-        .txt-xs {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #4a6f8a;
-        }
-
-        /* ── MODALES ── */
+        /* ========== MODALES ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -265,7 +266,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 4000;
             visibility: hidden;
             opacity: 0;
             transition: visibility 0.2s, opacity 0.2s ease;
@@ -318,6 +319,7 @@
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
+            margin-bottom: 0.2rem;
         }
 
         .modal-contenido .modal-sub {
@@ -416,6 +418,7 @@
             text-decoration: underline;
         }
 
+        /* Mensaje global de autenticación */
         .auth-message-global {
             position: fixed;
             bottom: 130px;
@@ -427,7 +430,7 @@
             border-radius: 60px;
             font-size: 0.9rem;
             font-weight: 500;
-            z-index: 2100;
+            z-index: 5000;
             display: none;
             backdrop-filter: blur(12px);
             background: rgba(10, 43, 62, 0.95);
@@ -444,261 +447,214 @@
             background: #2a9d8f;
         }
 
-        /* ── CRÉDITOS ── */
-        .creditos-footer {
+        /* Popup de versión */
+        .version-info-popup {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-            background: #0a2b3e;
-            color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
-            line-height: 1.4;
+            bottom: 100px;
+            right: 30px;
+            background: rgba(0, 31, 63, 0.95);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 1.2rem 1.8rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 6000;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            pointer-events: none;
-            user-select: none;
-            max-width: 200px;
-            opacity: 0;
-            transform: translateX(120%) scale(0.9);
-            transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 280px;
         }
 
-        .creditos-footer.mostrar {
+        .version-info-popup.show {
             opacity: 1;
-            transform: translateX(0) scale(1);
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
         }
 
-        .creditos-footer.ocultar {
-            opacity: 0;
-            transform: translateX(120%) scale(0.9);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            pointer-events: none;
+        .version-info-popup .titulo {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: #00bfff;
         }
 
-        .creditos-footer .nombre {
-            font-weight: 600;
-            letter-spacing: 0.3px;
+        .version-info-popup .nombre {
+            font-weight: 400;
+            font-size: 0.95rem;
+            color: #e2e8f0;
         }
 
-        .creditos-footer .version {
-            font-weight: 300;
-            opacity: 0.8;
-            font-size: 0.65rem;
-            margin-top: 2px;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* ── RESPONSIVE ── */
-        @media (max-width: 1024px) {
-            .main-container {
-                padding: 2rem 3rem;
-                gap: 3rem;
-            }
-            .image-rotator {
-                max-width: 600px;
-            }
-            .imagen-decorativa-wrapper {
-                width: clamp(120px, 28vw, 200px);
-                height: clamp(120px, 28vw, 200px);
-            }
-            .texto-lateral {
-                font-size: clamp(1rem, 2.2vw, 1.6rem);
-            }
-            .textos-laterales {
-                max-width: 200px;
-                gap: 0.4rem 0.8rem;
-            }
-            .txt-xl { font-size: 2.2rem; }
-            .txt-lg { font-size: 1.6rem; }
-            .txt-md { font-size: 1.2rem; }
-            .txt-sm { font-size: 1rem; }
-            .txt-xs { font-size: 0.9rem; }
-        }
-
-        @media (max-width: 900px) {
-            html, body {
-                overflow: auto;
-            }
-
-            .main-container {
-                flex-direction: column-reverse;
-                height: auto;
-                min-height: 100vh;
-                padding: 2rem 1.5rem;
-                gap: 2rem;
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .welcome-bar {
                 justify-content: center;
+                padding: 0.5rem 1rem;
             }
-
-            .left-col {
-                align-items: center;
+            .left-group {
+                display: none;
+            }
+            .sistema-digital-text {
+                font-size: 2.2rem;
+                margin-left: 0;
                 text-align: center;
-                max-width: 100%;
-                padding: 0;
+                width: 100%;
             }
-
-            .circulo-con-texto {
+            .image-large {
+                max-width: 280px;
+                border-width: 3px;
+            }
+            footer {
+                height: auto;
+                min-height: 56px;
+                padding: 8px 16px;
+                flex-direction: column;
+                align-items: center;
                 justify-content: center;
-                flex-wrap: wrap;
-                gap: 0.5rem;
+                gap: 0;
             }
-
-            .left-col .greeting {
-                font-size: 2rem;
+            .footer-left {
+                width: 100%;
+                justify-content: center;
+                height: auto;
+                padding: 4px 0;
             }
-
-            .left-col .description {
-                max-width: 100%;
-                font-size: 1rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .left-col .btn-email {
-                max-width: 100%;
-            }
-
-            .imagen-decorativa-wrapper {
-                width: clamp(120px, 35vw, 200px);
-                height: clamp(120px, 35vw, 200px);
-                margin-bottom: 0;
-            }
-
-            .texto-lateral {
-                font-size: clamp(1rem, 4vw, 1.6rem);
+            .footer-left .btn-credenciales {
+                font-size: 0.85rem;
+                padding: 0.5rem 1.5rem;
+                width: 100%;
+                max-width: 320px;
+                text-align: center;
                 white-space: normal;
             }
-
-            .right-col {
-                width: 100%;
-                max-width: 450px;
-                margin: 0 auto;
-                height: auto;
-                max-height: 60vh;
-                padding: 0;
-                flex-direction: column;    /* en móvil apilamos imagen y textos */
-                gap: 1rem;
-            }
-
-            .image-rotator {
-                max-width: 100%;
-                height: 100%;
-                aspect-ratio: 1 / 1;
-                border-width: 3px;
-                border-radius: 1.5rem;
-                flex: 0 0 auto;
-            }
-
-            .image-rotator img {
-                padding: 1rem;
-            }
-
-            /* Ocultamos los textos laterales en móvil */
-            .textos-laterales {
+            .footer-center {
                 display: none;
+            }
+            .footer-right {
+                display: none;
+            }
+            .version-info-popup {
+                right: 16px;
+                bottom: 80px;
+                padding: 0.8rem 1.2rem;
+                max-width: 220px;
+            }
+            .version-info-popup .titulo {
+                font-size: 0.9rem;
+            }
+            .version-info-popup .nombre {
+                font-size: 0.85rem;
+            }
+            .modal-contenido {
+                padding: 1.5rem;
+            }
+            .modal-contenido h3 {
+                font-size: 1.4rem;
+            }
+            .btn-modal-primario {
+                font-size: 0.9rem;
+                padding: 12px;
             }
         }
 
         @media (max-width: 480px) {
-            .main-container {
+            .image-large {
+                max-width: 200px;
+                border-width: 3px;
+            }
+            .footer-left .btn-credenciales {
+                font-size: 0.8rem;
+                padding: 0.4rem 1rem;
+            }
+            .modal-contenido {
                 padding: 1rem;
-                gap: 1.5rem;
             }
-
-            .left-col .greeting {
-                font-size: 1.6rem;
+            .modal-contenido h3 {
+                font-size: 1.2rem;
             }
-
-            .left-col .description {
-                font-size: 0.95rem;
+            .btn-modal-primario {
+                font-size: 0.85rem;
+                padding: 10px;
             }
-
-            .btn-email {
-                font-size: 0.9rem;
-                padding: 0.8rem 1.2rem;
+            .grupo-input input {
+                padding: 10px 14px;
+                font-size: 0.85rem;
             }
+        }
 
-            .right-col {
-                max-width: 100%;
-            }
-
-            .imagen-decorativa-wrapper {
-                width: clamp(100px, 40vw, 160px);
-                height: clamp(100px, 40vw, 160px);
-            }
-
-            .texto-lateral {
-                font-size: clamp(0.9rem, 5vw, 1.2rem);
-            }
-
-            .creditos-footer {
-                bottom: 12px;
-                right: 12px;
-                padding: 6px 12px;
-                font-size: 0.6rem;
+        @media (max-width: 360px) {
+            .image-large {
                 max-width: 160px;
+                border-width: 2px;
+            }
+            .sistema-digital-text {
+                font-size: 1.8rem;
+            }
+            .footer-left .btn-credenciales {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- ─── CONTENEDOR PRINCIPAL ─── -->
-    <div class="main-container">
-        <!-- Columna izquierda -->
-        <div class="left-col">
-            <!-- Contenedor del círculo y el texto lateral -->
-            <div class="circulo-con-texto">
-                <div class="imagen-decorativa-wrapper">
-                    <img id="imagenIzquierda" src="https://github.com/sistemadigital/iconos/blob/main/1.png?raw=true" alt="decoración" />
+
+    <main>
+        <div id="homeContent">
+            <!-- Header de bienvenida -->
+            <div id="dynamicContent">
+                <div class="welcome-container">
+                    <div class="welcome-bar" id="welcomeBar">
+                        <div class="left-group" id="leftGroup">
+                            <div>
+                                <div class="welcome-message" id="welcomeMessage">Hola, Defensoría Oficial</div>
+                            </div>
+                        </div>
+                        <span class="sistema-digital-text">Sistema Digital</span>
+                    </div>
                 </div>
-                <span id="textoLateral" class="texto-lateral"></span>
             </div>
 
-            <div class="greeting">Hola, ingresa tus credenciales para comenzar</div>
-            <div class="description">
-                Defensoría Civil y Comercial 6<br />
-                Ministerio Publico de Misiones<br />
-                <span class="bold">Acceso Empleados</span>
-            </div>
-            <button class="btn-email" id="btnAbrirLoginDirecto">Ingresar con correo electrónico</button>
-            <div class="register-link">
-                ¿No tienes cuenta? <a id="abrirRegistroDirecto">Regístrate aquí</a>
+            <!-- Imagen central -->
+            <div class="top-image-container">
+                <div class="image-wrapper">
+                    <div class="image-large">
+                        <img src="https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true" alt="Ministerio Público" />
+                    </div>
+                </div>
             </div>
         </div>
+    </main>
 
-        <!-- Columna derecha: rotador de imágenes + textos laterales -->
-        <div class="right-col">
-            <div class="image-rotator" id="imageRotator">
-                <img id="rotatingImage" src="https://github.com/sistemadigital/iconos/blob/main/logo/logo.png?raw=true" alt="Logo Defensoría" />
-            </div>
-
-            <!-- NUEVO: textos laterales (solo escritorio) -->
-            <div class="textos-laterales">
-                <span class="txt-xl">Expedientes</span>
-                <span class="txt-lg">Seguimiento</span>
-                <span class="txt-md">Audiencias</span>
-                <span class="txt-xl">Vencimientos</span>
-                <span class="txt-lg">Recursos</span>
-                <span class="txt-md">Escritos</span>
-                <span class="txt-xl">Modelos</span>
-                <span class="txt-lg">Diligencias</span>
-                <span class="txt-md">Oficios</span>
-                <span class="txt-xl">Dictámenes</span>
-                <span class="txt-lg">Bus Federal</span>
-            </div>
+    <!-- ===== FOOTER ===== -->
+    <footer id="mainFooter">
+        <div class="footer-left">
+            <button class="btn-credenciales" id="btnFooterCredenciales">Ingresa tus credenciales para comenzar</button>
         </div>
-    </div>
+        <div class="footer-center">
+            <span class="institucional">Defensoría Civil y Comercial 6 – Ministerio Público de Misiones</span>
+            <span class="mundial-text">⚽ Mundial 2026 – ¡Vamos Argentina! ⚽</span>
+        </div>
+        <div class="footer-right">
+            <span class="version-text" id="versionText">Versión 5.2.2026</span>
+        </div>
+    </footer>
 
-    <!-- ─── CRÉDITOS ─── -->
-    <div class="creditos-footer" id="creditosFooter">
-        <div class="nombre">Diseño y Programación: Rómulo Fioravante</div>
-        <div class="version">Versión 5.1.2026</div>
-    </div>
-
-    <!-- ─── MODAL LOGIN ─── -->
+    <!-- ===== MODALES ===== -->
+    <!-- MODAL LOGIN -->
     <div id="modalLogin" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalLoginBtn">&times;</button>
@@ -724,7 +680,7 @@
         </div>
     </div>
 
-    <!-- ─── MODAL REGISTRO ─── -->
+    <!-- MODAL REGISTRO -->
     <div id="modalRegistro" class="modal-overlay">
         <div class="modal-contenido">
             <button class="btn-cerrar-modal" id="cerrarModalRegistroBtn">&times;</button>
@@ -754,12 +710,23 @@
         </div>
     </div>
 
+    <!-- Mensaje global -->
     <div id="globalAuthMessage" class="auth-message-global"></div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    <!-- Popup de versión -->
+    <div id="versionInfoPopup" class="version-info-popup">
+        <div class="titulo">Diseño y Programación:</div>
+        <div class="nombre">Rómulo Fioravante</div>
+    </div>
 
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
+    </script>
+
+    <script>
+        // ─── CONFIGURACIÓN DE FIREBASE ───
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
@@ -769,94 +736,19 @@
             appId: "1:438237217533:web:6603123e43a12da00c7494"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const DEFAULT_DOMAIN = "@mpmisiones.gob.ar";
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
         // ─── ELEMENTOS DOM ───
-        const rotatingImg = document.getElementById('rotatingImage');
         const modalLogin = document.getElementById('modalLogin');
         const modalRegistro = document.getElementById('modalRegistro');
-        const creditosFooter = document.getElementById('creditosFooter');
+        const welcomeBar = document.getElementById('welcomeBar');
+        const btnFooter = document.getElementById('btnFooterCredenciales');
+        const welcomeMessage = document.getElementById('welcomeMessage');
 
-        // ─── LISTA DE IMÁGENES PARA EL ROTADOR DE LA DERECHA ───
-        const imageList = [
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo1.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo2.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo3.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo4.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo5.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo6.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/logo7.png?raw=true'
-        ];
-
-        let currentIndex = 0;
-        let rotatorInterval = null;
-
-        function startImageRotation() {
-            if (rotatorInterval) clearInterval(rotatorInterval);
-            rotatorInterval = setInterval(() => {
-                currentIndex = (currentIndex + 1) % imageList.length;
-                rotatingImg.src = imageList[currentIndex];
-            }, 2000);
-        }
-        startImageRotation();
-
-        // ─── ROTADOR PARA EL CÍRCULO IZQUIERDO CON TEXTO DINÁMICO ───
-        const imagenIzquierda = document.getElementById('imagenIzquierda');
-        const textoLateral = document.getElementById('textoLateral');
-        const imageListIzquierda = [
-            'https://github.com/sistemadigital/iconos/blob/main/1.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/pelota.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/logo/ar.png?raw=true'
-        ];
-        // Textos asociados a cada imagen (vacío para la primera)
-        const textos = ['', 'Mundial 2026', 'Vamos Argentina'];
-        let currentIndexIzquierda = 0;
-        let rotatorIntervalIzquierda = null;
-
-        function actualizarTextoLateral(index) {
-            const texto = textos[index];
-            if (texto) {
-                textoLateral.textContent = texto;
-                textoLateral.classList.add('visible');
-            } else {
-                textoLateral.textContent = '';
-                textoLateral.classList.remove('visible');
-            }
-        }
-
-        function startLeftRotation() {
-            if (rotatorIntervalIzquierda) clearInterval(rotatorIntervalIzquierda);
-            // Inicializar con el primer estado
-            actualizarTextoLateral(0);
-            rotatorIntervalIzquierda = setInterval(() => {
-                currentIndexIzquierda = (currentIndexIzquierda + 1) % imageListIzquierda.length;
-                imagenIzquierda.src = imageListIzquierda[currentIndexIzquierda];
-                actualizarTextoLateral(currentIndexIzquierda);
-            }, 2000);
-        }
-        startLeftRotation();
-
-        // ─── ESTADO ───
         let currentState = 'idle';
 
-        // ─── CRÉDITOS ───
-        function gestionarCreditos() {
-            setTimeout(() => {
-                creditosFooter.classList.add('mostrar');
-            }, 300);
-            setTimeout(() => {
-                creditosFooter.classList.remove('mostrar');
-                creditosFooter.classList.add('ocultar');
-                setTimeout(() => {
-                    creditosFooter.style.display = 'none';
-                }, 600);
-            }, 4300);
-        }
-
-        // ─── FUNCIONES DE NAVEGACIÓN ───
+        // ─── FUNCIONES DE UI ───
         function resetToInitial() {
             modalLogin.classList.remove('active');
             modalRegistro.classList.remove('active');
@@ -884,6 +776,195 @@
                 resetToInitial();
             }
         }
+
+        // ─── ACTUALIZAR UI SEGÚN USUARIO ───
+        function updateUI(user) {
+            if (user) {
+                // Este caso ya no se usa porque redirigimos a app.html,
+                // pero lo dejamos por si acaso.
+                const displayName = user.displayName || user.email || 'Usuario';
+                welcomeMessage.textContent = `Hola, ${displayName}`;
+                btnFooter.textContent = 'Cerrar sesión';
+                btnFooter.onclick = () => {
+                    auth.signOut().catch((error) => {
+                        showMessage('Error al cerrar sesión: ' + error.message, 'error');
+                    });
+                };
+            } else {
+                // Estado sin autenticar
+                welcomeMessage.textContent = 'Hola, Defensoría Oficial';
+                btnFooter.textContent = 'Ingresa tus credenciales para comenzar';
+                btnFooter.onclick = abrirLogin;
+            }
+        }
+
+        // ─── MENSAJES ───
+        function showMessage(msg, type) {
+            const div = document.getElementById('globalAuthMessage');
+            div.textContent = msg;
+            div.className = 'auth-message-global';
+            if (type === 'error') div.classList.add('error');
+            else if (type === 'success') div.classList.add('success');
+            div.style.display = 'block';
+            setTimeout(() => {
+                div.style.display = 'none';
+                div.classList.remove('error', 'success');
+            }, 5000);
+        }
+
+        // ─── LOGIN ───
+        window.loginUser = function() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!email || !password) {
+                showMessage('Completa todos los campos', 'error');
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    showMessage('✅ Inicio de sesión exitoso', 'success');
+                    resetToInitial();
+                    // Redirigir a app.html
+                    window.location.href = 'app.html';
+                })
+                .catch((error) => {
+                    let msg = 'Error al iniciar sesión: ';
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            msg += 'Usuario no encontrado.';
+                            break;
+                        case 'auth/wrong-password':
+                            msg += 'Contraseña incorrecta.';
+                            break;
+                        case 'auth/invalid-email':
+                            msg += 'Correo electrónico inválido.';
+                            break;
+                        case 'auth/too-many-requests':
+                            msg += 'Demasiados intentos. Intenta más tarde.';
+                            break;
+                        default:
+                            msg += error.message;
+                    }
+                    showMessage(msg, 'error');
+                });
+        };
+
+        // ─── REGISTRO ───
+        window.registerUser = function() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+
+            if (!name || !email || !password) {
+                showMessage('Completa todos los campos', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    return user.updateProfile({ displayName: name }).then(() => {
+                        showMessage('✅ Registro exitoso. ¡Bienvenido!', 'success');
+                        resetToInitial();
+                        // Redirigir a app.html
+                        window.location.href = 'app.html';
+                    });
+                })
+                .catch((error) => {
+                    let msg = 'Error al registrarse: ';
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            msg += 'El correo ya está registrado.';
+                            break;
+                        case 'auth/invalid-email':
+                            msg += 'Correo electrónico inválido.';
+                            break;
+                        case 'auth/weak-password':
+                            msg += 'La contraseña es demasiado débil.';
+                            break;
+                        default:
+                            msg += error.message;
+                    }
+                    showMessage(msg, 'error');
+                });
+        };
+
+        // ─── ASIGNACIÓN DE EVENTOS ───
+        document.getElementById('btnLoginAction').addEventListener('click', window.loginUser);
+        document.getElementById('btnRegisterAction').addEventListener('click', window.registerUser);
+
+        // Mostrar/ocultar contraseña
+        const mostrarLogin = document.getElementById('mostrarLoginPass');
+        const loginPass = document.getElementById('loginPassword');
+        mostrarLogin.addEventListener('change', () => {
+            loginPass.type = mostrarLogin.checked ? 'text' : 'password';
+        });
+        const mostrarReg = document.getElementById('mostrarRegPass');
+        const regPass = document.getElementById('registerPassword');
+        mostrarReg.addEventListener('change', () => {
+            regPass.type = mostrarReg.checked ? 'text' : 'password';
+        });
+
+        // Enter en login
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassInput = document.getElementById('loginPassword');
+        const handleLoginEnter = (e) => { if (e.key === 'Enter') window.loginUser(); };
+        loginEmail.addEventListener('keypress', handleLoginEnter);
+        loginPassInput.addEventListener('keypress', handleLoginEnter);
+
+        // Enter en registro
+        const regName = document.getElementById('registerName');
+        const regEmail = document.getElementById('registerEmail');
+        const regPassword = document.getElementById('registerPassword');
+        const handleRegEnter = (e) => { if (e.key === 'Enter') window.registerUser(); };
+        regName.addEventListener('keypress', handleRegEnter);
+        regEmail.addEventListener('keypress', handleRegEnter);
+        regPassword.addEventListener('keypress', handleRegEnter);
+
+        // ─── POPUP DE VERSIÓN ───
+        const versionText = document.getElementById('versionText');
+        const versionPopup = document.getElementById('versionInfoPopup');
+        let popupTimeout = null;
+
+        function cerrarPopup() {
+            versionPopup.classList.remove('show');
+            if (popupTimeout) {
+                clearTimeout(popupTimeout);
+                popupTimeout = null;
+            }
+        }
+
+        function togglePopup(e) {
+            e.stopPropagation();
+            if (versionPopup.classList.contains('show')) {
+                cerrarPopup();
+            } else {
+                versionPopup.classList.add('show');
+                if (popupTimeout) {
+                    clearTimeout(popupTimeout);
+                    popupTimeout = null;
+                }
+                popupTimeout = setTimeout(() => {
+                    cerrarPopup();
+                }, 5000);
+            }
+        }
+
+        versionText.addEventListener('click', togglePopup);
+
+        document.addEventListener('click', function(e) {
+            if (versionPopup.classList.contains('show')) {
+                if (!versionPopup.contains(e.target) && e.target !== versionText) {
+                    cerrarPopup();
+                }
+            }
+        });
 
         // ─── CONFIGURACIÓN DE MODALES ───
         function setupModalEvents() {
@@ -922,119 +1003,35 @@
                 }
             });
 
-            document.getElementById('btnAbrirLoginDirecto').addEventListener('click', () => {
-                if (currentState === 'idle') abrirLogin();
+            btnFooter.addEventListener('click', () => {
+                if (!auth.currentUser) abrirLogin();
             });
-
-            document.getElementById('abrirRegistroDirecto').addEventListener('click', (e) => {
-                e.preventDefault();
-                if (currentState === 'idle') abrirRegistro();
+            welcomeBar.addEventListener('click', () => {
+                if (!auth.currentUser) abrirLogin();
             });
         }
 
-        // ─── HELPERS DE AUTENTICACIÓN ───
-        function formatEmail(input) {
-            let email = input.trim();
-            if (email && !email.includes('@')) email += DEFAULT_DOMAIN;
-            return email;
-        }
-
-        function showMessage(msg, type) {
-            const div = document.getElementById('globalAuthMessage');
-            div.textContent = msg;
-            div.className = 'auth-message-global';
-            if (type === 'error') div.classList.add('error');
-            else if (type === 'success') div.classList.add('success');
-            div.style.display = 'block';
-            setTimeout(() => {
-                div.style.display = 'none';
-                div.classList.remove('error', 'success');
-            }, 4000);
-        }
-
-        window.loginUser = async function() {
-            const rawEmail = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const email = formatEmail(rawEmail);
-            if (!email || !password) {
-                showMessage('Completa todos los campos', 'error');
-                return;
-            }
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                showMessage('Acceso concedido. Iniciando sistema...', 'success');
-                setTimeout(() => window.location.href = 'app.html', 2000);
-            } catch (error) {
-                showMessage('Credenciales inválidas', 'error');
-            }
-        };
-
-        window.registerUser = async function() {
-            const name = document.getElementById('registerName').value.trim();
-            const rawEmail = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const email = formatEmail(rawEmail);
-            if (!name || !email || !password) {
-                showMessage('Completa todos los campos', 'error');
-                return;
-            }
-            if (password.length < 6) {
-                showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(cred.user, { displayName: name });
-                showMessage('Cuenta creada con éxito', 'success');
-                setTimeout(() => window.location.href = 'app.html', 2000);
-            } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    showMessage('El correo ya está registrado', 'error');
-                } else {
-                    showMessage('Error al crear la cuenta', 'error');
-                }
-            }
-        };
-
-        document.getElementById('btnLoginAction').addEventListener('click', () => loginUser());
-        document.getElementById('btnRegisterAction').addEventListener('click', () => registerUser());
-
-        const mostrarLogin = document.getElementById('mostrarLoginPass');
-        const loginPass = document.getElementById('loginPassword');
-        mostrarLogin.addEventListener('change', () => {
-            loginPass.type = mostrarLogin.checked ? 'text' : 'password';
-        });
-        const mostrarReg = document.getElementById('mostrarRegPass');
-        const regPass = document.getElementById('registerPassword');
-        mostrarReg.addEventListener('change', () => {
-            regPass.type = mostrarReg.checked ? 'text' : 'password';
-        });
-
-        const loginEmail = document.getElementById('loginEmail');
-        const loginPassInput = document.getElementById('loginPassword');
-        const handleLoginEnter = (e) => { if (e.key === 'Enter') loginUser(); };
-        loginEmail.addEventListener('keypress', handleLoginEnter);
-        loginPassInput.addEventListener('keypress', handleLoginEnter);
-
-        const regName = document.getElementById('registerName');
-        const regEmail = document.getElementById('registerEmail');
-        const regPassword = document.getElementById('registerPassword');
-        const handleRegEnter = (e) => { if (e.key === 'Enter') registerUser(); };
-        regName.addEventListener('keypress', handleRegEnter);
-        regEmail.addEventListener('keypress', handleRegEnter);
-        regPassword.addEventListener('keypress', handleRegEnter);
-
-        // ─── MONITOREO DE AUTENTICACIÓN ───
-        onAuthStateChanged(auth, (user) => {
-            if (user && (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '')) {
+        // ─── OBSERVADOR DE AUTENTICACIÓN ───
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Si el usuario está autenticado, redirigir a app.html
                 window.location.href = 'app.html';
+            } else {
+                // No autenticado: mostrar la UI de inicio
+                updateUI(null);
+                // Si algún modal quedó abierto, lo cerramos
+                if (currentState === 'modalOpen') {
+                    resetToInitial();
+                }
             }
         });
 
         // ─── INICIALIZACIÓN ───
         resetToInitial();
         setupModalEvents();
-        gestionarCreditos();
+        // Aseguramos que la UI esté en estado inicial (por si no se disparó el observer)
+        updateUI(null);
     </script>
+
 </body>
 </html>
