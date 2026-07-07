@@ -71,10 +71,10 @@
             padding: 0.75rem 1.5rem;
             border-radius: 50px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid #00bfff; /* ← BORDE AZUL MODIFICADO */
             width: 100%;
             justify-content: space-between;
-            cursor: pointer;
+            cursor: default;
             transition: background-color 0.2s;
         }
         .welcome-bar:hover {
@@ -93,6 +93,7 @@
             color: #003366;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
             white-space: nowrap;
+            cursor: pointer;
         }
 
         .sistema-digital-text {
@@ -102,6 +103,118 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
             white-space: nowrap;
             margin-left: auto;
+            cursor: pointer;
+        }
+
+        /* ===== MODALES INFORMATIVOS ===== */
+        .info-modal-defensor {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 30px;
+            background: #ffffff;
+            border: 2px solid #003366;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            min-width: 280px;
+            max-width: 400px;
+            width: auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            z-index: 5000;
+            display: none;
+            pointer-events: auto;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+
+        .info-modal-defensor.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-modal-tecnico {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 10px;
+            background: #ffffff;
+            border: 2px solid #003366;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            min-width: 220px;
+            max-width: 320px;
+            width: auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            z-index: 5000;
+            display: none;
+            pointer-events: auto;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+
+        .info-modal-tecnico.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-modal-defensor .info-title,
+        .info-modal-tecnico .info-title {
+            font-weight: 800;
+            color: #003366;
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-modal-defensor .info-name,
+        .info-modal-tecnico .info-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1a2a3a;
+            margin-bottom: 0.8rem;
+        }
+
+        .info-modal-defensor .info-subtitle,
+        .info-modal-tecnico .info-subtitle {
+            font-weight: 700;
+            color: #003366;
+            font-size: 1rem;
+            margin-top: 0.6rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-modal-defensor .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0.2rem 0;
+        }
+
+        .info-modal-defensor .info-list li {
+            font-size: 0.95rem;
+            color: #1a2a3a;
+            padding: 0.1rem 0;
+        }
+
+        .info-modal-defensor .info-contact,
+        .info-modal-tecnico .info-contact {
+            font-size: 0.95rem;
+            color: #1a2a3a;
+            padding: 0.1rem 0;
+            word-break: break-word;
+        }
+
+        .info-modal-defensor .info-contact strong,
+        .info-modal-tecnico .info-contact strong {
+            font-weight: 600;
+        }
+
+        .info-modal-defensor .info-address {
+            font-weight: 700;
+            color: #003366;
+            font-size: 0.95rem;
+            margin-top: 0.4rem;
+            padding: 0.1rem 0;
         }
 
         /* Contenedor de la imagen central */
@@ -217,15 +330,15 @@
 
         .footer-center .institucional {
             font-weight: 700;
-            font-size: 0.85rem;
-            color: #00bfff;
+            font-size: 0.95rem;
+            color: #ffffff;  /* cambiado a blanco */
             white-space: nowrap;
             letter-spacing: 0.3px;
         }
 
         .footer-center .mundial-text {
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             color: #ffdd57;
             text-shadow: 0 0 8px rgba(255, 220, 87, 0.3);
             white-space: nowrap;
@@ -288,7 +401,7 @@
             white-space: nowrap;
         }
 
-        /* ========== MODALES ========== */
+        /* ========== MODALES (login/registro) ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -546,6 +659,10 @@
                 margin-left: 0;
                 text-align: center;
                 width: 100%;
+                cursor: default;
+            }
+            .welcome-message {
+                cursor: default;
             }
             .image-large {
                 max-width: 280px;
@@ -612,6 +729,11 @@
                 font-size: 0.9rem;
                 padding: 12px;
             }
+
+            .info-modal-defensor,
+            .info-modal-tecnico {
+                display: none !important;
+            }
         }
 
         @media (max-width: 480px) {
@@ -666,7 +788,35 @@
                                 <div class="welcome-message" id="welcomeMessage">Hola, Defensoría Oficial</div>
                             </div>
                         </div>
-                        <span class="sistema-digital-text">Sistema Digital</span>
+                        <span class="sistema-digital-text" id="sistemaDigitalText">Sistema Digital</span>
+                    </div>
+
+                    <!-- MODAL INFORMATIVO DEFENSOR (Hola...) -->
+                    <div id="infoModalDefensor" class="info-modal-defensor">
+                        <div class="info-title">Defensor Oficial</div>
+                        <div class="info-name">Dr. Marcelo Gustavo Ramos</div>
+
+                        <div class="info-subtitle">Secretarios:</div>
+                        <ul class="info-list">
+                            <li>Dra. Alicia Mariela Corrales</li>
+                            <li>Dr. Enzo Luciano Magnani</li>
+                            <li>Dra. Patricia Soledad Riveros</li>
+                        </ul>
+
+                        <div class="info-subtitle">Contacto:</div>
+                        <div class="info-contact">Teléfono Oficial 376-4446700</div>
+                        <div class="info-contact">Email Oficial: defensoriacivil6.posadas@mpmisiones.gob.ar</div>
+
+                        <div class="info-address">Av Santa Catalina 1735 1°piso</div>
+                        <div class="info-address">Posadas-Misiones</div>
+                    </div>
+
+                    <!-- MODAL INFORMATIVO TÉCNICO (Sistema Digital) -->
+                    <div id="infoModalTecnico" class="info-modal-tecnico">
+                        <div class="info-contact" style="margin-bottom: 0.6rem;">Aplicación de base de datos.</div>
+                        <div class="info-contact" style="margin-bottom: 0.6rem;">Registro y seguimiento de causas judiciales, dictámenes, escritos, audiencias, diligencias, vencimientos. Biblioteca doctrinaria. Reporte estadístico.</div>
+                        <div class="info-title" style="font-size:1rem; margin-top:0.4rem;">Fecha de Inicio:</div>
+                        <div class="info-contact">Septiembre 2025</div>
                     </div>
                 </div>
             </div>
@@ -779,9 +929,12 @@
         // ─── ELEMENTOS DOM ───
         const modalLogin = document.getElementById('modalLogin');
         const modalRegistro = document.getElementById('modalRegistro');
-        const welcomeBar = document.getElementById('welcomeBar');
-        const btnFooter = document.getElementById('btnFooterCredenciales');
         const welcomeMessage = document.getElementById('welcomeMessage');
+        const sistemaDigitalText = document.getElementById('sistemaDigitalText');
+        const btnFooter = document.getElementById('btnFooterCredenciales');
+
+        const infoDefensor = document.getElementById('infoModalDefensor');
+        const infoTecnico = document.getElementById('infoModalTecnico');
 
         let currentState = 'idle';
 
@@ -948,7 +1101,6 @@
         document.getElementById('btnLoginAction').addEventListener('click', window.loginUser);
         document.getElementById('btnRegisterAction').addEventListener('click', window.registerUser);
 
-        // Mostrar/ocultar contraseña
         const mostrarLogin = document.getElementById('mostrarLoginPass');
         const loginPass = document.getElementById('loginPassword');
         mostrarLogin.addEventListener('change', () => {
@@ -960,7 +1112,6 @@
             regPass.type = mostrarReg.checked ? 'text' : 'password';
         });
 
-        // Enter en login y registro
         const loginEmail = document.getElementById('loginEmail');
         const loginPassInput = document.getElementById('loginPassword');
         const handleLoginEnter = (e) => { if (e.key === 'Enter') window.loginUser(); };
@@ -1014,7 +1165,7 @@
             }
         });
 
-        // ─── CONFIGURACIÓN DE MODALES ───
+        // ─── CONFIGURACIÓN DE MODALES (login/registro) ───
         function setupModalEvents() {
             const cerrarLogin = document.getElementById('cerrarModalLoginBtn');
             const cerrarRegistro = document.getElementById('cerrarModalRegistroBtn');
@@ -1055,20 +1206,55 @@
                     document.getElementById('loginEmail').focus();
                 }
             });
-
-            btnFooter.addEventListener('click', () => {
-                if (!auth.currentUser) abrirLogin();
-            });
-            welcomeBar.addEventListener('click', () => {
-                if (!auth.currentUser) abrirLogin();
-            });
         }
-        
+
+        // ─── MANEJO DE MODALES INFORMATIVOS ───
+        function toggleDefensor(e) {
+            e.stopPropagation();
+            if (window.innerWidth <= 768) return;
+            if (currentState === 'modalOpen') return;
+            if (infoTecnico.classList.contains('active')) {
+                infoTecnico.classList.remove('active');
+            }
+            infoDefensor.classList.toggle('active');
+        }
+
+        function toggleTecnico(e) {
+            e.stopPropagation();
+            if (window.innerWidth <= 768) return;
+            if (currentState === 'modalOpen') return;
+            if (infoDefensor.classList.contains('active')) {
+                infoDefensor.classList.remove('active');
+            }
+            infoTecnico.classList.toggle('active');
+        }
+
+        function cerrarTodosModalesInformativos() {
+            infoDefensor.classList.remove('active');
+            infoTecnico.classList.remove('active');
+        }
+
+        welcomeMessage.addEventListener('click', toggleDefensor);
+        sistemaDigitalText.addEventListener('click', toggleTecnico);
+
+        document.addEventListener('click', function(e) {
+            const target = e.target;
+            if (infoDefensor.classList.contains('active') || infoTecnico.classList.contains('active')) {
+                const clickedInsideModal = infoDefensor.contains(target) || infoTecnico.contains(target);
+                const clickedOnTrigger = target === welcomeMessage || target === sistemaDigitalText || welcomeMessage.contains(target) || sistemaDigitalText.contains(target);
+                if (!clickedInsideModal && !clickedOnTrigger) {
+                    cerrarTodosModalesInformativos();
+                }
+            }
+        });
+
+        infoDefensor.addEventListener('click', function(e) { e.stopPropagation(); });
+        infoTecnico.addEventListener('click', function(e) { e.stopPropagation(); });
+
         // ─── FECHA Y HORA EN EL FOOTER ───
         function actualizarFechaYHora() {
             const ahora = new Date();
             
-            // Formatear Fecha
             const opcionesFecha = { day: '2-digit', month: 'long', year: 'numeric' };
             let fechaString = ahora.toLocaleDateString('es-ES', opcionesFecha);
             const partesFecha = fechaString.split(' de ');
@@ -1077,7 +1263,6 @@
             }
             document.getElementById('currentDateText').textContent = partesFecha.join(' de ');
 
-            // Formatear Hora
             const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
             const horaString = ahora.toLocaleTimeString('es-ES', opcionesHora);
             document.getElementById('currentTimeText').textContent = horaString;
