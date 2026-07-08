@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ===== RESET Y BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -53,6 +54,7 @@
             flex-shrink: 0;
         }
 
+        /* ===== FOOTER ===== */
         footer {
             height: 70px;
             background-color: #001f3f;
@@ -407,6 +409,7 @@
             pointer-events: none;
         }
 
+        /* ===== MODAL DE SALIDA ===== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -494,6 +497,7 @@
             background-color: #64748b;
         }
 
+        /* ===== WELCOME ===== */
         .welcome-container {
             display: flex;
             flex-direction: column;
@@ -746,6 +750,7 @@
             display: block;
         }
 
+        /* ===== MÓDULO DE BOTONES SUPERIOR DERECHA ===== */
         .module-botones {
             position: absolute;
             top: 80px;
@@ -764,7 +769,8 @@
         }
 
         .module-botones a,
-        .pase-digital-btn {
+        .pase-digital-btn,
+        .btn-novedades {
             display: inline-block;
             padding: 0.4rem 1rem;
             background: white;
@@ -782,12 +788,20 @@
         }
 
         .module-botones a:hover,
-        .pase-digital-btn:hover {
+        .pase-digital-btn:hover,
+        .btn-novedades:hover {
             background: #f0faff;
             border-color: #00BFFF;
             color: #00BFFF;
             transform: translateY(-1px);
             box-shadow: 0 4px 10px rgba(0,191,255,0.2);
+        }
+
+        /* BORDE VERDE LUMINOSO CUANDO HAY DATOS */
+        .btn-novedades.hay-datos {
+            border-color: #22c55e;
+            box-shadow: 0 0 12px #22c55e, 0 0 20px rgba(34, 197, 94, 0.3);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .pase-digital-wrapper {
@@ -819,6 +833,117 @@
             display: block;
         }
 
+        /* ===== MODAL NOVEDADES (copiado de a.html) ===== */
+        .novedades-modal {
+            position: absolute;
+            top: 140px;
+            right: 20px;
+            z-index: 600;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(8px);
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            width: 340px;
+            max-height: 420px;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            display: none; /* oculto por defecto */
+        }
+
+        .novedades-modal.visible {
+            display: block;
+        }
+
+        .novedades-modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00BFFF;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .novedades-modal .modal-titulo {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #003366;
+            letter-spacing: 0.3px;
+        }
+
+        .novedades-modal .cerrar-modal-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .novedades-modal .cerrar-modal-btn:hover {
+            color: #ef4444;
+        }
+
+        .novedades-modal .seccion {
+            margin-bottom: 1rem;
+        }
+
+        .novedades-modal .seccion-titulo {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #1e293b;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .novedades-modal .seccion-titulo i {
+            color: #00BFFF;
+            font-size: 0.9rem;
+        }
+
+        .novedades-modal .item-lista {
+            font-size: 0.8rem;
+            color: #334155;
+            padding: 0.2rem 0 0.2rem 1.2rem;
+            border-bottom: 1px dashed #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .novedades-modal .item-lista .nombre {
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .novedades-modal .item-lista .fecha {
+            color: #64748b;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .novedades-modal .sin-datos {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-style: italic;
+            padding: 0.2rem 0 0.2rem 1.2rem;
+        }
+
+        .novedades-modal .badge-feria {
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 20px;
+            padding: 0.1rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        /* ===== BIRTHDAY MODAL ===== */
         .birthday-modal {
             display: none;
             position: fixed;
@@ -903,6 +1028,7 @@
             background-color: #002244;
         }
 
+        /* ===== REMINDER MODAL ===== */
         .reminder-modal {
             position: fixed;
             top: 20%;
@@ -1001,6 +1127,7 @@
             color: #e63946;
         }
 
+        /* ===== MODAL FESTIVIDAD ===== */
         .modal-festividad-overlay {
             position: fixed;
             top: 0;
@@ -1132,6 +1259,7 @@
             }
         }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .welcome-message {
                 font-size: 1.4rem;
@@ -1162,9 +1290,18 @@
                 border-radius: 10px;
             }
             .module-botones a,
-            .pase-digital-btn {
+            .pase-digital-btn,
+            .btn-novedades {
                 padding: 0.3rem 0.7rem;
                 font-size: 0.75rem;
+            }
+
+            .novedades-modal {
+                top: 120px;
+                right: 10px;
+                width: 280px;
+                max-height: 300px;
+                padding: 0.8rem;
             }
 
             footer {
@@ -1297,9 +1434,21 @@
                 gap: 0.3rem;
             }
             .module-botones a,
-            .pase-digital-btn {
+            .pase-digital-btn,
+            .btn-novedades {
                 padding: 0.2rem 0.5rem;
                 font-size: 0.65rem;
+            }
+            .novedades-modal {
+                top: 110px;
+                right: 6px;
+                width: 220px;
+                max-height: 250px;
+                padding: 0.6rem;
+                font-size: 0.75rem;
+            }
+            .novedades-modal .item-lista {
+                font-size: 0.7rem;
             }
         }
     </style>
@@ -1320,6 +1469,19 @@
                     </div>
                 </div>
                 <a href="https://defensorialocal-seis.github.io/protocolo/" target="_blank">Protocolo de Actuación</a>
+                <!-- BOTÓN NOVEDADES -->
+                <button class="btn-novedades" id="btnNovedades"><i class="fas fa-bullhorn"></i> Novedades</button>
+            </div>
+
+            <!-- MODAL DE NOVEDADES -->
+            <div class="novedades-modal" id="novedadesModal">
+                <div class="modal-header">
+                    <span class="modal-titulo"><i class="fas fa-bullhorn" style="margin-right:8px;"></i>Novedades</span>
+                    <button class="cerrar-modal-btn" id="cerrarNovedadesBtn">&times;</button>
+                </div>
+                <div id="novedadesContenido">
+                    <!-- Se llena dinámicamente con JS -->
+                </div>
             </div>
 
             <div id="dynamicContent">
@@ -1485,6 +1647,7 @@
             document.getElementById('calendarPopup')?.classList.remove('show');
             document.getElementById('sistemaInfoModal')?.classList.remove('show');
             document.getElementById('paseDigitalPopup')?.classList.remove('show');
+            document.getElementById('novedadesModal')?.classList.remove('visible');
             const dropdown = document.getElementById('userDropdown');
             if (dropdown) dropdown.classList.remove('show');
         }
@@ -1499,9 +1662,12 @@
             const isClickInsideFestModal = e.target.closest('.modal-festividad-overlay');
             const isClickInsidePase = document.getElementById('btnPaseDigital')?.contains(e.target) ||
                                       document.getElementById('paseDigitalPopup')?.contains(e.target);
+            const isClickInsideNovedadesBtn = document.getElementById('btnNovedades')?.contains(e.target);
+            const isClickInsideNovedadesModal = document.getElementById('novedadesModal')?.contains(e.target);
 
             if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideFooter && !isClickInsideDevInfo &&
-                !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal && !isClickInsidePase) {
+                !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal && !isClickInsidePase &&
+                !isClickInsideNovedadesBtn && !isClickInsideNovedadesModal) {
                 closeAllModals();
             }
         });
@@ -1775,7 +1941,7 @@
             if (isFinDeAnioRange()) setTimeout(() => mostrarModalFinDeAnio(), 350);
         });
 
-        // ===== BANNER DE EVENTOS: SIEMPRE ABRE EVENTOS AGENDADOS (como en app(1)) =====
+        // ===== BANNER DE EVENTOS: abre eventos agendados =====
         document.getElementById('eventBanner')?.addEventListener('click', (e) => {
             loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
         });
@@ -1810,6 +1976,7 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged, updateProfile, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         // ========== CONFIG PERFIL (empleados) ==========
         const firebaseConfigPerfil = {
@@ -1824,7 +1991,236 @@
         const auth = getAuth(app);
         const dbPerfil = getFirestore(app);
 
-        // ========== CONFIG BASES DE EVENTOS (histórica + nueva) ==========
+        // ========== CONFIGURACIONES PARA FERIA Y LICENCIAS ==========
+        const feriaConfig = {
+            apiKey: "AIzaSyCxct5wrF6yGrGyWCwcI5J6F_bbzTOcr4w",
+            authDomain: "feriajudicial6.firebaseapp.com",
+            projectId: "feriajudicial6",
+            storageBucket: "feriajudicial6.firebasestorage.app",
+            messagingSenderId: "426494712242",
+            appId: "1:426494712242:web:a04a98a5f7f088ac656cab"
+        };
+        const feriaApp = initializeApp(feriaConfig, "feria");
+        const dbFeria = getFirestore(feriaApp);
+
+        const licenciasConfig = {
+            apiKey: "AIzaSyDDIbbbuorx96B02O-gmZ60oAs7bb7fjfM",
+            authDomain: "defensoria6rpj.firebaseapp.com",
+            projectId: "defensoria6rpj",
+            storageBucket: "defensoria6rpj.appspot.com",
+            messagingSenderId: "388530292853",
+            appId: "1:388530292853:web:3161b40c0f7b1eb01fd03c",
+            databaseURL: "https://defensoria6rpj-default-rtdb.firebaseio.com/"
+        };
+        const licenciasApp = initializeApp(licenciasConfig, "licencias");
+        const dbLicencias = getDatabase(licenciasApp);
+
+        // ========== FUNCIÓN PARA FORMATEAR FECHAS ==========
+        function formatFecha(fechaStr) {
+            if (!fechaStr) return '';
+            const partes = fechaStr.split('-');
+            if (partes.length === 3) {
+                return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+            return fechaStr;
+        }
+
+        // ========== OBTENER EMPLEADOS DE FERIA (SEMANA SIGUIENTE) ==========
+        async function obtenerEmpleadosFeriaSemanaSiguiente() {
+            try {
+                const snapshot = await getDocs(collection(dbFeria, "ferias"));
+                if (snapshot.empty) return [];
+
+                const hoy = new Date();
+                hoy.setHours(0,0,0,0);
+                const dentroDe7Dias = new Date(hoy);
+                dentroDe7Dias.setDate(hoy.getDate() + 7);
+
+                const empleadosSemana = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.inicio) {
+                        const fechaInicio = new Date(data.inicio + 'T00:00:00');
+                        if (fechaInicio >= hoy && fechaInicio <= dentroDe7Dias) {
+                            empleadosSemana.push({
+                                id: doc.id,
+                                periodo: data.periodo || 'Sin período',
+                                defensor: data.defensor || 'Sin defensor',
+                                encargado: data.encargado || 'Sin encargado',
+                                personal: data.personal || '',
+                                inicio: data.inicio,
+                                fin: data.fin
+                            });
+                        }
+                    }
+                });
+
+                const grupos = {};
+                empleadosSemana.forEach(emp => {
+                    if (!grupos[emp.periodo]) {
+                        grupos[emp.periodo] = {
+                            periodo: emp.periodo,
+                            defensor: emp.defensor,
+                            encargado: emp.encargado,
+                            empleados: []
+                        };
+                    }
+                    grupos[emp.periodo].empleados.push({
+                        nombre: emp.personal,
+                        inicio: emp.inicio,
+                        fin: emp.fin
+                    });
+                });
+
+                const resultado = Object.values(grupos).map(grupo => ({
+                    periodo: grupo.periodo,
+                    defensor: grupo.defensor,
+                    encargado: grupo.encargado,
+                    empleados: grupo.empleados.map(emp => ({
+                        nombre: emp.nombre,
+                        inicio: formatFecha(emp.inicio),
+                        fin: formatFecha(emp.fin)
+                    }))
+                }));
+
+                return resultado;
+            } catch (error) {
+                console.error("Error obteniendo empleados de feria:", error);
+                return [];
+            }
+        }
+
+        // ========== OBTENER LICENCIAS (SEMANA SIGUIENTE) ==========
+        async function obtenerLicenciasSemanaProxima() {
+            try {
+                const snapshot = await get(ref(dbLicencias, "registros"));
+                const data = snapshot.val();
+                if (!data) return [];
+
+                const hoy = new Date();
+                hoy.setHours(0,0,0,0);
+                const dentroDe7Dias = new Date(hoy);
+                dentroDe7Dias.setDate(hoy.getDate() + 7);
+
+                const licencias = [];
+                for (const key in data) {
+                    const reg = data[key];
+                    if (!reg.inicio) continue;
+                    const fechaInicio = new Date(reg.inicio + 'T00:00:00');
+                    if (fechaInicio >= hoy && fechaInicio <= dentroDe7Dias) {
+                        licencias.push({
+                            nombre: reg.nombre || 'Sin nombre',
+                            articulo: reg.articulo || 'Sin artículo',
+                            inicio: reg.inicio,
+                            dias: reg.dias || 0
+                        });
+                    }
+                }
+                licencias.sort((a,b) => new Date(a.inicio) - new Date(b.inicio));
+                return licencias;
+            } catch (error) {
+                console.error("Error obteniendo licencias:", error);
+                return [];
+            }
+        }
+
+        // ========== ACTUALIZAR MODAL DE NOVEDADES Y BOTÓN ==========
+        async function actualizarNovedades() {
+            const contenedor = document.getElementById('novedadesContenido');
+            const btnNovedades = document.getElementById('btnNovedades');
+            if (!contenedor) return;
+
+            try {
+                const [gruposFeria, licencias] = await Promise.all([
+                    obtenerEmpleadosFeriaSemanaSiguiente(),
+                    obtenerLicenciasSemanaProxima()
+                ]);
+
+                // Determinar si hay datos para mostrar
+                const hayDatos = (gruposFeria.length > 0) || (licencias.length > 0);
+                if (btnNovedades) {
+                    if (hayDatos) {
+                        btnNovedades.classList.add('hay-datos');
+                    } else {
+                        btnNovedades.classList.remove('hay-datos');
+                    }
+                }
+
+                let html = '';
+
+                // SECCIÓN FERIA
+                html += `<div class="seccion">`;
+                html += `<div class="seccion-titulo"><i class="fas fa-gavel"></i> Feria Judicial - Semana Próxima</div>`;
+                if (gruposFeria.length > 0) {
+                    gruposFeria.forEach(grupo => {
+                        html += `<div class="item-lista"><span class="nombre"><strong>${grupo.periodo}</strong></span></div>`;
+                        html += `<div class="item-lista"><span class="nombre">⚖️ Defensor: ${grupo.defensor}</span></div>`;
+                        html += `<div class="item-lista"><span class="nombre">📋 Encargado: ${grupo.encargado}</span></div>`;
+                        html += `<div style="font-size:0.8rem; font-weight:600; color:#1e293b; padding:0.2rem 0 0.2rem 1.2rem; border-bottom:1px dashed #e2e8f0;">👥 Empleados en semana próxima:</div>`;
+                        grupo.empleados.forEach(emp => {
+                            html += `<div class="item-lista"><span class="nombre">${emp.nombre}</span><span class="fecha">${emp.inicio} - ${emp.fin}</span></div>`;
+                        });
+                    });
+                } else {
+                    html += `<div class="sin-datos">No hay empleados de feria en la semana próxima.</div>`;
+                }
+                html += `</div>`;
+
+                // SECCIÓN LICENCIAS
+                html += `<div class="seccion">`;
+                html += `<div class="seccion-titulo"><i class="fas fa-calendar-week"></i> Licencias en la semana próxima</div>`;
+                if (licencias.length > 0) {
+                    licencias.forEach(lic => {
+                        const fecha = lic.inicio ? formatFecha(lic.inicio) : '?';
+                        html += `<div class="item-lista"><span class="nombre">${lic.nombre}</span><span class="fecha">${fecha} (${lic.dias} d)</span></div>`;
+                    });
+                } else {
+                    html += `<div class="sin-datos">No hay licencias en los próximos 7 días.</div>`;
+                }
+                html += `</div>`;
+
+                contenedor.innerHTML = html;
+            } catch (error) {
+                console.error("Error actualizando novedades:", error);
+                contenedor.innerHTML = `<div class="sin-datos">Error al cargar novedades.</div>`;
+            }
+        }
+
+        // ========== MANEJO DEL BOTÓN Y MODAL DE NOVEDADES ==========
+        const btnNovedades = document.getElementById('btnNovedades');
+        const modalNovedades = document.getElementById('novedadesModal');
+        const cerrarNovedadesBtn = document.getElementById('cerrarNovedadesBtn');
+
+        function toggleNovedades() {
+            if (modalNovedades.classList.contains('visible')) {
+                modalNovedades.classList.remove('visible');
+            } else {
+                actualizarNovedades();
+                modalNovedades.classList.add('visible');
+            }
+        }
+
+        btnNovedades.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleNovedades();
+        });
+
+        cerrarNovedadesBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            modalNovedades.classList.remove('visible');
+        });
+
+        // Actualización periódica (30 min) si el modal está abierto
+        setInterval(() => {
+            if (modalNovedades.classList.contains('visible')) {
+                actualizarNovedades();
+            }
+        }, 30 * 60 * 1000);
+
+        // Cargar datos al inicio para mostrar borde verde si corresponde
+        actualizarNovedades();
+
+        // ========== BASES DE EVENTOS (histórica + nueva) ==========
         const causasConfigHistorica = {
             apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
             authDomain: "causas-defensoria.firebaseapp.com",
@@ -1848,16 +2244,13 @@
             const appNueva = initializeApp(causasConfigNueva, "nueva");
             dbHistorica = getFirestore(appHistorica);
             dbNueva = getFirestore(appNueva);
-            console.log("Bases de eventos inicializadas correctamente");
-            const authHistorica = getAuth(appHistorica);
-            signInAnonymously(authHistorica).catch(e => console.warn("Auth anónima histórica:", e));
-            const authNueva = getAuth(appNueva);
-            signInAnonymously(authNueva).catch(e => console.warn("Auth anónima nueva:", e));
+            console.log("Bases de eventos inicializadas");
+            signInAnonymously(getAuth(appHistorica)).catch(e => console.warn("Auth anónima histórica:", e));
+            signInAnonymously(getAuth(appNueva)).catch(e => console.warn("Auth anónima nueva:", e));
         } catch (e) {
             console.error("Error al inicializar bases de eventos:", e);
         }
 
-        // ========== FUNCIÓN toDate MEJORADA ==========
         function toDate(val) {
             if (!val) return null;
             if (val.toDate) return val.toDate();
@@ -1883,19 +2276,13 @@
             return null;
         }
 
-        // ========== DETECCIÓN DE EVENTOS HOY (ambas bases) ==========
         async function hayEventosHoy() {
             try {
-                if (!dbHistorica || !dbNueva) {
-                    console.warn("Bases de datos de eventos no inicializadas");
-                    return false;
-                }
-
+                if (!dbHistorica || !dbNueva) return false;
                 const [snapHistorica, snapNueva] = await Promise.all([
                     getDocs(collection(dbHistorica, "causas")),
                     getDocs(collection(dbNueva, "causas"))
                 ]);
-
                 const hoy = new Date();
                 const year = hoy.getFullYear();
                 const month = hoy.getMonth();
@@ -1931,7 +2318,6 @@
                 for (const docSnap of snapNueva.docs) {
                     if (procesarCausa(docSnap.data())) return true;
                 }
-
                 return false;
             } catch (error) {
                 console.error("Error en hayEventosHoy:", error);
@@ -1939,15 +2325,12 @@
             }
         }
 
-        // ========== ACTUALIZAR BANNER ==========
         async function actualizarBannerEventos() {
             const bannerDiv = document.getElementById('eventBanner');
             const bannerText = document.getElementById('bannerText');
             if (!bannerDiv || !bannerText) return;
-
             try {
                 const hay = await hayEventosHoy();
-                console.log("¿Hay eventos hoy?", hay);
                 if (hay) {
                     bannerText.textContent = "📅 Recuerda, hoy tenemos eventos agendados";
                     bannerDiv.classList.add('hay-eventos');
@@ -1961,7 +2344,6 @@
                 bannerDiv.classList.remove('hay-eventos');
             }
         }
-
         actualizarBannerEventos();
         setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
@@ -1975,7 +2357,7 @@
             } : null;
         }
 
-        // ========== RESTO DEL CÓDIGO DE PERFIL ==========
+        // ========== PERFIL DE USUARIO ==========
         const AVATAR_HOMBRE = 'https://github.com/sistemadigital/iconos/blob/main/hombre.png?raw=true';
         const AVATAR_MUJER = 'https://github.com/sistemadigital/iconos/blob/main/mujer.png?raw=true';
 
@@ -2033,7 +2415,6 @@
 
         function aplicarColorPersonalizado(color) {
             if (!color) return;
-
             const footer = document.getElementById('mainFooter');
             if (footer) {
                 footer.style.backgroundColor = color;
@@ -2088,7 +2469,6 @@
             if (welcomeMsg) welcomeMsg.style.color = color;
             if (sistemaDigital) sistemaDigital.style.color = color;
 
-            // Cambiar el fondo de <main> con un tono suave
             const mainEl = document.querySelector('main');
             if (mainEl) {
                 if (color === DEFAULT_FOOTER_COLOR) {
