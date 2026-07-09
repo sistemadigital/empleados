@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ========== ESTILOS PRINCIPALES (sin cambios) ========== */
+        /* ========== ESTILOS PRINCIPALES ========== */
         * {
             margin: 0;
             padding: 0;
@@ -724,11 +724,22 @@
             .footer-right {
                 display: none;
             }
+
+            /* POPUP DE VERSIÓN EN MÓVIL: posicionado debajo del welcome-bar, centrado */
             .version-info-container {
-                right: 12px;
-                bottom: 68px;      /* más cerca del footer en móvil */
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%) scale(0.95); /* se ajusta con JS para el top */
+                bottom: auto;
+                right: auto;
+                top: auto;   /* se establece con JS */
                 padding: 4px 6px 4px 8px;
                 gap: 5px;
+                border-radius: 10px;
+                /* El margen superior se define con JS para que esté pegado al welcome-bar */
+            }
+            .version-info-container.show {
+                transform: translateX(-50%) scale(1);
             }
             .version-image-right {
                 width: 50px;
@@ -739,16 +750,6 @@
             }
             .version-text-left .nombre {
                 font-size: 0.65rem;
-            }
-            .modal-contenido {
-                padding: 1.5rem;
-            }
-            .modal-contenido h3 {
-                font-size: 1.4rem;
-            }
-            .btn-modal-primario {
-                font-size: 0.9rem;
-                padding: 12px;
             }
 
             .info-modal-defensor,
@@ -781,8 +782,6 @@
                 font-size: 0.85rem;
             }
             .version-info-container {
-                right: 8px;
-                bottom: 64px;
                 padding: 3px 5px 3px 6px;
                 gap: 4px;
             }
@@ -811,8 +810,6 @@
                 padding: 0.3rem 0.8rem;
             }
             .version-info-container {
-                right: 6px;
-                bottom: 60px;
                 padding: 2px 4px 2px 6px;
                 gap: 3px;
             }
@@ -991,6 +988,7 @@
         const welcomeMessage = document.getElementById('welcomeMessage');
         const sistemaDigitalText = document.getElementById('sistemaDigitalText');
         const btnFooter = document.getElementById('btnFooterCredenciales');
+        const welcomeBar = document.getElementById('welcomeBar');
 
         const infoDefensor = document.getElementById('infoModalDefensor');
         const infoTecnico = document.getElementById('infoModalTecnico');
@@ -1198,10 +1196,17 @@
             }
         }
 
-        function togglePopup(e) {
-            e.stopPropagation();
+        // Función para mostrar el popup con timeout de 3 segundos
+        function mostrarPopupConTimeout() {
             if (versionContainer.classList.contains('show')) {
-                cerrarPopup();
+                // Si ya está visible, reiniciamos el timeout
+                if (popupTimeout) {
+                    clearTimeout(popupTimeout);
+                    popupTimeout = null;
+                }
+                popupTimeout = setTimeout(() => {
+                    cerrarPopup();
+                }, 3000);
             } else {
                 versionContainer.classList.add('show');
                 if (popupTimeout) {
@@ -1210,14 +1215,25 @@
                 }
                 popupTimeout = setTimeout(() => {
                     cerrarPopup();
-                }, 5000);
+                }, 3000);
+            }
+        }
+
+        // Toggle manual al hacer clic en el texto
+        function togglePopup(e) {
+            e.stopPropagation();
+            if (versionContainer.classList.contains('show')) {
+                cerrarPopup();
+            } else {
+                mostrarPopupConTimeout();
             }
         }
 
         versionText.addEventListener('click', togglePopup);
 
+        // Cerrar si se hace clic fuera (solo en escritorio, para el toggle)
         document.addEventListener('click', function(e) {
-            if (versionContainer.classList.contains('show')) {
+            if (window.innerWidth > 768 && versionContainer.classList.contains('show')) {
                 if (!versionContainer.contains(e.target) && e.target !== versionText) {
                     cerrarPopup();
                 }
@@ -1358,6 +1374,100 @@
             currentIndex = (currentIndex + 1) % imageUrls.length;
             imgElement.src = imageUrls[currentIndex];
         }, 2000);
+
+        // ─── POSICIONAMIENTO DEL POPUP EN MÓVIL (debajo del welcome-bar) ───
+        function posicionarPopupDebajoDeWelcome() {
+            if (window.innerWidth <= 768) {
+                const rect = welcomeBar.getBoundingClientRect();
+                const topPos = rect.bottom + 4;
+                versionContainer.style.top = topPos + 'px';
+                versionContainer.style.bottom = 'auto';
+                versionContainer.style.right = 'auto';
+            } else {
+                // Restaurar estilos para escritorio (usar CSS)
+                versionContainer.style.top = '';
+                versionContainer.style.bottom = '';
+                versionContainer.style.right = '';
+                versionContainer.style.left = '';
+            }
+        }
+
+        // ─── AUTO-SHOW DEL POPUP EN ESCRITORIO (3 segundos, encima del texto) ───
+        function autoShowVersionInDesktop() {
+            if (window.innerWidth > 768) {
+                // Asegurar que el popup esté en su posición por CSS (no tocamos top/bottom)
+                // y mostrarlo con timeout de 3 segundos
+                setTimeout(() => {
+                    if (!versionContainer.classList.contains('show')) {
+                        mostrarPopupConTimeout();
+                    }
+                }, 600);
+            }
+        }
+
+        // ─── AUTO-SHOW DEL POPUP EN MÓVIL (3 segundos, debajo del welcome-bar) ───
+        function autoShowVersionInMobile() {
+            if (window.innerWidth <= 768) {
+                posicionarPopupDebajoDeWelcome();
+                setTimeout(() => {
+                    if (!versionContainer.classList.contains('show')) {
+                        mostrarPopupConTimeout();
+                    }
+                }, 600);
+            }
+        }
+
+        // Ejecutar al cargar
+        window.addEventListener('load', function() {
+            if (window.innerWidth > 768) {
+                autoShowVersionInDesktop();
+            } else {
+                autoShowVersionInMobile();
+            }
+        });
+
+        // Al redimensionar
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                posicionarPopupDebajoDeWelcome();
+                // Si el popup está visible y estamos en móvil, mantenerlo
+                // Si no está visible, no hacer nada
+            } else {
+                // Si estamos en escritorio y el popup está visible, lo dejamos (puede ser por toggle)
+                // pero si se redimensiona a escritorio y estaba visible por auto-show en móvil, lo cerramos?
+                // Si el popup está visible y estamos en escritorio, lo dejamos.
+                // Pero si estaba en móvil con posición modificada, restauramos estilos.
+                versionContainer.style.top = '';
+                versionContainer.style.bottom = '';
+                versionContainer.style.right = '';
+                versionContainer.style.left = '';
+                // Si el popup se mostró en móvil y ahora estamos en escritorio, lo dejamos visible,
+                // pero reiniciamos el timeout para que se cierre en 3s.
+                if (versionContainer.classList.contains('show')) {
+                    // Reiniciar timeout
+                    if (popupTimeout) {
+                        clearTimeout(popupTimeout);
+                        popupTimeout = null;
+                    }
+                    popupTimeout = setTimeout(() => {
+                        cerrarPopup();
+                    }, 3000);
+                }
+            }
+        });
+
+        // También si el usuario hace clic en el texto en móvil, debe funcionar igual (toggle)
+        // Ya está manejado por togglePopup, que usa mostrarPopupConTimeout.
+        // Pero en móvil, el popup se posiciona con JS, así que al hacer clic en el texto,
+        // se mostrará pero con la posición correcta. Asegurarnos de que al hacer clic en el texto
+        // en móvil se posicione correctamente.
+        // Podemos agregar un listener al texto para reposicionar si es móvil.
+        versionText.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                posicionarPopupDebajoDeWelcome();
+            }
+        });
+
     </script>
 
 </body>
