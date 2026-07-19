@@ -236,7 +236,7 @@
             max-width: 80%;
             max-height: 80%;
             justify-content: center;
-            position: relative; /* Para posicionar la rueda alrededor */
+            position: relative;
         }
 
         .image-large {
@@ -251,8 +251,8 @@
             background: #ffffff;
             flex-shrink: 0;
             animation: glowPulse 3s ease-in-out infinite;
-            position: relative; /* Superpuesta */
-            z-index: 20; /* Encima de la rueda */
+            position: relative;
+            z-index: 20;
         }
 
         .image-large img {
@@ -262,20 +262,20 @@
             display: block;
         }
 
-        /* ===== NUEVA RUEDA DE CELDAS ALREDEDOR CON EFECTO HOVER ===== */
+        /* ===== RUEDA DE CELDAS ALREDEDOR ===== */
         .cell-wheel-surround {
             position: absolute;
-            width: 140%; /* Un 40% más grande que image-large */
+            width: 140%;
             height: 140%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             overflow: hidden;
-            z-index: 5; /* Detrás de la imagen central */
-            pointer-events: auto; /* Permite hover */
-            background: white; /* Para las líneas divisorias */
-            border: 4px solid white; /* Línea blanca exterior de la rueda */
+            z-index: 5;
+            pointer-events: auto;
+            background: white;
+            border: 4px solid white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -296,12 +296,11 @@
             transform-origin: bottom right;
             overflow: hidden;
             box-sizing: border-box;
-            border: 2px solid white; /* Líneas divisorias blancas entre segmentos */
+            border: 2px solid white;
             cursor: pointer;
             transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
 
-        /* Rotaciones (0, 45, 90, 135, 180, 225, 270, 315) */
         .sur-seg-1 { transform: rotate(0deg) skewY(-45deg); }
         .sur-seg-2 { transform: rotate(45deg) skewY(-45deg); }
         .sur-seg-3 { transform: rotate(90deg) skewY(-45deg); }
@@ -311,7 +310,6 @@
         .sur-seg-7 { transform: rotate(270deg) skewY(-45deg); }
         .sur-seg-8 { transform: rotate(315deg) skewY(-45deg); }
 
-        /* Color Degradado (pseudoelemento) */
         .segment-surround::after {
             content: '';
             position: absolute;
@@ -322,10 +320,9 @@
             transform: skewY(45deg);
             transform-origin: top left;
             z-index: 1;
-            transition: filter 0.3s ease; /* Transición para el destello */
+            transition: filter 0.3s ease;
         }
 
-        /* Colores de degradado (sup-izq clockwise) */
         .sur-seg-1::after { background: linear-gradient(135deg, #1ABC9C, #00b894); }
         .sur-seg-2::after { background: linear-gradient(135deg, #1ABC9C, #2ECC71); }
         .sur-seg-3::after { background: linear-gradient(135deg, #2ECC71, #2980b9); }
@@ -335,14 +332,12 @@
         .sur-seg-7::after { background: linear-gradient(135deg, #3498db, #2980b9); }
         .sur-seg-8::after { background: linear-gradient(135deg, #009688, #1ABC9C); }
 
-        /* ====== EFECTO HOVER PARA DESTELLO ====== */
         .segment-surround:hover {
             z-index: 10;
-            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.7); /* Destello de luz interna */
+            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.7);
         }
-
         .segment-surround:hover::after {
-            filter: brightness(1.6) saturate(1.4); /* Resalta e ilumina los propios colores */
+            filter: brightness(1.6) saturate(1.4);
         }
 
         @keyframes glowPulse {
@@ -360,7 +355,7 @@
             }
         }
 
-        /* ========== SPINNER DE CARGA CON CONTADOR ========== */
+        /* ========== SPINNER DE CARGA ========== */
         #spinnerCarga {
             display: none;
             position: fixed;
@@ -414,18 +409,17 @@
         /* ========== FOOTER ========== */
         footer {
             height: 70px;
-            background-color: #001f3f;
+            background-color: #003366; /* AZUL FIRME */
             color: white;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             padding: 0 20px;
             box-shadow: 0 -4px 12px rgba(0, 31, 63, 0.2);
-            border-top: 3px solid #00bfff;
+            border-top: 3px solid #0077b6; /* BORDE AZUL */
             z-index: 3000;
             flex-shrink: 0;
-            gap: 15px;
-            flex-wrap: wrap;
+            position: relative;
         }
 
         .footer-left {
@@ -433,11 +427,16 @@
             align-items: center;
             height: 100%;
             flex-shrink: 0;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            gap: 10px;
         }
 
         .footer-left .btn-credenciales {
             background: #00bfff;
-            border: 2px solid #ffffff; /* Borde blanco luminoso */
+            border: 2px solid #ffffff;
             border-radius: 40px;
             padding: 0.5rem 1.5rem;
             font-weight: 700;
@@ -445,7 +444,7 @@
             color: #001f3f;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7); /* Sombra blanca brillante */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
             white-space: nowrap;
         }
 
@@ -458,11 +457,11 @@
         .footer-center {
             display: flex;
             align-items: center;
-            flex: 1;
             justify-content: center;
-            min-width: 150px;
+            width: 100%;
             gap: 20px;
             flex-wrap: wrap;
+            text-align: center;
         }
 
         .footer-center .institucional {
@@ -476,8 +475,8 @@
         .footer-center .mundial-text {
             font-weight: 700;
             font-size: 0.95rem;
-            color: #66d9ff; /* Celeste */
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.7); /* Brillo blanco */
+            color: #66d9ff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
             white-space: nowrap;
         }
 
@@ -487,6 +486,10 @@
             gap: 10px;
             height: 100%;
             flex-shrink: 0;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .version-text {
@@ -498,19 +501,17 @@
             letter-spacing: 0.3px;
             user-select: none;
             white-space: nowrap;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.8); /* Brillo blanco */
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
         }
 
         .version-text:hover {
             color: #00bfff;
         }
 
-        /* Estilos para fecha y el botón de hora */
         .fecha-actual {
             color: #ffffff;
             font-weight: bold;
             font-size: 0.95rem;
-            margin-left: 15px;
             white-space: nowrap;
         }
 
@@ -520,7 +521,6 @@
             border-radius: 30px;
             padding: 0.3rem 0.9rem;
             cursor: pointer;
-            margin-left: 15px;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
@@ -732,7 +732,7 @@
             background: #2a9d8f;
         }
 
-        /* ===== POPUP DE VERSIÓN (contenedor con texto e imagen) ===== */
+        /* ===== POPUP DE VERSIÓN ===== */
         .version-info-container {
             position: fixed;
             bottom: 76px;
@@ -823,9 +823,8 @@
                 max-width: 280px;
                 border-width: 3px;
             }
-            /* Rueda en móvil */
             .cell-wheel-surround {
-                width: 130%; /* Ajustar tamaño para que se vea bien en pantallas pequeñas */
+                width: 130%;
                 height: 130%;
                 border-width: 2px;
             }
@@ -839,23 +838,27 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 0;
+                gap: 4px;
+                position: relative;
             }
             .footer-left {
+                position: static;
+                transform: none;
+                left: auto;
+                top: auto;
                 width: 100%;
                 justify-content: center;
                 height: auto;
-                padding: 4px 0;
                 flex-direction: column;
+                gap: 6px;
+                padding: 4px 0;
             }
             .fecha-actual {
                 margin-left: 0;
-                margin-top: 10px;
                 font-size: 0.85rem;
             }
             .btn-hora {
                 margin-left: 0;
-                margin-top: 8px;
             }
             .footer-left .btn-credenciales {
                 font-size: 0.85rem;
@@ -864,17 +867,37 @@
                 max-width: 320px;
                 text-align: center;
                 white-space: normal;
-                border-width: 2px; /* Mantener borde blanco */
+                border-width: 2px;
                 box-shadow: 0 0 15px rgba(255,255,255,0.6);
             }
             .footer-center {
-                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 2px;
+                padding: 4px 0;
+            }
+            .footer-center .institucional {
+                white-space: normal;
+                font-size: 0.85rem;
+            }
+            .footer-center .mundial-text {
+                font-size: 0.85rem;
+                text-shadow: 0 0 12px rgba(255,255,255,0.6);
             }
             .footer-right {
-                display: none;
+                position: static;
+                transform: none;
+                right: auto;
+                top: auto;
+                width: 100%;
+                justify-content: center;
+                height: auto;
+                padding: 4px 0;
+            }
+            .version-text {
+                font-size: 0.85rem;
             }
 
-            /* POPUP DE VERSIÓN EN MÓVIL: posicionado debajo del welcome-bar, centrado */
             .version-info-container {
                 position: fixed;
                 left: 50%;
@@ -903,12 +926,6 @@
             .info-modal-defensor,
             .info-modal-tecnico {
                 display: none !important;
-            }
-
-            /* Ajustes para el texto mundial en móvil (si se muestra) */
-            .footer-center .mundial-text {
-                font-size: 0.85rem;
-                text-shadow: 0 0 12px rgba(255,255,255,0.6);
             }
         }
 
@@ -1008,18 +1025,15 @@
                     <div id="infoModalDefensor" class="info-modal-defensor">
                         <div class="info-title">Defensor Oficial</div>
                         <div class="info-name">Dr. Marcelo Gustavo Ramos</div>
-
                         <div class="info-subtitle">Secretarios:</div>
                         <ul class="info-list">
                             <li>Dra. Alicia Mariela Corrales</li>
                             <li>Dr. Enzo Luciano Magnani</li>
                             <li>Dra. Patricia Soledad Riveros</li>
                         </ul>
-
                         <div class="info-subtitle">Contacto:</div>
                         <div class="info-contact">Teléfono Oficial 376-4446700</div>
                         <div class="info-contact">Email Oficial: defensoriacivil6.posadas@mpmisiones.gob.ar</div>
-
                         <div class="info-address">Av Santa Catalina 1735 1°piso</div>
                         <div class="info-address">Posadas-Misiones</div>
                     </div>
@@ -1047,7 +1061,6 @@
                             <div class="segment-surround sur-seg-8"></div>
                         </div>
                     </div>
-
                     <div class="image-large">
                         <img src="https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true" alt="Ministerio Público" />
                     </div>
@@ -1071,7 +1084,7 @@
         </div>
         <div class="footer-center">
             <span class="institucional">Defensoría Civil y Comercial 6 – Ministerio Público de Misiones</span>
-            <span class="mundial-text">⚽ Mundial 2026 – ¡Vamos Argentina! ⚽</span>
+            <span class="mundial-text"></span>
         </div>
         <div class="footer-right">
             <span class="version-text" id="versionText">Versión 5.2.2026</span>
@@ -1174,13 +1187,11 @@
         const infoDefensor = document.getElementById('infoModalDefensor');
         const infoTecnico = document.getElementById('infoModalTecnico');
 
-        // SPINNER CON CONTADOR
         const spinnerCarga = document.getElementById('spinnerCarga');
         const spinnerText = document.getElementById('spinnerText');
 
         let currentState = 'idle';
 
-        // ─── FUNCIÓN PARA NORMALIZAR EL CORREO (ACEPTA CUALQUIER DOMINIO) ───
         function normalizeEmail(input) {
             input = input.trim();
             if (!input) return null;
@@ -1191,7 +1202,6 @@
             }
         }
 
-        // ─── FUNCIONES DE UI ───
         function resetToInitial() {
             modalLogin.classList.remove('active');
             modalRegistro.classList.remove('active');
@@ -1214,7 +1224,6 @@
             }
         }
 
-        // ─── ACTUALIZAR UI SEGÚN USUARIO ───
         function updateUI(user) {
             if (user) {
                 const displayName = user.displayName || user.email || 'Usuario';
@@ -1232,7 +1241,6 @@
             }
         }
 
-        // ─── MENSAJES ───
         function showMessage(msg, type) {
             const div = document.getElementById('globalAuthMessage');
             div.textContent = msg;
@@ -1246,7 +1254,6 @@
             }, 5000);
         }
 
-        // ─── MOSTRAR SPINNER CON CONTADOR (más lento: 35ms por paso) ───
         function mostrarSpinnerConContador() {
             spinnerCarga.style.display = 'flex';
             let progreso = 0;
@@ -1259,11 +1266,10 @@
                     return;
                 }
                 spinnerText.textContent = progreso + '%';
-            }, 35); // 35ms por paso → ~3.5 segundos para llegar a 100
+            }, 35);
             window._intervaloCarga = intervalo;
         }
 
-        // ─── LOGIN ───
         window.loginUser = function() {
             const rawEmail = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
@@ -1313,7 +1319,6 @@
                 });
         };
 
-        // ─── REGISTRO ───
         window.registerUser = function() {
             const name = document.getElementById('registerName').value.trim();
             const rawEmail = document.getElementById('registerEmail').value.trim();
@@ -1368,7 +1373,7 @@
                 });
         };
 
-        // ─── ASIGNACIÓN DE EVENTOS ───
+        // ─── EVENTOS ───
         document.getElementById('btnLoginAction').addEventListener('click', window.loginUser);
         document.getElementById('btnRegisterAction').addEventListener('click', window.registerUser);
 
@@ -1397,7 +1402,7 @@
         regEmail.addEventListener('keypress', handleRegEnter);
         regPassword.addEventListener('keypress', handleRegEnter);
 
-        // ─── POPUP DE VERSIÓN (contenedor) ───
+        // ─── POPUP VERSIÓN ───
         const versionText = document.getElementById('versionText');
         const versionContainer = document.getElementById('versionInfoContainer');
         let popupTimeout = null;
@@ -1450,7 +1455,7 @@
             }
         });
 
-        // ─── CONFIGURACIÓN DE MODALES (login/registro) ───
+        // ─── MODALES LOGIN/REGISTRO ───
         function setupModalEvents() {
             const cerrarLogin = document.getElementById('cerrarModalLoginBtn');
             const cerrarRegistro = document.getElementById('cerrarModalRegistroBtn');
@@ -1493,7 +1498,7 @@
             });
         }
 
-        // ─── MANEJO DE MODALES INFORMATIVOS ───
+        // ─── MODALES INFORMATIVOS ───
         function toggleDefensor(e) {
             e.stopPropagation();
             if (window.innerWidth <= 768) return;
@@ -1536,7 +1541,7 @@
         infoDefensor.addEventListener('click', function(e) { e.stopPropagation(); });
         infoTecnico.addEventListener('click', function(e) { e.stopPropagation(); });
 
-        // ─── FECHA Y HORA EN EL FOOTER ───
+        // ─── FECHA Y HORA ───
         function actualizarFechaYHora() {
             const ahora = new Date();
             
@@ -1573,11 +1578,10 @@
         setupModalEvents();
         updateUI(null);
 
-        // ─── INTERCAMBIO DE IMAGEN CENTRAL CADA 2 SEGUNDOS ───
+        // ─── INTERCAMBIO DE IMAGEN ───
         const imgElement = document.querySelector('.image-large img');
         const imageUrls = [
-            'https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true',
-            'https://github.com/sistemadigital/iconos/blob/main/arr.png?raw=true'
+            'https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true'
         ];
         let currentIndex = 0;
         setInterval(() => {
@@ -1585,7 +1589,7 @@
             imgElement.src = imageUrls[currentIndex];
         }, 2000);
 
-        // ─── POSICIONAMIENTO DEL POPUP EN MÓVIL (debajo del welcome-bar) ───
+        // ─── POSICIONAMIENTO DEL POPUP EN MÓVIL ───
         function posicionarPopupDebajoDeWelcome() {
             if (window.innerWidth <= 768) {
                 const rect = welcomeBar.getBoundingClientRect();
@@ -1655,8 +1659,6 @@
                 posicionarPopupDebajoDeWelcome();
             }
         });
-
     </script>
-
 </body>
 </html>
