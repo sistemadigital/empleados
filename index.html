@@ -20,7 +20,12 @@
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
+            /* Fondo más suave y texturado */
             background-color: #d4eafc;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23007bff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             overflow: hidden;
         }
 
@@ -49,7 +54,6 @@
             flex-shrink: 0;
         }
 
-        /* Bienvenida */
         .welcome-container {
             display: flex;
             flex-direction: column;
@@ -107,7 +111,6 @@
             cursor: pointer;
         }
 
-        /* ===== MODALES INFORMATIVOS ===== */
         .info-modal-defensor {
             position: absolute;
             top: calc(100% + 12px);
@@ -218,7 +221,6 @@
             padding: 0.1rem 0;
         }
 
-        /* Contenedor de la imagen central */
         .top-image-container {
             flex: 1;
             display: flex;
@@ -277,7 +279,6 @@
             }
         }
 
-        /* ========== SPINNER DE CARGA ========== */
         #spinnerCarga {
             display: none;
             position: fixed;
@@ -328,7 +329,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ========== FOOTER ========== */
         footer {
             height: 70px;
             background: transparent;
@@ -368,7 +368,7 @@
         }
 
         .btn-hora {
-            background: #00bfff;
+            background: #1976D2;
             border: 2px solid #ffffff;
             border-radius: 40px;
             padding: 0.2rem 0.7rem;
@@ -386,10 +386,10 @@
 
         .btn-hora:hover,
         .btn-hora:active {
-            background: #ffffff;
-            color: #003366;
+            background: #1565C0;
+            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 191, 255, 0.4);
+            box-shadow: 0 0 30px rgba(25, 118, 210, 0.4);
         }
 
         .hora-actual {
@@ -407,7 +407,7 @@
         }
 
         .footer-center .btn-credenciales {
-            background: #00bfff;
+            background: #1976D2;
             border: 2px solid #ffffff;
             border-radius: 40px;
             padding: 0.4rem 1.6rem;
@@ -422,10 +422,10 @@
 
         .footer-center .btn-credenciales:hover,
         .footer-center .btn-credenciales:active {
-            background: #ffffff;
-            color: #003366;
+            background: #1565C0;
+            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 191, 255, 0.4);
+            box-shadow: 0 0 30px rgba(25, 118, 210, 0.4);
         }
 
         .footer-right {
@@ -450,7 +450,6 @@
             color: #00bfff;
         }
 
-        /* ========== MODALES (login/registro) ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -614,7 +613,6 @@
             text-decoration: underline;
         }
 
-        /* Mensaje global de autenticación */
         .auth-message-global {
             position: fixed;
             bottom: 130px;
@@ -643,7 +641,6 @@
             background: #2a9d8f;
         }
 
-        /* ===== POPUP DE VERSIÓN ===== */
         .version-info-container {
             position: fixed;
             bottom: 76px;
@@ -731,11 +728,13 @@
                 cursor: default;
             }
             .image-large {
-                max-width: 280px;
-                border-width: 3px;
+                max-width: 380px;
+                border-width: 4px;
+            }
+            .image-wrapper {
+                max-width: 90%;
             }
 
-            /* Footer móvil: fecha y hora arriba, botón abajo */
             footer {
                 height: auto;
                 min-height: 60px;
@@ -749,7 +748,7 @@
                 width: 100%;
             }
             .footer-left {
-                display: flex !important; /* visible */
+                display: flex !important;
                 flex-direction: row;
                 justify-content: center;
                 align-items: center;
@@ -761,7 +760,7 @@
                 padding: 0;
             }
             .footer-left .fecha-actual {
-                color: #003366 !important; /* azul */
+                color: #003366 !important;
                 font-weight: 600;
                 font-size: 0.85rem;
                 background: transparent;
@@ -771,23 +770,26 @@
                 background: transparent !important;
                 border: none !important;
                 box-shadow: none !important;
-                padding: 0;
-                color: #003366 !important;
-                font-weight: 600;
+                padding: 0 !important;
+                color: #1976D2 !important;
+                font-weight: 700;
                 font-size: 0.85rem;
                 transform: none !important;
                 border-radius: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
             }
             .footer-left .btn-hora:hover,
             .footer-left .btn-hora:active {
                 background: transparent !important;
-                color: #003366 !important;
+                color: #1565C0 !important;
                 transform: none !important;
                 box-shadow: none !important;
             }
             .footer-left .hora-actual {
-                color: #003366 !important;
-                font-weight: 600;
+                color: #1976D2 !important;
+                font-weight: 700;
                 font-size: 0.85rem;
             }
 
@@ -804,11 +806,21 @@
                 padding: 0.6rem 1.5rem;
                 white-space: normal;
                 border-width: 2px;
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                background: #1976D2 !important;
+                border-color: #ffffff !important;
+                color: #ffffff !important;
+                box-shadow: 0 0 20px rgba(25, 118, 210, 0.3) !important;
+            }
+            .footer-center .btn-credenciales:hover,
+            .footer-center .btn-credenciales:active {
+                background: #1565C0 !important;
+                color: #ffffff !important;
+                transform: scale(0.98) !important;
+                box-shadow: 0 0 30px rgba(25, 118, 210, 0.5) !important;
             }
 
             .footer-right {
-                display: none; /* ocultar versión */
+                display: none;
             }
 
             .version-info-container {
@@ -845,10 +857,34 @@
             }
         }
 
+        /* ===== ESCRITORIO: POPUP MÁS PEQUEÑO ===== */
+        @media (min-width: 769px) {
+            .version-info-container {
+                padding: 3px 5px 3px 8px;
+                gap: 4px;
+                border-radius: 8px;
+            }
+            .version-image-right {
+                width: 40px;
+                height: 40px;
+                border-radius: 6px;
+            }
+            .version-text-left {
+                font-size: 0.5rem;
+                line-height: 1.2;
+            }
+            .version-text-left .nombre {
+                font-size: 0.6rem;
+            }
+        }
+
         @media (max-width: 480px) {
             .image-large {
-                max-width: 200px;
+                max-width: 300px;
                 border-width: 3px;
+            }
+            .image-wrapper {
+                max-width: 95%;
             }
             .footer-center .btn-credenciales {
                 font-size: 0.85rem;
@@ -886,8 +922,11 @@
 
         @media (max-width: 360px) {
             .image-large {
-                max-width: 160px;
-                border-width: 2px;
+                max-width: 250px;
+                border-width: 3px;
+            }
+            .image-wrapper {
+                max-width: 98%;
             }
             .sistema-digital-text {
                 font-size: 1.8rem;
