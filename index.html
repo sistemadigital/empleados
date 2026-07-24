@@ -329,6 +329,24 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ===== FRANJA AZUL VIBRANTE CON EFECTO LUMINOSO CELESTE ===== */
+        .franja-azul {
+            width: 100%;
+            height: 8px;
+            flex-shrink: 0;
+            z-index: 10;
+            margin-top: auto;
+            background: linear-gradient(90deg, #0055aa, #00bfff, #0055aa);
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.7), 0 0 30px rgba(0, 191, 255, 0.3);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
         footer {
             height: 70px;
             background: transparent;
@@ -1000,6 +1018,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- FRANJA AZUL CON EFECTO LUMINOSO CELESTE -->
+        <div class="franja-azul"></div>
     </main>
 
     <div id="spinnerCarga">
