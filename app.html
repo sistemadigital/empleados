@@ -1954,17 +1954,14 @@
             const popupPase = document.getElementById('paseDigitalPopup');
 
             if (btnPase && popupPase) {
+                // AHORA: al hacer clic abre la URL en nueva pestaña
                 btnPase.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    const isVisible = popupPase.classList.contains('show');
-                    closeAllModals();
-                    if (!isVisible) {
-                        popupPase.classList.add('show');
-                    } else {
-                        popupPase.classList.remove('show');
-                    }
+                    window.open('https://defensoria6.github.io/pase-digital/index2', '_blank');
+                    // El popup ya no se muestra
                 });
 
+                // El cierre del popup al hacer clic fuera ya no es necesario, pero se conserva
                 document.addEventListener('click', function(e) {
                     if (!btnPase.contains(e.target) && !popupPase.contains(e.target)) {
                         popupPase.classList.remove('show');
