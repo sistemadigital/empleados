@@ -2712,62 +2712,55 @@
         });
     </script>
 
-    <!-- Botón Asistente IA (sin ícono) -->
+    <!-- Botón Asistente IA (integrado en el footer, solo visible en escritorio) -->
     <script>
         (function() {
-            const link = document.createElement('a');
-            link.href = 'https://notebooklm.google.com/';
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.className = 'btn-asistente-ia';
-            link.innerHTML = 'Asistente IA';
-            document.body.appendChild(link);
+            document.addEventListener('DOMContentLoaded', function() {
+                const footerRight = document.getElementById('footerRightArea');
+                if (!footerRight) return;
+                const eventBanner = document.getElementById('eventBanner');
+                if (!eventBanner) return;
 
-            const style = document.createElement('style');
-            style.textContent = `
-                .btn-asistente-ia {
-                    position: fixed;
-                    z-index: 9999;
-                    background: #22c55e;
-                    border: 2px solid #15803d;
-                    color: white;
-                    padding: 12px 24px;
-                    border-radius: 50px;
-                    text-decoration: none;
-                    font-weight: 700;
-                    font-size: 1rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
-                    transition: transform 0.2s, box-shadow 0.2s;
-                    font-family: 'Inter', sans-serif;
-                    bottom: 80px;
-                    right: 20px;
-                }
-                .btn-asistente-ia:hover {
-                    transform: scale(1.05);
-                    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
-                }
-                @media (max-width: 768px) {
+                const link = document.createElement('a');
+                link.href = 'https://notebooklm.google.com/';
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.className = 'btn-asistente-ia';
+                link.innerHTML = 'Asistente IA';
+                footerRight.insertBefore(link, eventBanner);
+
+                const style = document.createElement('style');
+                style.textContent = `
                     .btn-asistente-ia {
-                        left: 50%;
-                        transform: translateX(-50%);
-                        right: auto;
-                        bottom: 75px;
-                        padding: 10px 20px;
-                        font-size: 0.9rem;
+                        display: inline-flex;
+                        align-items: center;
+                        background: #22c55e;
+                        border: 2px solid #15803d;
+                        color: white;
+                        padding: 6px 14px;
+                        border-radius: 40px;
+                        text-decoration: none;
+                        font-weight: 700;
+                        font-size: 0.85rem;
+                        gap: 6px;
+                        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+                        transition: transform 0.2s, box-shadow 0.2s;
+                        font-family: 'Inter', sans-serif;
+                        white-space: nowrap;
+                        margin-right: 8px;
                     }
-                }
-                @media (max-width: 360px) {
-                    .btn-asistente-ia {
-                        bottom: 65px;
-                        padding: 8px 16px;
-                        font-size: 0.8rem;
+                    .btn-asistente-ia:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
                     }
-                }
-            `;
-            document.head.appendChild(style);
+                    @media (max-width: 768px) {
+                        .btn-asistente-ia {
+                            display: none !important;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            });
         })();
     </script>
 
