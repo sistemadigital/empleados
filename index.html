@@ -715,6 +715,124 @@
             display: block;
         }
 
+        /* ===== NUEVO: ENLACE MANUAL DE USO ===== */
+        .manual-link-container {
+            position: fixed;
+            bottom: 76px;
+            right: 10px;
+            z-index: 6001;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            display: none; /* oculto por defecto, solo se muestra en escritorio cuando se cierra el popup */
+        }
+        .manual-link-container.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .manual-link-container a {
+            font-weight: 700;
+            color: #003366;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 2px solid #003366;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .manual-link-container a:hover {
+            background: #003366;
+            color: #ffffff;
+            border-color: #003366;
+            box-shadow: 0 6px 18px rgba(0, 51, 102, 0.3);
+        }
+
+        /* Modal para el manual con iframe */
+        .modal-manual-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 30, 47, 0.8);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 7000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
+        }
+        .modal-manual-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-manual-contenido {
+            background: #ffffff;
+            border-radius: 2rem;
+            width: 90%;
+            max-width: 1000px;
+            height: 85vh;
+            max-height: 90vh;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.96);
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .modal-manual-overlay.active .modal-manual-contenido {
+            transform: scale(1);
+        }
+        .modal-manual-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #003366;
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+        .modal-manual-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .modal-manual-header .btn-cerrar-manual {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .modal-manual-header .btn-cerrar-manual:hover {
+            opacity: 1;
+        }
+        .modal-manual-body {
+            flex: 1;
+            background: #f5f9ff;
+            overflow: auto;
+        }
+        .modal-manual-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -873,6 +991,11 @@
             .info-modal-tecnico {
                 display: none !important;
             }
+
+            /* Ocultar enlace manual en móvil */
+            .manual-link-container {
+                display: none !important;
+            }
         }
 
         /* ===== ESCRITORIO: POPUP MÁS PEQUEÑO ===== */
@@ -893,6 +1016,11 @@
             }
             .version-text-left .nombre {
                 font-size: 0.6rem;
+            }
+
+            /* Mostrar enlace manual solo en escritorio */
+            .manual-link-container {
+                display: block; /* pero oculto por .show */
             }
         }
 
@@ -1101,6 +1229,24 @@
 
     <div id="globalAuthMessage" class="auth-message-global"></div>
 
+    <!-- ===== NUEVO: ENLACE MANUAL DE USO ===== -->
+    <div id="manualLinkContainer" class="manual-link-container">
+        <a id="manualLink" href="#" title="Abrir Manual de Uso del Sistema">📘 Manual de Uso del Sistema</a>
+    </div>
+
+    <!-- ===== NUEVO: MODAL PARA MANUAL CON IFRAME ===== -->
+    <div id="modalManualOverlay" class="modal-manual-overlay">
+        <div class="modal-manual-contenido">
+            <div class="modal-manual-header">
+                <h2>📘 Manual de Uso del Sistema</h2>
+                <button class="btn-cerrar-manual" id="cerrarModalManualBtn">&times;</button>
+            </div>
+            <div class="modal-manual-body">
+                <iframe id="manualIframe" src="about:blank" title="Manual de Uso del Sistema"></iframe>
+            </div>
+        </div>
+    </div>
+
     <div id="versionInfoContainer" class="version-info-container">
         <div class="version-text-left">
             <span>Diseño y Programación:</span>
@@ -1143,6 +1289,14 @@
 
         const spinnerCarga = document.getElementById('spinnerCarga');
         const spinnerText = document.getElementById('spinnerText');
+
+        // Nuevos elementos para el manual
+        const manualLinkContainer = document.getElementById('manualLinkContainer');
+        const manualLink = document.getElementById('manualLink');
+        const modalManualOverlay = document.getElementById('modalManualOverlay');
+        const cerrarModalManualBtn = document.getElementById('cerrarModalManualBtn');
+        const manualIframe = document.getElementById('manualIframe');
+        const versionContainer = document.getElementById('versionInfoContainer');
 
         let currentState = 'idle';
 
@@ -1358,11 +1512,23 @@
 
         // ─── POPUP VERSIÓN ───
         const versionText = document.getElementById('versionText');
-        const versionContainer = document.getElementById('versionInfoContainer');
         let popupTimeout = null;
+
+        // FUNCIONES PARA EL ENLACE MANUAL
+        function mostrarManualLink() {
+            if (window.innerWidth > 768) {
+                manualLinkContainer.classList.add('show');
+            }
+        }
+
+        function ocultarManualLink() {
+            manualLinkContainer.classList.remove('show');
+        }
 
         function cerrarPopup() {
             versionContainer.classList.remove('show');
+            // Al cerrar el popup, mostramos el enlace manual (si estamos en escritorio)
+            mostrarManualLink();
             if (popupTimeout) {
                 clearTimeout(popupTimeout);
                 popupTimeout = null;
@@ -1370,6 +1536,8 @@
         }
 
         function mostrarPopupConTimeout() {
+            // Ocultamos el enlace manual cuando se muestra el popup
+            ocultarManualLink();
             if (versionContainer.classList.contains('show')) {
                 if (popupTimeout) {
                     clearTimeout(popupTimeout);
@@ -1613,6 +1781,36 @@
                 posicionarPopupDebajoDeWelcome();
             }
         });
+
+        // ─── MANUAL DE USO: ABRIR MODAL CON IFRAME ───
+        const MANUAL_URL = 'https://sistemadigital.github.io/ingreso-sistema/sistema-manual';
+
+        function abrirManual(e) {
+            e.preventDefault();
+            manualIframe.src = MANUAL_URL;
+            modalManualOverlay.classList.add('active');
+        }
+
+        function cerrarManual() {
+            modalManualOverlay.classList.remove('active');
+            // Opcional: limpiar iframe para liberar recursos
+            // manualIframe.src = 'about:blank';
+        }
+
+        manualLink.addEventListener('click', abrirManual);
+        cerrarModalManualBtn.addEventListener('click', cerrarManual);
+        modalManualOverlay.addEventListener('click', function(e) {
+            if (e.target === modalManualOverlay) {
+                cerrarManual();
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalManualOverlay.classList.contains('active')) {
+                cerrarManual();
+            }
+        });
+
+        console.log('✅ Sistema listo. Manual de uso disponible al cerrar el popup de versión en escritorio.');
     </script>
 </body>
 </html>
