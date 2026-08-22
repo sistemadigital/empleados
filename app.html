@@ -797,6 +797,18 @@
             box-shadow: 0 4px 10px rgba(0,191,255,0.2);
         }
 
+        /* Botón con borde celeste (Pase Digital y Caja Chica) */
+        .module-botones .caja-chica {
+            border-color: #00BFFF;
+            box-shadow: 0 0 8px rgba(0,191,255,0.3);
+        }
+        .module-botones .caja-chica:hover {
+            border-color: #00BFFF;
+            box-shadow: 0 0 12px rgba(0,191,255,0.5);
+            background: #f0faff;
+            color: #00BFFF;
+        }
+
         /* BORDE VERDE LUMINOSO CUANDO HAY DATOS */
         .btn-novedades.hay-datos {
             border-color: #22c55e;
@@ -1461,13 +1473,15 @@
         <div id="homeContent">
             <!-- Módulo de botones superior derecha -->
             <div class="module-botones">
-                <!-- Pase Digital con popup -->
+                <!-- Pase Digital con popup y borde celeste -->
                 <div class="pase-digital-wrapper">
-                    <span class="pase-digital-btn" id="btnPaseDigital">Pase Digital</span>
+                    <span class="pase-digital-btn caja-chica" id="btnPaseDigital">Pase Digital</span>
                     <div class="pase-digital-popup" id="paseDigitalPopup">
                         Requiere habilitación oficial para acceder
                     </div>
                 </div>
+                <!-- NUEVO BOTÓN CAJA CHICA -->
+                <a onclick="loadPage('https://fioravanteweb.github.io/cajachica/')" class="caja-chica">Caja Chica</a>
                 <a href="https://defensorialocal-seis.github.io/protocolo/" target="_blank">Protocolo de Actuación</a>
                 <!-- BOTÓN NOVEDADES -->
                 <button class="btn-novedades" id="btnNovedades"><i class="fas fa-bullhorn"></i> Novedades</button>
