@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Expedientes Judiciales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<style>
+  :root{
+    --bg:#F5F6F8;
+    --surface:#FFFFFF;
+    --ink:#1C2541;
+    --ink-soft:#5B6478;
+    --ink-faint:#8A93A6;
+    --line:#DDE1E8;
+    --line-strong:#C3C9D6;
+    --accent:#7A1F3D;
+    --accent-dark:#5E1730;
+    --accent-soft:#F3E4E9;
+    --accent-soft-line:#E3C3CE;
+
+    --badge-oficial-fg:#1C2541;   --badge-oficial-bg:#E4E8F1;
+    --badge-mpc-fg:#155E52;       --badge-mpc-bg:#DFEFEC;
+    --badge-mpp-fg:#7A5B0E;       --badge-mpp-bg:#F3ECD9;
+    --badge-incapaz-fg:#5B3A6B;   --badge-incapaz-bg:#ECE3F0;
+    --badge-ausente-fg:#8A3D1D;   --badge-ausente-bg:#F3E3DA;
+
+    --font-display:'Fraunces', Georgia, serif;
+    --font-body:'Inter', -apple-system, sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  .shell{max-width:1180px;margin:0 auto;padding:0 24px 64px;}
+
+  /* ---------- HEADER ---------- */
+  header.topbar{
+    background:linear-gradient(180deg,#1C2541 0%, #223056 100%);
+    color:#EDEFF5;
+    padding:18px 24px;
+    margin-bottom:28px;
+  }
+  .topbar-inner{
+    max-width:1180px;margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  }
+  h1{
+    font-family:var(--font-display); font-weight:600; font-size:26px; letter-spacing:.01em;
+    margin:0; color:#FFFFFF;
+  }
+  .btn-print{
+    display:inline-flex; align-items:center; gap:9px;
+    background:transparent; color:#F1D9E0;
+    border:1.5px solid #A5476A; padding:11px 18px;
+    font-family:var(--font-body); font-weight:600; font-size:13.5px;
+    border-radius:3px; cursor:pointer; letter-spacing:.02em;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+    white-space:nowrap;
+  }
+  .btn-print:hover{ background:#7A1F3D; color:#fff; border-color:#7A1F3D; }
+  .btn-print svg{width:16px;height:16px;}
+
+  /* ---------- FILTER CHIPS ---------- */
+  .filters{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    margin-bottom:16px;
+  }
+  .filters-label{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-faint); margin-right:6px;
+  }
+  .chip{
+    font-family:var(--font-body); font-size:12.5px; font-weight:600;
+    padding:6px 13px; border-radius:100px; cursor:pointer; user-select:none;
+    border:1.4px solid var(--line-strong); background:var(--surface); color:var(--ink-soft);
+    transition:all .12s ease;
+  }
+  .chip:hover{ border-color:var(--ink-faint); }
+  .chip.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .chip.active[data-modo="Defensor MPC"]{ background:var(--badge-mpc-fg); border-color:var(--badge-mpc-fg); }
+  .chip.active[data-modo="Defensor MPP"]{ background:var(--badge-mpp-fg); border-color:var(--badge-mpp-fg); }
+  .chip.active[data-modo="Defensor Incapaz"]{ background:var(--badge-incapaz-fg); border-color:var(--badge-incapaz-fg); }
+  .chip.active[data-modo="Defensor Ausente"]{ background:var(--badge-ausente-fg); border-color:var(--badge-ausente-fg); }
+  .chip-clear{ color:var(--accent); border-color:var(--accent-soft-line); background:var(--accent-soft);}
+
+  /* ---------- SEARCH BAR (por número de expediente) ---------- */
+  .search-bar{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    margin-bottom:16px;
+  }
+  .search-input-wrap{ position:relative; flex:1 1 240px; min-width:180px; }
+  .search-input-wrap .search-icon{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    width:15px; height:15px; color:var(--ink-faint); pointer-events:none;
+  }
+  .search-input{
+    width:100%; font-family:var(--font-mono); font-size:13.5px;
+    padding:10px 14px 10px 36px; border:1.4px solid var(--line-strong); border-radius:4px;
+    background:var(--surface); color:var(--ink);
+    transition:border-color .12s ease, box-shadow .12s ease;
+  }
+  .search-input::placeholder{ color:var(--ink-faint); font-family:var(--font-body); }
+  .search-input:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .btn-search{
+    display:inline-flex; align-items:center; gap:8px; flex-shrink:0;
+    background:var(--ink); color:#fff; border:1.4px solid var(--ink);
+    padding:10px 18px; font-family:var(--font-body); font-weight:600; font-size:13px;
+    border-radius:4px; cursor:pointer; letter-spacing:.01em; white-space:nowrap;
+    transition:background .12s ease, border-color .12s ease;
+  }
+  .btn-search:hover{ background:var(--accent); border-color:var(--accent); }
+  .btn-search svg{ width:15px; height:15px; }
+  .btn-search-clear{
+    display:inline-flex; align-items:center; gap:6px; flex-shrink:0;
+    background:transparent; color:var(--accent-dark); border:1.4px solid var(--accent-soft-line);
+    padding:10px 16px; font-family:var(--font-body); font-weight:600; font-size:13px;
+    border-radius:4px; cursor:pointer; white-space:nowrap;
+    transition:background .12s ease, color .12s ease;
+  }
+  .btn-search-clear:hover{ background:var(--accent-soft); }
+
+  /* Scroll horizontal de la tabla (necesario en pantallas angostas) */
+  .table-scroll{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+
+  /* ---------- TABLE CARD ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:0 1px 2px rgba(28,37,65,.04);
+  }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    text-align:left; font-family:var(--font-body); font-weight:700;
+    font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-soft);
+    padding:14px 16px; border-bottom:2px solid var(--accent);
+    background:#FAFAFB;
+    white-space:nowrap;
+  }
+  tbody tr.record-row{
+    cursor:pointer; border-bottom:1px solid var(--line);
+    transition:background .12s ease;
+  }
+  tbody tr.record-row:hover{ background:#F7F5F1; }
+  tbody tr.record-row.selected{
+    background:var(--accent-soft);
+    box-shadow: inset 4px 0 0 0 var(--accent);
+  }
+  tbody td{
+    padding:13px 16px; font-size:13.5px; color:var(--ink); vertical-align:middle;
+  }
+  td.num{ font-family:var(--font-mono); font-weight:600; color:var(--accent-dark); font-size:13px; }
+  td.exp{ font-family:var(--font-mono); font-size:13px; color:var(--ink-soft); }
+  td.caratula{ max-width:260px; }
+  td.caratula .cart-text{ font-weight:600; font-size:13.5px; line-height:1.35; display:block; }
+  td.fecha{ font-family:var(--font-mono); font-size:12.5px; color:var(--ink-soft); white-space:nowrap; }
+  td.obs{ max-width:320px; font-size:13px; color:var(--ink-soft); line-height:1.45; }
+  td.obs span{ display:block; white-space:normal; overflow-wrap:break-word; word-break:break-word; }
+  .btn-chrono-print{
+    display:inline-flex; align-items:center; gap:8px; flex-shrink:0;
+    background:var(--surface); color:var(--accent-dark);
+    border:1.4px solid var(--accent-soft-line); padding:8px 15px;
+    font-family:var(--font-body); font-weight:600; font-size:12.5px;
+    border-radius:4px; cursor:pointer; letter-spacing:.01em;
+    transition:background .12s ease, color .12s ease, border-color .12s ease;
+    white-space:nowrap;
+  }
+  .btn-chrono-print:hover{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .btn-chrono-print svg{ width:14px; height:14px; }
+  .badge{
+    display:inline-block; font-size:11.5px; font-weight:700; padding:4px 10px;
+    border-radius:100px; white-space:nowrap; letter-spacing:.01em;
+  }
+  .badge.oficial{ color:var(--badge-oficial-fg); background:var(--badge-oficial-bg); }
+  .badge.mpc{ color:var(--badge-mpc-fg); background:var(--badge-mpc-bg); }
+  .badge.mpp{ color:var(--badge-mpp-fg); background:var(--badge-mpp-bg); }
+  .badge.incapaz{ color:var(--badge-incapaz-fg); background:var(--badge-incapaz-bg); }
+  .badge.ausente{ color:var(--badge-ausente-fg); background:var(--badge-ausente-bg); }
+
+  .chev{
+    width:9px; height:9px; border-right:2px solid var(--ink-faint); border-bottom:2px solid var(--ink-faint);
+    transform:rotate(45deg); transition:transform .16s ease; display:inline-block; margin-left:4px;
+  }
+  tr.selected .chev{ transform:rotate(-135deg); border-color:var(--accent); }
+
+  /* ---------- CHRONOLOGY (expanded row) ---------- */
+  tr.chrono-row td{ padding:0; border-bottom:1px solid var(--line); }
+  .chrono-wrap{
+    background:#FBFAF8; padding:26px 30px 30px 30px;
+    animation:fadeIn .18s ease;
+  }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);} }
+  .chrono-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:14px; }
+  .chrono-title{ font-family:var(--font-display); font-weight:600; font-size:18px; color:var(--ink); display:block; }
+  .chrono-meta{ font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); display:block; margin-top:3px; }
+
+  .spine{ position:relative; padding-left:6px; }
+  .foja{
+    position:relative; display:flex; gap:18px; padding-bottom:22px; padding-left:38px;
+  }
+  .foja::before{ /* vertical line */
+    content:''; position:absolute; left:13px; top:26px; bottom:-2px; width:2px; background:var(--line-strong);
+  }
+  .foja:last-child::before{ display:none; }
+  .foja-node{
+    position:absolute; left:0; top:0;
+    width:28px; height:28px; border-radius:50%;
+    background:var(--surface); border:2px solid var(--accent);
+    color:var(--accent-dark); font-family:var(--font-mono); font-weight:700; font-size:11.5px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .foja-body{ flex:1; background:var(--surface); border:1px solid var(--line); border-radius:5px; padding:12px 16px; }
+  .foja-title{ font-weight:700; font-size:13.8px; color:var(--ink); margin-bottom:3px; }
+  .foja-sub{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); }
+
+  /* ---------- PAGINATION ---------- */
+  .pagination{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 18px; border-top:1px solid var(--line); background:#FAFAFB; flex-wrap:wrap; gap:12px;
+  }
+  .pag-info{ font-size:12.5px; color:var(--ink-soft); }
+  .pag-info strong{ color:var(--ink); }
+  .pag-controls{ display:flex; gap:6px; align-items:center; }
+  .pag-btn{
+    min-width:32px; height:32px; padding:0 8px; border-radius:4px;
+    border:1px solid var(--line-strong); background:var(--surface); color:var(--ink-soft);
+    font-family:var(--font-mono); font-size:12.5px; font-weight:600; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .12s ease;
+  }
+  .pag-btn:hover:not(:disabled){ border-color:var(--accent); color:var(--accent-dark); }
+  .pag-btn.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .pag-btn:disabled{ opacity:.35; cursor:not-allowed; }
+
+  .badge.otro{ color:var(--ink-soft); background:#EEF0F4; }
+
+  .db-select{
+    font-family:var(--font-body); font-weight:600; font-size:12.5px;
+    background:transparent; color:#EDEFF5; border:1.4px solid #4A5A82;
+    border-radius:3px; padding:9px 12px; cursor:pointer; appearance:none;
+  }
+  .db-select option{ color:#1C2541; }
+
+  .state-row{ padding:40px 20px; text-align:center; color:var(--ink-faint); font-size:14px; }
+  .state-row.err{ color:var(--accent-dark); }
+
+
+  /* ---------- PRINT ---------- */
+  @media print{
+    header.topbar{ background:none !important; color:var(--ink) !important; padding:0 0 16px; }
+    .topbar-inner{ align-items:flex-start; }
+    .btn-print, .filters, .search-bar, .pagination, .chrono-wrap, .db-select{ display:none !important; }
+    h1{ color:var(--ink) !important; font-size:22px; }
+    .shell{ padding:0; max-width:100%; }
+    .card{ border:none; box-shadow:none; }
+    tbody tr.record-row:hover, tbody tr.record-row.selected{ background:transparent !important; box-shadow:none; }
+    .chev{ display:none; }
+    body{ background:#fff; }
+  }
+
+  /* ---------- IMPRESIÓN DE UN EXPEDIENTE INDIVIDUAL (detalle + observaciones) ---------- */
+  .print-single-sheet{ display:none; }
+  .ps-title{ font-family:var(--font-display); font-weight:600; font-size:22px; margin:0 0 20px; color:var(--ink); }
+  table.ps-detail{ width:100%; border-collapse:collapse; margin-bottom:26px; }
+  table.ps-detail th, table.ps-detail td{
+    text-align:left; padding:9px 12px; font-size:13px; border-bottom:1px solid var(--line); vertical-align:top;
+  }
+  table.ps-detail th{ width:200px; color:var(--ink-soft); font-weight:600; }
+  .ps-obs-title{
+    font-family:var(--font-display); font-weight:600; font-size:15px; margin:0 0 12px; color:var(--ink);
+    border-top:2px solid var(--accent); padding-top:18px;
+  }
+  .ps-obs-content{ font-size:13.5px; line-height:1.6; color:var(--ink); }
+  .ps-footer{ margin-top:36px; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); }
+
+  @media print{
+    body.print-single-mode > *:not(.print-single-sheet){ display:none !important; }
+    body.print-single-mode .print-single-sheet{ display:block !important; padding:20px; }
+  }
+
+  /* ---------- RESPONSIVE (MÓVIL) ---------- */
+  @media (max-width:760px){
+    .shell{ padding:0 14px 48px; }
+
+    header.topbar{ padding:14px 16px; }
+    .topbar-inner{ gap:10px; }
+    h1{ font-size:19px; }
+    .topbar-inner > div:last-child{ width:100%; justify-content:space-between; }
+    .db-select{ flex:1; font-size:12px; padding:8px 10px; }
+    .btn-print{ padding:9px 13px; font-size:12px; flex-shrink:0; }
+    .btn-print svg{ width:14px; height:14px; }
+
+    .filters{ gap:6px; margin-bottom:14px; }
+    .filters-label{ width:100%; margin:0 0 4px; }
+    .chip{ font-size:11.5px; padding:5px 11px; }
+
+    .search-bar{ flex-direction:column; align-items:stretch; margin-bottom:14px; }
+    .search-input-wrap{ width:100%; min-width:0; }
+    .btn-search, .btn-search-clear{ width:100%; justify-content:center; }
+
+    table{ min-width:760px; }
+    thead th{ font-size:10px; padding:10px 10px; }
+    tbody td{ padding:10px 10px; font-size:12.5px; }
+
+    .pagination{ padding:14px; flex-direction:column; align-items:stretch; }
+    .pag-info{ width:100%; text-align:center; }
+    .pag-controls{ width:100%; justify-content:center; }
+
+    .chrono-wrap{ padding:18px 16px 22px; }
+    .chrono-head{ flex-direction:column; align-items:flex-start; }
+    .btn-chrono-print{ width:100%; justify-content:center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div>
+      <h1>Registro de Expedientes Judiciales</h1>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <select id="selectorBaseDatos" class="db-select">
+        <option value="nueva">Activos (nueva base)</option>
+        <option value="historica">Históricos (Anteriores)</option>
+      </select>
+      <button class="btn-print" id="btnPrint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Imprimir tabla
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+
+  <div class="filters" id="filters">
+    <span class="filters-label">Modo de intervención</span>
+    <!-- chips injected by JS -->
+  </div>
+
+  <div class="search-bar" id="searchBar">
+    <div class="search-input-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="searchExpediente" class="search-input" placeholder="Buscar por número de expediente…" autocomplete="off" inputmode="search">
+    </div>
+    <button type="button" class="btn-search" id="btnSearch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      Buscar
+    </button>
+    <button type="button" class="btn-search-clear" id="btnSearchClear" style="display:none;">
+      Limpiar
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Expediente</th>
+          <th>Carátula</th>
+          <th>Juzgado de origen</th>
+          <th>Modo de intervención</th>
+          <th>Empleado asignado</th>
+          <th>Fecha de registro</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"><!-- filas por JS --></tbody>
+    </table>
+    </div>
+    <div class="pagination">
+      <div class="pag-info" id="pagInfo"></div>
+      <div class="pag-controls" id="pagControls"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="print-single-sheet" id="printSingleSheet">
+  <div id="printSingleContent"></div>
+</div>
+
+<script>
+(function(){
+
+  /* ============ FIREBASE (idéntico al de tabla.html) ============ */
+  const firebaseConfigHistorica = {
+    apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
+    authDomain: "causas-defensoria.firebaseapp.com",
+    projectId: "causas-defensoria",
+    storageBucket: "causas-defensoria.appspot.com",
+    messagingSenderId: "186064671470",
+    appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
+  };
+  const firebaseConfigNueva = {
+    apiKey: "AIzaSyBevCwkh4iOWVqhp3gG2ae1eCUMkFpnr6I",
+    authDomain: "causas-2defensoria.firebaseapp.com",
+    projectId: "causas-2defensoria",
+    storageBucket: "causas-2defensoria.firebasestorage.app",
+    messagingSenderId: "663905632804",
+    appId: "1:663905632804:web:4f686a88004dc642ad0eb1"
+  };
+
+  let appNueva, dbNueva, appHistorica, dbHistorica, dbActiva;
+  try {
+    if (firebase.apps && firebase.apps.length > 0) {
+      appNueva = firebase.app();
+      try { appHistorica = firebase.app("historica"); } catch(e) {}
+    } else {
+      appNueva = firebase.initializeApp(firebaseConfigNueva);
+      appHistorica = firebase.initializeApp(firebaseConfigHistorica, "historica");
+    }
+    dbNueva = appNueva.firestore();
+    dbHistorica = appHistorica.firestore();
+    dbActiva = dbNueva;
+    // Nota: se removió enablePersistence(). Esta vista se embebe en un <iframe>
+    // (ver btnTotalExpedientes en tabla.html), y en ese contexto el intento de
+    // abrir IndexedDB para persistencia offline puede quedar bloqueado por las
+    // restricciones de almacenamiento de terceros de los navegadores modernos,
+    // dejando la carga de Firestore "colgada" sin datos ni error visible.
+  } catch (e) { console.error("Error Firebase:", e); }
+
+  // Mismas 17 modalidades de intervención que usa el sistema real
+  const intervencionOptions = ["Defensor Oficial","Ministerio Principal","Ministerio Complementario",
+    "Patrocinante Actor","Patrocinante Demandado","Patrocinante Tercero","Defensor de Ausente",
+    "Patrocinante presunto incapaz","Asesor Letrado","Ministerio Público del incapaz",
+    "Ministerio Público en turno Abril","Ministerio Público en turno Agosto",
+    "Ministerio Público en turno Diciembre","Asistencia Letrada del incapaz","Tutor Ad Litem",
+    "Defensor Oficial Art 329 CPCC","Defensor Oficial Art 626 CPCC"];
+
+  const badgeClassMap = {
+    "Defensor Oficial":"oficial", "Ministerio Complementario":"mpc", "Ministerio Principal":"mpp",
+    "Ministerio Público del incapaz":"incapaz", "Defensor de Ausente":"ausente"
+  };
+  const claseBadge = (modo)=> badgeClassMap[modo] || "otro";
+
+  /* ============ HELPERS DE FECHA (idénticos a tabla.html) ============ */
+  const toDate = (v) => {
+    if (!v) return null;
+    if (v.toDate) return v.toDate();
+    if (v.seconds) return new Date(v.seconds*1000 + (v.nanoseconds||0)/1e6);
+    if (typeof v === 'string'){ const d = new Date(v); if(!isNaN(d.getTime())) return d; }
+    if (v instanceof Date) return v;
+    return null;
+  };
+  function pad(n){ return String(n).padStart(2,"0"); }
+  function fmtDate(v, conHora=false){
+    const f = toDate(v);
+    if(!f || isNaN(f.getTime())) return "—";
+    const base = `${pad(f.getDate())}/${pad(f.getMonth()+1)}/${f.getFullYear()}`;
+    if(!conHora) return base;
+    return `${base} ${pad(f.getHours())}:${pad(f.getMinutes())}`;
+  }
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#39;");
+  }
+  // El campo "observaciones" se guarda como HTML (editor de texto enriquecido
+  // de tabla.html): lo pasamos a texto plano para mostrarlo en la celda.
+  function obsPlainText(html){
+    if(!html) return "";
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return (tmp.textContent || tmp.innerText || "").trim();
+  }
+  function fmtObservaciones(html){
+    const texto = obsPlainText(html);
+    if(!texto) return "—";
+    // Se muestra el texto completo (ya no se trunca): el CSS de la celda
+    // (.obs / .obs span) hace que el contenido se ajuste con salto de línea
+    // al ancho de la columna en vez de cortarse con "…".
+    return `<span>${escapeHtml(texto)}</span>`;
+  }
+
+  /* ============ ESTADO DE PAGINACIÓN / FILTROS ============ */
+  const PAGE_SIZE = 10;
+  let currentPage = 1, totalPages = 1, totalRecords = 0;
+  let pageCursors = [];          // pageCursors[i] = último doc de la página (i+1)
+  let currentPageDocs = [];      // registros de la página visible: {id, ...data}
+  let expandedId = null;
+  let activeModoFilter = null;
+  let searchTerm = ""; // búsqueda por número de expediente, sobre la base activa
+  let cachedCount = null, lastFilterKey = "";
+
+  function getFilterKey(){
+    return `${dbActiva===dbHistorica?"hist":"nueva"}|${activeModoFilter||""}|exp:${searchTerm}`;
+  }
+
+  function buildBaseQuery(){
+    // Búsqueda por número de expediente: recorre toda la base activa (historica o nueva),
+    // sin combinar con el filtro de "Modo de intervención".
+    if(searchTerm){
+      return dbActiva.collection("causas")
+        .where("numCausa", ">=", searchTerm)
+        .where("numCausa", "<=", searchTerm + "\uf8ff")
+        .orderBy("numCausa");
+    }
+    let q = dbActiva.collection("causas");
+    if(activeModoFilter) q = q.where("intervencion","==",activeModoFilter);
+    return q.orderBy("fechaRegistro","desc");
+  }
+
+  /* ============ RENDER: FILTROS (chips por Modo de intervención) ============ */
+  // Limpia el campo/estado de búsqueda por expediente (usado al tocar un chip
+  // de "Modo de intervención", ya que son dos filtros independientes).
+  function limpiarBusqueda(){
+    searchTerm = "";
+    const input = document.getElementById("searchExpediente");
+    if(input) input.value = "";
+    const btnClear = document.getElementById("btnSearchClear");
+    if(btnClear) btnClear.style.display = "none";
+  }
+
+  function renderFilters(){
+    const wrap = document.getElementById("filters");
+    wrap.querySelectorAll(".chip").forEach(c=>c.remove());
+
+    const clearChip = document.createElement("span");
+    clearChip.className = "chip" + (activeModoFilter ? "" : " active");
+    clearChip.textContent = "Todos";
+    clearChip.onclick = ()=>{
+      const teniaBusqueda = !!searchTerm;
+      limpiarBusqueda();
+      if(activeModoFilter===null && !teniaBusqueda) return;
+      activeModoFilter=null; cachedCount=null; cargarPagina(true);
+    };
+    wrap.appendChild(clearChip);
+
+    intervencionOptions.forEach(m=>{
+      const chip = document.createElement("span");
+      chip.className = "chip" + (activeModoFilter===m ? " active":"");
+      chip.textContent = m;
+      chip.onclick = ()=>{
+        limpiarBusqueda();
+        activeModoFilter = (activeModoFilter===m ? null : m);
+        cachedCount = null;
+        cargarPagina(true);
+      };
+      wrap.appendChild(chip);
+    });
+  }
+
+  /* ============ CARGA DESDE FIRESTORE ============ */
+  async function cargarPagina(reset=true, direction=null){
+    const tbody = document.getElementById("tbody");
+    if(!dbActiva){
+      tbody.innerHTML = `<tr><td colspan="7"><div class="state-row err">No se pudo inicializar Firebase. Revisá la consola del navegador.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = `<tr><td colspan="7"><div class="state-row">Cargando expedientes…</div></td></tr>`;
+    document.getElementById("pagInfo").textContent = "";
+    document.getElementById("pagControls").innerHTML = "";
+
+    try{
+      const baseQuery = buildBaseQuery();
+      const filterKey = getFilterKey();
+
+      if(reset){
+        currentPage = 1;
+        pageCursors = [];
+        if(cachedCount===null || filterKey!==lastFilterKey){
+          try {
+            const snapCount = await baseQuery.count().get();
+            totalRecords = snapCount.data().count;
+          } catch(errCount){
+            console.warn("No se pudo obtener el total (count()); se sigue cargando la tabla igual.", errCount);
+            totalRecords = null; // desconocido: no se pudo contar, pero los datos igual se muestran
+          }
+          cachedCount = totalRecords;
+          lastFilterKey = filterKey;
+        } else {
+          totalRecords = cachedCount;
+        }
+        totalPages = (totalRecords===null) ? null : Math.max(1, Math.ceil(totalRecords / PAGE_SIZE));
+      }
+
+      let query = baseQuery;
+      if(direction==="next"){
+        currentPage++;
+        const cursor = pageCursors[currentPage-2];
+        if(cursor) query = query.startAfter(cursor);
+      } else if(direction==="prev"){
+        currentPage = Math.max(1, currentPage-1);
+        if(currentPage>1){
+          const cursor = pageCursors[currentPage-2];
+          if(cursor) query = query.startAfter(cursor);
+        }
+      }
+      query = query.limit(PAGE_SIZE);
+
+      const snap = await query.get();
+      if(!snap.empty) pageCursors[currentPage-1] = snap.docs[snap.docs.length-1];
+      currentPageDocs = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+
+      expandedId = null;
+      renderTable();
+      renderPagination();
+    } catch(err){
+      console.error(err);
+      tbody.innerHTML = `<tr><td colspan="7"><div class="state-row err">No se pudieron cargar los expedientes. Verificá la conexión con Firestore.<br><span style="font-family:var(--font-mono);font-size:11px;opacity:.75;">${(err && err.message) ? err.message : err}</span></div></td></tr>`;
+    }
+  }
+
+  /* ============ RENDER: TABLA ============ */
+  function renderTable(){
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+
+    if(currentPageDocs.length===0){
+      const msg = searchTerm
+        ? `No se encontraron expedientes cuyo número comience con "${escapeHtml(searchTerm)}" en esta base.`
+        : "No hay expedientes que coincidan con el filtro seleccionado.";
+      tbody.innerHTML = `<tr><td colspan="7"><div class="state-row">${msg}</div></td></tr>`;
+      return;
+    }
+
+    const offset = (currentPage-1)*PAGE_SIZE;
+
+    currentPageDocs.forEach((rec, idx)=>{
+      const modo = rec.intervencion || "Sin dato";
+
+      const tr = document.createElement("tr");
+      tr.className = "record-row" + (expandedId===rec.id ? " selected":"");
+      tr.innerHTML = `
+        <td class="exp">${rec.numCausa || "—"}</td>
+        <td class="caratula"><span class="cart-text">${rec.caratula || "—"}</span></td>
+        <td>${rec.juzgado || "—"}</td>
+        <td><span class="badge ${claseBadge(modo)}">${modo}</span></td>
+        <td>${rec.usuarioAsignado || "—"}</td>
+        <td class="fecha">${fmtDate(rec.fechaRegistro)} <span class="chev"></span></td>
+        <td class="obs">${fmtObservaciones(rec.observaciones)}</td>
+      `;
+      tr.onclick = ()=>{
+        expandedId = (expandedId===rec.id) ? null : rec.id;
+        renderTable();
+      };
+      tbody.appendChild(tr);
+
+      if(expandedId===rec.id){
+        const trChrono = document.createElement("tr");
+        trChrono.className = "chrono-row";
+        const td = document.createElement("td");
+        td.colSpan = 7;
+        td.appendChild(buildChronology(rec));
+        trChrono.appendChild(td);
+        tbody.appendChild(trChrono);
+      }
+    });
+  }
+
+  /* ============ CRONOLOGÍA DE FOJAS (a partir de datos reales de Firestore) ============ */
+  function obtenerEventos(causa){
+    const eventos = [];
+    if(Array.isArray(causa.audiencias)) causa.audiencias.forEach(a=>{
+      const f = toDate(a); if(f) eventos.push({ titulo:"Audiencia", fecha:f });
+    });
+    if(causa.audienciaGesell){ const f=toDate(causa.audienciaGesell); if(f) eventos.push({ titulo:"Audiencia Gesell", fecha:f }); }
+    if(causa.vencimiento){ const f=toDate(causa.vencimiento); if(f) eventos.push({ titulo:"Vencimiento", fecha:f }); }
+    if(causa.vencimientoRecursos){ const f=toDate(causa.vencimientoRecursos); if(f) eventos.push({ titulo:"Vencimiento de recursos", fecha:f }); }
+    if(Array.isArray(causa.diligencias)) causa.diligencias.forEach(d=>{
+      const f = toDate(d.fecha); if(f) eventos.push({ titulo: d.detalle ? `Diligencia: ${d.detalle}` : "Diligencia", fecha:f });
+    });
+    return eventos;
+  }
+
+  function construirFojas(causa){
+    const items = [];
+    const fIni = causa.fechaInicio || causa.fechaRegistro;
+    if(fIni){ const f=toDate(fIni); if(f) items.push({ titulo:"Registro / inicio del expediente", fecha:f }); }
+    obtenerEventos(causa).sort((a,b)=>a.fecha-b.fecha).forEach(e=>items.push(e));
+    return items;
+  }
+
+  function buildChronology(rec){
+    const wrap = document.createElement("div");
+    wrap.className = "chrono-wrap";
+    const items = construirFojas(rec);
+
+    const head = document.createElement("div");
+    head.className = "chrono-head";
+    head.innerHTML = `
+      <div>
+        <span class="chrono-title">Cronología de fojas — Expediente ${rec.numCausa || "—"}</span>
+        <span class="chrono-meta">${items.length} fojas registradas</span>
+      </div>
+      <button type="button" class="btn-chrono-print" title="Imprimir este expediente con todos sus datos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Imprimir expediente
+      </button>
+    `;
+    const btnChronoPrint = head.querySelector(".btn-chrono-print");
+    if(btnChronoPrint){
+      btnChronoPrint.onclick = (ev)=>{
+        ev.stopPropagation();
+        imprimirRegistro(rec);
+      };
+    }
+    wrap.appendChild(head);
+
+    if(items.length===0){
+      const empty = document.createElement("div");
+      empty.className = "chrono-empty";
+      empty.textContent = "Sin audiencias, diligencias ni vencimientos cargados para este expediente.";
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    const spine = document.createElement("div");
+    spine.className = "spine";
+    items.forEach((it, i)=>{
+      const foja = document.createElement("div");
+      foja.className = "foja";
+      foja.innerHTML = `
+        <div class="foja-node">${i+1}</div>
+        <div class="foja-body">
+          <div class="foja-title">Foja ${i+1}: ${it.titulo}</div>
+          <div class="foja-sub">Fecha de incorporación: ${fmtDate(it.fecha, true)}</div>
+        </div>
+      `;
+      spine.appendChild(foja);
+    });
+    wrap.appendChild(spine);
+    return wrap;
+  }
+
+  /* ============ RENDER: PAGINACIÓN (server-side, cursores de Firestore) ============ */
+  function renderPagination(){
+    const info = document.getElementById("pagInfo");
+    const controls = document.getElementById("pagControls");
+    controls.innerHTML = "";
+
+    if(totalRecords===0){ info.textContent = "0 registros"; return; }
+
+    const start = (currentPage-1)*PAGE_SIZE + 1;
+
+    if(totalRecords===null){
+      // No se pudo calcular el total (count() no disponible): mostramos info parcial
+      // igual, y habilitamos "Siguiente" mientras la página traiga el máximo posible.
+      const end = start + currentPageDocs.length - 1;
+      info.innerHTML = `Mostrando <strong>${start}–${end}</strong>`;
+
+      const mkBtn = (label, opts={})=>{
+        const b = document.createElement("button");
+        b.className = "pag-btn" + (opts.active ? " active":"");
+        b.textContent = label;
+        b.disabled = !!opts.disabled;
+        if(opts.onclick) b.onclick = opts.onclick;
+        return b;
+      };
+
+      controls.appendChild(mkBtn("‹ Anterior", { disabled: currentPage===1, onclick: ()=>cargarPagina(false,"prev") }));
+      controls.appendChild(mkBtn(`Página ${currentPage}`, { active:true }));
+      controls.appendChild(mkBtn("Siguiente ›", { disabled: currentPageDocs.length<PAGE_SIZE, onclick: ()=>cargarPagina(false,"next") }));
+      return;
+    }
+
+    const end = Math.min(currentPage*PAGE_SIZE, totalRecords);
+    info.innerHTML = `Mostrando <strong>${start}–${end}</strong> de <strong>${totalRecords}</strong> registros`;
+
+    const mkBtn = (label, opts={})=>{
+      const b = document.createElement("button");
+      b.className = "pag-btn" + (opts.active ? " active":"");
+      b.textContent = label;
+      b.disabled = !!opts.disabled;
+      if(opts.onclick) b.onclick = opts.onclick;
+      return b;
+    };
+
+    controls.appendChild(mkBtn("‹ Anterior", { disabled: currentPage===1, onclick: ()=>cargarPagina(false,"prev") }));
+    controls.appendChild(mkBtn(`Página ${currentPage} de ${totalPages}`, { active:true }));
+    controls.appendChild(mkBtn("Siguiente ›", { disabled: currentPage>=totalPages, onclick: ()=>cargarPagina(false,"next") }));
+  }
+
+  /* ============ SELECTOR DE BASE DE DATOS ============ */
+  document.getElementById("selectorBaseDatos").addEventListener("change",(e)=>{
+    dbActiva = (e.target.value==="historica") ? dbHistorica : dbNueva;
+    cachedCount = null;
+    activeModoFilter = null;
+    renderFilters();
+    cargarPagina(true);
+  });
+
+  /* ============ BÚSQUEDA POR NÚMERO DE EXPEDIENTE (toda la base activa) ============ */
+  function ejecutarBusqueda(){
+    const input = document.getElementById("searchExpediente");
+    const val = input.value.trim();
+    searchTerm = val;
+    cachedCount = null;
+
+    const btnClear = document.getElementById("btnSearchClear");
+    if(btnClear) btnClear.style.display = val ? "inline-flex" : "none";
+
+    // La búsqueda por expediente es independiente del filtro por "Modo de
+    // intervención": si había un chip activo, se limpia para evitar confusión.
+    if(val && activeModoFilter!==null){
+      activeModoFilter = null;
+      renderFilters();
+    }
+    cargarPagina(true);
+  }
+
+  document.getElementById("btnSearch").addEventListener("click", ejecutarBusqueda);
+  document.getElementById("searchExpediente").addEventListener("keydown", (e)=>{
+    if(e.key==="Enter"){ e.preventDefault(); ejecutarBusqueda(); }
+  });
+  document.getElementById("btnSearchClear").addEventListener("click", ()=>{
+    if(!searchTerm){ return; }
+    limpiarBusqueda();
+    cachedCount = null;
+    cargarPagina(true);
+  });
+
+  /* ============ IMPRESIÓN ============ */
+  document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+
+  // Impresión de un expediente puntual: datos principales + observaciones completas
+  // (se conserva el formato del editor de texto enriquecido, ej. negritas, listas, etc.)
+  function imprimirRegistro(rec){
+    const modo = rec.intervencion || "Sin dato";
+    const obsTexto = obsPlainText(rec.observaciones);
+    const obsHtml = obsTexto ? rec.observaciones : "<p>—</p>";
+
+    document.getElementById("printSingleContent").innerHTML = `
+      <h1 class="ps-title">Expediente ${escapeHtml(rec.numCausa || "—")}</h1>
+      <table class="ps-detail">
+        <tr><th>Carátula</th><td>${escapeHtml(rec.caratula || "—")}</td></tr>
+        <tr><th>Juzgado de origen</th><td>${escapeHtml(rec.juzgado || "—")}</td></tr>
+        <tr><th>Modo de intervención</th><td>${escapeHtml(modo)}</td></tr>
+        <tr><th>Empleado asignado</th><td>${escapeHtml(rec.usuarioAsignado || "—")}</td></tr>
+        <tr><th>Fecha de registro</th><td>${fmtDate(rec.fechaRegistro)}</td></tr>
+      </table>
+      <h2 class="ps-obs-title">Observaciones</h2>
+      <div class="ps-obs-content">${obsHtml}</div>
+      <p class="ps-footer">Impreso el ${fmtDate(new Date(), true)}</p>
+    `;
+
+    document.body.classList.add("print-single-mode");
+    window.print();
+  }
+
+  window.addEventListener("afterprint", ()=>{
+    document.body.classList.remove("print-single-mode");
+  });
+
+  /* ============ INICIO ============ */
+  renderFilters();
+  cargarPagina(true);
+})();
+</script>
+</body>
+</html>
