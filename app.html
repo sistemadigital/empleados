@@ -750,27 +750,24 @@
             display: block;
         }
 
-        /* ===== MÓDULO DE BOTONES SUPERIOR DERECHA ===== */
+        /* ===== MÓDULO DE BOTONES SUPERIOR DERECHA (sin bordes, transparente) ===== */
         .module-botones {
             position: absolute;
             top: 80px;
             right: 20px;
             z-index: 500;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(6px);
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 0.6rem 0.8rem;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 0.6rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: background 0.2s, border-color 0.2s;
+            align-items: flex-end;
         }
 
-        .module-botones a,
-        .pase-digital-btn,
-        .btn-novedades {
+        /* Botones individuales (incluido Novedades y Aplicativos) */
+        .module-botones > * {
             display: inline-block;
             padding: 0.4rem 1rem;
             background: white;
@@ -785,11 +782,10 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             cursor: pointer;
             font-family: 'Inter', sans-serif;
+            line-height: normal;
         }
 
-        .module-botones a:hover,
-        .pase-digital-btn:hover,
-        .btn-novedades:hover {
+        .module-botones > *:hover {
             background: #f0faff;
             border-color: #00BFFF;
             color: #00BFFF;
@@ -797,52 +793,88 @@
             box-shadow: 0 4px 10px rgba(0,191,255,0.2);
         }
 
-        /* Botón con borde celeste (Pase Digital y Caja Chica) */
-        .module-botones .caja-chica {
-            border-color: #00BFFF;
-            box-shadow: 0 0 8px rgba(0,191,255,0.3);
-        }
-        .module-botones .caja-chica:hover {
-            border-color: #00BFFF;
-            box-shadow: 0 0 12px rgba(0,191,255,0.5);
-            background: #f0faff;
-            color: #00BFFF;
-        }
-
-        /* BORDE VERDE LUMINOSO CUANDO HAY DATOS */
+        /* Botón Novedades con borde verde cuando hay datos */
         .btn-novedades.hay-datos {
             border-color: #22c55e;
             box-shadow: 0 0 12px #22c55e, 0 0 20px rgba(34, 197, 94, 0.3);
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        .pase-digital-wrapper {
+        /* Botón Aplicativos */
+        .btn-aplicativos {
+            background: white;
+            border: 1px solid #94a3b8;
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #003366;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-aplicativos:hover {
+            background: #f0faff;
+            border-color: #00BFFF;
+            color: #00BFFF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,191,255,0.2);
+        }
+
+        /* Contenedor del desplegable de aplicativos */
+        .aplicativos-wrapper {
             position: relative;
             display: inline-block;
         }
 
-        .pase-digital-popup {
+        .aplicativos-list {
             display: none;
             position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
+            top: calc(100% + 0.5rem);
+            right: 0;
             background: white;
-            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 15px 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            z-index: 2000;
-            width: 240px;
-            text-align: center;
-            font-weight: 500;
-            color: #d32f2f;
-            white-space: normal;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            padding: 0.5rem 0;
+            min-width: 180px;
+            z-index: 550;
+            border: 1px solid #e2e8f0;
+            flex-direction: column;
+            gap: 0.3rem;
         }
 
-        .pase-digital-popup.show {
+        .aplicativos-list.show {
+            display: flex;
+        }
+
+        .aplicativos-list a {
             display: block;
+            padding: 0.4rem 1.2rem;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            color: #003366;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap;
+            box-shadow: none;
+            cursor: pointer;
+        }
+
+        .aplicativos-list a:hover {
+            background: #f0faff;
+            color: #00BFFF;
+        }
+
+        .aplicativos-list a:not(:last-child) {
+            border-bottom: 1px solid #f1f5f9;
         }
 
         /* ===== MODAL NOVEDADES (copiado de a.html) ===== */
@@ -1297,14 +1329,20 @@
             .module-botones {
                 top: 70px;
                 right: 10px;
-                padding: 0.4rem 0.6rem;
                 gap: 0.4rem;
-                border-radius: 10px;
             }
-            .module-botones a,
-            .pase-digital-btn,
-            .btn-novedades {
+            .module-botones > * {
                 padding: 0.3rem 0.7rem;
+                font-size: 0.75rem;
+            }
+
+            .aplicativos-list {
+                min-width: 150px;
+                right: 0;
+                left: auto;
+            }
+            .aplicativos-list a {
+                padding: 0.3rem 1rem;
                 font-size: 0.75rem;
             }
 
@@ -1442,14 +1480,18 @@
             .module-botones {
                 top: 60px;
                 right: 6px;
-                padding: 0.3rem 0.4rem;
                 gap: 0.3rem;
             }
-            .module-botones a,
-            .pase-digital-btn,
-            .btn-novedades {
+            .module-botones > * {
                 padding: 0.2rem 0.5rem;
                 font-size: 0.65rem;
+            }
+            .aplicativos-list {
+                min-width: 130px;
+            }
+            .aplicativos-list a {
+                padding: 0.2rem 0.8rem;
+                font-size: 0.7rem;
             }
             .novedades-modal {
                 top: 110px;
@@ -1471,20 +1513,21 @@
         <iframe id="appIframe"></iframe>
 
         <div id="homeContent">
-            <!-- Módulo de botones superior derecha -->
+            <!-- Módulo de botones superior derecha (Novedades primero, luego Aplicativos) -->
             <div class="module-botones">
-                <!-- Pase Digital con popup y borde celeste -->
-                <div class="pase-digital-wrapper">
-                    <span class="pase-digital-btn caja-chica" id="btnPaseDigital">Pase Digital</span>
-                    <div class="pase-digital-popup" id="paseDigitalPopup">
-                        Requiere habilitación oficial para acceder
+                <!-- Botón Novedades (siempre visible, primero) -->
+                <button class="btn-novedades" id="btnNovedades"><i class="fas fa-bullhorn"></i> Novedades</button>
+
+                <!-- Botón Aplicativos con su listado desplegable -->
+                <div class="aplicativos-wrapper">
+                    <button class="btn-aplicativos" id="btnAplicativos"><i class="fas fa-th"></i> Aplicativos</button>
+                    <div class="aplicativos-list" id="aplicativosList">
+                        <a onclick="loadPage('https://fioravanteweb.github.io/cajachica/')">Caja Chica</a>
+                        <a onclick="loadPage('https://defensoria6.github.io/CEJUME/')">Cejume-Audiencias</a>
+                        <a href="https://defensoria6.github.io/pase-digital/index2" target="_blank">Pase Digital</a>
+                        <a href="https://defensorialocal-seis.github.io/protocolo/" target="_blank">Protocolo de Actuación</a>
                     </div>
                 </div>
-                <!-- NUEVO BOTÓN CAJA CHICA -->
-                <a onclick="loadPage('https://fioravanteweb.github.io/cajachica/')" class="caja-chica">Caja Chica</a>
-                <a href="https://defensorialocal-seis.github.io/protocolo/" target="_blank">Protocolo de Actuación</a>
-                <!-- BOTÓN NOVEDADES -->
-                <button class="btn-novedades" id="btnNovedades"><i class="fas fa-bullhorn"></i> Novedades</button>
             </div>
 
             <!-- MODAL DE NOVEDADES -->
@@ -1664,8 +1707,8 @@
             document.getElementById('mainMenuPopup')?.classList.remove('show');
             document.getElementById('calendarPopup')?.classList.remove('show');
             document.getElementById('sistemaInfoModal')?.classList.remove('show');
-            document.getElementById('paseDigitalPopup')?.classList.remove('show');
             document.getElementById('novedadesModal')?.classList.remove('visible');
+            document.getElementById('aplicativosList')?.classList.remove('show');
             const dropdown = document.getElementById('userDropdown');
             if (dropdown) dropdown.classList.remove('show');
         }
@@ -1678,14 +1721,15 @@
             const isClickInsideBanner = document.getElementById('eventBanner')?.contains(e.target);
             const isClickInsideReminder = document.getElementById('reminderModal')?.contains(e.target);
             const isClickInsideFestModal = e.target.closest('.modal-festividad-overlay');
-            const isClickInsidePase = document.getElementById('btnPaseDigital')?.contains(e.target) ||
-                                      document.getElementById('paseDigitalPopup')?.contains(e.target);
             const isClickInsideNovedadesBtn = document.getElementById('btnNovedades')?.contains(e.target);
             const isClickInsideNovedadesModal = document.getElementById('novedadesModal')?.contains(e.target);
+            const isClickInsideAplicativos = document.getElementById('aplicativosList')?.contains(e.target);
+            const isClickOnAplicativosBtn = document.getElementById('btnAplicativos')?.contains(e.target);
 
             if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideFooter && !isClickInsideDevInfo &&
-                !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal && !isClickInsidePase &&
-                !isClickInsideNovedadesBtn && !isClickInsideNovedadesModal) {
+                !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal &&
+                !isClickInsideNovedadesBtn && !isClickInsideNovedadesModal &&
+                !isClickInsideAplicativos && !isClickOnAplicativosBtn) {
                 closeAllModals();
             }
         });
@@ -1712,6 +1756,22 @@
             const isShow = modal.classList.contains('show');
             closeAllModals();
             if (!isShow) modal.classList.add('show');
+        });
+
+        // Toggle del listado de aplicativos
+        document.getElementById('btnAplicativos').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const list = document.getElementById('aplicativosList');
+            const isShow = list.classList.contains('show');
+            // Cerramos otros desplegables abiertos
+            document.getElementById('mainMenuPopup')?.classList.remove('show');
+            document.getElementById('calendarPopup')?.classList.remove('show');
+            document.getElementById('sistemaInfoModal')?.classList.remove('show');
+            if (isShow) {
+                list.classList.remove('show');
+            } else {
+                list.classList.add('show');
+            }
         });
 
         const dtwBtn = document.getElementById('dateTimeWeatherBtn');
@@ -1963,28 +2023,6 @@
         document.getElementById('eventBanner')?.addEventListener('click', (e) => {
             loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
         });
-
-        // ================= CONTROL DEL POPUP PASE DIGITAL =================
-        (function() {
-            const btnPase = document.getElementById('btnPaseDigital');
-            const popupPase = document.getElementById('paseDigitalPopup');
-
-            if (btnPase && popupPase) {
-                // AHORA: al hacer clic abre la URL en nueva pestaña
-                btnPase.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    window.open('https://defensoria6.github.io/pase-digital/index2', '_blank');
-                    // El popup ya no se muestra
-                });
-
-                // El cierre del popup al hacer clic fuera ya no es necesario, pero se conserva
-                document.addEventListener('click', function(e) {
-                    if (!btnPase.contains(e.target) && !popupPase.contains(e.target)) {
-                        popupPase.classList.remove('show');
-                    }
-                });
-            }
-        })();
     </script>
 
     <script type="module">
