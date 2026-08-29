@@ -497,7 +497,7 @@
             background-color: #64748b;
         }
 
-        /* ===== WELCOME ===== */
+        /* ===== WELCOME Y MÓDULOS ===== */
         .welcome-container {
             display: flex;
             flex-direction: column;
@@ -576,6 +576,163 @@
             white-space: nowrap;
             margin-left: auto;
             transition: color 0.2s ease;
+        }
+
+        /* ===== MÓDULOS (igual que en a.html) ===== */
+        .modules-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.7rem;
+            width: 100%;
+            padding-right: 1.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .module-item {
+            background: #f1f5f9;
+            border: 2.5px solid;
+            border-radius: 12px;
+            padding: 0.9rem 1.8rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            width: 260px;
+            min-width: 220px;
+            max-width: 320px;
+            white-space: nowrap;
+            letter-spacing: 0.4px;
+            text-align: center;
+        }
+
+        .module-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .module-novedades {
+            border-color: #22c55e;
+        }
+        .module-novedades.hay-datos {
+            box-shadow: 0 0 16px #22c55e, 0 0 28px rgba(34, 197, 94, 0.35);
+        }
+        .module-caja {
+            border-color: #3b82f6;
+        }
+        .module-cejume {
+            border-color: #f59e0b;
+        }
+        .module-pase {
+            border-color: #8b5cf6;
+        }
+        .module-protocolo {
+            border-color: #ef4444;
+        }
+
+        /* ===== MODAL DE NOVEDADES ===== */
+        .novedades-modal {
+            position: absolute;
+            top: 140px;
+            right: 20px;
+            z-index: 600;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(8px);
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            width: 340px;
+            max-height: 420px;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            display: none;
+        }
+
+        .novedades-modal.visible {
+            display: block;
+        }
+
+        .novedades-modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00BFFF;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .novedades-modal .modal-titulo {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #003366;
+            letter-spacing: 0.3px;
+        }
+
+        .novedades-modal .cerrar-modal-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .novedades-modal .cerrar-modal-btn:hover {
+            color: #ef4444;
+        }
+
+        .novedades-modal .seccion {
+            margin-bottom: 1rem;
+        }
+
+        .novedades-modal .seccion-titulo {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #1e293b;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .novedades-modal .seccion-titulo i {
+            color: #00BFFF;
+            font-size: 0.9rem;
+        }
+
+        .novedades-modal .item-lista {
+            font-size: 0.8rem;
+            color: #334155;
+            padding: 0.2rem 0 0.2rem 1.2rem;
+            border-bottom: 1px dashed #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .novedades-modal .item-lista .nombre {
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .novedades-modal .item-lista .fecha {
+            color: #64748b;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .novedades-modal .sin-datos {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-style: italic;
+            padding: 0.2rem 0 0.2rem 1.2rem;
         }
 
         .user-dropdown {
@@ -748,243 +905,6 @@
             height: 100%;
             object-fit: cover;
             display: block;
-        }
-
-        /* ===== MÓDULO DE BOTONES SUPERIOR DERECHA (sin bordes, transparente) ===== */
-        .module-botones {
-            position: absolute;
-            top: 80px;
-            right: 20px;
-            z-index: 500;
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-            align-items: flex-end;
-        }
-
-        /* Botones individuales (incluido Novedades y Aplicativos) */
-        .module-botones > * {
-            display: inline-block;
-            padding: 0.4rem 1rem;
-            background: white;
-            border: 1px solid #94a3b8;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #003366;
-            text-decoration: none;
-            transition: all 0.2s;
-            white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            line-height: normal;
-        }
-
-        .module-botones > *:hover {
-            background: #f0faff;
-            border-color: #00BFFF;
-            color: #00BFFF;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0,191,255,0.2);
-        }
-
-        /* Botón Novedades con borde verde cuando hay datos */
-        .btn-novedades.hay-datos {
-            border-color: #22c55e;
-            box-shadow: 0 0 12px #22c55e, 0 0 20px rgba(34, 197, 94, 0.3);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        /* Botón Aplicativos */
-        .btn-aplicativos {
-            background: white;
-            border: 1px solid #94a3b8;
-            border-radius: 30px;
-            padding: 0.4rem 1rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #003366;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            font-family: 'Inter', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-aplicativos:hover {
-            background: #f0faff;
-            border-color: #00BFFF;
-            color: #00BFFF;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0,191,255,0.2);
-        }
-
-        /* Contenedor del desplegable de aplicativos */
-        .aplicativos-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .aplicativos-list {
-            display: none;
-            position: absolute;
-            top: calc(100% + 0.5rem);
-            right: 0;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            padding: 0.5rem 0;
-            min-width: 180px;
-            z-index: 550;
-            border: 1px solid #e2e8f0;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .aplicativos-list.show {
-            display: flex;
-        }
-
-        .aplicativos-list a {
-            display: block;
-            padding: 0.4rem 1.2rem;
-            background: transparent;
-            border: none;
-            border-radius: 0;
-            color: #003366;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.85rem;
-            transition: background 0.2s, color 0.2s;
-            white-space: nowrap;
-            box-shadow: none;
-            cursor: pointer;
-        }
-
-        .aplicativos-list a:hover {
-            background: #f0faff;
-            color: #00BFFF;
-        }
-
-        .aplicativos-list a:not(:last-child) {
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        /* ===== MODAL NOVEDADES (copiado de a.html) ===== */
-        .novedades-modal {
-            position: absolute;
-            top: 140px;
-            right: 20px;
-            z-index: 600;
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(8px);
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 1rem 1.2rem;
-            width: 340px;
-            max-height: 420px;
-            overflow-y: auto;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            display: none; /* oculto por defecto */
-        }
-
-        .novedades-modal.visible {
-            display: block;
-        }
-
-        .novedades-modal .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #00BFFF;
-            padding-bottom: 0.3rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .novedades-modal .modal-titulo {
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: #003366;
-            letter-spacing: 0.3px;
-        }
-
-        .novedades-modal .cerrar-modal-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #94a3b8;
-            transition: color 0.2s;
-            line-height: 1;
-        }
-
-        .novedades-modal .cerrar-modal-btn:hover {
-            color: #ef4444;
-        }
-
-        .novedades-modal .seccion {
-            margin-bottom: 1rem;
-        }
-
-        .novedades-modal .seccion-titulo {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #1e293b;
-            margin-bottom: 0.3rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .novedades-modal .seccion-titulo i {
-            color: #00BFFF;
-            font-size: 0.9rem;
-        }
-
-        .novedades-modal .item-lista {
-            font-size: 0.8rem;
-            color: #334155;
-            padding: 0.2rem 0 0.2rem 1.2rem;
-            border-bottom: 1px dashed #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .novedades-modal .item-lista .nombre {
-            font-weight: 500;
-            flex: 1;
-        }
-
-        .novedades-modal .item-lista .fecha {
-            color: #64748b;
-            font-size: 0.75rem;
-            white-space: nowrap;
-        }
-
-        .novedades-modal .sin-datos {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            font-style: italic;
-            padding: 0.2rem 0 0.2rem 1.2rem;
-        }
-
-        .novedades-modal .badge-feria {
-            background: #dbeafe;
-            color: #1e40af;
-            border-radius: 20px;
-            padding: 0.1rem 0.6rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-            margin-left: 6px;
         }
 
         /* ===== BIRTHDAY MODAL ===== */
@@ -1304,6 +1224,25 @@
         }
 
         /* ===== RESPONSIVE ===== */
+        @media (min-width: 769px) {
+            .modules-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                padding: 0 1.5rem;
+                gap: 0.7rem;
+            }
+            .module-item {
+                flex: 0 1 auto;
+                width: auto;
+                min-width: auto;
+                max-width: none;
+                padding: 0.9rem 1.8rem;
+                font-size: 1rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .welcome-message {
                 font-size: 1.4rem;
@@ -1326,24 +1265,19 @@
                 border-width: 3px;
             }
 
-            .module-botones {
-                top: 70px;
-                right: 10px;
-                gap: 0.4rem;
+            .modules-container {
+                flex-direction: column;
+                align-items: flex-end;
+                padding-right: 1.5rem;
+                gap: 0.5rem;
             }
-            .module-botones > * {
-                padding: 0.3rem 0.7rem;
-                font-size: 0.75rem;
-            }
-
-            .aplicativos-list {
-                min-width: 150px;
-                right: 0;
-                left: auto;
-            }
-            .aplicativos-list a {
-                padding: 0.3rem 1rem;
-                font-size: 0.75rem;
+            .module-item {
+                width: 200px;
+                min-width: 160px;
+                max-width: 240px;
+                font-size: 0.95rem;
+                padding: 0.7rem 1.2rem;
+                border-radius: 10px;
             }
 
             .novedades-modal {
@@ -1477,21 +1411,12 @@
                 max-width: 250px;
                 border-width: 3px;
             }
-            .module-botones {
-                top: 60px;
-                right: 6px;
-                gap: 0.3rem;
-            }
-            .module-botones > * {
-                padding: 0.2rem 0.5rem;
-                font-size: 0.65rem;
-            }
-            .aplicativos-list {
-                min-width: 130px;
-            }
-            .aplicativos-list a {
-                padding: 0.2rem 0.8rem;
-                font-size: 0.7rem;
+            .module-item {
+                width: 170px;
+                min-width: 140px;
+                max-width: 200px;
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
             }
             .novedades-modal {
                 top: 110px;
@@ -1505,6 +1430,37 @@
                 font-size: 0.7rem;
             }
         }
+
+        /* Botón Asistente IA (solo escritorio) */
+        .btn-asistente-ia {
+            display: inline-flex;
+            align-items: center;
+            background: #22c55e;
+            border: 2px solid #15803d;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            margin-right: 8px;
+        }
+
+        .btn-asistente-ia:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .btn-asistente-ia {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1513,24 +1469,7 @@
         <iframe id="appIframe"></iframe>
 
         <div id="homeContent">
-            <!-- Módulo de botones superior derecha (Novedades primero, luego Aplicativos) -->
-            <div class="module-botones">
-                <!-- Botón Novedades (siempre visible, primero) -->
-                <button class="btn-novedades" id="btnNovedades"><i class="fas fa-bullhorn"></i> Novedades</button>
-
-                <!-- Botón Aplicativos con su listado desplegable -->
-                <div class="aplicativos-wrapper">
-                    <button class="btn-aplicativos" id="btnAplicativos"><i class="fas fa-th"></i> Aplicativos</button>
-                    <div class="aplicativos-list" id="aplicativosList">
-                        <a onclick="loadPage('https://fioravanteweb.github.io/cajachica/')">Caja Chica</a>
-                        <a onclick="loadPage('https://defensoria6.github.io/CEJUME/')">Cejume-Audiencias</a>
-                        <a href="https://defensoria6.github.io/pase-digital/index2" target="_blank">Pase Digital</a>
-                        <a href="https://defensorialocal-seis.github.io/protocolo/" target="_blank">Protocolo de Actuación</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MODAL DE NOVEDADES -->
+            <!-- MODAL DE NOVEDADES (estático) -->
             <div class="novedades-modal" id="novedadesModal">
                 <div class="modal-header">
                     <span class="modal-titulo"><i class="fas fa-bullhorn" style="margin-right:8px;"></i>Novedades</span>
@@ -1542,17 +1481,7 @@
             </div>
 
             <div id="dynamicContent">
-                <div class="welcome-container" id="welcomeContainerPlaceholder">
-                    <div class="welcome-bar" style="cursor: default;">
-                        <div class="left-group">
-                            <div class="avatar-placeholder-medium" style="background-color: #003366;">...</div>
-                            <div>
-                                <div class="welcome-message">Cargando...</div>
-                            </div>
-                        </div>
-                        <span class="sistema-digital-text">Sistema Digital</span>
-                    </div>
-                </div>
+                <!-- El contenido del welcome bar y módulos se genera dinámicamente -->
             </div>
 
             <div class="top-image-container" id="imagenCentralContainer">
@@ -1584,9 +1513,7 @@
                         <li><a onclick="loadPage('https://sistemadigital.github.io/consultas-turnos/asignados')">Consultas y Turnos</a></li>
                         <li><a onclick="loadPage('https://sistemadigital.github.io/operador/atencion-publico.html')">Atención al Público</a></li>
                         <li><a onclick="loadPage('https://sistemadigital.github.io/ingreso-sistema/runnai-defensoria.html')">Registro NNyAI Defensoria</a></li>
-                        <!-- NUEVO ÍTEM MAPAS -->
                         <li><a onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/mapoteca')">Mapas</a></li>
-                        <!-- NUEVO ÍTEM MANUAL DE USO (con negrita y color celeste) -->
                         <li><a onclick="loadPage('https://sistemadigital.github.io/ingreso-sistema/sistema-manual')" style="font-weight: bold; color: #00BFFF;">Manual de Uso</a></li>
                     </ul>
                 </div>
@@ -1708,7 +1635,6 @@
             document.getElementById('calendarPopup')?.classList.remove('show');
             document.getElementById('sistemaInfoModal')?.classList.remove('show');
             document.getElementById('novedadesModal')?.classList.remove('visible');
-            document.getElementById('aplicativosList')?.classList.remove('show');
             const dropdown = document.getElementById('userDropdown');
             if (dropdown) dropdown.classList.remove('show');
         }
@@ -1723,13 +1649,10 @@
             const isClickInsideFestModal = e.target.closest('.modal-festividad-overlay');
             const isClickInsideNovedadesBtn = document.getElementById('btnNovedades')?.contains(e.target);
             const isClickInsideNovedadesModal = document.getElementById('novedadesModal')?.contains(e.target);
-            const isClickInsideAplicativos = document.getElementById('aplicativosList')?.contains(e.target);
-            const isClickOnAplicativosBtn = document.getElementById('btnAplicativos')?.contains(e.target);
 
             if (!isClickInsideMenu && !isClickInsideCalendar && !isClickInsideFooter && !isClickInsideDevInfo &&
                 !isClickInsideBanner && !isClickInsideReminder && !isClickInsideFestModal &&
-                !isClickInsideNovedadesBtn && !isClickInsideNovedadesModal &&
-                !isClickInsideAplicativos && !isClickOnAplicativosBtn) {
+                !isClickInsideNovedadesBtn && !isClickInsideNovedadesModal) {
                 closeAllModals();
             }
         });
@@ -1758,22 +1681,7 @@
             if (!isShow) modal.classList.add('show');
         });
 
-        // Toggle del listado de aplicativos
-        document.getElementById('btnAplicativos').addEventListener('click', function(e) {
-            e.stopPropagation();
-            const list = document.getElementById('aplicativosList');
-            const isShow = list.classList.contains('show');
-            // Cerramos otros desplegables abiertos
-            document.getElementById('mainMenuPopup')?.classList.remove('show');
-            document.getElementById('calendarPopup')?.classList.remove('show');
-            document.getElementById('sistemaInfoModal')?.classList.remove('show');
-            if (isShow) {
-                list.classList.remove('show');
-            } else {
-                list.classList.add('show');
-            }
-        });
-
+        // ========== RELOJ Y CALENDARIO ==========
         const dtwBtn = document.getElementById('dateTimeWeatherBtn');
         const calPopup = document.getElementById('calendarPopup');
 
@@ -1843,6 +1751,7 @@
         }
         fetchWeather();
 
+        // ========== MODAL DE SALIDA ==========
         const modalSalida = document.getElementById('modalSalida');
 
         document.getElementById('btnSalir').addEventListener('click', () => {
@@ -1850,6 +1759,7 @@
         });
         document.getElementById('cancelarSalida').addEventListener('click', () => { modalSalida.classList.remove('active'); });
 
+        // ========== BIRTHDAY MODAL ==========
         const birthdayModal = document.getElementById('birthdayModal');
 
         function cerrarBirthdayModal() { birthdayModal.style.display = 'none'; }
@@ -1864,6 +1774,7 @@
             });
         }
 
+        // ========== REMINDER MODAL ==========
         let reminderShown = false;
         let reminderTimeout = null;
 
@@ -1894,6 +1805,7 @@
             setTimeout(showReminderModalOnce, 500);
         });
 
+        // ========== FESTIVIDADES ==========
         function isMayoWeek() {
             const hoy = new Date();
             const mes = hoy.getMonth();
@@ -2023,6 +1935,149 @@
         document.getElementById('eventBanner')?.addEventListener('click', (e) => {
             loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
         });
+
+        // ========== FUNCIONES PARA NOVEDADES (globales) ==========
+        async function actualizarNovedades() {
+            // Esta función será llamada desde el módulo, pero la definimos aquí
+            // para que esté disponible globalmente.
+        }
+
+        function toggleNovedades() {
+            const modal = document.getElementById('novedadesModal');
+            if (modal.classList.contains('visible')) {
+                modal.classList.remove('visible');
+            } else {
+                // Actualizar contenido y mostrar
+                if (typeof actualizarNovedades === 'function') {
+                    actualizarNovedades();
+                }
+                modal.classList.add('visible');
+            }
+        }
+
+        document.getElementById('cerrarNovedadesBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('novedadesModal').classList.remove('visible');
+        });
+
+        // ========== EVENTOS DE EVENTOS (banner) ==========
+        const causasConfigHistorica = {
+            apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
+            authDomain: "causas-defensoria.firebaseapp.com",
+            projectId: "causas-defensoria",
+            storageBucket: "causas-defensoria.appspot.com",
+            messagingSenderId: "186064671470",
+            appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
+        };
+        const causasConfigNueva = {
+            apiKey: "AIzaSyBevCwkh4iOWVqhp3gG2ae1eCUMkFpnr6I",
+            authDomain: "causas-2defensoria.firebaseapp.com",
+            projectId: "causas-2defensoria",
+            storageBucket: "causas-2defensoria.firebasestorage.app",
+            messagingSenderId: "663905632804",
+            appId: "1:663905632804:web:4f686a88004dc642ad0eb1"
+        };
+
+        let dbHistorica, dbNueva;
+        try {
+            // Inicialización de Firebase para eventos (se hace en el módulo)
+        } catch (e) {}
+
+        function toDate(val) {
+            if (!val) return null;
+            if (val.toDate) return val.toDate();
+            if (val.seconds !== undefined) return new Date(val.seconds * 1000);
+            if (val instanceof Date) return val;
+            if (typeof val === 'string') {
+                const match = val.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}|\d{2})$/);
+                if (match) {
+                    let year = parseInt(match[3]);
+                    if (year < 100) year += 2000;
+                    return new Date(year, parseInt(match[2]) - 1, parseInt(match[1]));
+                }
+                const matchIso = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+                if (matchIso) {
+                    return new Date(parseInt(matchIso[1]), parseInt(matchIso[2]) - 1, parseInt(matchIso[3]));
+                }
+                const d = new Date(val);
+                if (!isNaN(d)) return d;
+            }
+            if (typeof val === 'object' && val !== null && 'fecha' in val) {
+                return toDate(val.fecha);
+            }
+            return null;
+        }
+
+        async function hayEventosHoy() {
+            try {
+                if (!dbHistorica || !dbNueva) return false;
+                const [snapHistorica, snapNueva] = await Promise.all([
+                    getDocs(collection(dbHistorica, "causas")),
+                    getDocs(collection(dbNueva, "causas"))
+                ]);
+                const hoy = new Date();
+                const year = hoy.getFullYear();
+                const month = hoy.getMonth();
+                const day = hoy.getDate();
+
+                function esHoy(fecha) {
+                    if (!fecha) return false;
+                    const d = toDate(fecha);
+                    if (!d) return false;
+                    return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+                }
+
+                function procesarCausa(causa) {
+                    if (Array.isArray(causa.audiencias)) {
+                        for (const item of causa.audiencias) {
+                            if (esHoy(item)) return true;
+                        }
+                    }
+                    if (causa.audienciaGesell && esHoy(causa.audienciaGesell)) return true;
+                    if (causa.vencimiento && esHoy(causa.vencimiento)) return true;
+                    if (causa.vencimientoRecursos && esHoy(causa.vencimientoRecursos)) return true;
+                    if (Array.isArray(causa.diligencias)) {
+                        for (const d of causa.diligencias) {
+                            if (d.fecha && esHoy(d.fecha)) return true;
+                        }
+                    }
+                    return false;
+                }
+
+                for (const docSnap of snapHistorica.docs) {
+                    if (procesarCausa(docSnap.data())) return true;
+                }
+                for (const docSnap of snapNueva.docs) {
+                    if (procesarCausa(docSnap.data())) return true;
+                }
+                return false;
+            } catch (error) {
+                console.error("Error en hayEventosHoy:", error);
+                return false;
+            }
+        }
+
+        async function actualizarBannerEventos() {
+            const bannerDiv = document.getElementById('eventBanner');
+            const bannerText = document.getElementById('bannerText');
+            if (!bannerDiv || !bannerText) return;
+            try {
+                const hay = await hayEventosHoy();
+                if (hay) {
+                    bannerText.textContent = "📅 Recuerda, hoy tenemos eventos agendados";
+                    bannerDiv.classList.add('hay-eventos');
+                } else {
+                    bannerText.textContent = "📅 Hoy no tenemos nada agendado";
+                    bannerDiv.classList.remove('hay-eventos');
+                }
+            } catch (err) {
+                console.error("Error en actualizarBannerEventos:", err);
+                bannerText.textContent = "📅 No se pudo verificar eventos";
+                bannerDiv.classList.remove('hay-eventos');
+            }
+        }
+        actualizarBannerEventos();
+        setInterval(actualizarBannerEventos, 30 * 60 * 1000);
     </script>
 
     <script type="module">
@@ -2178,7 +2233,7 @@
         }
 
         // ========== ACTUALIZAR MODAL DE NOVEDADES Y BOTÓN ==========
-        async function actualizarNovedades() {
+        window.actualizarNovedades = async function() {
             const contenedor = document.getElementById('novedadesContenido');
             const btnNovedades = document.getElementById('btnNovedades');
             if (!contenedor) return;
@@ -2189,7 +2244,6 @@
                     obtenerLicenciasSemanaProxima()
                 ]);
 
-                // Determinar si hay datos para mostrar
                 const hayDatos = (gruposFeria.length > 0) || (licencias.length > 0);
                 if (btnNovedades) {
                     if (hayDatos) {
@@ -2237,41 +2291,7 @@
                 console.error("Error actualizando novedades:", error);
                 contenedor.innerHTML = `<div class="sin-datos">Error al cargar novedades.</div>`;
             }
-        }
-
-        // ========== MANEJO DEL BOTÓN Y MODAL DE NOVEDADES ==========
-        const btnNovedades = document.getElementById('btnNovedades');
-        const modalNovedades = document.getElementById('novedadesModal');
-        const cerrarNovedadesBtn = document.getElementById('cerrarNovedadesBtn');
-
-        function toggleNovedades() {
-            if (modalNovedades.classList.contains('visible')) {
-                modalNovedades.classList.remove('visible');
-            } else {
-                actualizarNovedades();
-                modalNovedades.classList.add('visible');
-            }
-        }
-
-        btnNovedades.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleNovedades();
-        });
-
-        cerrarNovedadesBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            modalNovedades.classList.remove('visible');
-        });
-
-        // Actualización periódica (30 min) si el modal está abierto
-        setInterval(() => {
-            if (modalNovedades.classList.contains('visible')) {
-                actualizarNovedades();
-            }
-        }, 30 * 60 * 1000);
-
-        // Cargar datos al inicio para mostrar borde verde si corresponde
-        actualizarNovedades();
+        };
 
         // ========== BASES DE EVENTOS (histórica + nueva) ==========
         const causasConfigHistorica = {
@@ -2300,105 +2320,12 @@
             console.log("Bases de eventos inicializadas");
             signInAnonymously(getAuth(appHistorica)).catch(e => console.warn("Auth anónima histórica:", e));
             signInAnonymously(getAuth(appNueva)).catch(e => console.warn("Auth anónima nueva:", e));
+            // Asignar a variables globales para que las funciones de banner las usen
+            window.dbHistorica = dbHistorica;
+            window.dbNueva = dbNueva;
         } catch (e) {
             console.error("Error al inicializar bases de eventos:", e);
         }
-
-        function toDate(val) {
-            if (!val) return null;
-            if (val.toDate) return val.toDate();
-            if (val.seconds !== undefined) return new Date(val.seconds * 1000);
-            if (val instanceof Date) return val;
-            if (typeof val === 'string') {
-                const match = val.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}|\d{2})$/);
-                if (match) {
-                    let year = parseInt(match[3]);
-                    if (year < 100) year += 2000;
-                    return new Date(year, parseInt(match[2]) - 1, parseInt(match[1]));
-                }
-                const matchIso = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-                if (matchIso) {
-                    return new Date(parseInt(matchIso[1]), parseInt(matchIso[2]) - 1, parseInt(matchIso[3]));
-                }
-                const d = new Date(val);
-                if (!isNaN(d)) return d;
-            }
-            if (typeof val === 'object' && val !== null && 'fecha' in val) {
-                return toDate(val.fecha);
-            }
-            return null;
-        }
-
-        async function hayEventosHoy() {
-            try {
-                if (!dbHistorica || !dbNueva) return false;
-                const [snapHistorica, snapNueva] = await Promise.all([
-                    getDocs(collection(dbHistorica, "causas")),
-                    getDocs(collection(dbNueva, "causas"))
-                ]);
-                const hoy = new Date();
-                const year = hoy.getFullYear();
-                const month = hoy.getMonth();
-                const day = hoy.getDate();
-
-                function esHoy(fecha) {
-                    if (!fecha) return false;
-                    const d = toDate(fecha);
-                    if (!d) return false;
-                    return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
-                }
-
-                function procesarCausa(causa) {
-                    if (Array.isArray(causa.audiencias)) {
-                        for (const item of causa.audiencias) {
-                            if (esHoy(item)) return true;
-                        }
-                    }
-                    if (causa.audienciaGesell && esHoy(causa.audienciaGesell)) return true;
-                    if (causa.vencimiento && esHoy(causa.vencimiento)) return true;
-                    if (causa.vencimientoRecursos && esHoy(causa.vencimientoRecursos)) return true;
-                    if (Array.isArray(causa.diligencias)) {
-                        for (const d of causa.diligencias) {
-                            if (d.fecha && esHoy(d.fecha)) return true;
-                        }
-                    }
-                    return false;
-                }
-
-                for (const docSnap of snapHistorica.docs) {
-                    if (procesarCausa(docSnap.data())) return true;
-                }
-                for (const docSnap of snapNueva.docs) {
-                    if (procesarCausa(docSnap.data())) return true;
-                }
-                return false;
-            } catch (error) {
-                console.error("Error en hayEventosHoy:", error);
-                return false;
-            }
-        }
-
-        async function actualizarBannerEventos() {
-            const bannerDiv = document.getElementById('eventBanner');
-            const bannerText = document.getElementById('bannerText');
-            if (!bannerDiv || !bannerText) return;
-            try {
-                const hay = await hayEventosHoy();
-                if (hay) {
-                    bannerText.textContent = "📅 Recuerda, hoy tenemos eventos agendados";
-                    bannerDiv.classList.add('hay-eventos');
-                } else {
-                    bannerText.textContent = "📅 Hoy no tenemos nada agendado";
-                    bannerDiv.classList.remove('hay-eventos');
-                }
-            } catch (err) {
-                console.error("Error en actualizarBannerEventos:", err);
-                bannerText.textContent = "📅 No se pudo verificar eventos";
-                bannerDiv.classList.remove('hay-eventos');
-            }
-        }
-        actualizarBannerEventos();
-        setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
         // ========== FUNCIONES AUXILIARES PARA COLORES ==========
         function hexToRgb(hex) {
@@ -2635,7 +2562,8 @@
             let avatarOptionsHtml = photoURL ? '' :
                 `<div class="avatar-options"><img src="${AVATAR_HOMBRE}" class="avatar-option" id="avatarHombre"><img src="${AVATAR_MUJER}" class="avatar-option" id="avatarMujer"></div>`;
 
-            dynamicContent.innerHTML = `
+            // HTML con welcome bar, módulos y dropdown
+            const html = `
                 <div class="welcome-container" id="welcomeContainer">
                     <div class="welcome-bar" id="welcomeBar">
                         <div class="left-group">
@@ -2647,6 +2575,15 @@
                         </div>
                         <span class="sistema-digital-text">Sistema Digital</span>
                     </div>
+
+                    <div class="modules-container">
+                        <div class="module-item module-novedades" id="btnNovedades">Novedades</div>
+                        <div class="module-item module-caja" onclick="loadPage('https://fioravanteweb.github.io/cajachica/')">Caja Chica</div>
+                        <div class="module-item module-cejume" onclick="loadPage('https://defensoria6.github.io/CEJUME/')">Cejume-Audiencias</div>
+                        <div class="module-item module-pase" onclick="loadPage('https://defensoria6.github.io/pase-digital/index2')">Pase Digital</div>
+                        <div class="module-item module-protocolo" onclick="loadPage('https://defensorialocal-seis.github.io/protocolo/')">Protocolo de Actuación</div>
+                    </div>
+
                     <div class="user-dropdown" id="userDropdown">
                         ${dropdownHeaderHtml}
                         ${avatarOptionsHtml}
@@ -2681,8 +2618,22 @@
                 </div>
             `;
 
+            dynamicContent.innerHTML = html;
+
             if (esCumpleanos) launchConfetti();
 
+            // Asignar evento al botón "Novedades" (dinámico)
+            const btnNovedades = document.getElementById('btnNovedades');
+            if (btnNovedades) {
+                btnNovedades.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    window.toggleNovedades();
+                });
+                // Actualizar el borde verde si hay datos
+                window.actualizarNovedades();
+            }
+
+            // Eventos del dropdown
             const bar = document.getElementById('welcomeBar');
             const dropdown = document.getElementById('userDropdown');
 
@@ -2749,6 +2700,7 @@
             await checkBirthdays(esCumpleanos);
         }
 
+        // ========== AUTH STATE ==========
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -2764,6 +2716,9 @@
             document.getElementById('modalSalida').classList.remove('active');
             try { await signOut(auth); } catch (error) { console.error('Error al salir:', error); }
         });
+
+        // Actualizar novedades cada 30 minutos
+        setInterval(() => { window.actualizarNovedades?.(); }, 30 * 60 * 1000);
     </script>
 
     <!-- Botón Asistente IA (integrado en el footer, solo visible en escritorio) -->
@@ -2782,38 +2737,6 @@
                 link.className = 'btn-asistente-ia';
                 link.innerHTML = 'Asistente IA';
                 footerRight.insertBefore(link, eventBanner);
-
-                const style = document.createElement('style');
-                style.textContent = `
-                    .btn-asistente-ia {
-                        display: inline-flex;
-                        align-items: center;
-                        background: #22c55e;
-                        border: 2px solid #15803d;
-                        color: white;
-                        padding: 6px 14px;
-                        border-radius: 40px;
-                        text-decoration: none;
-                        font-weight: 700;
-                        font-size: 0.85rem;
-                        gap: 6px;
-                        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-                        transition: transform 0.2s, box-shadow 0.2s;
-                        font-family: 'Inter', sans-serif;
-                        white-space: nowrap;
-                        margin-right: 8px;
-                    }
-                    .btn-asistente-ia:hover {
-                        transform: scale(1.05);
-                        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
-                    }
-                    @media (max-width: 768px) {
-                        .btn-asistente-ia {
-                            display: none !important;
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
             });
         })();
     </script>
