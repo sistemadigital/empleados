@@ -20,7 +20,6 @@
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
-            /* Fondo más suave y texturado */
             background-color: #d4eafc;
             background-image: 
                 radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 60%),
@@ -580,6 +579,19 @@
             box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
         }
 
+        /* Estilo específico para el token (visual feedback) */
+        .grupo-input input.token-input {
+            letter-spacing: 0.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .grupo-input input.token-input:invalid {
+            border-color: #e63946;
+        }
+        .grupo-input input.token-input:valid {
+            border-color: #2a9d8f;
+        }
+
         .mostrar-clave {
             display: flex;
             align-items: center;
@@ -715,7 +727,6 @@
             display: block;
         }
 
-        /* ===== NUEVO: ENLACE MANUAL DE USO ===== */
         .manual-link-container {
             position: fixed;
             bottom: 76px;
@@ -725,7 +736,7 @@
             transform: translateY(20px) scale(0.95);
             transition: opacity 0.3s ease, transform 0.3s ease;
             pointer-events: none;
-            display: none; /* oculto por defecto, solo se muestra en escritorio cuando se cierra el popup */
+            display: none;
         }
         .manual-link-container.show {
             display: block;
@@ -755,7 +766,6 @@
             box-shadow: 0 6px 18px rgba(0, 51, 102, 0.3);
         }
 
-        /* Modal para el manual con iframe */
         .modal-manual-overlay {
             position: fixed;
             top: 0;
@@ -844,7 +854,6 @@
             }
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .welcome-bar {
                 justify-content: center;
@@ -992,13 +1001,11 @@
                 display: none !important;
             }
 
-            /* Ocultar enlace manual en móvil */
             .manual-link-container {
                 display: none !important;
             }
         }
 
-        /* ===== ESCRITORIO: POPUP MÁS PEQUEÑO ===== */
         @media (min-width: 769px) {
             .version-info-container {
                 padding: 3px 5px 3px 8px;
@@ -1018,9 +1025,8 @@
                 font-size: 0.6rem;
             }
 
-            /* Mostrar enlace manual solo en escritorio */
             .manual-link-container {
-                display: block; /* pero oculto por .show */
+                display: block;
             }
         }
 
@@ -1147,7 +1153,6 @@
             </div>
         </div>
 
-        <!-- FRANJA AZUL CON EFECTO LUMINOSO CELESTE -->
         <div class="franja-azul"></div>
     </main>
 
@@ -1216,10 +1221,14 @@
                     <label>Contraseña</label>
                     <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
                 </div>
-                <!-- 🔐 NUEVO CAMPO: Código de invitación -->
+                <!-- 🔐 NUEVO CAMPO TOKEN NUMÉRICO DE 5 DÍGITOS -->
                 <div class="grupo-input">
-                    <label>Código de invitación</label>
-                    <input type="text" id="registerInviteCode" placeholder="Ingresa el código proporcionado" autocomplete="off" />
+                    <label>Token de acceso (5 dígitos)</label>
+                    <input type="text" id="registerToken" class="token-input" 
+                           placeholder="*****" maxlength="5" 
+                           pattern="\d{5}" inputmode="numeric" 
+                           autocomplete="off" />
+                    <small style="font-size:0.7rem;color:#4a627a;margin-top:-4px;">Ingresa el token numérico de 5 dígitos proporcionado</small>
                 </div>
                 <label class="mostrar-clave">
                     <input type="checkbox" id="mostrarRegPass" /> Mostrar contraseña
@@ -1234,12 +1243,10 @@
 
     <div id="globalAuthMessage" class="auth-message-global"></div>
 
-    <!-- ===== NUEVO: ENLACE MANUAL DE USO ===== -->
     <div id="manualLinkContainer" class="manual-link-container">
         <a id="manualLink" href="#" title="Abrir Manual de Uso del Sistema">📘 Manual de Uso del Sistema</a>
     </div>
 
-    <!-- ===== NUEVO: MODAL PARA MANUAL CON IFRAME ===== -->
     <div id="modalManualOverlay" class="modal-manual-overlay">
         <div class="modal-manual-contenido">
             <div class="modal-manual-header">
@@ -1266,7 +1273,6 @@
     </script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
     </script>
-    <!-- 🔥 Firestore SDK agregado para la validación del código de invitación -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
     </script>
 
@@ -1283,7 +1289,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore(); // ← Inicializamos Firestore
+        const db = firebase.firestore();
 
         // ─── ELEMENTOS DOM ───
         const modalLogin = document.getElementById('modalLogin');
@@ -1299,7 +1305,6 @@
         const spinnerCarga = document.getElementById('spinnerCarga');
         const spinnerText = document.getElementById('spinnerText');
 
-        // Nuevos elementos para el manual
         const manualLinkContainer = document.getElementById('manualLinkContainer');
         const manualLink = document.getElementById('manualLink');
         const modalManualOverlay = document.getElementById('modalManualOverlay');
@@ -1436,15 +1441,15 @@
                 });
         };
 
-        // ─── REGISTRO CON CÓDIGO DE INVITACIÓN (igual que en index.html) ───
+        // ─── REGISTRO CON TOKEN NUMÉRICO DE 5 DÍGITOS ───
         window.registerUser = function() {
             const name = document.getElementById('registerName').value.trim();
             const rawEmail = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value.trim();
-            const inviteCode = document.getElementById('registerInviteCode').value.trim();
+            const token = document.getElementById('registerToken').value.trim();
 
             // Validaciones básicas
-            if (!name || !rawEmail || !password || !inviteCode) {
+            if (!name || !rawEmail || !password || !token) {
                 showMessage('Completa todos los campos', 'error');
                 return;
             }
@@ -1452,45 +1457,50 @@
                 showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
                 return;
             }
+            // Validar token: exactamente 5 dígitos numéricos
+            if (!/^\d{5}$/.test(token)) {
+                showMessage('El token debe ser un número de 5 dígitos (ej. 15753)', 'error');
+                return;
+            }
 
-            // Normalizar email y validar dominio
             const email = normalizeEmail(rawEmail);
             if (!email) {
                 showMessage('Correo electrónico inválido', 'error');
                 return;
             }
-            // Opcional: verificar que termine en @mpmisiones.gob.ar (ya lo hace normalizeEmail)
 
-            // 🔐 1. Obtener el código de invitación desde Firestore
-            mostrarSpinnerConContador(); // Mostramos spinner mientras se consulta Firestore
+            // 🔐 Leer el token almacenado en Firestore (colección 'config', documento 'token')
+            mostrarSpinnerConContador();
 
-            const configRef = db.collection('config').doc('settings');
-            configRef.get()
+            const tokenRef = db.collection('config').doc('token');
+            tokenRef.get()
                 .then((doc) => {
                     if (!doc.exists) {
-                        showMessage('❌ Configuración del sistema no encontrada. Contacta al administrador.', 'error');
+                        showMessage('❌ Token del sistema no configurado. Contacta al administrador.', 'error');
                         if (window._intervaloCarga) clearInterval(window._intervaloCarga);
                         spinnerCarga.style.display = 'none';
                         return;
                     }
 
-                    const storedCode = doc.data().inviteCode;
-                    if (!storedCode) {
-                        showMessage('❌ Código de invitación no configurado. Contacta al administrador.', 'error');
+                    // El documento tiene un campo 'token' con el valor esperado
+                    const storedToken = doc.data().token;
+                    if (storedToken === undefined || storedToken === null) {
+                        showMessage('❌ Token del sistema no configurado correctamente. Contacta al administrador.', 'error');
                         if (window._intervaloCarga) clearInterval(window._intervaloCarga);
                         spinnerCarga.style.display = 'none';
                         return;
                     }
 
-                    // Comparar códigos
-                    if (inviteCode !== storedCode) {
-                        showMessage('❌ Código de invitación incorrecto. Verifica e intenta de nuevo.', 'error');
+                    // Convertir a string para comparación (por si viene como número)
+                    const storedTokenStr = String(storedToken);
+                    if (token !== storedTokenStr) {
+                        showMessage('❌ Token incorrecto. Verifica el número de 5 dígitos.', 'error');
                         if (window._intervaloCarga) clearInterval(window._intervaloCarga);
                         spinnerCarga.style.display = 'none';
                         return;
                     }
 
-                    // ✅ Código correcto: proceder con el registro
+                    // ✅ Token correcto: proceder con el registro
                     auth.createUserWithEmailAndPassword(email, password)
                         .then((userCredential) => {
                             const user = userCredential.user;
@@ -1528,13 +1538,12 @@
                         });
                 })
                 .catch((error) => {
-                    // Error al leer Firestore
                     if (window._intervaloCarga) {
                         clearInterval(window._intervaloCarga);
                         window._intervaloCarga = null;
                     }
                     spinnerCarga.style.display = 'none';
-                    showMessage('❌ Error al verificar el código de invitación: ' + error.message, 'error');
+                    showMessage('❌ Error al verificar el token: ' + error.message, 'error');
                 });
         };
 
@@ -1553,6 +1562,13 @@
             regPass.type = mostrarReg.checked ? 'text' : 'password';
         });
 
+        // Validación en tiempo real del token: solo dígitos y longitud 5
+        const registerToken = document.getElementById('registerToken');
+        registerToken.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 5);
+        });
+
+        // Enter para login y registro
         const loginEmail = document.getElementById('loginEmail');
         const loginPassInput = document.getElementById('loginPassword');
         const handleLoginEnter = (e) => { if (e.key === 'Enter') window.loginUser(); };
@@ -1562,12 +1578,12 @@
         const regName = document.getElementById('registerName');
         const regEmail = document.getElementById('registerEmail');
         const regPassword = document.getElementById('registerPassword');
-        const regInvite = document.getElementById('registerInviteCode');
+        const regToken = document.getElementById('registerToken');
         const handleRegEnter = (e) => { if (e.key === 'Enter') window.registerUser(); };
         regName.addEventListener('keypress', handleRegEnter);
         regEmail.addEventListener('keypress', handleRegEnter);
         regPassword.addEventListener('keypress', handleRegEnter);
-        regInvite.addEventListener('keypress', handleRegEnter);
+        regToken.addEventListener('keypress', handleRegEnter);
 
         // ─── POPUP VERSIÓN ───
         const versionText = document.getElementById('versionText');
@@ -1585,7 +1601,6 @@
 
         function cerrarPopup() {
             versionContainer.classList.remove('show');
-            // Al cerrar el popup, mostramos el enlace manual (si estamos en escritorio)
             mostrarManualLink();
             if (popupTimeout) {
                 clearTimeout(popupTimeout);
@@ -1594,7 +1609,6 @@
         }
 
         function mostrarPopupConTimeout() {
-            // Ocultamos el enlace manual cuando se muestra el popup
             ocultarManualLink();
             if (versionContainer.classList.contains('show')) {
                 if (popupTimeout) {
@@ -1840,7 +1854,7 @@
             }
         });
 
-        // ─── MANUAL DE USO: ABRIR MODAL CON IFRAME ───
+        // ─── MANUAL DE USO ───
         const MANUAL_URL = 'https://sistemadigital.github.io/ingreso-sistema/sistema-manual';
 
         function abrirManual(e) {
@@ -1866,7 +1880,7 @@
             }
         });
 
-        console.log('✅ Sistema listo. El código de invitación se obtiene desde Firestore.');
+        console.log('✅ Sistema listo. El token se obtiene desde Firestore (colección config, documento token, campo token).');
     </script>
 </body>
 </html>
