@@ -20,7 +20,6 @@
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
-            /* Fondo azul opaco suave (sin patrones ni gradientes fuertes) */
             background-color: #d4e6f5;
             background-image: none;
             overflow: hidden;
@@ -237,13 +236,11 @@
             max-height: 80%;
             justify-content: center;
             position: relative;
-            /* Inicialmente oculta y sin escala */
             opacity: 0;
             transform: scale(0);
             transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Clase que activa la animación de aparición */
         .image-wrapper.visible {
             opacity: 1;
             transform: scale(1);
@@ -336,7 +333,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ===== FRANJA AZUL VIBRANTE CON EFECTO LUMINOSO CELESTE ===== */
         .franja-azul {
             width: 100%;
             height: 8px;
@@ -587,7 +583,6 @@
             box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
         }
 
-        /* Estilo específico para el token (visual feedback) */
         .grupo-input input.token-input {
             letter-spacing: 0.5rem;
             font-weight: 700;
@@ -1229,7 +1224,6 @@
                     <label>Contraseña</label>
                     <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
                 </div>
-                <!-- 🔐 NUEVO CAMPO TOKEN NUMÉRICO DE 5 DÍGITOS -->
                 <div class="grupo-input">
                     <label>Token de acceso (5 dígitos)</label>
                     <input type="text" id="registerToken" class="token-input" 
@@ -1285,10 +1279,11 @@
     </script>
 
     <script>
-        // ─── CONFIGURACIÓN DE FIREBASE ───
+        // ─── CONFIGURACIÓN DE FIREBASE (TU PROYECTO ORIGINAL) ───
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
+            databaseURL: "https://defensoria-empleados-default-rtdb.firebaseio.com",
             projectId: "defensoria-empleados",
             storageBucket: "defensoria-empleados.firebasestorage.app",
             messagingSenderId: "438237217533",
@@ -1459,7 +1454,6 @@
             const password = document.getElementById('registerPassword').value.trim();
             const token = document.getElementById('registerToken').value.trim();
 
-            // Validaciones básicas
             if (!name || !rawEmail || !password || !token) {
                 showMessage('Completa todos los campos', 'error');
                 return;
@@ -1468,7 +1462,6 @@
                 showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
                 return;
             }
-            // Validar token: exactamente 5 dígitos numéricos
             if (!/^\d{5}$/.test(token)) {
                 showMessage('El token debe ser un número de 5 dígitos (ej. 15753)', 'error');
                 return;
@@ -1480,7 +1473,6 @@
                 return;
             }
 
-            // 🔐 Leer el token almacenado en Firestore (colección 'config', documento 'token')
             mostrarSpinnerConContador();
 
             const tokenRef = db.collection('config').doc('token');
@@ -1493,7 +1485,6 @@
                         return;
                     }
 
-                    // El documento tiene un campo 'token' con el valor esperado
                     const storedToken = doc.data().token;
                     if (storedToken === undefined || storedToken === null) {
                         showMessage('❌ Token del sistema no configurado correctamente. Contacta al administrador.', 'error');
@@ -1502,7 +1493,6 @@
                         return;
                     }
 
-                    // Convertir a string para comparación (por si viene como número)
                     const storedTokenStr = String(storedToken);
                     if (token !== storedTokenStr) {
                         showMessage('❌ Token incorrecto. Verifica el número de 5 dígitos.', 'error');
@@ -1511,7 +1501,6 @@
                         return;
                     }
 
-                    // ✅ Token correcto: proceder con el registro
                     auth.createUserWithEmailAndPassword(email, password)
                         .then((userCredential) => {
                             const user = userCredential.user;
@@ -1573,13 +1562,11 @@
             regPass.type = mostrarReg.checked ? 'text' : 'password';
         });
 
-        // Validación en tiempo real del token: solo dígitos y longitud 5
         const registerToken = document.getElementById('registerToken');
         registerToken.addEventListener('input', function() {
             this.value = this.value.replace(/\D/g, '').slice(0, 5);
         });
 
-        // Enter para login y registro
         const loginEmail = document.getElementById('loginEmail');
         const loginPassInput = document.getElementById('loginPassword');
         const handleLoginEnter = (e) => { if (e.key === 'Enter') window.loginUser(); };
@@ -1597,7 +1584,7 @@
         regToken.addEventListener('keypress', handleRegEnter);
 
         // ─── POPUP VERSIÓN ───
-        const versionText = document.getElementById('versionText');ap
+        const versionText = document.getElementById('versionText'); // ← CORREGIDO: eliminado 'ap'
         let popupTimeout = null;
 
         function mostrarManualLink() {
