@@ -20,11 +20,9 @@
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
-            background-color: #d4eafc;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 60%),
-                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0%, transparent 50%),
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23007bff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            /* Fondo azul opaco suave (sin patrones ni gradientes fuertes) */
+            background-color: #d4e6f5;
+            background-image: none;
             overflow: hidden;
         }
 
@@ -239,6 +237,16 @@
             max-height: 80%;
             justify-content: center;
             position: relative;
+            /* Inicialmente oculta y sin escala */
+            opacity: 0;
+            transform: scale(0);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Clase que activa la animación de aparición */
+        .image-wrapper.visible {
+            opacity: 1;
+            transform: scale(1);
         }
 
         .image-large {
@@ -1145,7 +1153,7 @@
             </div>
 
             <div class="top-image-container">
-                <div class="image-wrapper">
+                <div class="image-wrapper" id="imageWrapper">
                     <div class="image-large">
                         <img src="https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true" alt="Ministerio Público" />
                     </div>
@@ -1173,7 +1181,7 @@
                 <button class="btn-credenciales" id="btnFooterCredenciales">Ingresa tus credenciales para comenzar</button>
             </div>
             <div class="footer-right">
-                <span class="version-text" id="versionText">Versión 5.2.2026</span>
+                <span class="version-text" id="versionText">Versión 9.2026</span>
             </div>
         </div>
     </footer>
@@ -1311,6 +1319,9 @@
         const cerrarModalManualBtn = document.getElementById('cerrarModalManualBtn');
         const manualIframe = document.getElementById('manualIframe');
         const versionContainer = document.getElementById('versionInfoContainer');
+
+        // ─── IMAGEN ───
+        const imageWrapper = document.getElementById('imageWrapper');
 
         let currentState = 'idle';
 
@@ -1586,7 +1597,7 @@
         regToken.addEventListener('keypress', handleRegEnter);
 
         // ─── POPUP VERSIÓN ───
-        const versionText = document.getElementById('versionText');
+        const versionText = document.getElementById('versionText');ap
         let popupTimeout = null;
 
         function mostrarManualLink() {
@@ -1771,6 +1782,11 @@
         resetToInitial();
         setupModalEvents();
         updateUI(null);
+
+        // ─── ANIMACIÓN DE APARICIÓN DE LA IMAGEN TRAS 3 SEGUNDOS ───
+        setTimeout(() => {
+            imageWrapper.classList.add('visible');
+        }, 3000);
 
         // ─── INTERCAMBIO DE IMAGEN ───
         const imgElement = document.querySelector('.image-large img');
