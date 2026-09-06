@@ -20,6 +20,7 @@
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
+            /* Fondo azul opaco suave (sin patrones ni gradientes fuertes) */
             background-color: #d4e6f5;
             background-image: none;
             overflow: hidden;
@@ -97,14 +98,43 @@
             cursor: pointer;
         }
 
+        /* Contenedor para "Sistema Digital" + "Con Ayudante IA" */
+        .sistema-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+            flex-wrap: nowrap;
+        }
+
         .sistema-digital-text {
             font-size: 1.8rem;
             font-weight: 800;
             color: #003366;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
             white-space: nowrap;
-            margin-left: auto;
             cursor: pointer;
+        }
+
+        /* NUEVO: estilos para "Con Ayudante IA" */
+        .ayudante-ia {
+            font-weight: 800;
+            color: #ff8c00;
+            font-size: 1.8rem;
+            white-space: nowrap;
+            display: inline-block;
+            animation: brillo-ia 2s ease-in-out infinite;
+        }
+
+        @keyframes brillo-ia {
+            0%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 5px rgba(255, 140, 0, 0.4);
+            }
+            50% {
+                opacity: 0.7;
+                text-shadow: 0 0 20px rgba(255, 140, 0, 0.9), 0 0 40px rgba(255, 140, 0, 0.5);
+            }
         }
 
         .info-modal-defensor {
@@ -236,11 +266,13 @@
             max-height: 80%;
             justify-content: center;
             position: relative;
+            /* Inicialmente oculta y sin escala */
             opacity: 0;
             transform: scale(0);
             transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
+        /* Clase que activa la animación de aparición */
         .image-wrapper.visible {
             opacity: 1;
             transform: scale(1);
@@ -333,6 +365,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ===== FRANJA AZUL VIBRANTE CON EFECTO LUMINOSO CELESTE ===== */
         .franja-azul {
             width: 100%;
             height: 8px;
@@ -583,6 +616,7 @@
             box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
         }
 
+        /* Estilo específico para el token (visual feedback) */
         .grupo-input input.token-input {
             letter-spacing: 0.5rem;
             font-weight: 700;
@@ -865,12 +899,20 @@
             .left-group {
                 display: none;
             }
+            .sistema-wrapper {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
             .sistema-digital-text {
                 font-size: 2.2rem;
-                margin-left: 0;
                 text-align: center;
-                width: 100%;
                 cursor: default;
+            }
+            .ayudante-ia {
+                font-size: 2.2rem;
             }
             .welcome-message {
                 cursor: default;
@@ -1086,6 +1128,9 @@
             .sistema-digital-text {
                 font-size: 1.8rem;
             }
+            .ayudante-ia {
+                font-size: 1.8rem;
+            }
             .footer-center .btn-credenciales {
                 font-size: 0.7rem;
                 padding: 0.3rem 0.8rem;
@@ -1119,7 +1164,11 @@
                                 <div class="welcome-message" id="welcomeMessage">Hola, Defensoría Oficial</div>
                             </div>
                         </div>
-                        <span class="sistema-digital-text" id="sistemaDigitalText">Sistema Digital</span>
+                        <!-- Contenedor para "Sistema Digital" + "Con Ayudante IA" -->
+                        <div class="sistema-wrapper">
+                            <span class="sistema-digital-text" id="sistemaDigitalText">Sistema Digital</span>
+                            <span class="ayudante-ia" id="ayudanteIA">Con Ayudante IA</span>
+                        </div>
                     </div>
 
                     <div id="infoModalDefensor" class="info-modal-defensor">
@@ -1224,6 +1273,7 @@
                     <label>Contraseña</label>
                     <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
                 </div>
+                <!-- 🔐 NUEVO CAMPO TOKEN NUMÉRICO DE 5 DÍGITOS -->
                 <div class="grupo-input">
                     <label>Token de acceso (5 dígitos)</label>
                     <input type="text" id="registerToken" class="token-input" 
@@ -1279,7 +1329,7 @@
     </script>
 
     <script>
-        // ─── CONFIGURACIÓN DE FIREBASE (TU PROYECTO ORIGINAL) ───
+        // ─── CONFIGURACIÓN DE FIREBASE ───
         const firebaseConfig = {
             apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
             authDomain: "defensoria-empleados.firebaseapp.com",
@@ -1454,6 +1504,7 @@
             const password = document.getElementById('registerPassword').value.trim();
             const token = document.getElementById('registerToken').value.trim();
 
+            // Validaciones básicas
             if (!name || !rawEmail || !password || !token) {
                 showMessage('Completa todos los campos', 'error');
                 return;
@@ -1462,6 +1513,7 @@
                 showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
                 return;
             }
+            // Validar token: exactamente 5 dígitos numéricos
             if (!/^\d{5}$/.test(token)) {
                 showMessage('El token debe ser un número de 5 dígitos (ej. 15753)', 'error');
                 return;
@@ -1473,6 +1525,7 @@
                 return;
             }
 
+            // 🔐 Leer el token almacenado en Firestore (colección 'config', documento 'token')
             mostrarSpinnerConContador();
 
             const tokenRef = db.collection('config').doc('token');
@@ -1485,6 +1538,7 @@
                         return;
                     }
 
+                    // El documento tiene un campo 'token' con el valor esperado
                     const storedToken = doc.data().token;
                     if (storedToken === undefined || storedToken === null) {
                         showMessage('❌ Token del sistema no configurado correctamente. Contacta al administrador.', 'error');
@@ -1493,6 +1547,7 @@
                         return;
                     }
 
+                    // Convertir a string para comparación (por si viene como número)
                     const storedTokenStr = String(storedToken);
                     if (token !== storedTokenStr) {
                         showMessage('❌ Token incorrecto. Verifica el número de 5 dígitos.', 'error');
@@ -1501,6 +1556,7 @@
                         return;
                     }
 
+                    // ✅ Token correcto: proceder con el registro
                     auth.createUserWithEmailAndPassword(email, password)
                         .then((userCredential) => {
                             const user = userCredential.user;
@@ -1562,11 +1618,13 @@
             regPass.type = mostrarReg.checked ? 'text' : 'password';
         });
 
+        // Validación en tiempo real del token: solo dígitos y longitud 5
         const registerToken = document.getElementById('registerToken');
         registerToken.addEventListener('input', function() {
             this.value = this.value.replace(/\D/g, '').slice(0, 5);
         });
 
+        // Enter para login y registro
         const loginEmail = document.getElementById('loginEmail');
         const loginPassInput = document.getElementById('loginPassword');
         const handleLoginEnter = (e) => { if (e.key === 'Enter') window.loginUser(); };
@@ -1584,7 +1642,7 @@
         regToken.addEventListener('keypress', handleRegEnter);
 
         // ─── POPUP VERSIÓN ───
-        const versionText = document.getElementById('versionText'); // ← CORREGIDO: eliminado 'ap'
+        const versionText = document.getElementById('versionText');
         let popupTimeout = null;
 
         function mostrarManualLink() {
