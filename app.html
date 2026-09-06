@@ -1277,6 +1277,41 @@
             box-shadow: 0 0 20px rgba(255, 140, 0, 0.7), 0 0 40px rgba(255, 140, 0, 0.3);
         }
 
+        /* ===== NUEVO: TEXTO MÓVIL "Sistema Digital Con Ayudante IA" ===== */
+        .sistema-movil {
+            display: none;
+            width: 100%;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #003366;
+            padding: 0.25rem 0 0.25rem 0;
+            margin-top: -0.25rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .sistema-movil:hover {
+            opacity: 0.7;
+        }
+        .sistema-movil .ayudante-ia {
+            color: #ff8c00;
+            animation: brillo-ia 2s ease-in-out infinite;
+        }
+
+        /* ===== GIF AYUDANTE IA EN FOOTER (móvil) ===== */
+        .gif-ayudante-movil {
+            display: none;
+            width: 40px;
+            height: auto;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(255, 140, 0, 0.5);
+            transition: transform 0.2s;
+        }
+        .gif-ayudante-movil:hover {
+            transform: scale(1.1);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (min-width: 769px) {
             .modules-container {
@@ -1295,21 +1330,27 @@
                 padding: 0.9rem 1.8rem;
                 font-size: 1rem;
             }
+            .sistema-movil {
+                display: none !important;
+            }
+            .gif-ayudante-movil {
+                display: none !important;
+            }
         }
 
         @media (max-width: 768px) {
             .welcome-message {
                 font-size: 1.4rem;
             }
-            .sistema-digital-text {
-                display: none;
-            }
             .sistema-wrapper {
-                margin-left: 0;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 0.25rem;
+                display: none !important;
+            }
+            .sistema-movil {
+                display: block !important;
+            }
+            .sistema-digital-text {
+                display: inline !important;
+                font-size: 1.4rem;
             }
             .ayudante-ia {
                 font-size: 1.4rem;
@@ -1448,6 +1489,9 @@
             }
             .btn-asistente-ia {
                 display: none !important;
+            }
+            .gif-ayudante-movil {
+                display: block !important;
             }
         }
 
@@ -2355,7 +2399,6 @@
             console.log("Bases de eventos inicializadas");
             signInAnonymously(getAuth(appHistorica)).catch(e => console.warn("Auth anónima histórica:", e));
             signInAnonymously(getAuth(appNueva)).catch(e => console.warn("Auth anónima nueva:", e));
-            // Asignar a variables globales para que las funciones de banner las usen
             window.dbHistorica = dbHistorica;
             window.dbNueva = dbNueva;
         } catch (e) {
@@ -2597,7 +2640,7 @@
             let avatarOptionsHtml = photoURL ? '' :
                 `<div class="avatar-options"><img src="${AVATAR_HOMBRE}" class="avatar-option" id="avatarHombre"><img src="${AVATAR_MUJER}" class="avatar-option" id="avatarMujer"></div>`;
 
-            // HTML con welcome bar, módulos y dropdown - MODIFICADO para incluir "Con Ayudante IA"
+            // HTML con welcome bar, módulos y dropdown - el bloque .sistema-movil ahora es clickeable
             const html = `
                 <div class="welcome-container" id="welcomeContainer">
                     <div class="welcome-bar" id="welcomeBar">
@@ -2613,7 +2656,11 @@
                             <span class="ayudante-ia">Con Ayudante IA</span>
                         </div>
                     </div>
-
+                    <!-- Bloque móvil clickeable -->
+                    <div class="sistema-movil" id="sistemaMovilLink" onclick="loadPage('https://defensoria6.github.io/ayudanteIA/')">
+                        <span class="sistema-digital-text">Sistema Digital</span>
+                        <span class="ayudante-ia">Con Ayudante IA</span>
+                    </div>
                     <div class="modules-container">
                         <div class="module-item module-novedades" id="btnNovedades">Novedades</div>
                         <div class="module-item module-caja" onclick="loadPage('https://fioravanteweb.github.io/cajachica/')">Caja Chica</div>
@@ -2660,7 +2707,6 @@
 
             if (esCumpleanos) launchConfetti();
 
-            // Asignar evento al botón "Novedades" (dinámico)
             const btnNovedades = document.getElementById('btnNovedades');
             if (btnNovedades) {
                 btnNovedades.addEventListener('click', (e) => {
@@ -2670,7 +2716,6 @@
                 window.actualizarNovedades();
             }
 
-            // Eventos del dropdown
             const bar = document.getElementById('welcomeBar');
             const dropdown = document.getElementById('userDropdown');
 
@@ -2754,11 +2799,10 @@
             try { await signOut(auth); } catch (error) { console.error('Error al salir:', error); }
         });
 
-        // Actualizar novedades cada 30 minutos
         setInterval(() => { window.actualizarNovedades?.(); }, 30 * 60 * 1000);
     </script>
 
-    <!-- Botón "Ayudante IA Defensoria Oficial" en el footer (solo visible en escritorio) -->
+    <!-- Footer: en móvil se muestra el GIF, en escritorio el botón -->
     <script>
         (function() {
             document.addEventListener('DOMContentLoaded', function() {
@@ -2767,14 +2811,25 @@
                 const eventBanner = document.getElementById('eventBanner');
                 if (!eventBanner) return;
 
-                // Crear el botón con el estilo y texto de app.html
+                // Creamos el GIF solo para móvil (se oculta en escritorio por CSS)
+                const img = document.createElement('img');
+                img.src = 'https://github.com/sistemadigital/iconos/blob/main/vector.gif?raw=true';
+                img.alt = 'Ayudante IA';
+                img.className = 'gif-ayudante-movil';
+                img.onclick = function() {
+                    loadPage('https://defensoria6.github.io/ayudanteIA/');
+                };
+                // Insertar antes del banner
+                footerRight.insertBefore(img, eventBanner);
+
+                // Botón para escritorio (ya existe el estilo .btn-asistente-ia)
                 const btn = document.createElement('button');
                 btn.className = 'btn-asistente-ia';
                 btn.innerHTML = 'Ayudante IA Defensoria Oficial';
                 btn.onclick = function() {
                     loadPage('https://defensoria6.github.io/ayudanteIA/');
                 };
-                // Insertar antes del banner de eventos
+                // Insertar antes del banner también
                 footerRight.insertBefore(btn, eventBanner);
             });
         })();
