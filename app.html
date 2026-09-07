@@ -1632,7 +1632,10 @@
         </div>
 
         <div class="footer-right" id="footerRightArea">
-            <div class="event-banner" id="eventBanner">
+            <!-- GIF ayudante IA (solo móvil) -->
+            <img src="https://github.com/sistemadigital/iconos/blob/main/vector.gif?raw=true" alt="Ayudante IA" class="gif-ayudante-movil" onclick="loadPage('https://defensoria6.github.io/ayudanteIA/')" />
+
+            <div class="event-banner" id="eventBanner" onclick="loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html')">
                 <p id="bannerText">Cargando eventos...</p>
             </div>
 
@@ -2011,10 +2014,9 @@
             if (isFinDeAnioRange()) setTimeout(() => mostrarModalFinDeAnio(), 350);
         });
 
-        // ===== BANNER DE EVENTOS: abre eventos agendados =====
-        document.getElementById('eventBanner')?.addEventListener('click', (e) => {
-            loadPage('https://sistemadigital.github.io/defensor-secretarios/eventos.html');
-        });
+        // ===== BANNER DE EVENTOS: abre eventos agendados (ya tiene onclick en HTML) =====
+        // El evento click ahora se maneja directamente con el atributo onclick en el elemento HTML.
+        // Ya no es necesario el addEventListener.
 
         // ========== FUNCIONES PARA NOVEDADES (globales) ==========
         async function actualizarNovedades() {
@@ -2039,124 +2041,13 @@
             document.getElementById('novedadesModal').classList.remove('visible');
         });
 
-        // ========== EVENTOS DE EVENTOS (banner) ==========
-        const causasConfigHistorica = {
-            apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
-            authDomain: "causas-defensoria.firebaseapp.com",
-            projectId: "causas-defensoria",
-            storageBucket: "causas-defensoria.appspot.com",
-            messagingSenderId: "186064671470",
-            appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
+        // ========== EVENTOS DE EVENTOS (banner) - ahora manejado en el módulo ==========
+        // Las funciones hayEventosHoy y actualizarBannerEventos se definen en el módulo.
+        // Al final del módulo se llaman y se configuran intervalos.
+        // Aquí solo dejamos un placeholder por si acaso.
+        window.actualizarBannerEventos = function() {
+            // Será sobrescrito por el módulo
         };
-        const causasConfigNueva = {
-            apiKey: "AIzaSyBevCwkh4iOWVqhp3gG2ae1eCUMkFpnr6I",
-            authDomain: "causas-2defensoria.firebaseapp.com",
-            projectId: "causas-2defensoria",
-            storageBucket: "causas-2defensoria.firebasestorage.app",
-            messagingSenderId: "663905632804",
-            appId: "1:663905632804:web:4f686a88004dc642ad0eb1"
-        };
-
-        let dbHistorica, dbNueva;
-        try {
-            // Inicialización de Firebase para eventos (se hace en el módulo)
-        } catch (e) {}
-
-        function toDate(val) {
-            if (!val) return null;
-            if (val.toDate) return val.toDate();
-            if (val.seconds !== undefined) return new Date(val.seconds * 1000);
-            if (val instanceof Date) return val;
-            if (typeof val === 'string') {
-                const match = val.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}|\d{2})$/);
-                if (match) {
-                    let year = parseInt(match[3]);
-                    if (year < 100) year += 2000;
-                    return new Date(year, parseInt(match[2]) - 1, parseInt(match[1]));
-                }
-                const matchIso = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-                if (matchIso) {
-                    return new Date(parseInt(matchIso[1]), parseInt(matchIso[2]) - 1, parseInt(matchIso[3]));
-                }
-                const d = new Date(val);
-                if (!isNaN(d)) return d;
-            }
-            if (typeof val === 'object' && val !== null && 'fecha' in val) {
-                return toDate(val.fecha);
-            }
-            return null;
-        }
-
-        async function hayEventosHoy() {
-            try {
-                if (!dbHistorica || !dbNueva) return false;
-                const [snapHistorica, snapNueva] = await Promise.all([
-                    getDocs(collection(dbHistorica, "causas")),
-                    getDocs(collection(dbNueva, "causas"))
-                ]);
-                const hoy = new Date();
-                const year = hoy.getFullYear();
-                const month = hoy.getMonth();
-                const day = hoy.getDate();
-
-                function esHoy(fecha) {
-                    if (!fecha) return false;
-                    const d = toDate(fecha);
-                    if (!d) return false;
-                    return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
-                }
-
-                function procesarCausa(causa) {
-                    if (Array.isArray(causa.audiencias)) {
-                        for (const item of causa.audiencias) {
-                            if (esHoy(item)) return true;
-                        }
-                    }
-                    if (causa.audienciaGesell && esHoy(causa.audienciaGesell)) return true;
-                    if (causa.vencimiento && esHoy(causa.vencimiento)) return true;
-                    if (causa.vencimientoRecursos && esHoy(causa.vencimientoRecursos)) return true;
-                    if (Array.isArray(causa.diligencias)) {
-                        for (const d of causa.diligencias) {
-                            if (d.fecha && esHoy(d.fecha)) return true;
-                        }
-                    }
-                    return false;
-                }
-
-                for (const docSnap of snapHistorica.docs) {
-                    if (procesarCausa(docSnap.data())) return true;
-                }
-                for (const docSnap of snapNueva.docs) {
-                    if (procesarCausa(docSnap.data())) return true;
-                }
-                return false;
-            } catch (error) {
-                console.error("Error en hayEventosHoy:", error);
-                return false;
-            }
-        }
-
-        async function actualizarBannerEventos() {
-            const bannerDiv = document.getElementById('eventBanner');
-            const bannerText = document.getElementById('bannerText');
-            if (!bannerDiv || !bannerText) return;
-            try {
-                const hay = await hayEventosHoy();
-                if (hay) {
-                    bannerText.textContent = "📅 Recuerda, hoy tenemos eventos agendados";
-                    bannerDiv.classList.add('hay-eventos');
-                } else {
-                    bannerText.textContent = "📅 Hoy no tenemos nada agendado";
-                    bannerDiv.classList.remove('hay-eventos');
-                }
-            } catch (err) {
-                console.error("Error en actualizarBannerEventos:", err);
-                bannerText.textContent = "📅 No se pudo verificar eventos";
-                bannerDiv.classList.remove('hay-eventos');
-            }
-        }
-        actualizarBannerEventos();
-        setInterval(actualizarBannerEventos, 30 * 60 * 1000);
     </script>
 
     <script type="module">
@@ -2372,7 +2263,7 @@
             }
         };
 
-        // ========== BASES DE EVENTOS (histórica + nueva) ==========
+        // ========== BASES DE EVENTOS (histórica + nueva) - PARA EL BANNER ==========
         const causasConfigHistorica = {
             apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
             authDomain: "causas-defensoria.firebaseapp.com",
@@ -2404,6 +2295,111 @@
         } catch (e) {
             console.error("Error al inicializar bases de eventos:", e);
         }
+
+        // ========== FUNCIÓN TO DATE ==========
+        function toDate(val) {
+            if (!val) return null;
+            if (val.toDate) return val.toDate();
+            if (val.seconds !== undefined) return new Date(val.seconds * 1000);
+            if (val instanceof Date) return val;
+            if (typeof val === 'string') {
+                const match = val.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}|\d{2})$/);
+                if (match) {
+                    let year = parseInt(match[3]);
+                    if (year < 100) year += 2000;
+                    return new Date(year, parseInt(match[2]) - 1, parseInt(match[1]));
+                }
+                const matchIso = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+                if (matchIso) {
+                    return new Date(parseInt(matchIso[1]), parseInt(matchIso[2]) - 1, parseInt(matchIso[3]));
+                }
+                const d = new Date(val);
+                if (!isNaN(d)) return d;
+            }
+            if (typeof val === 'object' && val !== null && 'fecha' in val) {
+                return toDate(val.fecha);
+            }
+            return null;
+        }
+
+        // ========== FUNCIÓN HAY EVENTOS HOY ==========
+        async function hayEventosHoy() {
+            try {
+                if (!dbHistorica || !dbNueva) return false;
+                const [snapHistorica, snapNueva] = await Promise.all([
+                    getDocs(collection(dbHistorica, "causas")),
+                    getDocs(collection(dbNueva, "causas"))
+                ]);
+                const hoy = new Date();
+                const year = hoy.getFullYear();
+                const month = hoy.getMonth();
+                const day = hoy.getDate();
+
+                function esHoy(fecha) {
+                    if (!fecha) return false;
+                    const d = toDate(fecha);
+                    if (!d) return false;
+                    return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+                }
+
+                function procesarCausa(causa) {
+                    if (Array.isArray(causa.audiencias)) {
+                        for (const item of causa.audiencias) {
+                            if (esHoy(item)) return true;
+                        }
+                    }
+                    if (causa.audienciaGesell && esHoy(causa.audienciaGesell)) return true;
+                    if (causa.vencimiento && esHoy(causa.vencimiento)) return true;
+                    if (causa.vencimientoRecursos && esHoy(causa.vencimientoRecursos)) return true;
+                    if (Array.isArray(causa.diligencias)) {
+                        for (const d of causa.diligencias) {
+                            if (d.fecha && esHoy(d.fecha)) return true;
+                        }
+                    }
+                    return false;
+                }
+
+                for (const docSnap of snapHistorica.docs) {
+                    if (procesarCausa(docSnap.data())) return true;
+                }
+                for (const docSnap of snapNueva.docs) {
+                    if (procesarCausa(docSnap.data())) return true;
+                }
+                return false;
+            } catch (error) {
+                console.error("Error en hayEventosHoy:", error);
+                return false;
+            }
+        }
+
+        // ========== ACTUALIZAR BANNER DE EVENTOS ==========
+        async function actualizarBannerEventos() {
+            const bannerDiv = document.getElementById('eventBanner');
+            const bannerText = document.getElementById('bannerText');
+            if (!bannerDiv || !bannerText) return;
+            try {
+                const hay = await hayEventosHoy();
+                if (hay) {
+                    bannerText.textContent = "📅 Recuerda, hoy tenemos eventos agendados";
+                    bannerDiv.classList.add('hay-eventos');
+                } else {
+                    bannerText.textContent = "📅 Hoy no tenemos nada agendado";
+                    bannerDiv.classList.remove('hay-eventos');
+                }
+            } catch (err) {
+                console.error("Error en actualizarBannerEventos:", err);
+                bannerText.textContent = "📅 No se pudo verificar eventos";
+                bannerDiv.classList.remove('hay-eventos');
+            }
+        }
+
+        // Exponer funciones al ámbito global para que puedan ser llamadas desde otros scripts si es necesario
+        window.hayEventosHoy = hayEventosHoy;
+        window.actualizarBannerEventos = actualizarBannerEventos;
+
+        // Llamar inicialmente y configurar intervalo
+        actualizarBannerEventos();
+        setInterval(actualizarBannerEventos, 30 * 60 * 1000);
 
         // ========== FUNCIONES AUXILIARES PARA COLORES ==========
         function hexToRgb(hex) {
