@@ -20,8 +20,8 @@
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
-            /* Fondo azul opaco suave (sin patrones ni gradientes fuertes) */
-            background-color: #d4e6f5;
+            /* El fondo real lo aporta .intro-fluid-bg (fijo, detrás de todo) */
+            background-color: transparent;
             background-image: none;
             overflow: hidden;
         }
@@ -78,9 +78,17 @@
             justify-content: space-between;
             cursor: default;
             transition: background-color 0.2s;
+            /* Borde animado vibrante */
+            animation: borderGlow 2s ease-in-out infinite;
         }
         .welcome-bar:hover {
             background: rgba(255, 255, 255, 0.85);
+        }
+
+        @keyframes borderGlow {
+            0% { border-color: #00bfff; box-shadow: 0 0 8px rgba(0, 191, 255, 0.4); }
+            50% { border-color: #66d9ff; box-shadow: 0 0 25px rgba(0, 191, 255, 0.8), 0 0 50px rgba(0, 191, 255, 0.3); }
+            100% { border-color: #00bfff; box-shadow: 0 0 8px rgba(0, 191, 255, 0.4); }
         }
 
         .left-group {
@@ -96,15 +104,8 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
             white-space: nowrap;
             cursor: pointer;
-        }
-
-        /* Contenedor para "Sistema Digital" + "Con Ayudante IA" */
-        .sistema-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-left: auto;
-            flex-wrap: nowrap;
+            /* Asegurar que el texto no se desborde durante la animación */
+            min-width: 2em;
         }
 
         .sistema-digital-text {
@@ -113,28 +114,18 @@
             color: #003366;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
             white-space: nowrap;
+            margin-left: auto;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* NUEVO: estilos para "Con Ayudante IA" */
-        .ayudante-ia {
-            font-weight: 800;
-            color: #ff8c00;
-            font-size: 1.8rem;
-            white-space: nowrap;
+        .vector-gif {
+            height: 1em;
+            width: auto;
+            vertical-align: middle;
             display: inline-block;
-            animation: brillo-ia 2s ease-in-out infinite;
-        }
-
-        @keyframes brillo-ia {
-            0%, 100% {
-                opacity: 1;
-                text-shadow: 0 0 5px rgba(255, 140, 0, 0.4);
-            }
-            50% {
-                opacity: 0.7;
-                text-shadow: 0 0 20px rgba(255, 140, 0, 0.9), 0 0 40px rgba(255, 140, 0, 0.5);
-            }
         }
 
         .info-modal-defensor {
@@ -899,20 +890,12 @@
             .left-group {
                 display: none;
             }
-            .sistema-wrapper {
-                margin-left: 0;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 0.25rem;
-            }
             .sistema-digital-text {
                 font-size: 2.2rem;
+                margin-left: 0;
                 text-align: center;
+                width: 100%;
                 cursor: default;
-            }
-            .ayudante-ia {
-                font-size: 2.2rem;
             }
             .welcome-message {
                 cursor: default;
@@ -1128,9 +1111,6 @@
             .sistema-digital-text {
                 font-size: 1.8rem;
             }
-            .ayudante-ia {
-                font-size: 1.8rem;
-            }
             .footer-center .btn-credenciales {
                 font-size: 0.7rem;
                 padding: 0.3rem 0.8rem;
@@ -1150,9 +1130,159 @@
                 font-size: 0.4rem;
             }
         }
+        /* ============================================================
+           FONDO ABSTRACTO FLUIDO + ICONO DE INTRODUCCIÓN
+           ============================================================ */
+
+        .intro-fluid-bg{
+            position:fixed;
+            inset:0;
+            z-index:0;
+            overflow:hidden;
+            background:
+                radial-gradient(circle at 30% 20%, #1a0f2e 0%, transparent 60%),
+                radial-gradient(circle at 70% 80%, #140b24 0%, transparent 60%),
+                #0d0716;
+        }
+
+        .intro-blob{
+            position:absolute;
+            border-radius:50%;
+            filter:blur(90px);
+            mix-blend-mode:screen;
+            opacity:.65;
+            will-change:transform;
+        }
+        .intro-blob--1{ width:60vw;height:60vw;left:-15vw;top:-10vh; background:#7c3aed; animation:introDrift1 26s ease-in-out infinite alternate; }
+        .intro-blob--2{ width:50vw;height:50vw;right:-10vw;top:-5vh; background:#12b3a8; animation:introDrift2 32s ease-in-out infinite alternate; }
+        .intro-blob--3{ width:55vw;height:55vw;left:10vw;bottom:-20vh; background:#ff6a4d; animation:introDrift3 22s ease-in-out infinite alternate; }
+        .intro-blob--4{ width:45vw;height:45vw;right:5vw;bottom:-15vh; background:#ff3d7f; animation:introDrift4 30s ease-in-out infinite alternate; }
+        .intro-blob--5{ width:35vw;height:35vw;left:35vw;top:30vh; background:#ffb648; opacity:.4; animation:introDrift5 20s ease-in-out infinite alternate; }
+
+        @keyframes introDrift1{ 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(8vw,10vh) scale(1.15);} }
+        @keyframes introDrift2{ 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(-10vw,8vh) scale(1.1);} }
+        @keyframes introDrift3{ 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(6vw,-8vh) scale(1.2);} }
+        @keyframes introDrift4{ 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(-8vw,-6vh) scale(1.1);} }
+        @keyframes introDrift5{ 0%{transform:translate(-6vw,-4vh) scale(1);} 100%{transform:translate(6vw,6vh) scale(1.25);} }
+
+        #introOverlay{
+            position:fixed;
+            inset:0;
+            z-index:9999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            -webkit-tap-highlight-color:transparent;
+            transition:opacity .6s ease;
+        }
+        #introOverlay.intro-leaving{
+            opacity:0;
+            pointer-events:none;
+        }
+
+        .intro-logo-entrance{
+            width:min(34vw,220px);
+            height:min(34vw,220px);
+            opacity:0;
+            transform:scale(.25) translateY(50px) rotate(-25deg);
+            filter:blur(14px);
+            animation:introEnter 1.6s cubic-bezier(.16,.9,.28,1) .3s forwards;
+        }
+        @keyframes introEnter{
+            0%{ opacity:0; transform:scale(.25) translateY(50px) rotate(-25deg); filter:blur(14px); }
+            65%{ opacity:1; transform:scale(1.08) translateY(0) rotate(4deg); filter:blur(0); }
+            100%{ opacity:1; transform:scale(1) translateY(0) rotate(0deg); filter:blur(0); }
+        }
+
+        .intro-logo-idle{
+            width:100%;
+            height:100%;
+            animation:introIdleRotate 4s linear infinite;
+        }
+        @keyframes introIdleRotate{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+        .intro-logo-idle svg{
+            width:100%;
+            height:100%;
+            display:block;
+            filter:
+                drop-shadow(0 0 18px rgba(124,58,237,.55))
+                drop-shadow(0 0 40px rgba(255,106,77,.35));
+        }
+
+        #introOverlay.intro-clicked .intro-logo-entrance{
+            animation:none;
+            transition:transform .7s cubic-bezier(.5,0,.5,1), opacity .5s ease, filter .5s ease;
+            opacity:0;
+            transform:scale(.15);
+            filter:blur(6px);
+        }
+        #introOverlay.intro-clicked .intro-logo-idle{
+            animation:none;
+        }
+
+        /* La app permanece oculta hasta pulsar el icono */
+        body.pre-reveal main,
+        body.pre-reveal footer,
+        body.pre-reveal #manualLinkContainer,
+        body.pre-reveal #versionInfoContainer{
+            opacity:0;
+            pointer-events:none;
+        }
+        main, footer, #manualLinkContainer, #versionInfoContainer{
+            transition:opacity 1s ease .1s;
+        }
+
+        @media (prefers-reduced-motion: reduce){
+            .intro-blob{ animation:none; }
+            .intro-logo-entrance{ animation:none; opacity:1; transform:none; filter:none; }
+            .intro-logo-idle{ animation:none; }
+        }
     </style>
 </head>
-<body>
+<body class="pre-reveal">
+
+    <div class="intro-fluid-bg">
+        <div class="intro-blob intro-blob--1"></div>
+        <div class="intro-blob intro-blob--2"></div>
+        <div class="intro-blob intro-blob--3"></div>
+        <div class="intro-blob intro-blob--4"></div>
+        <div class="intro-blob intro-blob--5"></div>
+    </div>
+
+    <div id="introOverlay">
+        <div class="intro-logo-entrance">
+            <div class="intro-logo-idle">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="petalA" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#7c3aed"/>
+                            <stop offset="100%" stop-color="#ff3d7f"/>
+                        </linearGradient>
+                        <linearGradient id="petalB" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#12b3a8"/>
+                            <stop offset="100%" stop-color="#7c3aed"/>
+                        </linearGradient>
+                        <linearGradient id="petalC" x1="100%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffb648"/>
+                            <stop offset="100%" stop-color="#ff6a4d"/>
+                        </linearGradient>
+                    </defs>
+                    <g transform="translate(100,100)">
+                        <g transform="rotate(0)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalA)" opacity="0.92" style="mix-blend-mode:screen"/></g>
+                        <g transform="rotate(60)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalB)" opacity="0.92" style="mix-blend-mode:screen"/></g>
+                        <g transform="rotate(120)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalC)" opacity="0.92" style="mix-blend-mode:screen"/></g>
+                        <g transform="rotate(180)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalA)" opacity="0.92" style="mix-blend-mode:screen"/></g>
+                        <g transform="rotate(240)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalB)" opacity="0.92" style="mix-blend-mode:screen"/></g>
+                        <g transform="rotate(300)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalC)" opacity="0.92" style="mix-blend-mode:screen"/></g>
+                        <circle r="16" fill="#0d0716"/>
+                        <circle r="10" fill="#ffffff" opacity="0.9"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
 
     <main>
         <div id="homeContent">
@@ -1164,11 +1294,10 @@
                                 <div class="welcome-message" id="welcomeMessage">Hola, Defensoría Oficial</div>
                             </div>
                         </div>
-                        <!-- Contenedor para "Sistema Digital" + "Con Ayudante IA" -->
-                        <div class="sistema-wrapper">
-                            <span class="sistema-digital-text" id="sistemaDigitalText">Sistema Digital</span>
-                            <span class="ayudante-ia" id="ayudanteIA">Con Ayudante IA</span>
-                        </div>
+                        <span class="sistema-digital-text" id="sistemaDigitalText">
+                            Sistema Digital
+                            <img src="https://sistemadigital.github.io/iconos/vector.gif" alt="vector" class="vector-gif" />
+                        </span>
                     </div>
 
                     <div id="infoModalDefensor" class="info-modal-defensor">
@@ -1368,7 +1497,91 @@
         // ─── IMAGEN ───
         const imageWrapper = document.getElementById('imageWrapper');
 
+        // ─── ICONO DE INTRODUCCIÓN ───
+        const introOverlay = document.getElementById('introOverlay');
+        let introRevealed = false;
+        let introTimer = null;
+
+        function revealAppFromIcon() {
+            if (introRevealed) return;
+            introRevealed = true;
+
+            if (introTimer) {
+                clearTimeout(introTimer);
+                introTimer = null;
+            }
+
+            introOverlay.classList.add('intro-clicked');
+            document.body.classList.remove('pre-reveal');
+            imageWrapper.classList.add('visible');
+
+            setTimeout(() => {
+                introOverlay.classList.add('intro-leaving');
+            }, 250);
+
+            setTimeout(() => {
+                introOverlay.style.display = 'none';
+            }, 900);
+        }
+
+        // ─── AUTO-REVELADO DESPUÉS DE 3 SEGUNDOS ───
+        introTimer = setTimeout(() => {
+            revealAppFromIcon();
+        }, 3000);
+
+        introOverlay.addEventListener('click', revealAppFromIcon);
+
         let currentState = 'idle';
+
+        // ─── ANIMACIÓN DE ESCRITURA ───
+        let typingTimer = null;
+        let typingTimeout = null;
+        let fullText = '';
+        let currentIndex = 0;
+
+        function startTyping(text) {
+            // Limpiar temporizadores previos
+            if (typingTimer) {
+                clearInterval(typingTimer);
+                typingTimer = null;
+            }
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+                typingTimeout = null;
+            }
+            fullText = text;
+            currentIndex = 0;
+            welcomeMessage.textContent = ''; // empezar vacío
+
+            // Función que escribe una letra
+            function typeNext() {
+                if (currentIndex < fullText.length) {
+                    welcomeMessage.textContent += fullText.charAt(currentIndex);
+                    currentIndex++;
+                    typingTimer = setTimeout(typeNext, 80); // velocidad de escritura
+                } else {
+                    // Terminó, esperar 3 segundos y reiniciar
+                    typingTimeout = setTimeout(() => {
+                        startTyping(fullText);
+                    }, 3000);
+                }
+            }
+
+            typeNext();
+        }
+
+        // Función para cambiar el texto y reiniciar la animación
+        function setTypingText(newText) {
+            if (typingTimer) {
+                clearTimeout(typingTimer);
+                typingTimer = null;
+            }
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+                typingTimeout = null;
+            }
+            startTyping(newText);
+        }
 
         function normalizeEmail(input) {
             input = input.trim();
@@ -1405,7 +1618,8 @@
         function updateUI(user) {
             if (user) {
                 const displayName = user.displayName || user.email || 'Usuario';
-                welcomeMessage.textContent = `Hola, ${displayName}`;
+                // Cambiar el texto con animación
+                setTypingText(`Hola, ${displayName}`);
                 btnFooter.textContent = 'Cerrar sesión';
                 btnFooter.onclick = () => {
                     auth.signOut().catch((error) => {
@@ -1413,7 +1627,7 @@
                     });
                 };
             } else {
-                welcomeMessage.textContent = 'Hola, Defensoría Oficial';
+                setTypingText('Hola, Defensoría Oficial');
                 btnFooter.textContent = 'Ingresa tus credenciales para comenzar';
                 btnFooter.onclick = abrirLogin;
             }
@@ -1826,22 +2040,23 @@
         // ─── INICIALIZACIÓN ───
         resetToInitial();
         setupModalEvents();
-        updateUI(null);
+        // Iniciar animación por defecto
+        setTypingText('Hola, Defensoría Oficial');
+        // El observador de auth llamará a updateUI, pero si no hay usuario, se mantiene el texto.
+        // Pero como el observador se ejecutará después, llamamos a updateUI(null) para asegurar.
+        // Sin embargo, ya llamamos a setTypingText directamente.
 
-        // ─── ANIMACIÓN DE APARICIÓN DE LA IMAGEN TRAS 3 SEGUNDOS ───
-        setTimeout(() => {
-            imageWrapper.classList.add('visible');
-        }, 3000);
+        // ─── La imagen ya no aparece con temporizador fijo: revealAppFromIcon() la muestra al pulsar el icono ───
 
         // ─── INTERCAMBIO DE IMAGEN ───
         const imgElement = document.querySelector('.image-large img');
         const imageUrls = [
             'https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true'
         ];
-        let currentIndex = 0;
+        let currentIndexImg = 0;
         setInterval(() => {
-            currentIndex = (currentIndex + 1) % imageUrls.length;
-            imgElement.src = imageUrls[currentIndex];
+            currentIndexImg = (currentIndexImg + 1) % imageUrls.length;
+            imgElement.src = imageUrls[currentIndexImg];
         }, 2000);
 
         // ─── POSICIONAMIENTO DEL POPUP EN MÓVIL ───
