@@ -1144,24 +1144,24 @@
             z-index:0;
             overflow:hidden;
             background:
-                radial-gradient(circle at 30% 20%, #1a0f2e 0%, transparent 60%),
-                radial-gradient(circle at 70% 80%, #140b24 0%, transparent 60%),
-                #0d0716;
+                radial-gradient(circle at 30% 20%, #eaf9ff 0%, transparent 60%),
+                radial-gradient(circle at 70% 80%, #dff4ff 0%, transparent 60%),
+                #e6f7ff;
         }
 
         .intro-blob{
             position:absolute;
             border-radius:50%;
             filter:blur(90px);
-            mix-blend-mode:screen;
-            opacity:.65;
+            mix-blend-mode:multiply;
+            opacity:.5;
             will-change:transform;
         }
-        .intro-blob--1{ width:60vw;height:60vw;left:-15vw;top:-10vh; background:#7c3aed; animation:introDrift1 26s ease-in-out infinite alternate; }
-        .intro-blob--2{ width:50vw;height:50vw;right:-10vw;top:-5vh; background:#12b3a8; animation:introDrift2 32s ease-in-out infinite alternate; }
-        .intro-blob--3{ width:55vw;height:55vw;left:10vw;bottom:-20vh; background:#ff6a4d; animation:introDrift3 22s ease-in-out infinite alternate; }
-        .intro-blob--4{ width:45vw;height:45vw;right:5vw;bottom:-15vh; background:#ff3d7f; animation:introDrift4 30s ease-in-out infinite alternate; }
-        .intro-blob--5{ width:35vw;height:35vw;left:35vw;top:30vh; background:#ffb648; opacity:.4; animation:introDrift5 20s ease-in-out infinite alternate; }
+        .intro-blob--1{ width:60vw;height:60vw;left:-15vw;top:-10vh; background:#a8e6ff; animation:introDrift1 26s ease-in-out infinite alternate; }
+        .intro-blob--2{ width:50vw;height:50vw;right:-10vw;top:-5vh; background:#c7f0ff; animation:introDrift2 32s ease-in-out infinite alternate; }
+        .intro-blob--3{ width:55vw;height:55vw;left:10vw;bottom:-20vh; background:#8fd9ff; animation:introDrift3 22s ease-in-out infinite alternate; }
+        .intro-blob--4{ width:45vw;height:45vw;right:5vw;bottom:-15vh; background:#bfeaff; animation:introDrift4 30s ease-in-out infinite alternate; }
+        .intro-blob--5{ width:35vw;height:35vw;left:35vw;top:30vh; background:#66d9ff; opacity:.3; animation:introDrift5 20s ease-in-out infinite alternate; }
 
         @keyframes introDrift1{ 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(8vw,10vh) scale(1.15);} }
         @keyframes introDrift2{ 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(-10vw,8vh) scale(1.1);} }
@@ -1186,8 +1186,8 @@
         }
 
         .intro-logo-entrance{
-            width:min(34vw,220px);
-            height:min(34vw,220px);
+            width:clamp(80px, 20vw, 130px);
+            height:clamp(80px, 20vw, 130px);
             opacity:0;
             transform:scale(.25) translateY(50px) rotate(-25deg);
             filter:blur(14px);
@@ -1202,17 +1202,18 @@
         .intro-logo-idle{
             width:100%;
             height:100%;
-            animation:introIdleRotate 4s linear infinite;
+            animation:introHourglassFloat 3.2s ease-in-out infinite;
         }
         @keyframes introIdleRotate{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+        @keyframes introHourglassFloat{ 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-8px) rotate(2deg);} }
 
         .intro-logo-idle svg{
             width:100%;
             height:100%;
             display:block;
             filter:
-                drop-shadow(0 0 18px rgba(124,58,237,.55))
-                drop-shadow(0 0 40px rgba(255,106,77,.35));
+                drop-shadow(0 0 18px rgba(0,191,255,.55))
+                drop-shadow(0 0 40px rgba(102,217,255,.35));
         }
 
         #introOverlay.intro-clicked .intro-logo-entrance{
@@ -1260,29 +1261,77 @@
             <div class="intro-logo-idle">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <linearGradient id="petalA" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#7c3aed"/>
-                            <stop offset="100%" stop-color="#ff3d7f"/>
+                        <linearGradient id="hgFrame" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#66d9ff"/>
+                            <stop offset="45%" stop-color="#00bfff"/>
+                            <stop offset="100%" stop-color="#003366"/>
                         </linearGradient>
-                        <linearGradient id="petalB" x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#12b3a8"/>
-                            <stop offset="100%" stop-color="#7c3aed"/>
+                        <linearGradient id="hgGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#eaffff" stop-opacity="0.85"/>
+                            <stop offset="55%" stop-color="#b3ecff" stop-opacity="0.4"/>
+                            <stop offset="100%" stop-color="#eaffff" stop-opacity="0.6"/>
                         </linearGradient>
-                        <linearGradient id="petalC" x1="100%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#ffb648"/>
-                            <stop offset="100%" stop-color="#ff6a4d"/>
+                        <linearGradient id="hgSand" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#8fe6ff"/>
+                            <stop offset="55%" stop-color="#00bfff"/>
+                            <stop offset="100%" stop-color="#003d80"/>
                         </linearGradient>
+                        <radialGradient id="hgGlow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#66d9ff" stop-opacity="0.45"/>
+                            <stop offset="100%" stop-color="#66d9ff" stop-opacity="0"/>
+                        </radialGradient>
                     </defs>
-                    <g transform="translate(100,100)">
-                        <g transform="rotate(0)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalA)" opacity="0.92" style="mix-blend-mode:screen"/></g>
-                        <g transform="rotate(60)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalB)" opacity="0.92" style="mix-blend-mode:screen"/></g>
-                        <g transform="rotate(120)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalC)" opacity="0.92" style="mix-blend-mode:screen"/></g>
-                        <g transform="rotate(180)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalA)" opacity="0.92" style="mix-blend-mode:screen"/></g>
-                        <g transform="rotate(240)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalB)" opacity="0.92" style="mix-blend-mode:screen"/></g>
-                        <g transform="rotate(300)"><path d="M0,0 C 14,-18 34,-38 34,-64 C 34,-84 18,-96 0,-96 C -18,-96 -34,-84 -34,-64 C -34,-38 -14,-18 0,0 Z" fill="url(#petalC)" opacity="0.92" style="mix-blend-mode:screen"/></g>
-                        <circle r="16" fill="#0d0716"/>
-                        <circle r="10" fill="#ffffff" opacity="0.9"/>
-                    </g>
+
+                    <circle cx="100" cy="100" r="92" fill="url(#hgGlow)"/>
+
+                    <!-- Postes laterales del marco -->
+                    <rect x="40" y="30" width="7" height="140" rx="3" fill="url(#hgFrame)"/>
+                    <rect x="153" y="30" width="7" height="140" rx="3" fill="url(#hgFrame)"/>
+
+                    <!-- Tapas superior e inferior -->
+                    <ellipse cx="100" cy="30" rx="60" ry="13" fill="url(#hgFrame)"/>
+                    <ellipse cx="100" cy="170" rx="60" ry="13" fill="url(#hgFrame)"/>
+                    <ellipse cx="100" cy="30" rx="60" ry="13" fill="none" stroke="#001c33" stroke-width="2" opacity="0.5"/>
+                    <ellipse cx="100" cy="170" rx="60" ry="13" fill="none" stroke="#001c33" stroke-width="2" opacity="0.5"/>
+
+                    <!-- Vidrio del reloj de arena -->
+                    <path d="M47,33 C47,72 70,88 97,97 L103,97 C130,88 153,72 153,33 Z" fill="url(#hgGlass)" stroke="#00bfff" stroke-width="2"/>
+                    <path d="M47,167 C47,128 70,112 97,103 L103,103 C130,112 153,128 153,167 Z" fill="url(#hgGlass)" stroke="#00bfff" stroke-width="2"/>
+
+                    <!-- Arena superior (disminuye) -->
+                    <clipPath id="hgTopClip">
+                        <path d="M47,33 C47,72 70,88 97,97 L103,97 C130,88 153,72 153,33 Z"/>
+                    </clipPath>
+                    <path clip-path="url(#hgTopClip)" fill="url(#hgSand)">
+                        <animate attributeName="d" dur="3.5s" repeatCount="indefinite"
+                            values="
+                                M50,36 L150,36 L100,97 Z;
+                                M60,50 L140,50 L100,97 Z;
+                                M85,80 L115,80 L100,97 Z;
+                                M50,36 L150,36 L100,97 Z" />
+                    </path>
+
+                    <!-- Chorro de arena cayendo -->
+                    <rect x="98.5" y="97" width="3" height="6" fill="#8fe6ff">
+                        <animate attributeName="opacity" values="1;0.3;1" dur="0.5s" repeatCount="indefinite"/>
+                    </rect>
+
+                    <!-- Arena inferior (aumenta) -->
+                    <clipPath id="hgBottomClip">
+                        <path d="M47,167 C47,128 70,112 97,103 L103,103 C130,112 153,128 153,167 Z"/>
+                    </clipPath>
+                    <path clip-path="url(#hgBottomClip)" fill="url(#hgSand)">
+                        <animate attributeName="d" dur="3.5s" repeatCount="indefinite"
+                            values="
+                                M95,164 L105,164 L100,103 Z;
+                                M75,164 L125,164 L100,103 Z;
+                                M50,164 L150,164 L100,103 Z;
+                                M95,164 L105,164 L100,103 Z" />
+                    </path>
+
+                    <!-- Reflejos de vidrio -->
+                    <path d="M55,38 C55,58 65,72 80,82" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.35" stroke-linecap="round"/>
+                    <path d="M55,162 C55,142 65,128 80,118" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.35" stroke-linecap="round"/>
                 </svg>
             </div>
         </div>

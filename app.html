@@ -25,31 +25,31 @@
             position: relative;
         }
 
-        /* ===== FONDO ANIMADO (heredado de index.html) ===== */
+        /* ===== FONDO ANIMADO (tono celeste suave, estilo index) ===== */
         .intro-fluid-bg {
             position: fixed;
             inset: 0;
             z-index: 0;
             overflow: hidden;
             background:
-                radial-gradient(circle at 30% 20%, #1a0f2e 0%, transparent 60%),
-                radial-gradient(circle at 70% 80%, #140b24 0%, transparent 60%),
-                #0d0716;
+                radial-gradient(circle at 30% 20%, #eaf9ff 0%, transparent 60%),
+                radial-gradient(circle at 70% 80%, #dff4ff 0%, transparent 60%),
+                #e6f7ff;
         }
 
         .intro-blob {
             position: absolute;
             border-radius: 50%;
             filter: blur(90px);
-            mix-blend-mode: screen;
-            opacity: .65;
+            mix-blend-mode: multiply;
+            opacity: .5;
             will-change: transform;
         }
-        .intro-blob--1 { width: 60vw; height: 60vw; left: -15vw; top: -10vh; background: #7c3aed; animation: introDrift1 26s ease-in-out infinite alternate; }
-        .intro-blob--2 { width: 50vw; height: 50vw; right: -10vw; top: -5vh; background: #12b3a8; animation: introDrift2 32s ease-in-out infinite alternate; }
-        .intro-blob--3 { width: 55vw; height: 55vw; left: 10vw; bottom: -20vh; background: #ff6a4d; animation: introDrift3 22s ease-in-out infinite alternate; }
-        .intro-blob--4 { width: 45vw; height: 45vw; right: 5vw; bottom: -15vh; background: #ff3d7f; animation: introDrift4 30s ease-in-out infinite alternate; }
-        .intro-blob--5 { width: 35vw; height: 35vw; left: 35vw; top: 30vh; background: #ffb648; opacity: .4; animation: introDrift5 20s ease-in-out infinite alternate; }
+        .intro-blob--1 { width: 60vw; height: 60vw; left: -15vw; top: -10vh; background: #a8e6ff; animation: introDrift1 26s ease-in-out infinite alternate; }
+        .intro-blob--2 { width: 50vw; height: 50vw; right: -10vw; top: -5vh; background: #c7f0ff; animation: introDrift2 32s ease-in-out infinite alternate; }
+        .intro-blob--3 { width: 55vw; height: 55vw; left: 10vw; bottom: -20vh; background: #8fd9ff; animation: introDrift3 22s ease-in-out infinite alternate; }
+        .intro-blob--4 { width: 45vw; height: 45vw; right: 5vw; bottom: -15vh; background: #bfeaff; animation: introDrift4 30s ease-in-out infinite alternate; }
+        .intro-blob--5 { width: 35vw; height: 35vw; left: 35vw; top: 30vh; background: #66d9ff; opacity: .3; animation: introDrift5 20s ease-in-out infinite alternate; }
 
         @keyframes introDrift1 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(8vw,10vh) scale(1.15); } }
         @keyframes introDrift2 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-10vw,8vh) scale(1.1); } }
@@ -1581,7 +1581,7 @@
 </head>
 <body>
 
-    <!-- FONDO ANIMADO -->
+    <!-- FONDO ANIMADO (tono celeste suave, estilo index) -->
     <div class="intro-fluid-bg">
         <div class="intro-blob intro-blob--1"></div>
         <div class="intro-blob intro-blob--2"></div>
