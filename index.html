@@ -794,6 +794,46 @@
             box-shadow: 0 6px 18px rgba(0, 51, 102, 0.3);
         }
 
+        /* ===== NUEVO: CONTENEDOR DEFENSORÍA OFICIAL 6 (ESQUINA IZQUIERDA) ===== */
+        .defensoria-link-container {
+            position: fixed;
+            bottom: 76px;
+            left: 10px;
+            z-index: 6001;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            display: none;
+        }
+        .defensoria-link-container.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .defensoria-link-container a {
+            font-weight: 700;
+            color: #003366;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 2px solid #003366;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .defensoria-link-container a:hover {
+            background: #003366;
+            color: #ffffff;
+            border-color: #003366;
+            box-shadow: 0 6px 18px rgba(0, 51, 102, 0.3);
+        }
+
         .modal-manual-overlay {
             position: fixed;
             top: 0;
@@ -1036,6 +1076,11 @@
             .manual-link-container {
                 display: none !important;
             }
+
+            /* NUEVO: ocultar en móvil igual que el manual */
+            .defensoria-link-container {
+                display: none !important;
+            }
         }
 
         @media (min-width: 769px) {
@@ -1058,6 +1103,11 @@
             }
 
             .manual-link-container {
+                display: block;
+            }
+
+            /* NUEVO: mostrar en desktop igual que el manual */
+            .defensoria-link-container {
                 display: block;
             }
         }
@@ -1231,11 +1281,12 @@
         body.pre-reveal main,
         body.pre-reveal footer,
         body.pre-reveal #manualLinkContainer,
+        body.pre-reveal #defensoriaLinkContainer,
         body.pre-reveal #versionInfoContainer{
             opacity:0;
             pointer-events:none;
         }
-        main, footer, #manualLinkContainer, #versionInfoContainer{
+        main, footer, #manualLinkContainer, #defensoriaLinkContainer, #versionInfoContainer{
             transition:opacity 1s ease .1s;
         }
 
@@ -1481,6 +1532,11 @@
         <a id="manualLink" href="#" title="Abrir Manual de Uso del Sistema">📘 Manual de Uso del Sistema</a>
     </div>
 
+    <!-- ===== NUEVO: BOTÓN DEFENSORÍA OFICIAL 6 (ESQUINA IZQUIERDA) ===== -->
+    <div id="defensoriaLinkContainer" class="defensoria-link-container">
+        <a id="defensoriaLink" href="https://defensoria6.github.io/web/" target="_blank" rel="noopener noreferrer" title="Abrir sitio de la Defensoría Oficial 6">⚖️ Defensoría Oficial 6</a>
+    </div>
+
     <div id="modalManualOverlay" class="modal-manual-overlay">
         <div class="modal-manual-contenido">
             <div class="modal-manual-header">
@@ -1546,6 +1602,9 @@
         const cerrarModalManualBtn = document.getElementById('cerrarModalManualBtn');
         const manualIframe = document.getElementById('manualIframe');
         const versionContainer = document.getElementById('versionInfoContainer');
+
+        // ─── NUEVO: CONTENEDOR DEFENSORÍA OFICIAL 6 ───
+        const defensoriaLinkContainer = document.getElementById('defensoriaLinkContainer');
 
         // ─── IMAGEN ───
         const imageWrapper = document.getElementById('imageWrapper');
@@ -1650,10 +1709,15 @@
             modalLogin.classList.remove('active');
             modalRegistro.classList.remove('active');
             currentState = 'idle';
+            // Mostrar los enlaces solo si no hay popup de versión activo
+            if (!versionContainer.classList.contains('show')) {
+                mostrarManualLink();
+            }
         }
 
         function abrirLogin() {
             if (currentState === 'idle') {
+                ocultarManualLink();
                 modalLogin.classList.add('active');
                 currentState = 'modalOpen';
                 document.getElementById('loginEmail').focus();
@@ -1662,6 +1726,7 @@
 
         function abrirRegistro() {
             if (currentState === 'idle') {
+                ocultarManualLink();
                 modalRegistro.classList.add('active');
                 currentState = 'modalOpen';
                 document.getElementById('registerName').focus();
@@ -1915,11 +1980,15 @@
         function mostrarManualLink() {
             if (window.innerWidth > 768) {
                 manualLinkContainer.classList.add('show');
+                // NUEVO: mostrar también el botón de la Defensoría Oficial 6
+                defensoriaLinkContainer.classList.add('show');
             }
         }
 
         function ocultarManualLink() {
             manualLinkContainer.classList.remove('show');
+            // NUEVO: ocultar también el botón de la Defensoría Oficial 6
+            defensoriaLinkContainer.classList.remove('show');
         }
 
         function cerrarPopup() {
