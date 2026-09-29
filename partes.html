@@ -1,1766 +1,819 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro de Datos de Partes</title>
-    
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
-    
-    <style>
-        /* Variables CSS */
-        :root {
-            --primary-blue: #007bff;
-            --primary-light-blue: #e7f4ff;
-            --primary-dark-blue: #0056b3;
-            --secondary-gray: #f8f9fa;
-            --secondary-light-gray: #e9ecef;
-            --secondary-dark-gray: #6c757d;
-            --status-success: #28a745;
-            --status-warning: #ffc107;
-            --status-danger: #dc3545;
-            --status-info: #17a2b8;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --text-light: #ffffff;
-            --background-default: #ffffff;
-            --background-card: #ffffff;
-            --background-header: #ffffff;
-            --background-table-header: #f8f9fa;
-            --border-default: #dee2e6;
-            --font-family: 'Arial', 'Helvetica', sans-serif;
-            --h1-size: 20px;
-            --h2-size: 18px;
-            --body-large-size: 16px;
-            --body-regular-size: 14px;
-            --caption-size: 12px;
-            --font-weight-regular: 400;
-            --font-weight-semibold: 600;
-            --font-weight-bold: 700;
-            --spacing-unit: 8px;
-            --spacing-xs: 4px;
-            --spacing-s: 8px;
-            --spacing-m: 16px;
-            --spacing-l: 24px;
-            --spacing-xl: 32px;
-            --spacing-gutter: 20px;
-            --border-radius-default: 4px;
-            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        /* Estilos base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-family);
-            background-color: var(--background-default);
-            color: var(--text-primary);
-            line-height: 1.5;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--background-header);
-            border-bottom: 1px solid var(--border-default);
-            padding: var(--spacing-s) var(--spacing-m);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: var(--h1-size);
-            font-weight: var(--font-weight-bold);
-            color: var(--primary-blue);
-        }
-
-        /* Contenedor principal */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--spacing-m) var(--spacing-gutter);
-        }
-
-        /* Tarjetas de resumen (KPIs) */
-        .kpi-section {
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .kpi-title {
-            font-size: var(--h2-size);
-            font-weight: var(--font-weight-semibold);
-            margin-bottom: var(--spacing-m);
-        }
-
-        .kpi-cards {
-            display: flex;
-            gap: var(--spacing-m);
-            overflow-x: auto;
-            padding-bottom: var(--spacing-s);
-        }
-
-        .kpi-card {
-            background-color: var(--background-card);
-            padding: var(--spacing-m) var(--spacing-l);
-            border-radius: var(--border-radius-default);
-            border: 1px solid var(--border-default);
-            text-align: center;
-            box-shadow: var(--shadow-subtle);
-            transition: transform 0.2s, box-shadow 0.2s;
-            min-width: 180px;
-            flex: 1;
-        }
-
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-        .kpi-card.total {
-            background-color: var(--primary-blue);
-            color: var(--text-light);
-        }
-
-        .kpi-card.activos {
-            border-left: 4px solid var(--status-success);
-        }
-
-        .kpi-card.inactivos {
-            border-left: 4px solid var(--status-warning);
-        }
-
-        .kpi-number {
-            font-size: 24px;
-            font-weight: var(--font-weight-bold);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .kpi-card.total .kpi-number {
-            color: var(--text-light);
-        }
-
-        .kpi-label {
-            font-size: var(--caption-size);
-            font-weight: var(--font-weight-regular);
-            text-transform: uppercase;
-        }
-
-        .kpi-card.total .kpi-label {
-            color: var(--text-light);
-        }
-
-        /* Filtros */
-        .filters-section {
-            background-color: var(--background-card);
-            padding: var(--spacing-m);
-            border-radius: var(--border-radius-default);
-            border: 1px solid var(--border-default);
-            margin-bottom: var(--spacing-xl);
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .filters-title {
-            font-size: var(--h2-size);
-            font-weight: var(--font-weight-semibold);
-            margin-bottom: var(--spacing-m);
-        }
-
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--spacing-m);
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .filter-label {
-            display: block;
-            font-size: var(--body-regular-size);
-            margin-bottom: var(--spacing-xs);
-            font-weight: var(--font-weight-semibold);
-        }
-
-        .input, .dropdown {
-            border: 1px solid var(--border-default);
-            border-radius: var(--border-radius-default);
-            padding: var(--spacing-s);
-            background-color: var(--background-default);
-            color: var(--text-primary);
-            font-size: var(--body-regular-size);
-            width: 100%;
-            transition: border-color 0.2s;
-        }
-
-        .input:focus, .dropdown:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-        }
-
-        /* Botones de acción */
-        .action-buttons {
-            display: flex;
-            gap: var(--spacing-s);
-            margin-top: var(--spacing-m);
-            flex-wrap: wrap;
-        }
-
-        .button {
-            background-color: var(--primary-blue);
-            color: var(--text-light);
-            border: none;
-            border-radius: var(--border-radius-default);
-            padding: var(--spacing-s) var(--spacing-m);
-            font-size: var(--body-regular-size);
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .button:hover {
-            opacity: 0.9;
-        }
-
-        .button-success {
-            background-color: var(--status-success);
-        }
-
-        .button-secondary {
-            background-color: var(--secondary-dark-gray);
-        }
-
-        .button-danger {
-            background-color: var(--status-danger);
-        }
-
-        /* Tabla de datos - Estilo moderno */
-        .table-section {
-            background-color: var(--background-card);
-            border-radius: var(--border-radius-default);
-            border: 1px solid var(--border-default);
-            overflow: hidden;
-            box-shadow: var(--shadow-subtle);
-            margin-bottom: var(--spacing-m);
-        }
-
-        .table-title {
-            font-size: var(--h2-size);
-            font-weight: var(--font-weight-semibold);
-            padding: var(--spacing-m);
-            background-color: var(--background-table-header);
-            border-bottom: 1px solid var(--border-default);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1200px;
-        }
-
-        .data-table th {
-            background-color: var(--background-table-header);
-            font-weight: var(--font-weight-semibold);
-            border-bottom: 2px solid var(--border-default);
-            padding: var(--spacing-m);
-            color: var(--text-primary);
-            font-size: var(--caption-size);
-            text-transform: uppercase;
-            text-align: left;
-            position: sticky;
-            top: 0;
-        }
-
-        .data-table td {
-            border-bottom: 1px solid var(--border-default);
-            padding: var(--spacing-m);
-            color: var(--text-primary);
-            font-size: var(--body-regular-size);
-            vertical-align: top;
-        }
-
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .data-table tr:hover td {
-            background-color: var(--secondary-gray);
-        }
-
-        /* Acciones en tabla */
-        .table-actions {
-            display: flex;
-            gap: var(--spacing-xs);
-            flex-wrap: wrap;
-        }
-
-        .table-actions .button {
-            padding: 6px 10px;
-            font-size: var(--caption-size);
-        }
-
-        /* Paginación */
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--spacing-m);
-            background: var(--background-card);
-            border-radius: var(--border-radius-default);
-            box-shadow: var(--shadow-subtle);
-            flex-wrap: wrap;
-            gap: var(--spacing-m);
-        }
-
-        .pagination .page-info {
-            font-size: var(--body-regular-size);
-            color: var(--text-secondary);
-            font-weight: var(--font-weight-semibold);
-        }
-
-        .pagination .nav-buttons {
-            display: flex;
-            gap: var(--spacing-s);
-            align-items: center;
-        }
-
-        .page-numbers {
-            display: flex;
-            gap: var(--spacing-xs);
-            flex-wrap: wrap;
-        }
-
-        .page-btn {
-            min-width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--border-default);
-            background: white;
-            border-radius: var(--border-radius-default);
-            cursor: pointer;
-            font-size: var(--body-regular-size);
-            transition: all 0.2s;
-        }
-
-        .page-btn:hover {
-            background: var(--secondary-light-gray);
-        }
-
-        .page-btn.active {
-            background: var(--primary-blue);
-            color: white;
-            border-color: var(--primary-blue);
-        }
-
-        /* MODALES */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.6);
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 1000;
-        }
-
-        .modal .content {
-            background: #fff;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            animation: fadeIn .25s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-header {
-            background: var(--primary-blue);
-            color: #fff;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 12px 12px 0 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 60vh;
-        }
-
-        .modal-footer {
-            background: #fff;
-            padding: 15px 20px;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            border-radius: 0 0 12px 12px;
-        }
-
-        /* Modal de detalle compacto */
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .detail-item {
-            margin-bottom: 10px;
-        }
-
-        .detail-label {
-            font-weight: var(--font-weight-semibold);
-            color: var(--primary-blue);
-            font-size: var(--caption-size);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        .detail-value {
-            font-size: var(--body-regular-size);
-            color: var(--text-primary);
-            padding: 8px 0;
-            border-bottom: 1px solid var(--secondary-light-gray);
-        }
-
-        .detail-section {
-            grid-column: 1 / -1;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid var(--primary-blue);
-        }
-
-        .detail-section-title {
-            font-weight: var(--font-weight-bold);
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-            font-size: var(--body-large-size);
-        }
-
-        /* Alerta flotante */
-        .floating-alert {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--status-danger);
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            max-width: 400px;
-            text-align: center;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .floating-alert.success {
-            background-color: var(--status-success);
-        }
-
-        .floating-alert.warning {
-            background-color: var(--status-warning);
-        }
-
-        .floating-alert.show {
-            opacity: 1;
-            visibility: visible;
-            top: 20px;
-        }
-
-        /* Campo con error */
-        .input-error {
-            border-color: var(--status-danger) !important;
-            background-color: #fff5f5 !important;
-        }
-
-        /* Modal bloqueado */
-        .modal-blocked {
-            position: relative;
-        }
-
-        .modal-blocked::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.8);
-            z-index: 10;
-            border-radius: 12px;
-        }
-
-        .modal-blocked .modal-body,
-        .modal-blocked .modal-footer {
-            filter: blur(1px);
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .modal-blocked .modal-header {
-            filter: blur(1px);
-        }
-
-        /* Campo obligatorio vacío */
-        .required-error {
-            border-color: var(--status-danger) !important;
-            background-color: #fff5f5 !important;
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        /* Estilos para impresión */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .table-section, .table-section * {
-                visibility: visible;
-            }
-            .table-section {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                box-shadow: none;
-                border: none;
-            }
-            .table-title, .table-actions, .table-actions * {
-                display: none !important;
-            }
-            .data-table {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-            .data-table th, .data-table td {
-                border: 1px solid #ddd;
-                padding: 8px;
-            }
-            /* Ocultar columna de acciones al imprimir */
-            .data-table th:last-child,
-            .data-table td:last-child {
-                display: none;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .container {
-                max-width: 100%;
-                padding: var(--spacing-s);
-            }
-            
-            .kpi-cards {
-                gap: var(--spacing-s);
-            }
-            
-            .kpi-card {
-                min-width: 160px;
-                padding: var(--spacing-s) var(--spacing-m);
-            }
-            
-            .filter-row {
-                gap: var(--spacing-s);
-            }
-            
-            .filter-group {
-                min-width: 140px;
-            }
-
-            .modal .content {
-                max-width: 95%;
-            }
-
-            .data-table {
-                min-width: 1000px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: var(--spacing-s);
-                text-align: center;
-            }
-            
-            .kpi-cards {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                overflow-x: visible;
-            }
-            
-            .kpi-card {
-                min-width: auto;
-            }
-            
-            .filter-row {
-                flex-direction: column;
-            }
-            
-            .filter-group {
-                min-width: auto;
-            }
-            
-            .pagination {
-                flex-direction: column;
-                gap: var(--spacing-m);
-                text-align: center;
-            }
-            
-            .table-title {
-                padding: var(--spacing-s);
-                flex-direction: column;
-                align-items: flex-start;
-                gap: var(--spacing-s);
-            }
-            
-            .data-table th, 
-            .data-table td {
-                padding: var(--spacing-s);
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .modal-footer {
-                flex-direction: column;
-            }
-
-            .detail-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .container {
-                padding: var(--spacing-xs);
-            }
-            
-            .kpi-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .kpi-card {
-                padding: var(--spacing-m);
-            }
-            
-            .kpi-number {
-                font-size: var(--h1-size);
-            }
-            
-            .filters-section,
-            .table-section {
-                padding: var(--spacing-s);
-            }
-            
-            .filters-title,
-            .table-title {
-                font-size: var(--body-large-size);
-            }
-
-            .modal .content {
-                max-width: 100%;
-                max-height: 100vh;
-                border-radius: 0;
-            }
-
-            .modal-header,
-            .modal-body,
-            .modal-footer {
-                padding: var(--spacing-s);
-            }
-            
-            .table-actions {
-                flex-direction: column;
-            }
-
-            .page-numbers {
-                justify-content: center;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Datos de Partes</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase (sin cambios) -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+
+<style>
+:root{
+  --navy:#0b2a6f; --navy-d:#081c4d; --b7:#1849c4; --b6:#2160e8; --b5:#3b7bf5;
+  --b2:#c3d7ff; --b1:#eef4ff; --ink:#0f1b3d; --mute:#5a6a8a; --rule:#dde5f3;
+  --field:#c9d5ec; --bg:#f4f7fd; --ok:#16a34a; --bad:#dc2626; --warn:#d97706;
+  --ff:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --pad:clamp(14px,3vw,28px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{min-height:100vh;font:15px/1.55 var(--ff);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--b5);outline-offset:2px}
+.wrap{width:min(1200px,calc(100% - 2*var(--pad)));margin-inline:auto}
+
+/* Cabecera */
+.top{background:var(--navy);color:#fff;padding:14px 0 36px}
+.top h1{font-size:clamp(18px,2.6vw,24px);font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.top p{margin-top:2px;font-size:12.5px;font-weight:500;color:var(--b2)}
+
+/* Pestañas */
+.tabs{position:sticky;top:10px;z-index:30;margin-top:-22px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:5px;background:#fff;border:1px solid var(--rule);border-radius:16px;box-shadow:0 10px 30px -12px rgba(11,42,111,.35)}
+.tab{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 14px;border:0;border-radius:11px;background:transparent;color:var(--mute);font-size:14px;font-weight:600;line-height:1.2;cursor:pointer;transition:background .15s,color .15s}
+.tab:hover{background:var(--b1);color:var(--b7)}
+.tab[aria-selected=true]{background:var(--b6);color:#fff}
+.view{margin-top:20px;padding-bottom:40px}
+
+/* Tarjeta */
+.card{background:#fff;border:1px solid var(--rule);border-radius:18px;box-shadow:0 1px 2px rgba(11,42,111,.05),0 12px 28px -18px rgba(11,42,111,.25)}
+.pad{padding:clamp(18px,2.6vw,28px)}
+.card h2{font-size:clamp(17px,2.2vw,20px);font-weight:700;letter-spacing:-.015em}
+.card h2 small{font-size:.8em;font-weight:500;color:var(--mute)}
+.ttl{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.ttl i{color:var(--b6)}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border:1px solid transparent;border-radius:10px;font-size:14px;font-weight:600;line-height:1.2;cursor:pointer;transition:background .15s,border-color .15s}
+.btn.solid{background:var(--b6);color:#fff}
+.btn.solid:hover:not(:disabled){background:var(--b7)}
+.btn.line{background:#fff;color:var(--b7);border-color:var(--b2)}
+.btn.line:hover:not(:disabled){background:var(--b1)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sq{width:36px;height:36px;padding:0;border-radius:9px;font-size:14px}
+
+/* Formulario */
+.formcard{max-width:900px;margin-inline:auto}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px}
+.full{grid-column:1/-1}
+.sec{grid-column:1/-1;margin-top:6px;padding-top:16px;border-top:1px solid var(--rule);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--navy)}
+label{display:block;margin-bottom:6px;font-size:13px;font-weight:600}
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--field);border-radius:10px;background:#fff;color:var(--ink);font:400 15px/1.4 var(--ff);transition:border-color .15s,box-shadow .15s}
+textarea{resize:vertical;min-height:84px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b6);box-shadow:0 0 0 4px rgba(33,96,232,.16)}
+input::placeholder{color:#93a0bd}
+.fld .msg{display:none;margin-top:5px;font-size:12.5px}
+.fld.err input{border-color:var(--bad);background:#fef2f2}
+.fld.err .msg{display:block;color:var(--bad)}
+.fld.warn input{border-color:var(--warn);background:#fffbeb}
+.fld.warn .msg{display:block;color:#92400e}
+.hint{display:block;margin-top:5px;font-size:12px;color:var(--mute)}
+.acw{position:relative}
+.acl{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;max-height:250px;overflow-y:auto;list-style:none;padding:4px;background:#fff;border:1px solid var(--rule);border-radius:12px;box-shadow:0 14px 30px -12px rgba(11,42,111,.35)}
+.acl li{padding:10px 12px;border-radius:8px;font-size:14px;cursor:pointer}
+.acl li b{font-weight:700;color:var(--b7)}
+.acl li[aria-selected=true],.acl li:hover{background:var(--b1);color:var(--b7)}
+.note{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:11px 14px;border:1px solid var(--b2);border-left:4px solid var(--b6);border-radius:10px;background:var(--b1);color:var(--navy);font-size:13.5px}
+.note i{color:var(--b6)}
+.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+
+/* Listado */
+.tools{padding:clamp(16px,2.4vw,24px);border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.row .grp{display:flex;gap:8px;flex-wrap:wrap}
+.ftoggle .n{min-width:20px;height:20px;padding:0 6px;display:inline-grid;place-items:center;border-radius:999px;background:var(--b6);color:#fff;font-size:11.5px;font-weight:700}
+.ftoggle .chev{font-size:12px;transition:transform .2s}
+.ftoggle[aria-expanded=true] .chev{transform:rotate(180deg)}
+.fpanel{padding:10px 12px;border:1px solid var(--rule);border-radius:12px;background:var(--bg)}
+.fgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 10px;align-items:end}
+.fpanel label{margin-bottom:3px;font-size:12px}
+.fpanel input,.fpanel select{padding:7px 10px;font-size:14px;border-radius:8px}
+.fpanel .btn{width:100%;padding:8px 12px;font-size:13px;border-radius:8px}
+
+.pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pager .info{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.pager .ctl{display:flex;align-items:center;gap:6px}
+.pager select{width:auto;min-width:96px;padding:7px 10px;font-size:14px;border-radius:9px}
+.pg{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--b2);border-radius:9px;background:#fff;color:var(--b7);font-size:14px;cursor:pointer}
+.pg:hover:not(:disabled){background:var(--b1)}
+.pg:disabled{opacity:.4;cursor:not-allowed}
+.pfoot{padding:14px clamp(16px,2.4vw,24px);border-top:1px solid var(--rule)}
+
+.scroll{overflow:hidden}
+table.dt{width:100%;border-collapse:collapse;table-layout:auto}
+table.dt th{padding:11px 10px;text-align:left;background:var(--b1);color:var(--navy);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}
+table.dt th.sort{cursor:pointer;user-select:none}
+table.dt th.sort:hover{color:var(--b7)}
+table.dt td{padding:10px;border-bottom:1px solid var(--rule);font-size:13px;line-height:1.4;vertical-align:middle;overflow-wrap:anywhere}
+table.dt .v{min-width:0;overflow-wrap:anywhere}
+table.dt .sub{display:block;margin-top:1px;font-size:12px;color:var(--mute)}
+table.dt td.ac{width:1%;white-space:nowrap}
+table.dt tbody tr:hover{background:var(--b1)}
+table.dt tbody tr:last-child td{border-bottom:0}
+.acts{display:flex;gap:6px}
+.empty{padding:36px 16px!important;text-align:center;color:var(--mute)}
+
+/* Reporte */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.kpi{padding:18px 20px}
+.kpi b{display:block;font-size:30px;font-weight:700;letter-spacing:-.02em;color:var(--b7);line-height:1.1}
+.kpi span{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}
+.reps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rep h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--navy)}
+.bar{margin-bottom:11px;font-size:13px}
+.bar .t{display:flex;justify-content:space-between;gap:10px;margin-bottom:4px}
+.bar .t em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}
+.bar .tr{height:8px;border-radius:99px;background:var(--b1)}
+.bar .tr i{display:block;height:100%;border-radius:99px;background:var(--b6)}
+
+/* Modal detalle */
+.ov{display:none;position:fixed;inset:0;z-index:1000;padding:16px;background:rgba(8,28,77,.55);justify-content:center;align-items:center}
+.ov.open{display:flex}
+.sheet{width:100%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;background:#fff;border-radius:18px;box-shadow:0 24px 60px -20px rgba(8,28,77,.5);animation:rise .22s ease}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sh{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--rule)}
+.sh h3{font-size:18px;font-weight:700;letter-spacing:-.015em}
+.x{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:var(--mute);font-size:16px;cursor:pointer}
+.x:hover{background:var(--b1);color:var(--b7)}
+.sb{padding:20px 22px;overflow-y:auto}
+.sf{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;padding:14px 22px;border-top:1px solid var(--rule)}
+.det{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.det dt{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin-bottom:3px}
+.det dd{font-size:15px;word-break:break-word;white-space:pre-wrap}
+.det .sec{margin:0}
+
+/* Aviso */
+.toast{position:fixed;left:50%;top:16px;z-index:1100;max-width:min(420px,calc(100% - 32px));padding:12px 20px;border-radius:12px;background:var(--bad);color:#fff;font-size:14px;font-weight:500;text-align:center;box-shadow:0 10px 25px -8px rgba(0,0,0,.35);transform:translate(-50%,-140%);opacity:0;visibility:hidden;transition:transform .35s,opacity .35s,visibility .35s}
+.toast.ok{background:var(--ok)}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+
+#printArea{display:none}
+
+@media(max-width:900px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.reps,.kpis{grid-template-columns:1fr}}
+@media(max-width:768px){
+  input,select,textarea{font-size:16px}
+  .grid2,.det{grid-template-columns:1fr}
+  .row .grp{width:100%}.row .grp .btn{flex:1}
+  .pager{justify-content:center}
+}
+@media screen and (max-width:1000px){
+  .scroll{overflow:visible}
+  table.dt,table.dt thead,table.dt tbody,table.dt tr,table.dt td{display:block;width:100%;min-width:0}
+  table.dt thead{display:none}
+  table.dt tbody{padding:12px}
+  table.dt tr{margin-bottom:12px;padding:8px 14px;border:1px solid var(--rule);border-radius:14px;background:#fff}
+  table.dt tr:last-child{margin-bottom:0}
+  table.dt tbody tr:hover{background:#fff}
+  table.dt td{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:7px 0;border:0;text-align:right;font-size:14px}
+  table.dt td[data-l]::before{content:attr(data-l);flex:none;width:96px;font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--mute);text-align:left;padding-top:2px}
+  table.dt td .v{flex:1;min-width:0}
+  table.dt td.ac{width:100%;white-space:normal;justify-content:flex-end;border-top:1px solid var(--rule);margin-top:6px;padding-top:10px}
+  table.dt td.ac::before{display:none}
+  table.dt td.empty{display:block;text-align:center}
+}
+@media(max-width:600px){
+  .tab{flex-direction:column;gap:5px;padding:9px 4px;font-size:12px;text-align:center}
+  .actions .btn,.sf .btn{flex:1}
+  .ov{padding:0;align-items:flex-end}
+  .sheet{max-width:100%;max-height:94vh;max-height:94dvh;border-radius:18px 18px 0 0}
+  .sh,.sb,.sf{padding-left:16px;padding-right:16px}
+}
+@media(max-width:480px){
+  body{font-size:14px}
+  .fgrid{grid-template-columns:1fr}
+  .row .grp .btn{flex:1 1 calc(50% - 4px);min-width:0;padding:10px 8px}
+  .row .grp .ftoggle{flex-basis:100%}
+  .tools{padding:14px}
+  table.dt tbody{padding:10px}
+  table.dt td[data-l]::before{width:84px}
+  .pager .ctl{width:100%;justify-content:space-between}
+  .pager .ctl select{flex:1;min-width:0}
+  .kpi b{font-size:26px}
+  .sf .btn{flex:1 1 100%}
+}
+@media(max-width:360px){
+  .tab{font-size:11px;letter-spacing:-.01em}
+  .tab i{font-size:13px}
+  table.dt tr{padding:6px 12px}
+  table.dt td[data-l]::before{width:74px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01ms!important}}
+
+@media print{
+  @page{margin:14mm}
+  body{background:#fff}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block}
+  #printArea h1{font-size:18pt;margin-bottom:2pt}
+  #printArea .sub{font-size:9pt;color:#444;margin-bottom:12pt;padding-bottom:6pt;border-bottom:2px solid #000}
+  #printArea table{width:100%;border-collapse:collapse}
+  #printArea th,#printArea td{padding:5pt 6pt;border:1px solid #999;font-size:9pt;text-align:left;vertical-align:top}
+  #printArea th{background:#f0f0f0}
+}
+</style>
 </head>
 <body>
-    <!-- Alerta flotante para duplicados -->
-    <div class="floating-alert" id="duplicateAlert">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span id="duplicateAlertText"></span>
-    </div>
 
-    <!-- Alerta flotante para campos obligatorios -->
-    <div class="floating-alert warning" id="requiredFieldsAlert" style="display: none;">
-        <i class="fas fa-exclamation-circle"></i>
-        <span>Faltan completar datos obligatorios.</span>
-    </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">Registro de Partes</div>
-            <button id="btnNuevo" class="button">
-                <i class="fas fa-plus"></i> Nuevo Registro
-            </button>
+<header class="top">
+  <div class="wrap">
+    <h1>Registro de Partes</h1>
+    <p>Datos de partes e intervención de Defensorías</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button class="tab" role="tab" id="tabNuevo" aria-controls="vNuevo" aria-selected="true" data-v="Nuevo"><i class="fa-solid fa-plus"></i> Nuevo Registro</button>
+    <button class="tab" role="tab" id="tabListado" aria-controls="vListado" aria-selected="false" data-v="Listado"><i class="fa-solid fa-list"></i> Listado de Partes</button>
+    <button class="tab" role="tab" id="tabReporte" aria-controls="vReporte" aria-selected="false" data-v="Reporte"><i class="fa-solid fa-chart-column"></i> Reporte</button>
+  </nav>
+
+  <main>
+    <!-- Nuevo / Editar -->
+    <section class="view" id="vNuevo" role="tabpanel" aria-labelledby="tabNuevo">
+      <div class="card pad formcard">
+        <div class="ttl"><i class="fa-solid fa-user-plus"></i><h2 id="formTitulo">Nuevo Registro</h2></div>
+        <div class="note" id="editNote" hidden><i class="fa-solid fa-pen"></i><span>Estás editando un registro existente.</span></div>
+
+        <form id="registroForm" novalidate>
+          <div class="grid2">
+            <div class="fld" id="f-apellido"><label for="apellido">Apellido *</label><input id="apellido" autocomplete="off"><span class="msg"></span></div>
+            <div class="fld" id="f-nombre"><label for="nombre">Nombre *</label><input id="nombre" autocomplete="off"><span class="msg"></span></div>
+            <div class="fld" id="f-dni"><label for="dni">DNI *</label><input id="dni" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ej.: 30123456"><span class="hint">Solo números, sin puntos (7 u 8 dígitos).</span><span class="msg"></span></div>
+            <div class="fld"><label for="domicilio">Domicilio</label><input id="domicilio"></div>
+            <div class="fld"><label for="ciudad">Ciudad</label>
+              <div class="acw">
+                <input id="ciudad" type="text" autocomplete="off" role="combobox" aria-autocomplete="both" aria-expanded="false" aria-controls="ciudadList" placeholder="Escriba 4 letras: Posa…">
+                <ul class="acl" id="ciudadList" role="listbox" hidden></ul>
+              </div>
+            </div>
+            <div class="fld" id="f-telefono"><label for="telefono">Teléfono</label><input id="telefono" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="Ej.: 3764123456"><span class="hint">10 dígitos: código de área sin 0 + número sin 15.</span><span class="msg"></span></div>
+            <div class="fld full"><label for="email">Email</label><input type="email" id="email"></div>
+
+            <div class="sec">Intervención de Defensorías</div>
+            <div class="fld full"><label for="datosAntecedentes">Datos Judiciales Antecedentes</label><textarea id="datosAntecedentes"></textarea></div>
+            <div class="fld"><label for="expteAntiguo">Expte. más antiguo</label><input id="expteAntiguo"></div>
+            <div class="fld"><label for="condicionParte">Condición de parte</label><input id="condicionParte"></div>
+            <div class="fld"><label for="defensoriaPatrocinante">Defensoría Patrocinante</label><select id="defensoriaPatrocinante"></select></div>
+            <div class="fld"><label for="defensoriaMpc">Defensoría MPC</label><select id="defensoriaMpc"></select></div>
+
+            <div class="sec">Información Adicional</div>
+            <div class="fld full"><label for="datosNnya">Datos de NNyA involucrados</label><textarea id="datosNnya"></textarea></div>
+            <div class="fld"><label for="situacionMedica">Situación Médica</label><textarea id="situacionMedica"></textarea></div>
+            <div class="fld"><label for="situacionLaboral">Situación Laboral</label><textarea id="situacionLaboral"></textarea></div>
+            <div class="fld full"><label for="observaciones">Otras Observaciones</label><textarea id="observaciones"></textarea></div>
+
+            <div class="actions full">
+              <button type="button" class="btn line" id="btnCancelar"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+              <button type="submit" class="btn solid" id="btnGuardar"><i class="fa-solid fa-floppy-disk"></i> <span id="btnGuardarTxt">Guardar</span></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Listado -->
+    <section class="view" id="vListado" role="tabpanel" aria-labelledby="tabListado" hidden>
+      <div class="card" style="overflow:hidden">
+        <div class="tools">
+          <div class="row">
+            <h2>Listado de partes <small>· Total: <span id="total">0</span></small></h2>
+            <div class="grp">
+              <button type="button" class="btn line ftoggle" id="btnFiltros" aria-expanded="false" aria-controls="fpanel">
+                <i class="fa-solid fa-sliders"></i> <span id="fTxt">Mostrar filtros</span>
+                <span class="n" id="fCount" hidden>0</span>
+                <i class="fa-solid fa-chevron-down chev"></i>
+              </button>
+              <button type="button" class="btn line" id="btnActualizar"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+              <button type="button" class="btn line" id="btnPrintListado"><i class="fa-solid fa-print"></i> Imprimir lista</button>
+            </div>
+          </div>
+
+          <!-- Filtros: ocultos al iniciar -->
+          <div class="fpanel" id="fpanel" hidden>
+            <div class="fgrid">
+              <div><label for="fBusca">Búsqueda</label><input id="fBusca" placeholder="Buscar en todos los campos" autocomplete="off"></div>
+              <div><label for="fExpte">Expte. más antiguo</label><input id="fExpte" placeholder="Nº de expediente" autocomplete="off"></div>
+              <div><label for="fPatro">Def. Patrocinante</label><select id="fPatro"></select></div>
+              <div><label for="fMpc">Def. MPC</label><select id="fMpc"></select></div>
+              <div><button type="button" class="btn line" id="btnLimpiar"><i class="fa-solid fa-eraser"></i> Limpiar filtros</button></div>
+            </div>
+          </div>
+
+          <div class="pager" data-pager><span class="info"></span>
+            <div class="ctl"><button type="button" class="pg prev" aria-label="Página anterior"><i class="fa-solid fa-chevron-left"></i></button><select class="pgsel" aria-label="Ir a la página"></select><button type="button" class="pg next" aria-label="Página siguiente"><i class="fa-solid fa-chevron-right"></i></button></div>
+          </div>
         </div>
-    </header>
 
-    <!-- Contenido principal -->
-    <main class="container">
-        <!-- Tarjetas de resumen (KPIs) -->
-        <section class="kpi-section">
-            <h2 class="kpi-title">Resumen de Registros</h2>
-            <div class="kpi-cards" id="kpiCards">
-                <div class="loading">Cargando datos...</div>
-            </div>
-        </section>
-
-        <!-- Filtros -->
-        <section class="filters-section">
-            <h2 class="filters-title">Filtros de Búsqueda</h2>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label class="filter-label" for="searchInput">Búsqueda</label>
-                    <input type="text" id="searchInput" class="input" placeholder="🔍 Buscar...">
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="expteAntiguoFilter">Expte. más antiguo</label>
-                    <input type="text" id="expteAntiguoFilter" class="input" placeholder="Filtrar por expediente...">
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="defensoriaPatrocinanteFilter">Defensoría Patrocinante</label>
-                    <select id="defensoriaPatrocinanteFilter" class="dropdown">
-                        <option value="">Def. Patrocinante (Todas)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="defensoriaMpcFilter">Defensoría MPC</label>
-                    <select id="defensoriaMpcFilter" class="dropdown">
-                        <option value="">Def. MPC (Todas)</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- Botones de acción -->
-            <div class="action-buttons">
-                <button id="btnPrintListado" class="button button-success">
-                    <i class="fas fa-print"></i> Imprimir Listado
-                </button>
-                <button id="btnActualizar" class="button button-secondary">
-                    <i class="fas fa-sync"></i> Actualizar
-                </button>
-            </div>
-        </section>
-
-        <!-- Tabla de datos -->
-        <section class="table-section">
-            <div class="table-title">
-                <h2>Registros de Partes</h2>
-            </div>
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th onclick="ordenarPor('apellido')">Apellido</th>
-                            <th onclick="ordenarPor('nombre')">Nombre</th>
-                            <th onclick="ordenarPor('dni')">DNI</th>
-                            <th>Domicilio</th>
-                            <th onclick="ordenarPor('ciudad')">Ciudad</th>
-                            <th>Teléfono</th>
-                            <th>Email</th>
-                            <th>Expte. Antiguo</th>
-                            <th>Def. Patrocinante</th>
-                            <th>Condición</th>
-                            <th>Def. MPC</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <tr>
-                            <td colspan="12" class="loading">Cargando registros...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        
-        <!-- Paginación -->
-        <div id="pagination" class="pagination"></div>
-    </main>
-
-    <!-- Modal de registro -->
-    <div id="modalRegistro" class="modal">
-        <div class="content" id="modalContent">
-            <div class="modal-header">
-                <i class="fa-solid fa-user-plus"></i>
-                <h2 id="modalRegistroTitle" style="margin:0;">Nuevo Registro</h2>
-            </div>
-            <div class="modal-body">
-                <form id="registroForm">
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <label for="apellido" class="detail-label">Apellido *</label>
-                            <input type="text" id="apellido" name="apellido" class="input" required />
-                        </div>
-                        <div class="detail-item">
-                            <label for="nombre" class="detail-label">Nombre *</label>
-                            <input type="text" id="nombre" name="nombre" class="input" required />
-                        </div>
-                        <div class="detail-item">
-                            <label for="dni" class="detail-label">DNI *</label>
-                            <input type="text" id="dni" name="dni" class="input" required pattern="[0-9]{7,8}" />
-                        </div>
-                        <div class="detail-item">
-                            <label for="domicilio" class="detail-label">Domicilio</label>
-                            <input type="text" id="domicilio" name="domicilio" class="input" />
-                        </div>
-                        <div class="detail-item">
-                            <label for="ciudad" class="detail-label">Ciudad</label>
-                            <input type="text" id="ciudad" name="ciudad" class="input" />
-                        </div>
-                        <div class="detail-item">
-                            <label for="telefono" class="detail-label">Teléfono</label>
-                            <input type="text" id="telefono" name="telefono" class="input" />
-                        </div>
-                        <div class="detail-item">
-                            <label for="email" class="detail-label">Email</label>
-                            <input type="email" id="email" name="email" class="input" />
-                        </div>
-                        
-                        <div class="detail-section">
-                            <div class="detail-section-title">Intervención de Defensorías</div>
-                            
-                            <div class="detail-item">
-                                <label for="datosAntecedentes" class="detail-label">Datos Judiciales Antecedentes</label>
-                                <textarea id="datosAntecedentes" name="datosAntecedentes" class="input" rows="3"></textarea>
-                            </div>
-                            <div class="detail-item">
-                                <label for="expteAntiguo" class="detail-label">Expte. más antiguo</label>
-                                <input type="text" id="expteAntiguo" name="expteAntiguo" class="input" />
-                            </div>
-                            <div class="detail-item">
-                                <label for="defensoriaPatrocinante" class="detail-label">Defensoría Patrocinante</label>
-                                <select id="defensoriaPatrocinante" name="defensoriaPatrocinante" class="dropdown">
-                                    <option value="">Seleccionar</option>
-                                    <option value="Defensoria Civil 3">Defensoría Civil 3</option>
-                                    <option value="Defensoria Civil 4">Defensoría Civil 4</option>
-                                    <option value="Defensoria Civil 5">Defensoría Civil 5</option>
-                                    <option value="Defensoria 7 Villa Cabello">Defensoría 7 Villa Cabello</option>
-                                    <option value="Defensoria 8 Garupa">Defensoría 8 Garupá</option>
-                                    <option value="Defensoria 9 Itaembe Mini">Defensoría 9 Itaembé Miní</option>
-                                </select>
-                            </div>
-                            <div class="detail-item">
-                                <label for="condicionParte" class="detail-label">Condición de parte</label>
-                                <input type="text" id="condicionParte" name="condicionParte" class="input" />
-                            </div>
-                            <div class="detail-item">
-                                <label for="defensoriaMpc" class="detail-label">Defensoría MPC</label>
-                                <select id="defensoriaMpc" name="defensoriaMpc" class="dropdown">
-                                    <option value="">Seleccionar</option>
-                                    <option value="Defensoria Civil 3">Defensoría Civil 3</option>
-                                    <option value="Defensoria Civil 4">Defensoría Civil 4</option>
-                                    <option value="Defensoria Civil 5">Defensoría Civil 5</option>
-                                    <option value="Defensoria 7 Villa Cabello">Defensoría 7 Villa Cabello</option>
-                                    <option value="Defensoria 8 Garupa">Defensoría 8 Garupá</option>
-                                    <option value="Defensoria 9 Itaembe Mini">Defensoría 9 Itaembé Miní</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-section">
-                            <div class="detail-section-title">Información Adicional</div>
-                            
-                            <div class="detail-item">
-                                <label for="datosNnya" class="detail-label">Datos de NNyA involucrados</label>
-                                <textarea id="datosNnya" name="datosNnya" class="input" rows="3"></textarea>
-                            </div>
-                            <div class="detail-item">
-                                <label for="situacionMedica" class="detail-label">Situación Médica</label>
-                                <textarea id="situacionMedica" name="situacionMedica" class="input" rows="3"></textarea>
-                            </div>
-                            <div class="detail-item">
-                                <label for="situacionLaboral" class="detail-label">Situación Laboral</label>
-                                <textarea id="situacionLaboral" name="situacionLaboral" class="input" rows="3"></textarea>
-                            </div>
-                            <div class="detail-item">
-                                <label for="observaciones" class="detail-label">Otras Observaciones</label>
-                                <textarea id="observaciones" name="observaciones" class="input" rows="3"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="button button-success" type="button" id="btnGuardar">
-                    <i class="fa fa-save"></i> Guardar
-                </button>
-                <button class="button button-secondary" type="button" id="btnCancelar">
-                    <i class="fa fa-xmark"></i> Cancelar
-                </button>
-            </div>
+        <div class="scroll">
+          <table class="dt">
+            <thead><tr>
+              <th class="sort" data-k="apellido">Apellido / Nombre <span class="ind"></span></th>
+              <th class="sort" data-k="dni">DNI <span class="ind"></span></th>
+              <th class="sort" data-k="ciudad">Domicilio / Ciudad <span class="ind"></span></th>
+              <th>Teléfono / Email</th>
+              <th>Expte. Antiguo</th><th>Def. Patrocinante</th><th>Condición</th><th>Def. MPC</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody"><tr><td colspan="9" class="empty">Cargando registros...</td></tr></tbody>
+          </table>
         </div>
-    </div>
 
-    <!-- Modal de detalles compacto -->
-    <div id="modalDetalle" class="modal">
-        <div class="content">
-            <div class="modal-header">
-                <i class="fa-solid fa-eye"></i>
-                <h2 style="margin:0;">Detalle del Registro</h2>
-            </div>
-            <div class="modal-body">
-                <div id="detalleContenido"></div>
-            </div>
-            <div class="modal-footer">
-                <button id="btnImprimirDetalle" class="button button-success">
-                    <i class="fa fa-print"></i> Imprimir
-                </button>
-                <button id="btnCerrarDetalle" class="button button-secondary">
-                    <i class="fa fa-xmark"></i> Cerrar
-                </button>
-            </div>
+        <div class="pager pfoot" data-pager><span class="info"></span>
+          <div class="ctl"><button type="button" class="pg prev" aria-label="Página anterior"><i class="fa-solid fa-chevron-left"></i></button><select class="pgsel" aria-label="Ir a la página"></select><button type="button" class="pg next" aria-label="Página siguiente"><i class="fa-solid fa-chevron-right"></i></button></div>
         </div>
+      </div>
+    </section>
+
+    <!-- Reporte -->
+    <section class="view" id="vReporte" role="tabpanel" aria-labelledby="tabReporte" hidden>
+      <div class="row" style="margin-bottom:14px">
+        <h2 style="font-size:20px;letter-spacing:-.015em">Reporte general</h2>
+        <button type="button" class="btn line" id="btnPrintReporte"><i class="fa-solid fa-print"></i> Imprimir reporte</button>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="reps" id="reps"></div>
+    </section>
+  </main>
+</div>
+
+<!-- Detalle -->
+<div class="ov" id="ovDetalle">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dTitulo">
+    <div class="sh"><h3 id="dTitulo">Detalle del Registro</h3><button class="x" id="dX" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="sb"><dl class="det" id="detBody"></dl></div>
+    <div class="sf">
+      <button class="btn line" id="btnEditarDet"><i class="fa-solid fa-pen"></i> Editar</button>
+      <button class="btn line" id="btnPrintDet"><i class="fa-solid fa-print"></i> Imprimir</button>
+      <button class="btn solid" id="btnCerrarDet">Cerrar</button>
     </div>
+  </div>
+</div>
 
-    <script>
-        // Configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyC871IwG89d3yd-BUY9tj2q0_gmBV3AMfM",
-            authDomain: "datos-partes.firebaseapp.com",
-            databaseURL: "https://datos-partes-default-rtdb.firebaseio.com",
-            projectId: "datos-partes",
-            storageBucket: "datos-partes.firebasestorage.app",
-            messagingSenderId: "277413385546",
-            appId: "1:277413385546:web:9863aaa081727a84479db3"
-        };
-        
-        const DEFENSORIA_OPTIONS = [
-            { value: "Defensoria Civil 3", label: "Defensoría Civil 3" },
-            { value: "Defensoria Civil 4", label: "Defensoría Civil 4" },
-            { value: "Defensoria Civil 5", label: "Defensoría Civil 5" },
-            { value: "Defensoria 7 Villa Cabello", label: "Defensoría 7 Villa Cabello" },
-            { value: "Defensoria 8 Garupa", label: "Defensoría 8 Garupá" },
-            { value: "Defensoria 9 Itaembe Mini", label: "Defensoría 9 Itaembé Miní" }
-        ];
+<div id="printArea"></div>
 
-        // Inicializar Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const database = firebase.database();
+<script>
+/* ============ Firebase (sin cambios) ============ */
+const firebaseConfig = {
+  apiKey: "AIzaSyC871IwG89d3yd-BUY9tj2q0_gmBV3AMfM",
+  authDomain: "datos-partes.firebaseapp.com",
+  databaseURL: "https://datos-partes-default-rtdb.firebaseio.com",
+  projectId: "datos-partes",
+  storageBucket: "datos-partes.firebasestorage.app",
+  messagingSenderId: "277413385546",
+  appId: "1:277413385546:web:9863aaa081727a84479db3"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-        // Variables globales
-        let todosLosRegistros = [];
-        let registros = [];
-        let registroEditando = null;
-        let ordenActual = { campo: 'apellido', direccion: 'asc' };
-        let paginaActual = 1;
-        const registrosPorPagina = 5;
-        let dniDuplicado = false;
+/* ============ Datos y estado ============ */
+const DEFENSORIAS = [
+  ["Defensoria Civil 3","Defensoría Civil 3"], ["Defensoria Civil 4","Defensoría Civil 4"],
+  ["Defensoria Civil 5","Defensoría Civil 5"], ["Defensoria 7 Villa Cabello","Defensoría 7 Villa Cabello"],
+  ["Defensoria 8 Garupa","Defensoría 8 Garupá"], ["Defensoria 9 Itaembe Mini","Defensoría 9 Itaembé Miní"]
+];
+const CAMPOS = ["apellido","nombre","dni","domicilio","ciudad","telefono","email","datosAntecedentes","expteAntiguo","defensoriaPatrocinante","condicionParte","defensoriaMpc","datosNnya","situacionMedica","situacionLaboral","observaciones"];
+const POR_PAGINA = 5;
 
-        // Elementos DOM
-        const duplicateAlert = document.getElementById('duplicateAlert');
-        const duplicateAlertText = document.getElementById('duplicateAlertText');
-        const requiredFieldsAlert = document.getElementById('requiredFieldsAlert');
-        const modalRegistro = document.getElementById('modalRegistro');
-        const modalContent = document.getElementById('modalContent');
-        const modalDetalle = document.getElementById('modalDetalle');
-        const btnNuevo = document.getElementById('btnNuevo');
-        const btnGuardar = document.getElementById('btnGuardar');
-        const btnCancelar = document.getElementById('btnCancelar');
-        const btnImprimirDetalle = document.getElementById('btnImprimirDetalle');
-        const btnCerrarDetalle = document.getElementById('btnCerrarDetalle');
-        const btnPrintListado = document.getElementById('btnPrintListado');
-        const btnActualizar = document.getElementById('btnActualizar');
-        const inputApellido = document.getElementById('apellido');
-        const inputNombre = document.getElementById('nombre');
-        const inputDni = document.getElementById('dni');
+let todos = [], lista = [], editandoId = null, pagina = 1, dniDup = false, detalleId = null;
+let orden = { campo: "apellido", dir: "asc" };
 
-        // Inicializar aplicación
-        document.addEventListener('DOMContentLoaded', function () {
-            renderDefensoriaFilters();
-            cargarTodosLosRegistros();
-            
-            // Event listeners
-            document.getElementById('registroForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                guardarRegistro();
-            });
-            
-            btnNuevo.onclick = abrirModalRegistro;
-            btnGuardar.onclick = guardarRegistro;
-            btnCancelar.onclick = cerrarModalRegistro;
-            btnCerrarDetalle.onclick = cerrarModalDetalle;
-            btnImprimirDetalle.onclick = imprimirDetalle;
-            btnPrintListado.onclick = printListadoCompleto;
-            btnActualizar.onclick = cargarTodosLosRegistros;
-            
-            // Filtros en tiempo real
-            document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
-            document.getElementById('expteAntiguoFilter').addEventListener('input', aplicarFiltros);
-            document.getElementById('defensoriaPatrocinanteFilter').addEventListener('change', aplicarFiltros);
-            document.getElementById('defensoriaMpcFilter').addEventListener('change', aplicarFiltros);
-            
-            // Detección de duplicados en tiempo real
-            inputApellido.addEventListener('input', verificarDuplicadosEnTiempoReal);
-            inputNombre.addEventListener('input', verificarDuplicadosEnTiempoReal);
-            inputDni.addEventListener('input', verificarDuplicadosEnTiempoReal);
-            
-            // Cerrar modales al hacer clic fuera
-            window.addEventListener('click', e => {
-                if (e.target === modalRegistro) cerrarModalRegistro();
-                if (e.target === modalDetalle) cerrarModalDetalle();
-            });
-        });
+const $ = id => document.getElementById(id);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dash = v => (v && String(v).trim()) ? esc(v) : "-";
+const dos = (a, b) => `<div class="v">${(a && String(a).trim()) ? esc(a) : "-"}${(b && String(b).trim()) ? `<span class="sub">${esc(b)}</span>` : ""}</div>`;
+const defLabel = v => { if (!v) return ""; const o = DEFENSORIAS.find(d => d[0].toLowerCase() === String(v).toLowerCase()); return o ? o[1] : v; };
 
-        // Función para verificar duplicados en tiempo real
-        function verificarDuplicadosEnTiempoReal() {
-            const apellido = inputApellido.value.trim().toLowerCase();
-            const nombre = inputNombre.value.trim().toLowerCase();
-            const dni = inputDni.value.trim();
-            
-            // Resetear estado de bloqueo
-            dniDuplicado = false;
-            resetearEstilosCampos();
-            duplicateAlert.classList.remove('show');
-            modalContent.classList.remove('modal-blocked');
-            btnGuardar.disabled = false;
-            
-            // Verificar si hay apellido duplicado
-            if (apellido.length >= 2) { // Solo verificar si hay al menos 2 caracteres
-                const apellidoDuplicado = todosLosRegistros.some(registro => {
-                    if (registroEditando && registro.id === registroEditando) return false;
-                    const regApellido = (registro.apellido || '').toLowerCase();
-                    return regApellido === apellido;
-                });
-                
-                if (apellidoDuplicado) {
-                    duplicateAlertText.textContent = 'Ya existe un registro con este apellido.';
-                    duplicateAlert.classList.add('show');
-                    inputApellido.classList.add('input-error');
-                    
-                    // Ocultar alerta después de 5 segundos
-                    setTimeout(() => {
-                        duplicateAlert.classList.remove('show');
-                    }, 5000);
-                }
-            }
-            
-            // Verificar si hay nombre duplicado
-            if (nombre.length >= 2) { // Solo verificar si hay al menos 2 caracteres
-                const nombreDuplicado = todosLosRegistros.some(registro => {
-                    if (registroEditando && registro.id === registroEditando) return false;
-                    const regNombre = (registro.nombre || '').toLowerCase();
-                    return regNombre === nombre;
-                });
-                
-                if (nombreDuplicado) {
-                    duplicateAlertText.textContent = 'Ya existe un registro con este nombre.';
-                    duplicateAlert.classList.add('show');
-                    inputNombre.classList.add('input-error');
-                    
-                    // Ocultar alerta después de 5 segundos
-                    setTimeout(() => {
-                        duplicateAlert.classList.remove('show');
-                    }, 5000);
-                }
-            }
-            
-            // Verificar si hay DNI duplicado - BLOQUEA TODO EL MODAL
-            if (dni.length >= 7) { // Solo verificar si hay al menos 7 caracteres (DNI completo)
-                const dniDuplicadoExiste = todosLosRegistros.some(registro => {
-                    if (registroEditando && registro.id === registroEditando) return false;
-                    const regDni = (registro.dni || '').toString();
-                    return regDni === dni;
-                });
-                
-                if (dniDuplicadoExiste) {
-                    dniDuplicado = true;
-                    duplicateAlertText.textContent = 'Ya existe un registro con este DNI. No se puede guardar.';
-                    duplicateAlert.classList.add('show');
-                    inputDni.classList.add('input-error');
-                    modalContent.classList.add('modal-blocked');
-                    btnGuardar.disabled = true;
-                    
-                    // Ocultar alerta después de 5 segundos pero mantener bloqueado
-                    setTimeout(() => {
-                        duplicateAlert.classList.remove('show');
-                    }, 5000);
-                }
-            }
-        }
+/* ============ Aviso ============ */
+let toastT;
+function aviso(msg, tipo) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.className = "toast" + (tipo === "ok" ? " ok" : "");
+  requestAnimationFrame(() => t.classList.add("show"));
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove("show"), 3200);
+}
 
-        // Función para resetear estilos de los campos
-        function resetearEstilosCampos() {
-            inputApellido.classList.remove('input-error', 'required-error');
-            inputNombre.classList.remove('input-error', 'required-error');
-            inputDni.classList.remove('input-error', 'required-error');
-        }
+/* ============ Pestañas ============ */
+const VISTAS = ["Nuevo","Listado","Reporte"];
+function ir(v) {
+  VISTAS.forEach(n => {
+    $("v" + n).hidden = n !== v;
+    $("tab" + n).setAttribute("aria-selected", n === v);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.querySelectorAll(".tab").forEach((b, i, all) => {
+  b.onclick = () => ir(b.dataset.v);
+  b.onkeydown = e => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const n = all[(i + (e.key === "ArrowRight" ? 1 : all.length - 1)) % all.length];
+    n.focus(); ir(n.dataset.v);
+  };
+});
 
-        // Función para renderizar las opciones de las Defensorías en los filtros
-        function renderDefensoriaFilters() {
-            const patrocinanteSelect = document.getElementById('defensoriaPatrocinanteFilter');
-            const mpcSelect = document.getElementById('defensoriaMpcFilter');
+/* ============ Filtros (ocultos al iniciar) ============ */
+function alternarFiltros(mostrar) {
+  $("fpanel").hidden = !mostrar;
+  $("btnFiltros").setAttribute("aria-expanded", mostrar);
+  $("fTxt").textContent = mostrar ? "Ocultar filtros" : "Mostrar filtros";
+}
+$("btnFiltros").onclick = () => alternarFiltros($("fpanel").hidden);
 
-            const optionsHtml = DEFENSORIA_OPTIONS.map(opt => `<option value="${opt.value.toLowerCase()}">${opt.label}</option>`).join('');
-            
-            patrocinanteSelect.innerHTML = `<option value="">Def. Patrocinante (Todas)</option>${optionsHtml}`;
-            mpcSelect.innerHTML = `<option value="">Def. MPC (Todas)</option>${optionsHtml}`;
-        }
+function opciones(sel, vacio, minusc) {
+  sel.innerHTML = `<option value="">${vacio}</option>` + DEFENSORIAS.map(d => `<option value="${minusc ? d[0].toLowerCase() : d[0]}">${d[1]}</option>`).join("");
+}
+function valoresFiltro() {
+  return {
+    q: $("fBusca").value.toLowerCase().trim(),
+    expte: $("fExpte").value.toLowerCase().trim(),
+    patro: $("fPatro").value.toLowerCase(),
+    mpc: $("fMpc").value.toLowerCase()
+  };
+}
+function filtrar() {
+  const f = valoresFiltro();
+  const activos = Object.values(f).filter(Boolean).length;
+  $("fCount").hidden = !activos;
+  $("fCount").textContent = activos;
 
-        // Abrir modal de registro
-        function abrirModalRegistro() {
-            limpiarFormulario();
-            document.getElementById('modalRegistroTitle').textContent = 'Nuevo Registro';
-            modalRegistro.style.display = 'flex';
-            // Ocultar alertas y resetear estados
-            duplicateAlert.classList.remove('show');
-            requiredFieldsAlert.style.display = 'none';
-            resetearEstilosCampos();
-            modalContent.classList.remove('modal-blocked');
-            btnGuardar.disabled = false;
-            dniDuplicado = false;
-        }
+  lista = todos.filter(r =>
+    (!f.q || Object.values(r).some(v => v && String(v).toLowerCase().includes(f.q))) &&
+    (!f.expte || (r.expteAntiguo || "").toLowerCase().includes(f.expte)) &&
+    (!f.patro || (r.defensoriaPatrocinante || "").toLowerCase() === f.patro) &&
+    (!f.mpc || (r.defensoriaMpc || "").toLowerCase() === f.mpc)
+  );
+  lista.sort((a, b) => {
+    const x = String(a[orden.campo] || "").toLowerCase(), y = String(b[orden.campo] || "").toLowerCase();
+    return orden.dir === "asc" ? x.localeCompare(y, "es", { numeric: true }) : y.localeCompare(x, "es", { numeric: true });
+  });
+  pagina = 1;
+  pintar();
+}
+["fBusca","fExpte"].forEach(id => $(id).oninput = filtrar);
+["fPatro","fMpc"].forEach(id => $(id).onchange = filtrar);
+$("btnLimpiar").onclick = () => { ["fBusca","fExpte","fPatro","fMpc"].forEach(id => $(id).value = ""); filtrar(); };
 
-        // Cerrar modal de registro
-        function cerrarModalRegistro() {
-            modalRegistro.style.display = 'none';
-            registroEditando = null;
-            duplicateAlert.classList.remove('show');
-            requiredFieldsAlert.style.display = 'none';
-            resetearEstilosCampos();
-            modalContent.classList.remove('modal-blocked');
-            btnGuardar.disabled = false;
-            dniDuplicado = false;
-        }
+document.querySelectorAll("th.sort").forEach(th => th.onclick = () => {
+  const k = th.dataset.k;
+  orden = orden.campo === k ? { campo: k, dir: orden.dir === "asc" ? "desc" : "asc" } : { campo: k, dir: "asc" };
+  document.querySelectorAll("th.sort .ind").forEach(s => s.textContent = "");
+  th.querySelector(".ind").textContent = orden.dir === "asc" ? "↑" : "↓";
+  filtrar();
+});
 
-        // Cerrar modal de detalle
-        function cerrarModalDetalle() {
-            modalDetalle.style.display = 'none';
-        }
+/* ============ Tabla y paginación ============ */
+function pintar() {
+  $("total").textContent = lista.length;
+  const tb = $("tbody");
+  if (!lista.length) {
+    tb.innerHTML = '<tr><td colspan="9" class="empty">No hay registros. Ajuste los filtros o agregue uno nuevo.</td></tr>';
+  } else {
+    const ini = (pagina - 1) * POR_PAGINA;
+    tb.innerHTML = lista.slice(ini, ini + POR_PAGINA).map(r => `
+      <tr>
+        <td data-l="Apellido y nombre"><div class="v"><strong>${dash(r.apellido)}</strong><span class="sub">${dash(r.nombre)}</span></div></td>
+        <td data-l="DNI"><div class="v">${dash(r.dni)}</div></td>
+        <td data-l="Domicilio">${dos(r.domicilio, r.ciudad)}</td>
+        <td data-l="Contacto">${dos(r.telefono, r.email)}</td>
+        <td data-l="Expte."><div class="v">${dash(r.expteAntiguo)}</div></td>
+        <td data-l="Patrocinante"><div class="v">${dash(defLabel(r.defensoriaPatrocinante))}</div></td>
+        <td data-l="Condición"><div class="v">${dash(r.condicionParte)}</div></td>
+        <td data-l="MPC"><div class="v">${dash(defLabel(r.defensoriaMpc))}</div></td>
+        <td class="ac"><div class="acts">
+          <button class="btn line sq" data-ver="${esc(r.id)}" title="Ver" aria-label="Ver"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn line sq" data-edit="${esc(r.id)}" title="Editar" aria-label="Editar"><i class="fa-solid fa-pen"></i></button>
+        </div></td>
+      </tr>`).join("");
+  }
+  const tp = Math.max(1, Math.ceil(lista.length / POR_PAGINA));
+  const desde = lista.length ? (pagina - 1) * POR_PAGINA + 1 : 0;
+  const hasta = Math.min(pagina * POR_PAGINA, lista.length);
+  document.querySelectorAll("[data-pager]").forEach(p => {
+    p.querySelector(".info").textContent = `Mostrando ${desde}–${hasta} de ${lista.length}`;
+    p.querySelector(".pgsel").innerHTML = Array.from({ length: tp }, (_, i) => `<option value="${i + 1}"${i + 1 === pagina ? " selected" : ""}>Pág. ${i + 1} / ${tp}</option>`).join("");
+    p.querySelector(".prev").disabled = pagina <= 1;
+    p.querySelector(".next").disabled = pagina >= tp;
+  });
+}
+document.querySelectorAll("[data-pager]").forEach(p => {
+  p.querySelector(".prev").onclick = () => { pagina--; pintar(); };
+  p.querySelector(".next").onclick = () => { pagina++; pintar(); };
+  p.querySelector(".pgsel").onchange = e => { pagina = +e.target.value; pintar(); };
+});
+$("tbody").onclick = e => {
+  const v = e.target.closest("[data-ver]"), ed = e.target.closest("[data-edit]");
+  if (v) verRegistro(v.dataset.ver);
+  if (ed) editarRegistro(ed.dataset.edit);
+};
 
-        // Validar formulario
-        function validarFormulario() {
-            let isValid = true;
-            const requiredFields = ["apellido", "nombre", "dni"];
-            
-            // Primero verificar campos obligatorios
-            const camposFaltantes = [];
-            
-            requiredFields.forEach(id => {
-                const field = document.getElementById(id);
-                const value = field.value.trim();
-                
-                if (value === "") {
-                    camposFaltantes.push(id);
-                    field.classList.add('required-error');
-                    isValid = false;
-                } else {
-                    field.classList.remove('required-error');
-                }
-                
-                // Validación específica para DNI
-                if (id === 'dni' && value !== "") {
-                    const dniPattern = /^[0-9]{7,8}$/;
-                    if (!dniPattern.test(value)) {
-                        field.classList.add('required-error');
-                        isValid = false;
-                    }
-                }
-            });
-            
-            // Mostrar alerta de campos obligatorios si faltan
-            if (camposFaltantes.length > 0) {
-                requiredFieldsAlert.style.display = 'flex';
-                requiredFieldsAlert.classList.add('show');
-                
-                // Ocultar alerta después de 5 segundos
-                setTimeout(() => {
-                    requiredFieldsAlert.classList.remove('show');
-                    setTimeout(() => {
-                        requiredFieldsAlert.style.display = 'none';
-                    }, 500);
-                }, 5000);
-                
-                return false;
-            } else {
-                requiredFieldsAlert.classList.remove('show');
-                setTimeout(() => {
-                    requiredFieldsAlert.style.display = 'none';
-                }, 500);
-            }
-            
-            // Verificar duplicados de DNI (bloqueante)
-            if (dniDuplicado) {
-                duplicateAlertText.textContent = 'Ya existe un registro con este DNI. No se puede guardar.';
-                duplicateAlert.classList.add('show');
-                return false;
-            }
-            
-            return isValid;
-        }
+/* ============ Reporte ============ */
+function conteo(campo, etiqueta) {
+  const m = {};
+  todos.forEach(r => { const k = etiqueta ? defLabel(r[campo]) : (r[campo] || "").trim(); if (k) m[k] = (m[k] || 0) + 1; });
+  return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 8);
+}
+function barras(titulo, datos) {
+  const max = datos.length ? datos[0][1] : 1;
+  return `<div class="card pad rep"><h3>${titulo}</h3>${datos.length ? datos.map(([k, n]) => `
+    <div class="bar"><div class="t"><span>${esc(k)}</span><em>${n}</em></div><div class="tr"><i style="width:${n / max * 100}%"></i></div></div>`).join("") : '<p style="color:var(--mute);font-size:13px">Sin datos.</p>'}</div>`;
+}
+function reporte() {
+  const inact = todos.filter(r => r.estado === "inactivo").length;
+  $("kpis").innerHTML = [["Total de registros", todos.length], ["Registros activos", todos.length - inact], ["Registros inactivos", inact]]
+    .map(([l, n]) => `<div class="card kpi"><b>${n}</b><span>${l}</span></div>`).join("");
+  $("reps").innerHTML = barras("Por Def. Patrocinante", conteo("defensoriaPatrocinante", true)) +
+                        barras("Por Def. MPC", conteo("defensoriaMpc", true)) +
+                        barras("Por ciudad", conteo("ciudad", false));
+}
 
-        // Guardar registro
-        function guardarRegistro() {
-            if (!validarFormulario()) {
-                return;
-            }
-            
-            // Verificar duplicados completos antes de guardar
-            const apellido = inputApellido.value.trim().toLowerCase();
-            const nombre = inputNombre.value.trim().toLowerCase();
-            const dni = inputDni.value.trim();
-            
-            const existeDuplicadoCompleto = todosLosRegistros.some(registro => {
-                if (registroEditando && registro.id === registroEditando) {
-                    return false;
-                }
-                
-                const regApellido = (registro.apellido || '').toLowerCase();
-                const regNombre = (registro.nombre || '').toLowerCase();
-                const regDni = (registro.dni || '').toString();
-                
-                return regApellido === apellido && regNombre === nombre && regDni === dni;
-            });
-            
-            if (existeDuplicadoCompleto) {
-                duplicateAlertText.textContent = 'Este registro ya existe completamente.';
-                duplicateAlert.classList.add('show');
-                inputApellido.classList.add('input-error');
-                inputNombre.classList.add('input-error');
-                inputDni.classList.add('input-error');
-                return;
-            }
-            
-            const formData = new FormData(document.getElementById('registroForm'));
-            const registro = {};
-            for (let [key, value] of formData.entries()) {
-                registro[key] = value.trim();
-            }
-            
-            // Asegurar que los campos de Defensoría estén en minúsculas para la búsqueda
-            if (registro.defensoriaPatrocinante) {
-                registro.defensoriaPatrocinante = registro.defensoriaPatrocinante.toLowerCase();
-            }
-            if (registro.defensoriaMpc) {
-                registro.defensoriaMpc = registro.defensoriaMpc.toLowerCase();
-            }
-            
-            registro.fechaCreacion = new Date().toISOString();
-            registro.fechaModificacion = new Date().toISOString();
+/* ============ Carga desde Firebase ============ */
+function cargar() {
+  return database.ref("registros").once("value").then(snap => {
+    todos = [];
+    snap.forEach(c => { const r = c.val(); r.id = c.key; todos.push(r); });
+    filtrar();
+    reporte();
+  }).catch(err => aviso("Error al cargar registros: " + err.message));
+}
+$("btnActualizar").onclick = () => cargar().then(() => aviso("Datos actualizados", "ok"));
 
-            if (registroEditando) {
-                database.ref('registros/' + registroEditando).update(registro)
-                    .then(() => {
-                        mostrarAlertaFlotante('Registro actualizado exitosamente', 'success');
-                        limpiarFormulario();
-                        cerrarModalRegistro();
-                        cargarTodosLosRegistros();
-                        registroEditando = null;
-                    })
-                    .catch((error) => mostrarAlertaFlotante('Error al actualizar: ' + error.message, 'danger'));
-            } else {
-                database.ref('registros').push(registro)
-                    .then(() => {
-                        mostrarAlertaFlotante('Registro guardado exitosamente', 'success');
-                        limpiarFormulario();
-                        cerrarModalRegistro();
-                        cargarTodosLosRegistros();
-                    })
-                    .catch((error) => mostrarAlertaFlotante('Error al guardar: ' + error.message, 'danger'));
-            }
-        }
+/* ============ Formulario ============ */
+function marca(id, tipo, texto) {
+  const f = $("f-" + id);
+  f.classList.remove("err", "warn");
+  if (tipo) { f.classList.add(tipo); f.querySelector(".msg").textContent = texto; }
+}
+function verificarDuplicados() {
+  const ap = $("apellido").value.trim().toLowerCase();
+  const no = $("nombre").value.trim().toLowerCase();
+  const dni = $("dni").value.trim();
+  const otros = todos.filter(r => r.id !== editandoId);
+  ["apellido","nombre","dni"].forEach(i => marca(i));
+  dniDup = false;
 
-        // Función para mostrar alerta flotante
-        function mostrarAlertaFlotante(mensaje, tipo) {
-            // Crear una alerta temporal
-            const tempAlert = document.createElement('div');
-            tempAlert.className = `floating-alert ${tipo}`;
-            tempAlert.innerHTML = `<i class="fas fa-${tipo === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i><span>${mensaje}</span>`;
-            document.body.appendChild(tempAlert);
-            
-            // Mostrar alerta
-            setTimeout(() => {
-                tempAlert.classList.add('show');
-            }, 10);
-            
-            // Ocultar y remover después de 3 segundos
-            setTimeout(() => {
-                tempAlert.classList.remove('show');
-                setTimeout(() => {
-                    document.body.removeChild(tempAlert);
-                }, 500);
-            }, 3000);
-        }
+  if (ap.length >= 2 && otros.some(r => (r.apellido || "").toLowerCase() === ap)) marca("apellido", "warn", "Ya existe un registro con este apellido.");
+  if (no.length >= 2 && otros.some(r => (r.nombre || "").toLowerCase() === no)) marca("nombre", "warn", "Ya existe un registro con este nombre.");
+  if (dni.length >= 7 && otros.some(r => String(r.dni || "") === dni)) {
+    dniDup = true;
+    marca("dni", "err", "Ya existe un registro con este DNI. No se puede guardar.");
+  }
+  $("btnGuardar").disabled = dniDup;
+}
+/* DNI argentino: solo dígitos, máximo 8 */
+const soloDigitos = (v, max) => String(v || "").replace(/\D/g, "").slice(0, max);
+/* Teléfono argentino: 10 dígitos (área sin 0 + número sin 15). Acepta pegar +54 9…, 0…, 15… */
+function normTel(v) {
+  let d = String(v || "").replace(/\D/g, "");
+  if (d.startsWith("54") && d.length > 10) d = d.slice(2);
+  if (d.startsWith("9") && d.length > 10) d = d.slice(1);
+  d = d.replace(/^0+/, "");
+  if (d.length === 12) for (let a = 2; a <= 4; a++) if (d.slice(a, a + 2) === "15") { d = d.slice(0, a) + d.slice(a + 2); break; }
+  return d.slice(0, 10);
+}
+$("dni").addEventListener("input", e => { const n = soloDigitos(e.target.value, 8); if (n !== e.target.value) e.target.value = n; });
+$("telefono").addEventListener("input", e => { const n = normTel(e.target.value); if (n !== e.target.value) e.target.value = n; marca("telefono"); });
+["apellido","nombre","dni"].forEach(id => $(id).addEventListener("input", verificarDuplicados));
 
-        // Cargar todos los registros
-        function cargarTodosLosRegistros() {
-            database.ref('registros').once('value')
-                .then((snapshot) => {
-                    todosLosRegistros = [];
-                    snapshot.forEach((childSnapshot) => {
-                        const registro = childSnapshot.val();
-                        registro.id = childSnapshot.key;
-                        todosLosRegistros.push(registro);
-                    });
-                    aplicarFiltros();
-                    actualizarKPIs();
-                })
-                .catch((error) => mostrarAlertaFlotante('Error al cargar registros: ' + error.message, 'danger'));
-        }
+function modoFormulario(edicion) {
+  $("formTitulo").textContent = edicion ? "Editar Registro" : "Nuevo Registro";
+  $("btnGuardarTxt").textContent = edicion ? "Guardar cambios" : "Guardar";
+  $("editNote").hidden = !edicion;
+}
+function limpiar() {
+  $("registroForm").reset();
+  editandoId = null; dniDup = false;
+  ["apellido","nombre","dni","telefono"].forEach(i => marca(i));
+  cerrarSug();
+  $("btnGuardar").disabled = false;
+  modoFormulario(false);
+}
+function validar() {
+  let ok = true;
+  ["apellido","nombre","dni"].forEach(i => {
+    const v = $(i).value.trim();
+    if (!v) { marca(i, "err", "Este campo es obligatorio."); ok = false; }
+    else if (i === "dni" && !/^[0-9]{7,8}$/.test(v)) { marca(i, "err", "El DNI debe tener 7 u 8 dígitos."); ok = false; }
+  });
+  const tel = $("telefono").value.trim();
+  if (tel && !/^\d{10}$/.test(tel)) { marca("telefono", "err", "El teléfono debe tener 10 dígitos. Ej.: 3764123456"); ok = false; }
+  if (!ok) { aviso("Revise los datos marcados en el formulario."); return false; }
+  if (dniDup) { aviso("Ya existe un registro con este DNI. No se puede guardar."); return false; }
+  return true;
+}
+$("registroForm").onsubmit = e => {
+  e.preventDefault();
+  if (!validar()) return;
 
-        // Aplicar filtros
-        function aplicarFiltros() {
-            let dataset = [...todosLosRegistros];
+  const reg = {};
+  CAMPOS.forEach(c => reg[c] = $(c).value.trim());
+  const dup = todos.some(r => r.id !== editandoId &&
+    (r.apellido || "").toLowerCase() === reg.apellido.toLowerCase() &&
+    (r.nombre || "").toLowerCase() === reg.nombre.toLowerCase() && String(r.dni || "") === reg.dni);
+  if (dup) { aviso("Este registro ya existe completamente."); return; }
 
-            // Obtener términos de búsqueda
-            const terminoGlobal = document.getElementById('searchInput').value.toLowerCase().trim();
-            const expteFiltro = document.getElementById('expteAntiguoFilter').value.toLowerCase().trim();
-            const defPatrocinanteFiltro = document.getElementById('defensoriaPatrocinanteFilter').value.toLowerCase().trim();
-            const defMpcFiltro = document.getElementById('defensoriaMpcFilter').value.toLowerCase().trim();
-            
-            // Aplicar filtros
-            if (terminoGlobal || expteFiltro || defPatrocinanteFiltro || defMpcFiltro) {
-                dataset = dataset.filter(registro => {
-                    let pasaFiltro = true;
+  reg.defensoriaPatrocinante = reg.defensoriaPatrocinante.toLowerCase();
+  reg.defensoriaMpc = reg.defensoriaMpc.toLowerCase();
+  const ahora = new Date().toISOString();
+  reg.fechaModificacion = ahora;
 
-                    // Filtro Global
-                    if (terminoGlobal) {
-                        const matchGlobal = Object.values(registro).some(valor => 
-                            valor && valor.toString().toLowerCase().includes(terminoGlobal)
-                        );
-                        if (!matchGlobal) pasaFiltro = false;
-                    }
-                    
-                    // Filtro Expte. más antiguo
-                    if (pasaFiltro && expteFiltro) {
-                        const expte = (registro.expteAntiguo || '').toLowerCase();
-                        if (!expte.includes(expteFiltro)) pasaFiltro = false;
-                    }
+  const editando = !!editandoId;
+  const op = editando ? database.ref("registros/" + editandoId).update(reg)
+                      : database.ref("registros").push({ ...reg, fechaCreacion: ahora });
+  $("btnGuardar").disabled = true;
+  op.then(() => {
+    aviso(editando ? "Registro actualizado exitosamente" : "Registro guardado exitosamente", "ok");
+    limpiar();
+    return cargar().then(() => { if (editando) ir("Listado"); });
+  }).catch(err => { $("btnGuardar").disabled = false; aviso("Error al guardar: " + err.message); });
+};
+$("btnCancelar").onclick = () => { const eraEdicion = !!editandoId; limpiar(); if (eraEdicion) ir("Listado"); };
 
-                    // Filtro Defensoría Patrocinante
-                    if (pasaFiltro && defPatrocinanteFiltro) {
-                        const defPatr = (registro.defensoriaPatrocinante || '').toLowerCase();
-                        if (defPatr !== defPatrocinanteFiltro) pasaFiltro = false;
-                    }
+function editarRegistro(id) {
+  const r = todos.find(x => x.id === id);
+  if (!r) return;
+  limpiar();
+  CAMPOS.forEach(c => {
+    let v = r[c] || "";
+    if (c === "defensoriaPatrocinante" || c === "defensoriaMpc") { const o = DEFENSORIAS.find(d => d[0].toLowerCase() === String(v).toLowerCase()); v = o ? o[0] : ""; }
+    if (c === "dni") v = soloDigitos(v, 8);
+    if (c === "telefono") v = normTel(v);
+    $(c).value = v;
+  });
+  editandoId = id;
+  modoFormulario(true);
+  cerrarDetalle();
+  ir("Nuevo");
+  verificarDuplicados();
+}
 
-                    // Filtro Defensoría MPC
-                    if (pasaFiltro && defMpcFiltro) {
-                        const defMpc = (registro.defensoriaMpc || '').toLowerCase();
-                        if (defMpc !== defMpcFiltro) pasaFiltro = false;
-                    }
-                    
-                    return pasaFiltro;
-                });
-            }
+/* ============ Detalle ============ */
+function camposDetalle(r) {
+  const grupos = [
+    [null, [["Apellido", r.apellido], ["Nombre", r.nombre], ["DNI", r.dni], ["Domicilio", r.domicilio], ["Ciudad", r.ciudad], ["Teléfono", r.telefono], ["Email", r.email]]],
+    ["Intervención de Defensorías", [["Datos Judiciales Antecedentes", r.datosAntecedentes, 1], ["Expte. más antiguo", r.expteAntiguo], ["Defensoría Patrocinante", defLabel(r.defensoriaPatrocinante)], ["Condición de parte", r.condicionParte], ["Defensoría MPC", defLabel(r.defensoriaMpc)]]],
+    ["Información Adicional", [["Datos de NNyA involucrados", r.datosNnya, 1], ["Situación Médica", r.situacionMedica, 1], ["Situación Laboral", r.situacionLaboral, 1], ["Otras Observaciones", r.observaciones, 1]]]
+  ];
+  return grupos.map(([t, items]) => {
+    const con = items.filter(i => i[1]);
+    if (!con.length) return "";
+    return (t ? `<div class="sec" style="grid-column:1/-1">${t}</div>` : "") +
+      con.map(([l, v, ancho]) => `<div${ancho ? ' class="full" style="grid-column:1/-1"' : ""}><dt>${l}</dt><dd>${esc(v)}</dd></div>`).join("");
+  }).join("");
+}
+function verRegistro(id) {
+  const r = todos.find(x => x.id === id);
+  if (!r) return;
+  detalleId = id;
+  $("detBody").innerHTML = camposDetalle(r);
+  $("ovDetalle").classList.add("open");
+}
+function cerrarDetalle() { $("ovDetalle").classList.remove("open"); }
+$("dX").onclick = $("btnCerrarDet").onclick = cerrarDetalle;
+$("ovDetalle").onclick = e => { if (e.target === $("ovDetalle")) cerrarDetalle(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarDetalle(); });
+$("btnEditarDet").onclick = () => editarRegistro(detalleId);
 
-            // Asignar el resultado ordenado
-            registros = ordenarRegistros(dataset);
+/* ============ Impresión ============ */
+function imprimir(html) {
+  $("printArea").innerHTML = html;
+  window.print();
+}
+const fechaHoy = () => new Date().toLocaleDateString("es-AR");
+$("btnPrintDet").onclick = () => {
+  const r = todos.find(x => x.id === detalleId);
+  if (!r) return;
+  const filas = [["Apellido", r.apellido], ["Nombre", r.nombre], ["DNI", r.dni], ["Domicilio", r.domicilio], ["Ciudad", r.ciudad], ["Teléfono", r.telefono], ["Email", r.email],
+    ["Datos judiciales antecedentes", r.datosAntecedentes], ["Expte. más antiguo", r.expteAntiguo], ["Def. Patrocinante", defLabel(r.defensoriaPatrocinante)], ["Condición de parte", r.condicionParte], ["Def. MPC", defLabel(r.defensoriaMpc)],
+    ["Datos de NNyA", r.datosNnya], ["Situación médica", r.situacionMedica], ["Situación laboral", r.situacionLaboral], ["Otras observaciones", r.observaciones]].filter(f => f[1]);
+  imprimir(`<h1>Detalle del Registro</h1><div class="sub">Emitido el ${fechaHoy()}</div><table>${filas.map(([l, v]) => `<tr><th style="width:32%">${l}</th><td>${esc(v)}</td></tr>`).join("")}</table>`);
+};
+$("btnPrintListado").onclick = () => {
+  imprimir(`<h1>Listado de Partes</h1><div class="sub">${lista.length} registro(s) · ${fechaHoy()}</div>
+    <table><thead><tr><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Domicilio</th><th>Ciudad</th><th>Teléfono</th><th>Email</th><th>Expte.</th><th>Def. Patrocinante</th><th>Condición</th><th>Def. MPC</th></tr></thead><tbody>
+    ${lista.map(r => `<tr>${[r.apellido, r.nombre, r.dni, r.domicilio, r.ciudad, r.telefono, r.email, r.expteAntiguo, defLabel(r.defensoriaPatrocinante), r.condicionParte, defLabel(r.defensoriaMpc)].map(v => `<td>${dash(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`);
+};
+$("btnPrintReporte").onclick = () => {
+  const bloque = (t, d) => `<h3 style="margin:14pt 0 4pt">${t}</h3><table>${d.map(([k, n]) => `<tr><td>${esc(k)}</td><td style="width:60pt">${n}</td></tr>`).join("") || "<tr><td>Sin datos</td></tr>"}</table>`;
+  imprimir(`<h1>Reporte de Partes</h1><div class="sub">Total: ${todos.length} registro(s) · ${fechaHoy()}</div>` +
+    bloque("Por Def. Patrocinante", conteo("defensoriaPatrocinante", true)) + bloque("Por Def. MPC", conteo("defensoriaMpc", true)) + bloque("Por ciudad", conteo("ciudad", false)));
+};
 
-            // Resetear a la primera página después de filtrar
-            paginaActual = 1; 
-            mostrarRegistros();
-            actualizarPaginacion();
-        }
 
-        // Mostrar registros en tabla
-        function mostrarRegistros() {
-            const tbody = document.getElementById('tableBody');
-            if (registros.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" class="empty-state"><h3>No hay registros</h3><p>Ajuste sus filtros o agregue un nuevo registro.</p></td></tr>';
-                return;
-            }
-            
-            // Calcular registros para la página actual
-            const inicio = (paginaActual - 1) * registrosPorPagina;
-            const fin = inicio + registrosPorPagina;
-            const registrosPagina = registros.slice(inicio, fin);
-            
-            // Helper para obtener el label de Defensoría
-            const getDefensoriaLabel = (value) => {
-                if (!value) return '-';
-                const option = DEFENSORIA_OPTIONS.find(opt => opt.value.toLowerCase() === value.toLowerCase());
-                return option ? option.label : safe(value);
-            };
+/* ============ Autocompletado de ciudad / localidad ============ */
+const LOCALIDADES = [
+  /* Misiones */
+  "Posadas","Garupá","Candelaria","Santa Ana","Bonpland","Profundidad","Loreto","Cerro Corá","Mártires",
+  "Apóstoles","Azara","San José","Tres Capones","Concepción de la Sierra","Santa María",
+  "San Ignacio","Jardín América","Gobernador Roca","Hipólito Yrigoyen","Santo Pipó","Corpus",
+  "San Javier","Itacaruaré","Mojón Grande","Oberá","Campo Ramón","Campo Viera","Los Helechos","Panambí","General Alvear","Guaraní",
+  "Aristóbulo del Valle","Campo Grande","Dos de Mayo","Salto Encantado",
+  "Eldorado","Colonia Delicia","Santiago de Liniers","Valle Hermoso","Colonia Victoria","Nueve de Julio",
+  "Puerto Iguazú","Puerto Esperanza","Puerto Libertad","Wanda",
+  "Montecarlo","Caraguatay","Puerto Piray","Puerto Rico","Capioví","Ruiz de Montoya","Garuhapé","Puerto Leoni",
+  "Leandro N. Alem","Arroyo del Medio","Cerro Azul","Dos Arroyos","Olegario V. Andrade","Gobernador López","Almafuerte","Caá Yarí",
+  "Bernardo de Irigoyen","San Antonio","Comandante Andresito","El Soberbio","San Vicente","Fracrán","Colonia Aurora",
+  "San Pedro","Tobuna","Alba Posse","Colonia Alberdi","Veinticinco de Mayo","Villa Poujade",
+  /* Corrientes y región */
+  "Corrientes","Ituzaingó","Santo Tomé","Paso de los Libres","Goya","Mercedes","Curuzú Cuatiá","Monte Caseros","Esquina","Bella Vista","Saladas","Gobernador Virasoro","Itatí","Empedrado","San Luis del Palmar",
+  "Resistencia","Formosa","Paraná","Concordia","Gualeguaychú","Santa Fe","Rosario","Rafaela",
+  /* Capitales y ciudades principales del país */
+  "Buenos Aires","Ciudad Autónoma de Buenos Aires","La Plata","Mar del Plata","Bahía Blanca","Tandil","Quilmes","Lanús","Lomas de Zamora","Avellaneda","San Isidro","Morón","Tigre","Pilar",
+  "Córdoba","Río Cuarto","Villa María","Mendoza","San Rafael","San Juan","San Luis",
+  "San Miguel de Tucumán","Salta","San Salvador de Jujuy","Santiago del Estero","La Rioja","San Fernando del Valle de Catamarca",
+  "Neuquén","San Carlos de Bariloche","Viedma","Santa Rosa","Rawson","Trelew","Comodoro Rivadavia","Río Gallegos","Ushuaia"
+];
+const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+const ciu = $("ciudad"), ciuList = $("ciudadList");
+let ciuSug = [], ciuIdx = -1;
 
-            tbody.innerHTML = registrosPagina.map(registro => `
-                <tr>
-                    <td><strong>${registro.apellido || '-'}</strong></td>
-                    <td>${registro.nombre || '-'}</td>
-                    <td>${registro.dni || '-'}</td>
-                    <td>${registro.domicilio || '-'}</td>
-                    <td>${registro.ciudad || '-'}</td>
-                    <td>${registro.telefono || '-'}</td>
-                    <td>${registro.email || '-'}</td>
-                    <td>${registro.expteAntiguo || '-'}</td>
-                    <td>${getDefensoriaLabel(registro.defensoriaPatrocinante)}</td>
-                    <td>${registro.condicionParte || '-'}</td>
-                    <td>${getDefensoriaLabel(registro.defensoriaMpc)}</td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="button" onclick="verRegistro('${registro.id}')" title="Ver">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                            <button class="button button-secondary" onclick="editarRegistro('${registro.id}')" title="Editar">
-                                <i class="fa fa-pen"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
+function fuentesCiudad() {
+  const m = new Map();
+  LOCALIDADES.forEach(c => m.set(norm(c), c));
+  todos.forEach(r => { const c = (r.ciudad || "").trim(); if (c && !m.has(norm(c))) m.set(norm(c), c); });
+  return [...m.values()];
+}
+function sugerir(q) {
+  const n = norm(q);
+  if (n.length < 4) return [];
+  const pre = [], pal = [];
+  fuentesCiudad().forEach(c => {
+    const nc = norm(c);
+    if (nc.startsWith(n)) pre.push(c);
+    else if (nc.split(/[\s\-]+/).some(w => w.startsWith(n))) pal.push(c);
+  });
+  const ord = (a, b) => a.localeCompare(b, "es");
+  return [...pre.sort(ord), ...pal.sort(ord)].slice(0, 6);
+}
+function cerrarSug() {
+  ciuList.hidden = true; ciuList.innerHTML = "";
+  ciu.setAttribute("aria-expanded", "false"); ciu.removeAttribute("aria-activedescendant");
+  ciuSug = []; ciuIdx = -1;
+}
+function marcarSug() {
+  ciuList.querySelectorAll("li").forEach((li, i) => li.setAttribute("aria-selected", i === ciuIdx));
+  const act = ciuList.children[ciuIdx];
+  if (act) { ciu.setAttribute("aria-activedescendant", act.id); act.scrollIntoView({ block: "nearest" }); }
+}
+function elegirSug(i) {
+  if (!ciuSug[i]) return;
+  ciu.value = ciuSug[i];
+  cerrarSug();
+}
+function mostrarSug(q) {
+  ciuSug = sugerir(q);
+  if (!ciuSug.length || (ciuSug.length === 1 && norm(ciuSug[0]) === norm(q))) { cerrarSug(); return; }
+  const n = norm(q), l = q.trim().length;
+  ciuIdx = 0;
+  ciuList.innerHTML = ciuSug.map((c, i) => {
+    const ini = norm(c).startsWith(n);
+    return `<li role="option" id="ciu-${i}" data-i="${i}">${ini ? `<b>${esc(c.slice(0, l))}</b>${esc(c.slice(l))}` : esc(c)}</li>`;
+  }).join("");
+  ciuList.hidden = false;
+  ciu.setAttribute("aria-expanded", "true");
+  marcarSug();
+}
+ciu.addEventListener("input", e => {
+  const q = ciu.value;
+  mostrarSug(q);
+  /* Autocompleta el resto del nombre (queda seleccionado) mientras se escribe */
+  const top = ciuSug[0];
+  if (top && (e.inputType || "").startsWith("insert") && !e.isComposing && ciu.selectionStart === q.length &&
+      top.length > q.length && norm(top).startsWith(norm(q)) && norm(q).length === q.trim().length) {
+    ciu.value = top;
+    ciu.setSelectionRange(q.length, top.length);
+  }
+});
+ciu.addEventListener("keydown", e => {
+  const abierto = !ciuList.hidden;
+  if (!abierto) return;
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    ciuIdx = (ciuIdx + (e.key === "ArrowDown" ? 1 : -1) + ciuSug.length) % ciuSug.length;
+    marcarSug();
+  } else if (e.key === "Enter") { e.preventDefault(); elegirSug(ciuIdx); }
+  else if (e.key === "Tab") { elegirSug(ciuIdx); }
+  else if (e.key === "Escape") { e.stopPropagation(); cerrarSug(); }
+});
+ciu.addEventListener("blur", () => setTimeout(cerrarSug, 150));
+ciuList.addEventListener("mousedown", e => e.preventDefault());
+ciuList.addEventListener("click", e => { const li = e.target.closest("li"); if (li) elegirSug(+li.dataset.i); });
 
-        // Actualizar KPIs
-        function actualizarKPIs() {
-            const kpiCardsContainer = document.getElementById('kpiCards');
-            
-            if (todosLosRegistros.length === 0) {
-                kpiCardsContainer.innerHTML = '<div class="loading">No hay datos disponibles</div>';
-                return;
-            }
-            
-            // Calcular KPIs
-            const totalRegistros = todosLosRegistros.length;
-            const registrosActivos = todosLosRegistros.filter(r => r.estado !== 'inactivo').length;
-            const registrosInactivos = todosLosRegistros.filter(r => r.estado === 'inactivo').length;
-            
-            let kpisHTML = '';
-            
-            const kpisConfig = [
-                { key: 'total', label: 'Total de Registros', class: 'total' },
-                { key: 'activos', label: 'Registros Activos', class: 'activos' },
-                { key: 'inactivos', label: 'Registros Inactivos', class: 'inactivos' }
-            ];
-            
-            // Generar tarjetas de KPIs
-            kpisConfig.forEach(kpi => {
-                let valor = 0;
-                if (kpi.key === 'total') valor = totalRegistros;
-                if (kpi.key === 'activos') valor = registrosActivos;
-                if (kpi.key === 'inactivos') valor = registrosInactivos;
-                
-                kpisHTML += `
-                    <div class="kpi-card ${kpi.class}">
-                        <div class="kpi-number">${valor}</div>
-                        <div class="kpi-label">${kpi.label}</div>
-                    </div>
-                `;
-            });
-            
-            kpiCardsContainer.innerHTML = kpisHTML;
-        }
-
-        // Actualizar paginación
-        function actualizarPaginacion() {
-            const paginacion = document.getElementById('pagination');
-            const totalPaginas = Math.ceil(registros.length / registrosPorPagina);
-            
-            if (totalPaginas <= 1) {
-                paginacion.innerHTML = '';
-                return;
-            }
-            
-            // Calcular qué números de página mostrar
-            let inicio = Math.max(1, paginaActual - 2);
-            let fin = Math.min(totalPaginas, inicio + 4);
-            
-            // Ajustar si estamos cerca del final
-            if (fin - inicio < 4 && inicio > 1) {
-                inicio = Math.max(1, fin - 4);
-            }
-            
-            let pageNumbersHTML = '';
-            for (let i = inicio; i <= fin; i++) {
-                pageNumbersHTML += `<button class="page-btn ${i === paginaActual ? 'active' : ''}" onclick="irAPagina(${i})">${i}</button>`;
-            }
-            
-            let html = `
-                <div class="page-info">
-                    Página ${paginaActual} de ${totalPaginas} | Mostrando ${Math.min(registrosPorPagina, registros.length - (paginaActual - 1) * registrosPorPagina)} de ${registros.length} registros
-                </div>
-                <div class="nav-buttons">
-                    <button class="button" id="btnPrevPage" ${paginaActual === 1 ? 'disabled' : ''}><i class="fa fa-arrow-left"></i> Anterior</button>
-                    <div class="page-numbers">
-                        ${pageNumbersHTML}
-                    </div>
-                    <button class="button" id="btnNextPage" ${paginaActual === totalPaginas ? 'disabled' : ''}>Siguiente <i class="fa fa-arrow-right"></i></button>
-                </div>
-            `;
-
-            paginacion.innerHTML = html;
-
-            document.getElementById('btnPrevPage').onclick = () => {
-                paginaActual--;
-                mostrarRegistros();
-                actualizarPaginacion();
-            };
-
-            document.getElementById('btnNextPage').onclick = () => {
-                paginaActual++;
-                mostrarRegistros();
-                actualizarPaginacion();
-            };
-        }
-
-        // Ir a página específica
-        function irAPagina(pagina) {
-            paginaActual = pagina;
-            mostrarRegistros();
-            actualizarPaginacion();
-        }
-
-        // Helper para valores seguros
-        function safe(v) { return (v && String(v).trim()) ? String(v) : '-'; }
-
-        // Ordenar registros
-        function ordenarPor(campo) {
-            if (ordenActual.campo === campo) {
-                ordenActual.direccion = ordenActual.direccion === 'asc' ? 'desc' : 'asc';
-            } else {
-                ordenActual.campo = campo; 
-                ordenActual.direccion = 'asc';
-            }
-            aplicarFiltros();
-            actualizarIndicadoresOrden();
-        }
-        
-        function ordenarRegistros(array) {
-            array.sort((a, b) => {
-                const valorA = (a[ordenActual.campo] || '').toString().toLowerCase();
-                const valorB = (b[ordenActual.campo] || '').toString().toLowerCase();
-                return (ordenActual.direccion === 'asc') ? valorA.localeCompare(valorB) : valorB.localeCompare(valorA);
-            });
-            return array;
-        }
-        
-        function actualizarIndicadoresOrden() {
-            document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '');
-            const indicador = document.getElementById('sort-' + ordenActual.campo);
-            if (indicador) indicador.textContent = ordenActual.direccion === 'asc' ? '↑' : '↓';
-        }
-
-        // Ver registro - Modal compacto que solo muestra datos registrados
-        function verRegistro(id) {
-            const registro = todosLosRegistros.find(r => r.id === id);
-            if (!registro) return;
-
-            // Helper para obtener el label para la visualización
-            const getDefensoriaLabelDetalle = (value) => {
-                if (!value) return null;
-                const option = DEFENSORIA_OPTIONS.find(opt => opt.value.toLowerCase() === value.toLowerCase());
-                return option ? option.label : safe(value);
-            };
-
-            const detalleContenido = document.getElementById('detalleContenido');
-            let contenidoHTML = '<div class="detail-grid">';
-            
-            // Datos personales - solo mostrar si hay valores
-            const datosPersonales = [
-                { label: 'Apellido', value: registro.apellido },
-                { label: 'Nombre', value: registro.nombre },
-                { label: 'DNI', value: registro.dni },
-                { label: 'Domicilio', value: registro.domicilio },
-                { label: 'Ciudad', value: registro.ciudad },
-                { label: 'Teléfono', value: registro.telefono },
-                { label: 'Email', value: registro.email }
-            ];
-            
-            datosPersonales.forEach(item => {
-                if (item.value) {
-                    contenidoHTML += `
-                        <div class="detail-item">
-                            <div class="detail-label">${item.label}</div>
-                            <div class="detail-value">${item.value}</div>
-                        </div>
-                    `;
-                }
-            });
-            
-            // Intervención de Defensorías - solo mostrar si hay al menos un valor
-            const tieneIntervencion = registro.datosAntecedentes || registro.expteAntiguo || 
-                                     registro.defensoriaPatrocinante || registro.condicionParte || 
-                                     registro.defensoriaMpc;
-            
-            if (tieneIntervencion) {
-                contenidoHTML += `<div class="detail-section"><div class="detail-section-title">Intervención de Defensorías</div>`;
-                
-                const intervencionData = [
-                    { label: 'Datos Judiciales Antecedentes', value: registro.datosAntecedentes },
-                    { label: 'Expte. más antiguo', value: registro.expteAntiguo },
-                    { label: 'Defensoría Patrocinante', value: getDefensoriaLabelDetalle(registro.defensoriaPatrocinante) },
-                    { label: 'Condición de parte', value: registro.condicionParte },
-                    { label: 'Defensoría MPC', value: getDefensoriaLabelDetalle(registro.defensoriaMpc) }
-                ];
-                
-                intervencionData.forEach(item => {
-                    if (item.value) {
-                        contenidoHTML += `
-                            <div class="detail-item">
-                                <div class="detail-label">${item.label}</div>
-                                <div class="detail-value">${item.value}</div>
-                            </div>
-                        `;
-                    }
-                });
-                
-                contenidoHTML += `</div>`;
-            }
-            
-            // Información adicional - solo mostrar si hay al menos un valor
-            const tieneInfoAdicional = registro.datosNnya || registro.situacionMedica || 
-                                      registro.situacionLaboral || registro.observaciones;
-            
-            if (tieneInfoAdicional) {
-                contenidoHTML += `<div class="detail-section"><div class="detail-section-title">Información Adicional</div>`;
-                
-                const infoAdicional = [
-                    { label: 'Datos de NNyA involucrados', value: registro.datosNnya },
-                    { label: 'Situación Médica', value: registro.situacionMedica },
-                    { label: 'Situación Laboral', value: registro.situacionLaboral },
-                    { label: 'Otras Observaciones', value: registro.observaciones }
-                ];
-                
-                infoAdicional.forEach(item => {
-                    if (item.value) {
-                        contenidoHTML += `
-                            <div class="detail-item">
-                                <div class="detail-label">${item.label}</div>
-                                <div class="detail-value">${item.value}</div>
-                            </div>
-                        `;
-                    }
-                });
-                
-                contenidoHTML += `</div>`;
-            }
-            
-            contenidoHTML += '</div>';
-            detalleContenido.innerHTML = contenidoHTML;
-            modalDetalle.style.display = 'flex';
-        }
-
-        // Editar registro
-        function editarRegistro(id) {
-            const registro = todosLosRegistros.find(r => r.id === id);
-            if (!registro) return;
-            
-            Object.keys(registro).forEach(key => {
-                const campo = document.getElementById(key);
-                if (campo && key !== 'id') campo.value = registro[key] || '';
-            });
-            
-            registroEditando = id;
-            document.getElementById('modalRegistroTitle').textContent = 'Editar Registro';
-            modalRegistro.style.display = 'flex';
-            cerrarModalDetalle();
-            mostrarAlertaFlotante('Modo edición activado. Modifique los campos y guarde los cambios.', 'success');
-            
-            // Verificar duplicados al editar
-            setTimeout(verificarDuplicadosEnTiempoReal, 100);
-        }
-
-        // Limpiar formulario
-        function limpiarFormulario() { 
-            document.getElementById('registroForm').reset(); 
-            registroEditando = null; 
-            duplicateAlert.classList.remove('show');
-            requiredFieldsAlert.style.display = 'none';
-            resetearEstilosCampos();
-            modalContent.classList.remove('modal-blocked');
-            btnGuardar.disabled = false;
-            dniDuplicado = false;
-        }
-
-        // Funciones de impresión
-        function printListadoCompleto() {
-            window.print();
-        }
-
-        function imprimirDetalle() {
-            const detalleContenido = document.getElementById('detalleContenido').innerHTML;
-            const w = window.open('', '_blank');
-            const estilo = `
-                <style>
-                    body { font-family: 'Arial', 'Helvetica', sans-serif; color:#212529; }
-                    h1 { font-size: 20px; margin-bottom: 10px; color: #007bff; }
-                    .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
-                    .detail-item { margin-bottom: 10px; }
-                    .detail-label { font-weight: 600; color: #007bff; font-size: 12px; margin-bottom: 4px; text-transform: uppercase; }
-                    .detail-value { font-size: 14px; color: #212529; padding: 8px 0; border-bottom: 1px solid #e9ecef; }
-                    .detail-section { grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 2px solid #007bff; }
-                    .detail-section-title { font-weight: 700; color: #007bff; margin-bottom: 10px; font-size: 16px; }
-                </style>`;
-            
-            w.document.write(`
-                <html>
-                    <head>
-                        <title>Detalle del Registro</title>
-                        ${estilo}
-                    </head>
-                    <body>
-                        <h1>Detalle del Registro</h1>
-                        ${detalleContenido}
-                    </body>
-                </html>
-            `);
-            w.document.close();
-            w.focus();
-            setTimeout(() => { w.print(); }, 100);
-        }
-    </script>
+/* ============ Inicio ============ */
+opciones($("defensoriaPatrocinante"), "Seleccionar", false);
+opciones($("defensoriaMpc"), "Seleccionar", false);
+opciones($("fPatro"), "Todas", true);
+opciones($("fMpc"), "Todas", true);
+alternarFiltros(false);
+cargar();
+</script>
 </body>
 </html>
