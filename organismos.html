@@ -4,711 +4,177 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Organismos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
   
   <style>
-    /* Variables CSS */
-    :root {
-        --primary-blue: #007bff;
-        --primary-light-blue: #e7f4ff;
-        --primary-dark-blue: #0056b3;
-        --secondary-gray: #f8f9fa;
-        --secondary-light-gray: #e9ecef;
-        --secondary-dark-gray: #6c757d;
-        --status-success: #28a745;
-        --status-warning: #ffc107;
-        --status-danger: #dc3545;
-        --status-info: #17a2b8;
-        --text-primary: #212529;
-        --text-secondary: #6c757d;
-        --text-link: #007bff;
-        --text-light: #ffffff;
-        --background-default: #ffffff;
-        --background-card: #ffffff;
-        --background-header: #ffffff;
-        --background-table-header: #f8f9fa;
-        --border-default: #dee2e6;
-        --font-family: 'Arial', 'Helvetica', sans-serif;
-        --display-size: 24px;
-        --h1-size: 20px;
-        --h2-size: 18px;
-        --body-large-size: 16px;
-        --body-regular-size: 14px;
-        --caption-size: 12px;
-        --font-weight-regular: 400;
-        --font-weight-semibold: 600;
-        --font-weight-bold: 700;
-        --spacing-unit: 8px;
-        --spacing-xs: 4px;
-        --spacing-s: 8px;
-        --spacing-m: 16px;
-        --spacing-l: 24px;
-        --spacing-xl: 32px;
-        --spacing-gutter: 20px;
-        --border-radius-small: 2px;
-        --border-radius-default: 4px;
-        --border-radius-pill: 20px;
-        --shadow-none: none;
-        --shadow-subtle: 0 1px 3px rgba(0,0,0,0.1);
-        --radius: 12px;
-        --shadow: 0 4px 15px rgba(0,0,0,.08);
-    }
-
-    /* Estilos base */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: var(--font-family);
-        background-color: var(--background-default);
-        color: var(--text-primary);
-        line-height: 1.5;
-        min-height: 100vh;
-    }
-
-    /* Header */
-    .header {
-        background-color: var(--background-header);
-        border-bottom: 1px solid var(--border-default);
-        padding: var(--spacing-s) var(--spacing-m);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: var(--shadow-subtle);
-    }
-
-    .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .logo {
-        font-size: var(--h1-size);
-        font-weight: var(--font-weight-bold);
-        color: var(--primary-blue);
-    }
-
-    .header-buttons {
-        display: flex;
-        gap: var(--spacing-s);
-    }
-
-    /* Contenedor principal */
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: var(--spacing-m) var(--spacing-gutter);
-    }
-
-    /* Módulos de categorías */
-    .modules-section {
-        margin-bottom: var(--spacing-xl);
-    }
-
-    .modules-title {
-        font-size: var(--h2-size);
-        font-weight: var(--font-weight-semibold);
-        margin-bottom: var(--spacing-m);
-        text-align: center;
-    }
-
-    .modules-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--spacing-m);
-        margin-bottom: var(--spacing-l);
-    }
-
-    .module-card {
-        background: var(--background-card);
-        border: 1px solid var(--border-default);
-        border-radius: var(--border-radius-default);
-        padding: var(--spacing-l);
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow-subtle);
-    }
-
-    .module-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow);
-        border-color: var(--primary-blue);
-    }
-
-    .module-card.active {
-        background-color: var(--primary-light-blue);
-        border-color: var(--primary-blue);
-    }
-
-    .module-icon {
-        font-size: 2rem;
-        color: var(--primary-blue);
-        margin-bottom: var(--spacing-s);
-    }
-
-    .module-name {
-        font-weight: var(--font-weight-semibold);
-        margin-bottom: var(--spacing-xs);
-    }
-
-    .module-count {
-        font-size: var(--caption-size);
-        color: var(--text-secondary);
-    }
-
-    /* Filtros */
-    .filters-section {
-        background-color: var(--background-card);
-        padding: var(--spacing-m);
-        border-radius: var(--border-radius-default);
-        border: 1px solid var(--border-default);
-        margin-bottom: var(--spacing-xl);
-        box-shadow: var(--shadow-subtle);
-        display: none;
-    }
-
-    .filters-title {
-        font-size: var(--h2-size);
-        font-weight: var(--font-weight-semibold);
-        margin-bottom: var(--spacing-m);
-    }
-
-    .filter-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--spacing-m);
-    }
-
-    .filter-group {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    .filter-label {
-        display: block;
-        font-size: var(--body-regular-size);
-        margin-bottom: var(--spacing-xs);
-        font-weight: var(--font-weight-semibold);
-    }
-
-    .input, .dropdown {
-        border: 1px solid var(--border-default);
-        border-radius: var(--border-radius-default);
-        padding: var(--spacing-s);
-        background-color: var(--background-default);
-        color: var(--text-primary);
-        font-size: var(--body-regular-size);
-        width: 100%;
-        transition: border-color 0.2s;
-    }
-
-    .input:focus, .dropdown:focus {
-        outline: none;
-        border-color: var(--primary-blue);
-    }
-
-    /* Botones de acción */
-    .action-buttons {
-        display: flex;
-        gap: var(--spacing-s);
-        margin-top: var(--spacing-m);
-        flex-wrap: wrap;
-    }
-
-    .button {
-        background-color: var(--primary-blue);
-        color: var(--text-light);
-        border: none;
-        border-radius: var(--border-radius-default);
-        padding: var(--spacing-s) var(--spacing-m);
-        font-size: var(--body-regular-size);
-        cursor: pointer;
-        transition: background-color 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: var(--spacing-xs);
-    }
-
-    .button:hover {
-        opacity: 0.9;
-    }
-
-    /* Nuevo Estilo Celeste Oscuro */
-    .btn-celeste-oscuro {
-        background-color: #008db1 !important;
-    }
-
-    .button-success {
-        background-color: #1e7e34;
-    }
-
-    .button-secondary {
-        background-color: var(--secondary-dark-gray);
-    }
-
-    .button-warning {
-        background-color: var(--status-warning);
-        color: var(--text-primary);
-    }
-
-    /* Botones pequeños para iconos */
-    .btn-icon {
-        padding: 8px;
-        width: 36px;
-        height: 36px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        border-radius: var(--border-radius-default);
-        cursor: pointer;
-        transition: all 0.2s;
-        font-size: 14px;
-    }
-
-    .btn-icon:hover {
-        transform: scale(1.1);
-    }
-
-    .btn-view {
-        background-color: var(--status-info);
-        color: white;
-    }
-
-    .btn-edit {
-        background-color: var(--status-warning);
-        color: white;
-    }
-
-    .btn-print {
-        background-color: var(--status-success);
-        color: white;
-    }
-
-    /* Tabla de datos - Estilo moderno */
-    .table-section {
-        background-color: var(--background-card);
-        border-radius: var(--border-radius-default);
-        border: 1px solid var(--border-default);
-        overflow: hidden;
-        box-shadow: var(--shadow-subtle);
-        margin-bottom: var(--spacing-m);
-        display: none;
-    }
-
-    .table-title {
-        font-size: var(--h2-size);
-        font-weight: var(--font-weight-semibold);
-        padding: var(--spacing-m);
-        background-color: var(--background-table-header);
-        border-bottom: 1px solid var(--border-default);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .table-wrap {
-        overflow-x: auto;
-    }
-
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 800px;
-    }
-
-    .data-table th {
-        background-color: var(--primary-blue);
-        color: var(--text-light);
-        font-weight: var(--font-weight-bold);
-        padding: var(--spacing-m);
-        font-size: var(--caption-size);
-        text-transform: uppercase;
-        text-align: left;
-        position: sticky;
-        top: 0;
-    }
-
-    .data-table td {
-        border-bottom: 1px solid var(--border-default);
-        padding: var(--spacing-m);
-        color: var(--text-primary);
-        font-size: var(--body-regular-size);
-        transition: background-color 0.2s;
-        font-weight: var(--font-weight-semibold);
-    }
-
-    .data-table tr:last-child td {
-        border-bottom: none;
-    }
-
-    .data-table tr:hover td {
-        background-color: var(--primary-light-blue);
-    }
-
-    .data-table tr:nth-child(even) {
-        background-color: var(--secondary-gray);
-    }
-
-    .data-table tr:nth-child(even):hover td {
-        background-color: var(--primary-light-blue);
-    }
-
-    .actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    /* Paginación */
-    .pagination-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--spacing-m);
-        margin-top: var(--spacing-m);
-        background: var(--background-card);
-        border-radius: var(--border-radius-default);
-        box-shadow: var(--shadow-subtle);
-        display: none;
-    }
-
-    .pagination-container .page-info {
-        font-size: var(--body-regular-size);
-        color: var(--text-secondary);
-        font-weight: var(--font-weight-semibold);
-    }
-
-    .pagination-container .nav-buttons {
-        display: flex;
-        gap: var(--spacing-s);
-    }
-
-    .pagination-selector {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-s);
-    }
-
-    .pagination-selector select {
-        padding: var(--spacing-s);
-        border-radius: var(--border-radius-default);
-        border: 1px solid var(--border-default);
-    }
-
-    /* MODALES */
-    #organismModal, #policiaModal, #mapaModal, #viewModal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,.6);
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        z-index: 1000;
-    }
-    
-    #organismModal .content, #policiaModal .content, #mapaModal .content, #viewModal .content {
-        background: #fff;
-        border-radius: 16px;
-        max-width: 600px;
-        width: 100%;
-        max-height: 90vh;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        animation: fadeIn .25s ease;
-    }
-    
-    #policiaModal .content, #mapaModal .content {
-        max-width: 95%;
-        max-height: 95vh;
-        width: 95%;
-        height: 95vh;
-    }
-    
-    #policiaModal iframe, #mapaModal iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 0 0 16px 16px;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .modal-header {
-        position: sticky;
-        top: 0;
-        background: var(--primary-blue);
-        color: #fff;
-        padding: 12px 16px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 16px 16px 0 0;
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .modal-body {
-        padding: 16px;
-        overflow-y: auto;
-        flex: 1;
-    }
-    
-    #policiaModal .modal-body, #mapaModal .modal-body {
-        padding: 0;
-        flex: 1;
-        display: flex;
-    }
-    
-    .controls-form {
-        position: sticky;
-        bottom: 0;
-        background: #fff;
-        padding: 12px 16px;
-        border-top: 1px solid #eee;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: flex-end;
-        z-index: 5;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    .form-group label {
-        font-weight: 600;
-        color: var(--primary-blue);
-        font-size: 0.9rem;
-        margin-bottom: 4px;
-        display: block;
-    }
-    
-    .form-group input, .form-group select, .form-group textarea {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        background: #fafafa;
-        transition: .2s;
-    }
-    
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-        outline: none;
-        border-color: var(--primary-blue);
-        background: #fff;
-    }
-    
-    .field.error input,
-    .field.error textarea,
-    .field.error select {
-        border-color: var(--status-danger);
-        background-color: #ffeef0;
-    }
-    
-    .field .error-message {
-        color: var(--status-danger);
-        font-size: 0.8rem;
-        margin-top: 4px;
-        display: none;
-    }
-    
-    .field.error .error-message {
-        display: block;
-    }
-
-    /* Vista de solo lectura */
-    .view-field {
-        margin-bottom: 15px;
-        padding: 10px 0;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .view-field label {
-        font-weight: 600;
-        color: var(--primary-blue);
-        font-size: 0.9rem;
-        margin-bottom: 4px;
-        display: block;
-    }
-    
-    .view-field .value {
-        font-size: 1rem;
-        color: var(--text-primary);
-        padding: 8px 0;
-        font-weight: var(--font-weight-semibold);
-    }
-
-    /* ALERTA FLOTANTE */
-    .floating-alert {
-        position: fixed;
-        top: -100px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: var(--status-danger);
-        color: #fff;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        max-width: 400px;
-        text-align: center;
-        font-size: 1rem;
-    }
-    
-    .floating-alert.success {
-        background-color: var(--status-success);
-    }
-
-    .floating-alert.show {
-        opacity: 1;
-        visibility: visible;
-        top: 20px;
-    }
-
-    /* Estados vacíos */
-    .empty-state {
-        padding: 20px;
-        text-align: center;
-        font-weight: bold;
-        color: var(--text-secondary);
-        background: var(--secondary-light-gray);
-        border-radius: 6px;
-        margin: 10px 0;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-        .container {
-            max-width: 100%;
-            padding: var(--spacing-s);
-        }
-        
-        .modules-grid {
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        }
-        
-        .filter-row {
-            gap: var(--spacing-s);
-        }
-        
-        .filter-group {
-            min-width: 180px;
-        }
-
-        #organismModal .content, #policiaModal .content, #mapaModal .content, #viewModal .content {
-            max-width: 95%;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .header-content {
-            flex-direction: column;
-            gap: var(--spacing-s);
-            text-align: center;
-        }
-        
-        .header-buttons {
-            flex-direction: column;
-            width: 100%;
-        }
-        
-        .header-buttons .button {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .modules-grid {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        }
-        
-        .filter-row {
-            flex-direction: column;
-        }
-        
-        .filter-group {
-            min-width: auto;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .controls-form {
-            flex-direction: column;
-        }
-        
-        .pagination-container {
-            flex-direction: column;
-            gap: var(--spacing-m);
-            text-align: center;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .container {
-            padding: var(--spacing-xs);
-        }
-        
-        .modules-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-        
-        .module-card {
-            padding: var(--spacing-m);
-        }
-        
-        .filters-section,
-        .table-section {
-            padding: var(--spacing-s);
-        }
-        
-        .filters-title,
-        .table-title {
-            font-size: var(--body-large-size);
-        }
-
-        #organismModal .content, #policiaModal .content, #mapaModal .content, #viewModal .content {
-            max-width: 100%;
-            max-height: 100vh;
-            border-radius: 0;
-        }
-
-        .modal-header,
-        .modal-body,
-        .controls-form {
-            padding: var(--spacing-s);
-        }
-        
-        .actions {
-            flex-direction: column;
-        }
-        
-        .data-table {
-            min-width: 600px;
-        }
-    }
+:root{
+  --navy:#0b2a6f;--navy-d:#081c4d;--b7:#1849c4;--b6:#2160e8;--b5:#3b7bf5;
+  --b2:#c3d7ff;--b1:#eef4ff;--ink:#0f1b3d;--mute:#5a6a8a;--rule:#dde5f3;
+  --field:#c9d5ec;--bg:#f4f7fd;--ok:#16a34a;--bad:#dc2626;
+  --ff:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --pad:clamp(14px,3vw,28px);
+  --sh:0 1px 2px rgba(11,42,111,.05),0 12px 28px -18px rgba(11,42,111,.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{min-height:100vh;font:15px/1.55 var(--ff);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid var(--b5);outline-offset:2px}
+a{color:var(--b7);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Botones */
+.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:1px solid transparent;border-radius:10px;background:var(--b6);color:#fff;font-size:14px;font-weight:600;line-height:1.2;cursor:pointer;transition:background .15s,border-color .15s}
+.button:hover:not(:disabled){background:var(--b7)}
+.button:disabled{opacity:.45;cursor:not-allowed}
+.button-secondary,.button-warning,.action-buttons .button,.pagination-container .button{background:#fff;color:var(--b7);border-color:var(--b2)}
+.button-secondary:hover:not(:disabled),.button-warning:hover:not(:disabled),.action-buttons .button:hover:not(:disabled),.pagination-container .button:hover:not(:disabled){background:var(--b1)}
+
+/* Cabecera */
+.header{background:var(--navy);color:#fff;padding:22px 0}
+.header-content{width:min(1200px,calc(100% - 2*var(--pad)));margin-inline:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px 24px}
+.logo h1{font-size:clamp(20px,2.8vw,26px);font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.logo p{margin-top:2px;font-size:13px;font-weight:500;color:var(--b2)}
+.header-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.header .button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28);color:#fff}
+.header .button:hover:not(:disabled){background:rgba(255,255,255,.22)}
+.header .btn-celeste-oscuro{background:#fff;border-color:#fff;color:var(--navy)}
+.header .btn-celeste-oscuro:hover:not(:disabled){background:var(--b1)}
+
+/* Estructura: categorías a la izquierda, contenido a la derecha */
+.container{width:min(1200px,calc(100% - 2*var(--pad)));margin:24px auto 48px;display:grid;grid-template-columns:268px minmax(0,1fr);column-gap:24px;align-items:start}
+.container>*{grid-column:2;margin-bottom:14px}
+.container>.modules-section{grid-column:1;grid-row:1/span 6;position:sticky;top:16px;margin-bottom:0}
+
+.modules-section{padding:12px;background:#fff;border:1px solid var(--rule);border-radius:18px;box-shadow:var(--sh)}
+.modules-title{padding:6px 8px 10px;font-size:13px;font-weight:600;color:var(--mute)}
+.modules-grid{display:flex;flex-direction:column;gap:2px}
+.module-card{display:grid;grid-template-columns:36px 1fr;column-gap:12px;align-items:center;padding:8px 10px;border-radius:11px;cursor:pointer;transition:background .15s}
+.module-card[data-category=todos]{order:-1;margin-bottom:6px}
+.module-card:hover{background:var(--b1)}
+.module-card.active{background:var(--b6);color:#fff}
+.module-icon{grid-row:1/span 2;width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:var(--b1);color:var(--b6);font-size:15px}
+.module-card.active .module-icon{background:rgba(255,255,255,.18);color:#fff}
+.module-name{font-size:14px;font-weight:600;line-height:1.25}
+.module-count{font-size:12px;line-height:1.2;color:var(--mute)}
+.module-card.active .module-count{color:var(--b2)}
+
+.welcome{padding:56px 24px;text-align:center;background:#fff;border:1px dashed var(--field);border-radius:18px;color:var(--mute)}
+.welcome i{display:block;margin-bottom:12px;font-size:28px;color:var(--b5)}
+.welcome h2{margin-bottom:4px;font-size:18px;font-weight:700;letter-spacing:-.015em;color:var(--ink)}
+.welcome p{max-width:44ch;margin-inline:auto;font-size:14px}
+
+/* Filtros */
+.filters-section{display:none;padding:16px 18px;background:#fff;border:1px solid var(--rule);border-radius:18px;box-shadow:var(--sh)}
+.filters-title{margin-bottom:12px;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.filter-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px 16px}
+.filter-label{display:block;margin-bottom:5px;font-size:13px;font-weight:600}
+.input,.dropdown,.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 13px;border:1px solid var(--field);border-radius:10px;background:#fff;color:var(--ink);font-size:14px;line-height:1.4;transition:border-color .15s,box-shadow .15s}
+.input:focus,.dropdown:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--b6);box-shadow:0 0 0 4px rgba(33,96,232,.16)}
+.input::placeholder{color:#93a0bd}
+.action-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+/* Paginación */
+.pagination-container{display:none;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 12px}
+.page-info{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.pagination-selector{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.nav-buttons{display:flex;gap:6px}
+.pagination-container .button{padding:7px 12px;font-size:13px;border-radius:9px}
+.pagination-selector select{width:auto;min-width:104px;padding:7px 10px}
+
+/* Tabla */
+.table-section{display:none;overflow:hidden;background:#fff;border:1px solid var(--rule);border-radius:18px;box-shadow:var(--sh)}
+.table-title{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--rule);font-size:17px;font-weight:700;letter-spacing:-.015em}
+.table-title #tableCount{padding:3px 11px;border-radius:99px;background:var(--b1);color:var(--b7);font-size:13px;font-weight:600;letter-spacing:0}
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{padding:11px 14px;text-align:left;white-space:nowrap;background:var(--b1);color:var(--navy);font-size:12.5px;font-weight:700;border-bottom:1px solid var(--rule)}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--rule);font-size:14px;line-height:1.4;vertical-align:middle;overflow-wrap:anywhere}
+.data-table td strong{font-weight:400}
+.data-table td:first-child strong{font-weight:600}
+.data-table tbody tr:hover{background:var(--b1)}
+.data-table tr:last-child td{border-bottom:0}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--b2);border-radius:99px;background:var(--b1);color:var(--b7);font-size:12.5px;font-weight:600;white-space:nowrap}
+td.actions{width:1%;white-space:nowrap;font-size:0}
+.btn-icon{width:36px;height:36px;margin-right:6px;display:inline-grid;place-items:center;vertical-align:middle;border:1px solid var(--b2);border-radius:9px;background:#fff;color:var(--b7);font-size:14px;cursor:pointer;transition:background .15s}
+.btn-icon:last-child{margin-right:0}
+.btn-icon:hover{background:var(--b1)}
+.empty-state{width:100%;padding:28px 12px;text-align:center;color:var(--mute)}
+
+/* Modales */
+#organismModal,#policiaModal,#judicialModal,#mapaModal,#viewModal{display:none;position:fixed;inset:0;z-index:1000;padding:16px;background:rgba(8,28,77,.55);justify-content:center;align-items:center}
+:is(#organismModal,#policiaModal,#judicialModal,#mapaModal,#viewModal) .content{width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:18px;box-shadow:0 24px 60px -20px rgba(8,28,77,.5);animation:rise .22s ease}
+#viewModal .content{max-width:560px}
+#policiaModal .content,#judicialModal .content,#mapaModal .content{max-width:1200px;height:92vh;max-height:92vh}
+#policiaModal .modal-body,#judicialModal .modal-body,#mapaModal .modal-body{padding:0;display:flex}
+#policiaModal iframe,#judicialModal iframe,#mapaModal iframe{width:100%;height:100%;border:0}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.modal-header{display:flex;align-items:center;gap:12px;padding:16px 22px;background:var(--navy);color:#fff}
+.modal-header i{color:var(--b2)}
+.modal-header h2{font-size:18px;font-weight:700;letter-spacing:-.015em;line-height:1.3}
+.modal-body{flex:1;overflow-y:auto;padding:20px 22px}
+.controls-form{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;padding:14px 22px;border-top:1px solid var(--rule);background:#fff}
+
+#organismForm{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+#organismForm .form-group:first-child,#organismForm .form-group:last-child{grid-column:1/-1}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;margin-bottom:6px;font-size:13px;font-weight:600}
+.form-group input,.form-group select,.form-group textarea{font-size:15px;padding:11px 13px}
+.form-group textarea{resize:vertical;min-height:84px}
+.error-message{display:none;margin-top:5px;font-size:12.5px;color:var(--bad)}
+.form-group.error input,.form-group.error select{border-color:var(--bad);background:#fef2f2}
+.form-group.error .error-message{display:block}
+
+.view-field{padding:12px 0;border-bottom:1px solid var(--rule)}
+.view-field:first-child{padding-top:0}
+.view-field:last-child{padding-bottom:0;border-bottom:0}
+.view-field label{display:block;margin-bottom:2px;font-size:12.5px;font-weight:600;color:var(--mute)}
+.view-field .value{font-size:15px;overflow-wrap:anywhere;white-space:pre-wrap}
+
+/* Aviso */
+.floating-alert{position:fixed;top:-100px;left:50%;transform:translateX(-50%);z-index:1100;max-width:min(420px,calc(100% - 32px));padding:12px 20px;border-radius:12px;background:var(--bad);color:#fff;font-size:14px;font-weight:500;text-align:center;box-shadow:0 10px 25px -8px rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:top .35s,opacity .35s,visibility .35s}
+.floating-alert.success{background:var(--ok)}
+.floating-alert.show{top:16px;opacity:1;visibility:visible}
+
+/* Responsive */
+@media(max-width:960px){
+  .container{grid-template-columns:minmax(0,1fr)}
+  .container>*,.container>.modules-section{grid-column:1}
+  .container>.modules-section{grid-row:auto;position:static}
+  .modules-grid{flex-direction:row;overflow-x:auto;padding-bottom:4px}
+  .module-card{flex:none;min-width:172px}
+  .module-card[data-category=todos]{margin-bottom:0}
+}
+@media(max-width:900px){
+  .table-wrap{overflow:visible}
+  .data-table,.data-table tbody,.data-table tr,.data-table td{display:block;width:100%}
+  .data-table thead{display:none}
+  .data-table tbody{padding:12px}
+  .data-table tr{margin-bottom:12px;padding:8px 14px;border:1px solid var(--rule);border-radius:14px;background:#fff}
+  .data-table tr:last-child{margin-bottom:0}
+  .data-table tbody tr:hover{background:#fff}
+  .data-table td{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:7px 0;border:0;text-align:right}
+  .data-table td[data-l]::before{content:attr(data-l);flex:none;width:84px;font-size:12.5px;font-weight:600;color:var(--mute);text-align:left}
+  .data-table td.actions{justify-content:flex-end;gap:6px;margin-top:6px;padding-top:10px;border-top:1px solid var(--rule);font-size:14px}
+  .btn-icon{margin-right:0}
+}
+@media(max-width:600px){
+  .filter-row,#organismForm{grid-template-columns:1fr}
+  .action-buttons .button,.controls-form .button{flex:1}
+  .header-buttons,.header-buttons .button{width:100%}
+  .pagination-container{justify-content:center}
+  #organismModal,#policiaModal,#judicialModal,#mapaModal,#viewModal{padding:0;align-items:flex-end}
+  :is(#organismModal,#policiaModal,#judicialModal,#mapaModal,#viewModal) .content{max-width:100%;max-height:94vh;border-radius:18px 18px 0 0}
+  #policiaModal .content,#judicialModal .content,#mapaModal .content{max-width:100%;height:94vh}
+  .modal-header,.modal-body,.controls-form{padding-left:16px;padding-right:16px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01ms!important}}
   </style>
 </head>
 <body>
@@ -716,13 +182,16 @@
 
     <header class="header">
         <div class="header-content">
-            <div class="logo">Organismos</div>
+            <div class="logo"><h1>Organismos</h1><p>Directorio de instituciones y organismos de contacto</p></div>
             <div class="header-buttons">
                 <button id="btnMapa" class="button">
                     <i class="fas fa-map-marked-alt"></i> Usar Mapa de Ubicación
                 </button>
                 <button id="btnPolicia" class="button">
                     <i class="fas fa-shield-alt"></i> Policia de Misiones
+                </button>
+                <button id="btnJudicial" class="button">
+                    <i class="fas fa-balance-scale"></i> Poder Judicial
                 </button>
                 <button id="btnNuevo" class="button btn-celeste-oscuro">
                     <i class="fas fa-plus"></i> Nuevo Organismo
@@ -738,12 +207,18 @@
                 </div>
         </section>
 
+        <div class="welcome" id="welcome">
+            <i class="fa-solid fa-folder-open"></i>
+            <h2>Elige una categoría</h2>
+            <p>Selecciona un tipo de organismo para ver su listado, buscar y filtrar.</p>
+        </div>
+
         <section class="filters-section" id="filtersSection">
             <h2 class="filters-title">Filtros de Búsqueda</h2>
             <div class="filter-row">
                 <div class="filter-group">
                     <label class="filter-label" for="buscador">Búsqueda</label>
-                    <input type="text" id="buscador" class="input" placeholder="🔍 Buscar...">
+                    <input type="text" id="buscador" class="input" placeholder="Nombre, contacto o notas">
                 </div>
                 <div class="filter-group">
                     <label class="filter-label" for="filtroTipo">Tipo de Organismo</label>
@@ -952,6 +427,24 @@
         </div>
     </div>
 
+    <div id="judicialModal">
+        <div class="content">
+            <div class="modal-header">
+                <i class="fas fa-balance-scale"></i>
+                <h2 style="margin:0;">Poder Judicial</h2>
+            </div>
+            <div class="modal-body">
+                <iframe src="https://sistemadigital.github.io/defensor-secretarios/agendajudicial" 
+                        title="Poder Judicial"></iframe>
+            </div>
+            <div class="controls-form">
+                <button class="button button-secondary" type="button" id="btnCerrarJudicial">
+                    <i class="fa fa-arrow-left"></i> Volver a la pantalla principal
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="mapaModal">
         <div class="content">
             <div class="modal-header">
@@ -993,6 +486,7 @@
         const modal = $("organismModal");
         const viewModal = $("viewModal");
         const policiaModal = $("policiaModal");
+        const judicialModal = $("judicialModal");
         const mapaModal = $("mapaModal");
         const modalTitle = $("modalTitle");
         const buscador = $("buscador");
@@ -1071,15 +565,21 @@
                 const moduleCard = document.createElement('div');
                 moduleCard.className = 'module-card';
                 moduleCard.dataset.category = category.id;
+                if (category.id === currentCategory) moduleCard.classList.add('active');
                 moduleCard.innerHTML = `
                     <div class="module-icon">
                         <i class="fas ${category.icon}"></i>
                     </div>
                     <div class="module-name">${category.name}</div>
-                    <div class="module-count">${count} organismos</div>
+                    <div class="module-count">${count} ${count === 1 ? 'organismo' : 'organismos'}</div>
                 `;
                 
                 moduleCard.onclick = () => selectCategory(category.id);
+                moduleCard.tabIndex = 0;
+                moduleCard.setAttribute('role', 'button');
+                moduleCard.onkeydown = (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCategory(category.id); }
+                };
                 modulesGrid.appendChild(moduleCard);
             });
         }
@@ -1092,6 +592,7 @@
             document.querySelector(`.module-card[data-category="${categoryId}"]`).classList.add('active');
             
             currentCategory = categoryId;
+            $('welcome').hidden = true;
             
             // Mostrar secciones
             filtersSection.style.display = 'block';
@@ -1213,11 +714,11 @@
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${escapeHtml(organism.nombre)}</strong></td>
-                    <td><strong>${escapeHtml(organism.tipo)}</strong></td>
-                    <td><strong>${emailLink}</strong></td>
-                    <td><strong>${telefonoLink}</strong></td>
-                    <td><strong>${escapeHtml(organism.contacto || '-')}</strong></td>
+                    <td data-l="Nombre"><strong>${escapeHtml(organism.nombre)}</strong></td>
+                    <td data-l="Tipo"><span class="tag">${escapeHtml(organism.tipo)}</span></td>
+                    <td data-l="Email"><strong>${emailLink}</strong></td>
+                    <td data-l="Teléfono"><strong>${telefonoLink}</strong></td>
+                    <td data-l="Contacto"><strong>${escapeHtml(organism.contacto || '-')}</strong></td>
                     <td class="actions">
                         <button class="btn-icon btn-view ver-organismo" data-id="${organism.id}" title="Ver organismo">
                             <i class="fa fa-eye"></i>
@@ -1423,10 +924,10 @@
                         <title>${category.name} - Directorio de Organismos</title>
                         <style>
                             body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #007bff; text-align: center; margin-bottom: 20px; }
+                            h1 { color: #0b2a6f; text-align: center; margin-bottom: 20px; }
                             table { width: 100%; border-collapse: collapse; }
                             th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
-                            th { background-color: #007bff; color: white; font-weight: bold; }
+                            th { background-color: #0b2a6f; color: white; font-weight: bold; }
                             td { font-weight: bold; }
                             tr:nth-child(even) { background-color: #f8f9fa; }
                             .print-date { text-align: right; color: #6c757d; margin-bottom: 20px; }
@@ -1458,10 +959,10 @@
                         <title>${organism.nombre} - Directorio de Organismos</title>
                         <style>
                             body { font-family: Arial, sans-serif; margin: 30px; }
-                            h1 { color: #007bff; text-align: center; margin-bottom: 30px; }
-                            .organism-card { border: 2px solid #007bff; border-radius: 10px; padding: 20px; max-width: 500px; margin: 0 auto; }
+                            h1 { color: #0b2a6f; text-align: center; margin-bottom: 30px; }
+                            .organism-card { border: 2px solid #0b2a6f; border-radius: 10px; padding: 20px; max-width: 500px; margin: 0 auto; }
                             .field { margin-bottom: 15px; }
-                            .field label { font-weight: bold; color: #007bff; display: block; margin-bottom: 5px; }
+                            .field label { font-weight: bold; color: #0b2a6f; display: block; margin-bottom: 5px; }
                             .field .value { padding: 8px; background: #f8f9fa; border-radius: 5px; font-weight: bold; }
                             .print-date { text-align: right; color: #6c757d; margin-top: 20px; }
                         </style>
@@ -1542,10 +1043,10 @@
                         <title>Directorio de Organismos</title>
                         <style>
                             body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #007bff; text-align: center; margin-bottom: 20px; }
+                            h1 { color: #0b2a6f; text-align: center; margin-bottom: 20px; }
                             table { width: 100%; border-collapse: collapse; }
                             th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
-                            th { background-color: #007bff; color: white; font-weight: bold; }
+                            th { background-color: #0b2a6f; color: white; font-weight: bold; }
                             td { font-weight: bold; }
                             tr:nth-child(even) { background-color: #f8f9fa; }
                             .print-info { text-align: center; color: #6c757d; margin-bottom: 20px; }
@@ -1593,11 +1094,13 @@
             // Asignar eventos
             $("btnNuevo").onclick = abrirNuevo;
             $("btnPolicia").onclick = () => policiaModal.style.display = "flex";
+            $("btnJudicial").onclick = () => judicialModal.style.display = "flex";
             $("btnMapa").onclick = () => mapaModal.style.display = "flex";
             $("btnGuardar").onclick = guardarOrganismo;
             $("btnCancelar").onclick = () => modal.style.display = "none";
             $("btnCerrarView").onclick = () => viewModal.style.display = "none";
             $("btnCerrarPolicia").onclick = () => policiaModal.style.display = "none";
+            $("btnCerrarJudicial").onclick = () => judicialModal.style.display = "none";
             $("btnCerrarMapa").onclick = () => mapaModal.style.display = "none";
             $("btnPrintModule").onclick = imprimirModulo;
             $("btnPrintListado").onclick = printListado;
@@ -1622,6 +1125,7 @@
                 if (e.target === modal) modal.style.display = "none";
                 if (e.target === viewModal) viewModal.style.display = "none";
                 if (e.target === policiaModal) policiaModal.style.display = "none";
+                if (e.target === judicialModal) judicialModal.style.display = "none";
                 if (e.target === mapaModal) mapaModal.style.display = "none";
             });
         }
