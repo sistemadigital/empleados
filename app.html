@@ -696,6 +696,54 @@
         .module-protocolo {
             border-color: #ef4444;
         }
+        .module-capacitacion {
+            border-color: #14b8a6;
+        }
+
+        /* ===== BOTÓN CERRAR (solo visible con Capacitación Jurídica abierta) ===== */
+        #btnCerrarCapacitacion {
+            display: none;
+            position: absolute;
+            bottom: 14px;
+            right: calc(14px + env(safe-area-inset-right, 0px));
+            z-index: 700;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 44px;
+            padding: 0.45rem 1.1rem;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            background: rgba(0, 31, 63, 0.92);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            transition: background 0.2s, transform 0.2s;
+        }
+        #btnCerrarCapacitacion:hover {
+            background: #ef4444;
+            transform: translateY(-1px);
+        }
+        /* Tablet vertical y móvil */
+        @media (max-width: 768px) {
+            #btnCerrarCapacitacion {
+                bottom: 10px;
+                right: calc(10px + env(safe-area-inset-right, 0px));
+                font-size: 0.8rem;
+                padding: 0.4rem 1rem;
+            }
+        }
+        @media (max-width: 360px) {
+            #btnCerrarCapacitacion {
+                font-size: 0.75rem;
+                padding: 0.35rem 0.85rem;
+            }
+        }
 
         /* ===== MODAL DE NOVEDADES ===== */
         .novedades-modal {
@@ -1591,6 +1639,7 @@
     </div>
 
     <main id="mainContent">
+        <button type="button" id="btnCerrarCapacitacion" aria-label="Cerrar Capacitación Jurídica">&times; Cerrar</button>
         <iframe id="appIframe"></iframe>
 
         <div id="homeContent">
@@ -2624,6 +2673,7 @@
                         <div class="module-item module-cejume" onclick="loadPage('https://defensoria6.github.io/CEJUME/')">Cejume-Audiencias</div>
                         <div class="module-item module-pase" onclick="loadPage('https://defensoria6.github.io/pase-digital/index2')">Pase Digital</div>
                         <div class="module-item module-protocolo" onclick="loadPage('https://defensorialocal-seis.github.io/protocolo/')">Protocolo de Actuación</div>
+                        <div class="module-item module-capacitacion" onclick="loadPage('https://fioravanteweb.github.io/capacitacion/')">Capacitación Jurídica</div>
                     </div>
                     <div class="user-dropdown" id="userDropdown">
                         ${dropdownHeaderHtml}
@@ -2763,6 +2813,30 @@
                 };
                 footerRight.insertBefore(btn, eventBanner);
             });
+        })();
+    </script>
+
+    <!-- Capacitación Jurídica: muestra "Cerrar" solo mientras esa pantalla está abierta -->
+    <script>
+        (function() {
+            const URL_CAPACITACION = 'fioravanteweb.github.io/capacitacion';
+            const iframe = document.getElementById('appIframe');
+            const btnCerrar = document.getElementById('btnCerrarCapacitacion');
+            if (!iframe || !btnCerrar) return;
+
+            function actualizarBotonCerrar() {
+                const abierta = iframe.style.display === 'block' &&
+                                (iframe.getAttribute('src') || '').indexOf(URL_CAPACITACION) !== -1;
+                btnCerrar.style.display = abierta ? 'flex' : 'none';
+            }
+
+            btnCerrar.addEventListener('click', function(e) {
+                e.stopPropagation();
+                window.mostrarHome();
+            });
+
+            new MutationObserver(actualizarBotonCerrar)
+                .observe(iframe, { attributes: true, attributeFilter: ['src', 'style'] });
         })();
     </script>
 
