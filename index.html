@@ -794,7 +794,7 @@
             box-shadow: 0 6px 18px rgba(0, 51, 102, 0.3);
         }
 
-        /* ===== NUEVO: CONTENEDOR DEFENSORÍA OFICIAL 6 (ESQUINA IZQUIERDA) ===== */
+        /* ===== CONTENEDOR DEFENSORÍA OFICIAL 6 (ESQUINA IZQUIERDA) ===== */
         .defensoria-link-container {
             position: fixed;
             bottom: 76px;
@@ -1077,7 +1077,6 @@
                 display: none !important;
             }
 
-            /* NUEVO: ocultar en móvil igual que el manual */
             .defensoria-link-container {
                 display: none !important;
             }
@@ -1106,7 +1105,6 @@
                 display: block;
             }
 
-            /* NUEVO: mostrar en desktop igual que el manual */
             .defensoria-link-container {
                 display: block;
             }
@@ -1455,7 +1453,7 @@
                 <button class="btn-hora"><span class="hora-actual" id="currentTimeText"></span></button>
             </div>
             <div class="footer-center">
-                <button class="btn-credenciales" id="btnFooterCredenciales">Ingresa tus credenciales para comenzar</button>
+                <button class="btn-credenciales" id="btnFooterCredenciales">Haz clic para ingresar</button>
             </div>
             <div class="footer-right">
                 <span class="version-text" id="versionText">Versión 9.2026</span>
@@ -1528,27 +1526,6 @@
 
     <div id="globalAuthMessage" class="auth-message-global"></div>
 
-    <div id="manualLinkContainer" class="manual-link-container">
-        <a id="manualLink" href="#" title="Abrir Manual de Uso del Sistema">📘 Manual de Uso del Sistema</a>
-    </div>
-
-    <!-- ===== NUEVO: BOTÓN DEFENSORÍA OFICIAL 6 (ESQUINA IZQUIERDA) ===== -->
-    <div id="defensoriaLinkContainer" class="defensoria-link-container">
-        <a id="defensoriaLink" href="https://defensoria6.github.io/web/" target="_blank" rel="noopener noreferrer" title="Abrir sitio de la Defensoría Oficial 6">⚖️ Nuestra Web Defensoría Oficial 6</a>
-    </div>
-
-    <div id="modalManualOverlay" class="modal-manual-overlay">
-        <div class="modal-manual-contenido">
-            <div class="modal-manual-header">
-                <h2>📘 Manual de Uso del Sistema</h2>
-                <button class="btn-cerrar-manual" id="cerrarModalManualBtn">&times;</button>
-            </div>
-            <div class="modal-manual-body">
-                <iframe id="manualIframe" src="about:blank" title="Manual de Uso del Sistema"></iframe>
-            </div>
-        </div>
-    </div>
-
     <div id="versionInfoContainer" class="version-info-container">
         <div class="version-text-left">
             <span>Diseño y Programación:</span>
@@ -1596,15 +1573,7 @@
         const spinnerCarga = document.getElementById('spinnerCarga');
         const spinnerText = document.getElementById('spinnerText');
 
-        const manualLinkContainer = document.getElementById('manualLinkContainer');
-        const manualLink = document.getElementById('manualLink');
-        const modalManualOverlay = document.getElementById('modalManualOverlay');
-        const cerrarModalManualBtn = document.getElementById('cerrarModalManualBtn');
-        const manualIframe = document.getElementById('manualIframe');
         const versionContainer = document.getElementById('versionInfoContainer');
-
-        // ─── NUEVO: CONTENEDOR DEFENSORÍA OFICIAL 6 ───
-        const defensoriaLinkContainer = document.getElementById('defensoriaLinkContainer');
 
         // ─── IMAGEN ───
         const imageWrapper = document.getElementById('imageWrapper');
@@ -1709,15 +1678,10 @@
             modalLogin.classList.remove('active');
             modalRegistro.classList.remove('active');
             currentState = 'idle';
-            // Mostrar los enlaces solo si no hay popup de versión activo
-            if (!versionContainer.classList.contains('show')) {
-                mostrarManualLink();
-            }
         }
 
         function abrirLogin() {
             if (currentState === 'idle') {
-                ocultarManualLink();
                 modalLogin.classList.add('active');
                 currentState = 'modalOpen';
                 document.getElementById('loginEmail').focus();
@@ -1726,7 +1690,6 @@
 
         function abrirRegistro() {
             if (currentState === 'idle') {
-                ocultarManualLink();
                 modalRegistro.classList.add('active');
                 currentState = 'modalOpen';
                 document.getElementById('registerName').focus();
@@ -1746,7 +1709,7 @@
                 };
             } else {
                 setTypingText('Hola, Defensoría Oficial');
-                btnFooter.textContent = 'Ingresa tus credenciales para comenzar';
+                btnFooter.textContent = 'Haz clic para ingresar';
                 btnFooter.onclick = abrirLogin;
             }
         }
@@ -1977,23 +1940,8 @@
         const versionText = document.getElementById('versionText');
         let popupTimeout = null;
 
-        function mostrarManualLink() {
-            if (window.innerWidth > 768) {
-                manualLinkContainer.classList.add('show');
-                // NUEVO: mostrar también el botón de la Defensoría Oficial 6
-                defensoriaLinkContainer.classList.add('show');
-            }
-        }
-
-        function ocultarManualLink() {
-            manualLinkContainer.classList.remove('show');
-            // NUEVO: ocultar también el botón de la Defensoría Oficial 6
-            defensoriaLinkContainer.classList.remove('show');
-        }
-
         function cerrarPopup() {
             versionContainer.classList.remove('show');
-            mostrarManualLink();
             if (popupTimeout) {
                 clearTimeout(popupTimeout);
                 popupTimeout = null;
@@ -2001,7 +1949,6 @@
         }
 
         function mostrarPopupConTimeout() {
-            ocultarManualLink();
             if (versionContainer.classList.contains('show')) {
                 if (popupTimeout) {
                     clearTimeout(popupTimeout);
@@ -2164,11 +2111,6 @@
         setupModalEvents();
         // Iniciar animación por defecto
         setTypingText('Hola, Defensoría Oficial');
-        // El observador de auth llamará a updateUI, pero si no hay usuario, se mantiene el texto.
-        // Pero como el observador se ejecutará después, llamamos a updateUI(null) para asegurar.
-        // Sin embargo, ya llamamos a setTypingText directamente.
-
-        // ─── La imagen ya no aparece con temporizador fijo: revealAppFromIcon() la muestra al pulsar el icono ───
 
         // ─── INTERCAMBIO DE IMAGEN ───
         const imgElement = document.querySelector('.image-large img');
@@ -2249,32 +2191,6 @@
         versionText.addEventListener('click', function(e) {
             if (window.innerWidth <= 768) {
                 posicionarPopupDebajoDeWelcome();
-            }
-        });
-
-        // ─── MANUAL DE USO ───
-        const MANUAL_URL = 'https://sistemadigital.github.io/ingreso-sistema/sistema-manual';
-
-        function abrirManual(e) {
-            e.preventDefault();
-            manualIframe.src = MANUAL_URL;
-            modalManualOverlay.classList.add('active');
-        }
-
-        function cerrarManual() {
-            modalManualOverlay.classList.remove('active');
-        }
-
-        manualLink.addEventListener('click', abrirManual);
-        cerrarModalManualBtn.addEventListener('click', cerrarManual);
-        modalManualOverlay.addEventListener('click', function(e) {
-            if (e.target === modalManualOverlay) {
-                cerrarManual();
-            }
-        });
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && modalManualOverlay.classList.contains('active')) {
-                cerrarManual();
             }
         });
 
