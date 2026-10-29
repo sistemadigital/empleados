@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>⚖️ Sistema Digital Defensoria 6</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         /* ========== ESTILOS PRINCIPALES ========== */
@@ -20,7 +21,6 @@
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
-            /* El fondo real lo aporta .intro-fluid-bg (fijo, detrás de todo) */
             background-color: transparent;
             background-image: none;
             overflow: hidden;
@@ -78,7 +78,6 @@
             justify-content: space-between;
             cursor: default;
             transition: background-color 0.2s;
-            /* Borde animado vibrante */
             animation: borderGlow 2s ease-in-out infinite;
         }
         .welcome-bar:hover {
@@ -104,7 +103,6 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
             white-space: nowrap;
             cursor: pointer;
-            /* Asegurar que el texto no se desborde durante la animación */
             min-width: 2em;
         }
 
@@ -257,13 +255,12 @@
             max-height: 80%;
             justify-content: center;
             position: relative;
-            /* Inicialmente oculta y sin escala */
             opacity: 0;
             transform: scale(0);
-            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: opacity 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1),
+                        transform 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
-        /* Clase que activa la animación de aparición */
         .image-wrapper.visible {
             opacity: 1;
             transform: scale(1);
@@ -356,7 +353,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ===== FRANJA AZUL VIBRANTE CON EFECTO LUMINOSO CELESTE ===== */
         .franja-azul {
             width: 100%;
             height: 8px;
@@ -607,7 +603,6 @@
             box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
         }
 
-        /* Estilo específico para el token (visual feedback) */
         .grupo-input input.token-input {
             letter-spacing: 0.5rem;
             font-weight: 700;
@@ -794,7 +789,6 @@
             box-shadow: 0 6px 18px rgba(0, 51, 102, 0.3);
         }
 
-        /* ===== CONTENEDOR DEFENSORÍA OFICIAL 6 (ESQUINA IZQUIERDA) ===== */
         .defensoria-link-container {
             position: fixed;
             bottom: 76px;
@@ -936,7 +930,6 @@
                 text-align: center;
                 width: 100%;
                 cursor: default;
-                /* CENTRADO DEL CONTENIDO (TEXTO + GIF) */
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -1182,8 +1175,9 @@
                 font-size: 0.4rem;
             }
         }
+
         /* ============================================================
-           FONDO ABSTRACTO FLUIDO + ICONO DE INTRODUCCIÓN
+           FONDO ABSTRACTO FLUIDO + INTRO (ruta abstracta)
            ============================================================ */
 
         .intro-fluid-bg{
@@ -1217,65 +1211,201 @@
         @keyframes introDrift4{ 0%{transform:translate(0,0) scale(1);} 100%{transform:translate(-8vw,-6vh) scale(1.1);} }
         @keyframes introDrift5{ 0%{transform:translate(-6vw,-4vh) scale(1);} 100%{transform:translate(6vw,6vh) scale(1.25);} }
 
-        #introOverlay{
-            position:fixed;
-            inset:0;
-            z-index:9999;
-            display:flex;
-            align-items:center;
-            justify-content:center;
+        /* ===== INICIO: ICONO DE BALANZA + TEXTOS CON ESCRITURA ===== */
+        #landing{
+            --l-cyan:#00bfff;
+            position:fixed; inset:0; z-index:9999;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            gap:clamp(1.4rem, 4.5vh, 2.2rem);
+            padding:max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+            background:radial-gradient(120% 90% at 50% 35%, #e3f3fc, #cde8f7);
+            background-color:#e3f3fc;
+            overflow:hidden;
             cursor:pointer;
             -webkit-tap-highlight-color:transparent;
-            transition:opacity .6s ease;
+            transition:opacity .8s ease;
+            animation:landIn .7s ease backwards;
         }
-        #introOverlay.intro-leaving{
-            opacity:0;
-            pointer-events:none;
-        }
+        #landing.land-leaving{ opacity:0; pointer-events:none; }
+        @keyframes landIn{ from{opacity:0;} to{opacity:1;} }
 
-        .intro-logo-entrance{
+        /* Icono (mismo que el del index) */
+        .land-logo-entrance{
             width:clamp(80px, 20vw, 130px);
             height:clamp(80px, 20vw, 130px);
             opacity:0;
             transform:scale(.25) translateY(50px) rotate(-25deg);
             filter:blur(14px);
-            animation:introEnter 1.6s cubic-bezier(.16,.9,.28,1) .3s forwards;
+            animation:landEnter 1.6s cubic-bezier(.16,.9,.28,1) .3s forwards;
         }
-        @keyframes introEnter{
+        @keyframes landEnter{
             0%{ opacity:0; transform:scale(.25) translateY(50px) rotate(-25deg); filter:blur(14px); }
             65%{ opacity:1; transform:scale(1.08) translateY(0) rotate(4deg); filter:blur(0); }
             100%{ opacity:1; transform:scale(1) translateY(0) rotate(0deg); filter:blur(0); }
         }
-
-        .intro-logo-idle{
+        .land-logo-idle{
             width:100%;
             height:100%;
-            animation:introHourglassFloat 3.2s ease-in-out infinite;
+            animation:landHourglassFloat 3.2s ease-in-out infinite;
         }
-        @keyframes introIdleRotate{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-        @keyframes introHourglassFloat{ 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-8px) rotate(2deg);} }
-
-        .intro-logo-idle svg{
+        @keyframes landHourglassFloat{ 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-8px) rotate(2deg);} }
+        .land-logo-idle svg{
             width:100%;
             height:100%;
             display:block;
             filter:
-                drop-shadow(0 0 18px rgba(0,191,255,.55))
-                drop-shadow(0 0 40px rgba(102,217,255,.35));
+                drop-shadow(0 0 6px rgba(0,191,255,.55))
+                drop-shadow(0 0 14px rgba(0,191,255,.3));
         }
 
-        #introOverlay.intro-clicked .intro-logo-entrance{
-            animation:none;
-            transition:transform .7s cubic-bezier(.5,0,.5,1), opacity .5s ease, filter .5s ease;
+        /* Textos celestes: una sola línea a la vez, mismo lugar, mismo tamaño */
+        .land-texts{
+            width:100%;
+            display:grid;
+            justify-items:center;
+            align-items:center;
+            text-align:center;
+            color:var(--l-cyan);
+        }
+        .land-line{
+            grid-area:1 / 1;
+            margin:0;
+            max-width:100%;
+            white-space:nowrap;
+            line-height:1.4;
+            min-height:1.4em;
+            font-family:'Inter', sans-serif;
+            font-weight:400;
+            font-size:clamp(.7rem, 3.6vw, 1rem);
+            letter-spacing:.02em;
+            color:var(--l-cyan);
+            opacity:1;
+            transition:opacity .45s ease;
+        }
+        .land-line.out{ opacity:0; }
+
+        /* Línea de progreso 0 → 100 % con contador en la esquina derecha */
+        .land-block{
+            width:min(100%, 360px);
+            display:flex;
+            flex-direction:column;
+            align-items:stretch;
+            gap:.9rem;
+        }
+        .land-progress{ width:100%; }
+        .land-progress-track{
+            width:100%;
+            height:2px;
+            border-radius:2px;
+            background:rgba(0,191,255,.22);
+            overflow:hidden;
+        }
+        .land-progress-fill{
+            width:0%;
+            height:100%;
+            border-radius:2px;
+            background:#00bfff;
+            box-shadow:0 0 8px rgba(0,191,255,.6);
+        }
+        .land-progress-pct{
+            display:block;
+            margin-top:.35rem;
+            text-align:right;
+            font-family:'Inter', sans-serif;
+            font-weight:400;
+            font-size:.65rem;
+            line-height:1;
+            letter-spacing:.04em;
+            color:#00bfff;
+            font-variant-numeric:tabular-nums;
+        }
+        .land-line .t-rest{ visibility:hidden; }
+        .land-line.typing .t-vis::after{
+            content:"";
+            display:inline-block;
+            width:0;
+            height:1em;
+            border-right:2px solid var(--l-cyan);
+            vertical-align:-.12em;
+            animation:landCaret .7s steps(1) infinite;
+        }
+        @keyframes landCaret{ 50%{ border-right-color:transparent; } }
+
+        /* ===== Modal informativo posterior a la introducción ===== */
+        .aviso-overlay{
+            position:fixed;
+            inset:0;
+            z-index:10000;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:16px;
+            background:rgba(10,30,47,.35);
+            backdrop-filter:blur(6px);
+            -webkit-backdrop-filter:blur(6px);
+            visibility:hidden;
             opacity:0;
-            transform:scale(.15);
-            filter:blur(6px);
+            transition:opacity .4s ease, visibility .4s;
         }
-        #introOverlay.intro-clicked .intro-logo-idle{
-            animation:none;
+        .aviso-overlay.active{
+            visibility:visible;
+            opacity:1;
+        }
+        .aviso-contenido{
+            width:min(100%, 340px);
+            background:#ffffff;
+            border:1px solid rgba(0,180,216,.35);
+            border-radius:1.1rem;
+            padding:1.15rem 1.2rem 1.1rem;
+            box-shadow:0 16px 36px rgba(0,0,0,.2);
+            text-align:center;
+            transform:scale(.94) translateY(8px);
+            transition:transform .4s cubic-bezier(.2,.9,.4,1.1);
+        }
+        .aviso-overlay.active .aviso-contenido{
+            transform:none;
+        }
+        .aviso-titulo{
+            font-size:1.05rem;
+            font-weight:800;
+            color:#e65c00;
+            margin:0 0 .6rem;
+            line-height:1.25;
+        }
+        .aviso-texto{
+            font-size:.84rem;
+            line-height:1.45;
+            color:#1a2a3a;
+            margin:0 0 .55rem;
+        }
+        .aviso-btn{
+            margin-top:.35rem;
+            padding:8px 26px;
+            background:#0a2b3e;
+            color:#ffffff;
+            border:none;
+            border-radius:40px;
+            font-weight:700;
+            font-size:.85rem;
+            cursor:pointer;
+            transition:background .2s, transform .2s, box-shadow .2s;
+        }
+        .aviso-btn:hover{
+            background:#005f8c;
+            transform:translateY(-2px);
+            box-shadow:0 8px 18px rgba(0,120,180,.25);
+        }
+        .aviso-btn:focus-visible{
+            outline:3px solid #00bfff;
+            outline-offset:2px;
+        }
+        @media (max-width:480px){
+            .aviso-contenido{ padding:1rem 1rem .95rem; }
+            .aviso-titulo{ font-size:1rem; }
+            .aviso-texto{ font-size:.82rem; }
         }
 
-        /* La app permanece oculta hasta pulsar el icono */
+        /* ===== REVEAL DEL INDEX: desde el centro hacia adelante ===== */
         body.pre-reveal main,
         body.pre-reveal footer,
         body.pre-reveal #manualLinkContainer,
@@ -1284,14 +1414,28 @@
             opacity:0;
             pointer-events:none;
         }
-        main, footer, #manualLinkContainer, #defensoriaLinkContainer, #versionInfoContainer{
-            transition:opacity 1s ease .1s;
+
+        body.pre-reveal main{
+            transform:scale(0.35);
+            filter:blur(8px);
+        }
+
+        main{
+            transition:opacity 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1),
+                       transform 1.4s cubic-bezier(0.2, 0.9, 0.4, 1.1),
+                       filter 1.2s ease;
+            transform-origin:center center;
+        }
+
+        footer, #manualLinkContainer, #defensoriaLinkContainer, #versionInfoContainer{
+            transition:opacity 1.2s ease 0.2s;
         }
 
         @media (prefers-reduced-motion: reduce){
             .intro-blob{ animation:none; }
-            .intro-logo-entrance{ animation:none; opacity:1; transform:none; filter:none; }
-            .intro-logo-idle{ animation:none; }
+            .land-logo-entrance{ animation:none; opacity:1; transform:none; filter:none; }
+            .land-logo-idle{ animation:none; }
+            body.pre-reveal main{ transform:none; filter:none; }
         }
     </style>
 </head>
@@ -1305,84 +1449,112 @@
         <div class="intro-blob intro-blob--5"></div>
     </div>
 
-    <div id="introOverlay">
-        <div class="intro-logo-entrance">
-            <div class="intro-logo-idle">
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- ===== INICIO: ICONO DE BALANZA + TEXTOS CON ESCRITURA ===== -->
+    <div id="landing" role="region" aria-label="Inicio">
+        <div class="land-logo-entrance">
+            <div class="land-logo-idle">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balanza de la justicia">
                     <defs>
-                        <linearGradient id="hgFrame" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#66d9ff"/>
-                            <stop offset="45%" stop-color="#00bfff"/>
-                            <stop offset="100%" stop-color="#003366"/>
+                        <linearGradient id="scMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#d9f2ff"/>
+                            <stop offset="55%" stop-color="#a6dcf6"/>
+                            <stop offset="100%" stop-color="#84c9ec"/>
                         </linearGradient>
-                        <linearGradient id="hgGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#eaffff" stop-opacity="0.85"/>
-                            <stop offset="55%" stop-color="#b3ecff" stop-opacity="0.4"/>
-                            <stop offset="100%" stop-color="#eaffff" stop-opacity="0.6"/>
+                        <linearGradient id="scPan" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#e6f7ff"/>
+                            <stop offset="100%" stop-color="#8fd0ef"/>
                         </linearGradient>
-                        <linearGradient id="hgSand" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#8fe6ff"/>
-                            <stop offset="55%" stop-color="#00bfff"/>
-                            <stop offset="100%" stop-color="#003d80"/>
-                        </linearGradient>
-                        <radialGradient id="hgGlow" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stop-color="#66d9ff" stop-opacity="0.45"/>
-                            <stop offset="100%" stop-color="#66d9ff" stop-opacity="0"/>
-                        </radialGradient>
                     </defs>
 
-                    <circle cx="100" cy="100" r="92" fill="url(#hgGlow)"/>
+                    <!-- Aro azul vibrante (interior transparente) -->
+                    <circle cx="100" cy="100" r="94" fill="none" stroke="#00bfff" stroke-width="6"/>
 
-                    <!-- Postes laterales del marco -->
-                    <rect x="40" y="30" width="7" height="140" rx="3" fill="url(#hgFrame)"/>
-                    <rect x="153" y="30" width="7" height="140" rx="3" fill="url(#hgFrame)"/>
+                    <!-- Balanza reducida y centrada dentro del aro -->
+                    <g transform="translate(100 100) scale(0.55) translate(-100 -100)">
 
-                    <!-- Tapas superior e inferior -->
-                    <ellipse cx="100" cy="30" rx="60" ry="13" fill="url(#hgFrame)"/>
-                    <ellipse cx="100" cy="170" rx="60" ry="13" fill="url(#hgFrame)"/>
-                    <ellipse cx="100" cy="30" rx="60" ry="13" fill="none" stroke="#001c33" stroke-width="2" opacity="0.5"/>
-                    <ellipse cx="100" cy="170" rx="60" ry="13" fill="none" stroke="#001c33" stroke-width="2" opacity="0.5"/>
+                    <!-- Columna central -->
+                    <rect x="95.5" y="30" width="9" height="134" rx="4.5" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
+                    <path d="M98.5,50 L98.5,156" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round"/>
 
-                    <!-- Vidrio del reloj de arena -->
-                    <path d="M47,33 C47,72 70,88 97,97 L103,97 C130,88 153,72 153,33 Z" fill="url(#hgGlass)" stroke="#00bfff" stroke-width="2"/>
-                    <path d="M47,167 C47,128 70,112 97,103 L103,103 C130,112 153,128 153,167 Z" fill="url(#hgGlass)" stroke="#00bfff" stroke-width="2"/>
+                    <!-- Base escalonada -->
+                    <rect x="70" y="162" width="60" height="9" rx="4" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
+                    <rect x="54" y="170" width="92" height="11" rx="5.5" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
 
-                    <!-- Arena superior (disminuye) -->
-                    <clipPath id="hgTopClip">
-                        <path d="M47,33 C47,72 70,88 97,97 L103,97 C130,88 153,72 153,33 Z"/>
-                    </clipPath>
-                    <path clip-path="url(#hgTopClip)" fill="url(#hgSand)">
-                        <animate attributeName="d" dur="3.5s" repeatCount="indefinite"
-                            values="
-                                M50,36 L150,36 L100,97 Z;
-                                M60,50 L140,50 L100,97 Z;
-                                M85,80 L115,80 L100,97 Z;
-                                M50,36 L150,36 L100,97 Z" />
-                    </path>
+                    <!-- Platillo izquierdo (se mantiene nivelado mientras el brazo oscila) -->
+                    <g transform="translate(38 44)">
+                        <g>
+                            <animateTransform attributeName="transform" type="translate" dur="6s" repeatCount="indefinite"
+                                calcMode="spline" values="0 0; 0.76 -9.70; 0.46 7.56; 0.24 -5.40; 0.08 3.25; 0.02 -1.62; 0 0; 0 0"
+                                keyTimes="0;0.15;0.32;0.49;0.66;0.81;0.91;1"
+                                keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                            <line x1="0" y1="0" x2="-24" y2="60" stroke="#6bb6dc" stroke-width="1.6" stroke-linecap="round"/>
+                            <line x1="0" y1="0" x2="24" y2="60" stroke="#6bb6dc" stroke-width="1.6" stroke-linecap="round"/>
+                            <path d="M-25,62 L25,62 C23,76 12,82 0,82 C-12,82 -23,76 -25,62 Z" fill="url(#scPan)" stroke="#6bb6dc" stroke-width="1.5" stroke-linejoin="round"/>
+                            <rect x="-27" y="58.5" width="54" height="4.5" rx="2.25" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.2"/>
+                            <path d="M-17,67 C-15,72 -10,76 -5,77.5" stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.65" stroke-linecap="round"/>
+                        </g>
+                    </g>
 
-                    <!-- Chorro de arena cayendo -->
-                    <rect x="98.5" y="97" width="3" height="6" fill="#8fe6ff">
-                        <animate attributeName="opacity" values="1;0.3;1" dur="0.5s" repeatCount="indefinite"/>
-                    </rect>
+                    <!-- Platillo derecho -->
+                    <g transform="translate(162 44)">
+                        <g>
+                            <animateTransform attributeName="transform" type="translate" dur="6s" repeatCount="indefinite"
+                                calcMode="spline" values="0 0; -0.76 9.70; -0.46 -7.56; -0.24 5.40; -0.08 -3.25; -0.02 1.62; 0 0; 0 0"
+                                keyTimes="0;0.15;0.32;0.49;0.66;0.81;0.91;1"
+                                keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                            <line x1="0" y1="0" x2="-24" y2="60" stroke="#6bb6dc" stroke-width="1.6" stroke-linecap="round"/>
+                            <line x1="0" y1="0" x2="24" y2="60" stroke="#6bb6dc" stroke-width="1.6" stroke-linecap="round"/>
+                            <path d="M-25,62 L25,62 C23,76 12,82 0,82 C-12,82 -23,76 -25,62 Z" fill="url(#scPan)" stroke="#6bb6dc" stroke-width="1.5" stroke-linejoin="round"/>
+                            <rect x="-27" y="58.5" width="54" height="4.5" rx="2.25" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.2"/>
+                            <path d="M-17,67 C-15,72 -10,76 -5,77.5" stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.65" stroke-linecap="round"/>
+                        </g>
+                    </g>
 
-                    <!-- Arena inferior (aumenta) -->
-                    <clipPath id="hgBottomClip">
-                        <path d="M47,167 C47,128 70,112 97,103 L103,103 C130,112 153,128 153,167 Z"/>
-                    </clipPath>
-                    <path clip-path="url(#hgBottomClip)" fill="url(#hgSand)">
-                        <animate attributeName="d" dur="3.5s" repeatCount="indefinite"
-                            values="
-                                M95,164 L105,164 L100,103 Z;
-                                M75,164 L125,164 L100,103 Z;
-                                M50,164 L150,164 L100,103 Z;
-                                M95,164 L105,164 L100,103 Z" />
-                    </path>
+                    <!-- Brazo de la balanza (oscila hasta equilibrarse) -->
+                    <g>
+                        <animateTransform attributeName="transform" type="rotate" dur="6s" repeatCount="indefinite"
+                            calcMode="spline" values="0 100 44; 9 100 44; -7 100 44; 5 100 44; -3 100 44; 1.5 100 44; 0 100 44; 0 100 44"
+                            keyTimes="0;0.15;0.32;0.49;0.66;0.81;0.91;1"
+                            keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+                        <rect x="38" y="40.5" width="124" height="7" rx="3.5" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
+                        <circle cx="38" cy="44" r="4.5" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
+                        <circle cx="162" cy="44" r="4.5" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
+                        <path d="M50,43 L150,43" stroke="#ffffff" stroke-width="1.6" fill="none" opacity="0.6" stroke-linecap="round"/>
+                    </g>
 
-                    <!-- Reflejos de vidrio -->
-                    <path d="M55,38 C55,58 65,72 80,82" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.35" stroke-linecap="round"/>
-                    <path d="M55,162 C55,142 65,128 80,118" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.35" stroke-linecap="round"/>
+                    <!-- Eje y remate -->
+                    <circle cx="100" cy="44" r="7" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
+                    <circle cx="100" cy="44" r="2.6" fill="#eaf9ff"/>
+                    <circle cx="100" cy="26" r="7.5" fill="url(#scMetal)" stroke="#6bb6dc" stroke-width="1.5"/>
+                    <path d="M97,23.5 C98,22 99.5,21.5 101,21.8" stroke="#ffffff" stroke-width="1.8" fill="none" opacity="0.8" stroke-linecap="round"/>
+                    </g>
                 </svg>
             </div>
+        </div>
+
+        <div class="land-block">
+            <div class="land-texts" aria-label="Plataforma Digital de Expedientes. Defensoría Oficial Civil y Comercial 6. Ministerio Público de Misiones">
+            <p class="land-line land-line--1" data-text="Plataforma Digital de Expedientes" aria-hidden="true"></p>
+            <p class="land-line land-line--2" data-text="Defensoría Oficial Civil y Comercial 6" aria-hidden="true"></p>
+            <p class="land-line land-line--3" data-text="Ministerio Público de Misiones" aria-hidden="true"></p>
+        </div>
+            <div class="land-progress" aria-hidden="true">
+                <div class="land-progress-track"><div class="land-progress-fill" id="landProgressFill"></div></div>
+                <span class="land-progress-pct" id="landProgressPct">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="avisoOverlay" class="aviso-overlay" role="dialog" aria-modal="true" aria-labelledby="avisoTitulo">
+        <div class="aviso-contenido">
+            <h2 id="avisoTitulo" class="aviso-titulo">Aviso a todos los usuarios</h2>
+
+<p class="aviso-texto">Se informa que, en breve, esta aplicación dejará de estar alojada en la nube y será migrada en su totalidad a un servidor local físico ubicado en la oficina de la Defensoría Oficial N.º 6.</p>
+
+<p class="aviso-texto">Por este motivo, la aplicación no podrá utilizarse en modo remoto u online: el acceso quedará limitado únicamente a la red local.</p>
+
+<p class="aviso-texto">Todos los datos y registros actuales se conservarán intactos.</p>
+            <button type="button" id="avisoAceptarBtn" class="aviso-btn">Entendido</button>
         </div>
     </div>
 
@@ -1504,7 +1676,6 @@
                     <label>Contraseña</label>
                     <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
                 </div>
-                <!-- 🔐 NUEVO CAMPO TOKEN NUMÉRICO DE 5 DÍGITOS -->
                 <div class="grupo-input">
                     <label>Token de acceso (5 dígitos)</label>
                     <input type="text" id="registerToken" class="token-input" 
@@ -1536,12 +1707,9 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <script>
         // ─── CONFIGURACIÓN DE FIREBASE ───
@@ -1558,6 +1726,37 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+
+        // ─── CONTROL DE VERSIÓN: CIERRE DE SESIÓN FORZADO (UNA SOLA VEZ) ───
+        // El cierre solo se aplica a partir de FECHA_CIERRE_FORZADO (hora de Argentina, UTC-3).
+        // Antes de esa fecha no se cierra ninguna sesión ni se marca la versión como vista.
+        // Para una nueva publicación: cambiar VERSION_PLATAFORMA y FECHA_CIERRE_FORZADO
+        // (en este archivo y en app.html, con los mismos valores).
+        const VERSION_PLATAFORMA = '2026.10.30-migracion';
+        const FECHA_CIERRE_FORZADO = new Date('2026-10-30T00:00:00-03:00');
+        const CLAVE_VERSION_VISTA = 'defensoria_empleados_version_vista';
+        let versionVistaEnMemoria = false;
+        let cierreForzadoEnCurso = false;
+
+        function cierreHabilitado() {
+            return Date.now() >= FECHA_CIERRE_FORZADO.getTime();
+        }
+
+        function versionYaVista() {
+            if (versionVistaEnMemoria) return true;
+            try {
+                return localStorage.getItem(CLAVE_VERSION_VISTA) === VERSION_PLATAFORMA;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function marcarVersionVista() {
+            versionVistaEnMemoria = true;
+            try {
+                localStorage.setItem(CLAVE_VERSION_VISTA, VERSION_PLATAFORMA);
+            } catch (e) { }
+        }
 
         // ─── ELEMENTOS DOM ───
         const modalLogin = document.getElementById('modalLogin');
@@ -1578,39 +1777,146 @@
         // ─── IMAGEN ───
         const imageWrapper = document.getElementById('imageWrapper');
 
-        // ─── ICONO DE INTRODUCCIÓN ───
-        const introOverlay = document.getElementById('introOverlay');
+        // ─── INICIO: ICONO + TEXTOS CON ESCRITURA ───
+        const landing = document.getElementById('landing');
         let introRevealed = false;
-        let introTimer = null;
+        const LAND_TYPING_DELAY = 1700;
+        const LAND_CHAR_MS = 45;
+        let landTimers = [];
+        let landProgressRAF = null;
+        const landProgressFill = document.getElementById('landProgressFill');
+        const landProgressPct = document.getElementById('landProgressPct');
 
+        function landSetProgress(p) {
+            const v = Math.max(0, Math.min(100, p));
+            landProgressFill.style.width = v.toFixed(1) + '%';
+            landProgressPct.textContent = Math.floor(v) + '%';
+        }
+
+        // La línea crece de 0 a 100 % durante toda la secuencia (icono + textos)
+        function landStartProgress() {
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const lens = Array.from(document.querySelectorAll('#landing .land-line'))
+                .map(l => l.dataset.text.length);
+            const total = LAND_TYPING_DELAY
+                + lens.reduce((acc, n) => acc + (reduce ? 0 : n * LAND_CHAR_MS) + (reduce ? 1200 : 900) + 500, 0);
+            const t0 = performance.now();
+            (function frame(now) {
+                if (introRevealed) return;
+                const p = Math.min(99, ((now - t0) / total) * 100);
+                landSetProgress(p);
+                landProgressRAF = requestAnimationFrame(frame);
+            })(t0);
+        }
+
+        function landWait(fn, ms) {
+            const id = setTimeout(fn, ms);
+            landTimers.push(id);
+        }
+
+        // Escribe un texto letra por letra; la parte pendiente queda invisible para no mover el centrado
+        function landType(el, speed, done) {
+            const text = el.dataset.text;
+            const vis = document.createElement('span');
+            vis.className = 't-vis';
+            const rest = document.createElement('span');
+            rest.className = 't-rest';
+            rest.textContent = text;
+            el.textContent = '';
+            el.appendChild(vis);
+            el.appendChild(rest);
+            el.classList.add('typing');
+            let i = 0;
+            (function step() {
+                if (introRevealed) return;
+                if (i >= text.length) {
+                    el.classList.remove('typing');
+                    done();
+                    return;
+                }
+                i++;
+                vis.textContent = text.slice(0, i);
+                rest.textContent = text.slice(i);
+                landWait(step, speed);
+            })();
+        }
+
+        function landStartTyping() {
+            const lines = Array.from(document.querySelectorAll('#landing .land-line'));
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // Muestra una sola línea a la vez: se escribe, se mantiene un instante, se desvanece y sigue la siguiente
+            function showLine(idx) {
+                if (introRevealed) return;
+                if (idx >= lines.length) {
+                    landSetProgress(100);
+                    landWait(revealAppFromIcon, 350);
+                    return;
+                }
+                const el = lines[idx];
+                const finish = () => {
+                    landWait(() => {
+                        el.classList.add('out');
+                        landWait(() => showLine(idx + 1), 500);
+                    }, reduce ? 1200 : 900);
+                };
+                if (reduce) {
+                    el.textContent = el.dataset.text;
+                    finish();
+                } else {
+                    landType(el, LAND_CHAR_MS, finish);
+                }
+            }
+
+            showLine(0);
+        }
+
+        // Los textos empiezan cuando termina la entrada del icono
+        landStartProgress();
+        landWait(landStartTyping, LAND_TYPING_DELAY);
+
+// ─── AL INGRESAR: fade del inicio → aviso → index desde el centro ───
         function revealAppFromIcon() {
             if (introRevealed) return;
             introRevealed = true;
 
-            if (introTimer) {
-                clearTimeout(introTimer);
-                introTimer = null;
-            }
+            landTimers.forEach(clearTimeout);
+            landTimers = [];
+            if (landProgressRAF) { cancelAnimationFrame(landProgressRAF); landProgressRAF = null; }
 
-            introOverlay.classList.add('intro-clicked');
-            document.body.classList.remove('pre-reveal');
-            imageWrapper.classList.add('visible');
+            landing.classList.add('land-leaving');
 
             setTimeout(() => {
-                introOverlay.classList.add('intro-leaving');
-            }, 250);
-
-            setTimeout(() => {
-                introOverlay.style.display = 'none';
-            }, 900);
+                landing.style.display = 'none';
+                mostrarAviso();
+            }, 800);
         }
 
-        // ─── AUTO-REVELADO DESPUÉS DE 3 SEGUNDOS ───
-        introTimer = setTimeout(() => {
-            revealAppFromIcon();
-        }, 3000);
+        // ─── MODAL DE ADVERTENCIA ───
+        const avisoOverlay = document.getElementById('avisoOverlay');
+        const avisoAceptarBtn = document.getElementById('avisoAceptarBtn');
 
-        introOverlay.addEventListener('click', revealAppFromIcon);
+        function mostrarAviso() {
+            avisoOverlay.classList.add('active');
+            avisoAceptarBtn.focus();
+        }
+
+        function continuarTrasAviso() {
+            avisoOverlay.classList.remove('active');
+            document.body.classList.remove('pre-reveal');
+            imageWrapper.classList.add('visible');
+        }
+
+        avisoAceptarBtn.addEventListener('click', continuarTrasAviso);
+        avisoOverlay.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                avisoAceptarBtn.focus();
+            }
+        });
+
+        // Un toque en la pantalla de inicio también permite saltar la animación
+        landing.addEventListener('click', revealAppFromIcon);
 
         let currentState = 'idle';
 
@@ -1621,46 +1927,29 @@
         let currentIndex = 0;
 
         function startTyping(text) {
-            // Limpiar temporizadores previos
-            if (typingTimer) {
-                clearInterval(typingTimer);
-                typingTimer = null;
-            }
-            if (typingTimeout) {
-                clearTimeout(typingTimeout);
-                typingTimeout = null;
-            }
+            if (typingTimer) { clearInterval(typingTimer); typingTimer = null; }
+            if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
             fullText = text;
             currentIndex = 0;
-            welcomeMessage.textContent = ''; // empezar vacío
+            welcomeMessage.textContent = '';
 
-            // Función que escribe una letra
             function typeNext() {
                 if (currentIndex < fullText.length) {
                     welcomeMessage.textContent += fullText.charAt(currentIndex);
                     currentIndex++;
-                    typingTimer = setTimeout(typeNext, 80); // velocidad de escritura
+                    typingTimer = setTimeout(typeNext, 80);
                 } else {
-                    // Terminó, esperar 3 segundos y reiniciar
                     typingTimeout = setTimeout(() => {
                         startTyping(fullText);
                     }, 3000);
                 }
             }
-
             typeNext();
         }
 
-        // Función para cambiar el texto y reiniciar la animación
         function setTypingText(newText) {
-            if (typingTimer) {
-                clearTimeout(typingTimer);
-                typingTimer = null;
-            }
-            if (typingTimeout) {
-                clearTimeout(typingTimeout);
-                typingTimeout = null;
-            }
+            if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+            if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
             startTyping(newText);
         }
 
@@ -1699,7 +1988,6 @@
         function updateUI(user) {
             if (user) {
                 const displayName = user.displayName || user.email || 'Usuario';
-                // Cambiar el texto con animación
                 setTypingText(`Hola, ${displayName}`);
                 btnFooter.textContent = 'Cerrar sesión';
                 btnFooter.onclick = () => {
@@ -1792,14 +2080,12 @@
                 });
         };
 
-        // ─── REGISTRO CON TOKEN NUMÉRICO DE 5 DÍGITOS ───
         window.registerUser = function() {
             const name = document.getElementById('registerName').value.trim();
             const rawEmail = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value.trim();
             const token = document.getElementById('registerToken').value.trim();
 
-            // Validaciones básicas
             if (!name || !rawEmail || !password || !token) {
                 showMessage('Completa todos los campos', 'error');
                 return;
@@ -1808,7 +2094,6 @@
                 showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
                 return;
             }
-            // Validar token: exactamente 5 dígitos numéricos
             if (!/^\d{5}$/.test(token)) {
                 showMessage('El token debe ser un número de 5 dígitos (ej. 15753)', 'error');
                 return;
@@ -1820,7 +2105,6 @@
                 return;
             }
 
-            // 🔐 Leer el token almacenado en Firestore (colección 'config', documento 'token')
             mostrarSpinnerConContador();
 
             const tokenRef = db.collection('config').doc('token');
@@ -1833,7 +2117,6 @@
                         return;
                     }
 
-                    // El documento tiene un campo 'token' con el valor esperado
                     const storedToken = doc.data().token;
                     if (storedToken === undefined || storedToken === null) {
                         showMessage('❌ Token del sistema no configurado correctamente. Contacta al administrador.', 'error');
@@ -1842,7 +2125,6 @@
                         return;
                     }
 
-                    // Convertir a string para comparación (por si viene como número)
                     const storedTokenStr = String(storedToken);
                     if (token !== storedTokenStr) {
                         showMessage('❌ Token incorrecto. Verifica el número de 5 dígitos.', 'error');
@@ -1851,7 +2133,6 @@
                         return;
                     }
 
-                    // ✅ Token correcto: proceder con el registro
                     auth.createUserWithEmailAndPassword(email, password)
                         .then((userCredential) => {
                             const user = userCredential.user;
@@ -1913,13 +2194,11 @@
             regPass.type = mostrarReg.checked ? 'text' : 'password';
         });
 
-        // Validación en tiempo real del token: solo dígitos y longitud 5
         const registerToken = document.getElementById('registerToken');
         registerToken.addEventListener('input', function() {
             this.value = this.value.replace(/\D/g, '').slice(0, 5);
         });
 
-        // Enter para login y registro
         const loginEmail = document.getElementById('loginEmail');
         const loginPassInput = document.getElementById('loginPassword');
         const handleLoginEnter = (e) => { if (e.key === 'Enter') window.loginUser(); };
@@ -2097,8 +2376,23 @@
         // ─── OBSERVADOR DE AUTENTICACIÓN ───
         auth.onAuthStateChanged((user) => {
             if (user) {
+                if (cierreForzadoEnCurso) return;
+                if (cierreHabilitado() && !versionYaVista()) {
+                    cierreForzadoEnCurso = true;
+                    auth.signOut()
+                        .catch((error) => {
+                            console.error('No se pudo forzar el cierre de sesión:', error);
+                            window.location.href = 'app.html';
+                        })
+                        .finally(() => {
+                            cierreForzadoEnCurso = false;
+                        });
+                    return;
+                }
                 window.location.href = 'app.html';
             } else {
+                // Solo se marca como vista cuando el cierre ya está habilitado
+                if (cierreHabilitado()) marcarVersionVista();
                 updateUI(null);
                 if (currentState === 'modalOpen') {
                     resetToInitial();
@@ -2109,7 +2403,6 @@
         // ─── INICIALIZACIÓN ───
         resetToInitial();
         setupModalEvents();
-        // Iniciar animación por defecto
         setTypingText('Hola, Defensoría Oficial');
 
         // ─── INTERCAMBIO DE IMAGEN ───

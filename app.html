@@ -2140,6 +2140,42 @@
         const auth = getAuth(app);
         const dbPerfil = getFirestore(app);
 
+        // ============================================================
+        // CONTROL DE VERSIÓN: CIERRE DE SESIÓN FORZADO (UNA SOLA VEZ)
+        // Mismos valores que en index (empleado-act). Si el usuario entra directo a
+        // esta página con una sesión que no vio la versión actual, se cierra la
+        // sesión y vuelve al index. Solo se aplica desde FECHA_CIERRE_FORZADO.
+        // ============================================================
+        const VERSION_PLATAFORMA = '2026.10.30-migracion';
+        const FECHA_CIERRE_FORZADO = new Date('2026-10-30T00:00:00-03:00');
+        const CLAVE_VERSION_VISTA = 'defensoria_empleados_version_vista';
+        let cierreForzadoEnCurso = false;
+
+        function cierreHabilitado() {
+            return Date.now() >= FECHA_CIERRE_FORZADO.getTime();
+        }
+
+        // Si el navegador bloquea localStorage no se puede recordar la versión:
+        // en ese caso NO se fuerza el cierre (evita dejar al usuario sin poder entrar).
+        function almacenamientoDisponible() {
+            try {
+                const k = '__test_almacenamiento__';
+                localStorage.setItem(k, '1');
+                localStorage.removeItem(k);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function versionYaVista() {
+            try {
+                return localStorage.getItem(CLAVE_VERSION_VISTA) === VERSION_PLATAFORMA;
+            } catch (e) {
+                return true;
+            }
+        }
+
         // ========== CONFIG FERIA Y LICENCIAS ==========
         const feriaConfig = {
             apiKey: "AIzaSyCxct5wrF6yGrGyWCwcI5J6F_bbzTOcr4w",
@@ -2776,13 +2812,32 @@
         }
 
         // ========== AUTH STATE ==========
+        function iniciarConUsuario(user) {
+            currentUser = user;
+            userDataCache.displayName = user.displayName;
+            userDataCache.photoURL = user.photoURL;
+            showWelcomeMessage(currentUser);
+        }
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                currentUser = user;
-                userDataCache.displayName = user.displayName;
-                userDataCache.photoURL = user.photoURL;
-                showWelcomeMessage(currentUser);
+                // Cierre forzado en curso: esperar a que Firebase confirme el signOut
+                if (cierreForzadoEnCurso) return;
+
+                // Sesión previa que aún no vio esta versión: cerrarla una única vez
+                if (cierreHabilitado() && almacenamientoDisponible() && !versionYaVista()) {
+                    cierreForzadoEnCurso = true;
+                    signOut(auth).catch((error) => {
+                        console.error('No se pudo forzar el cierre de sesión:', error);
+                        cierreForzadoEnCurso = false;
+                        iniciarConUsuario(user);
+                    });
+                    return;
+                }
+
+                iniciarConUsuario(user);
             } else {
+                // Sin sesión (o recién cerrada): vuelve al index, que marca la versión como vista
                 window.location.href = 'index.html';
             }
         });
