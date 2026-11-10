@@ -266,16 +266,45 @@
             transform: scale(1);
         }
 
+        /* ===== SELLO INSTITUCIONAL: imagen limpia con anillo giratorio ===== */
+        .sello {
+            --sello-d: max(130px, min(320px, 74vw, calc((100vh - 240px))));
+            --sello-anillo: max(3px, calc(var(--sello-d) * 0.016));
+            position: relative;
+            width: var(--sello-d);
+            height: var(--sello-d);
+            flex-shrink: 0;
+        }
+        @supports (height: 100dvh) {
+            .sello {
+                --sello-d: max(130px, min(320px, 74vw, calc((100dvh - 240px))));
+            }
+        }
+
+        /* Anillo exterior con degradado que rota */
+        .sello-anillo {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #00bfff, #e6f9ff, #66d9ff, #0088bb, #bff0ff, #00bfff);
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--sello-anillo)), #000 calc(100% - var(--sello-anillo) + 1px));
+                    mask: radial-gradient(farthest-side, transparent calc(100% - var(--sello-anillo)), #000 calc(100% - var(--sello-anillo) + 1px));
+            filter: drop-shadow(0 0 6px rgba(0, 191, 255, 0.5));
+            animation: selloGirar 14s linear infinite reverse;
+        }
+
+        @keyframes selloGirar {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Imagen central (circular, centrada dentro del sello) */
         .image-large {
-            width: 100%;
-            max-width: 420px;
-            aspect-ratio: 1 / 1;
+            position: absolute;
+            inset: 8%;
             border-radius: 50%;
             overflow: hidden;
-            border: 4px solid #00bfff;
+            border: clamp(2px, calc(var(--sello-d) * 0.012), 4px) solid #00bfff;
             background: #ffffff;
-            flex-shrink: 0;
-            position: relative;
             z-index: 20;
             box-shadow: 
                 0 0 30px rgba(0, 191, 255, 0.3),
@@ -288,6 +317,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             display: block;
         }
 
@@ -937,10 +967,6 @@
             .welcome-message {
                 cursor: default;
             }
-            .image-large {
-                max-width: 380px;
-                border-width: 4px;
-            }
             .image-wrapper {
                 max-width: 90%;
             }
@@ -1104,10 +1130,6 @@
         }
 
         @media (max-width: 480px) {
-            .image-large {
-                max-width: 300px;
-                border-width: 3px;
-            }
             .image-wrapper {
                 max-width: 95%;
             }
@@ -1146,10 +1168,6 @@
         }
 
         @media (max-width: 360px) {
-            .image-large {
-                max-width: 250px;
-                border-width: 3px;
-            }
             .image-wrapper {
                 max-width: 98%;
             }
@@ -1331,80 +1349,6 @@
         }
         @keyframes landCaret{ 50%{ border-right-color:transparent; } }
 
-        /* ===== Modal informativo posterior a la introducción ===== */
-        .aviso-overlay{
-            position:fixed;
-            inset:0;
-            z-index:10000;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:16px;
-            background:rgba(10,30,47,.35);
-            backdrop-filter:blur(6px);
-            -webkit-backdrop-filter:blur(6px);
-            visibility:hidden;
-            opacity:0;
-            transition:opacity .4s ease, visibility .4s;
-        }
-        .aviso-overlay.active{
-            visibility:visible;
-            opacity:1;
-        }
-        .aviso-contenido{
-            width:min(100%, 340px);
-            background:#ffffff;
-            border:1px solid rgba(0,180,216,.35);
-            border-radius:1.1rem;
-            padding:1.15rem 1.2rem 1.1rem;
-            box-shadow:0 16px 36px rgba(0,0,0,.2);
-            text-align:center;
-            transform:scale(.94) translateY(8px);
-            transition:transform .4s cubic-bezier(.2,.9,.4,1.1);
-        }
-        .aviso-overlay.active .aviso-contenido{
-            transform:none;
-        }
-        .aviso-titulo{
-            font-size:1.05rem;
-            font-weight:800;
-            color:#e65c00;
-            margin:0 0 .6rem;
-            line-height:1.25;
-        }
-        .aviso-texto{
-            font-size:.84rem;
-            line-height:1.45;
-            color:#1a2a3a;
-            margin:0 0 .55rem;
-        }
-        .aviso-btn{
-            margin-top:.35rem;
-            padding:8px 26px;
-            background:#0a2b3e;
-            color:#ffffff;
-            border:none;
-            border-radius:40px;
-            font-weight:700;
-            font-size:.85rem;
-            cursor:pointer;
-            transition:background .2s, transform .2s, box-shadow .2s;
-        }
-        .aviso-btn:hover{
-            background:#005f8c;
-            transform:translateY(-2px);
-            box-shadow:0 8px 18px rgba(0,120,180,.25);
-        }
-        .aviso-btn:focus-visible{
-            outline:3px solid #00bfff;
-            outline-offset:2px;
-        }
-        @media (max-width:480px){
-            .aviso-contenido{ padding:1rem 1rem .95rem; }
-            .aviso-titulo{ font-size:1rem; }
-            .aviso-texto{ font-size:.82rem; }
-        }
-
         /* ===== REVEAL DEL INDEX: desde el centro hacia adelante ===== */
         body.pre-reveal main,
         body.pre-reveal footer,
@@ -1435,6 +1379,7 @@
             .intro-blob{ animation:none; }
             .land-logo-entrance{ animation:none; opacity:1; transform:none; filter:none; }
             .land-logo-idle{ animation:none; }
+            .sello-anillo{ animation:none; }
             body.pre-reveal main{ transform:none; filter:none; }
         }
     </style>
@@ -1545,19 +1490,6 @@
         </div>
     </div>
 
-    <div id="avisoOverlay" class="aviso-overlay" role="dialog" aria-modal="true" aria-labelledby="avisoTitulo">
-        <div class="aviso-contenido">
-            <h2 id="avisoTitulo" class="aviso-titulo">Aviso a todos los usuarios</h2>
-
-<p class="aviso-texto">Se informa que, en breve, esta aplicación dejará de estar alojada en la nube y será migrada en su totalidad a un servidor local físico ubicado en la oficina de la Defensoría Oficial N.º 6.</p>
-
-<p class="aviso-texto">Por este motivo, la aplicación no podrá utilizarse en modo remoto u online: el acceso quedará limitado únicamente a la red local.</p>
-
-<p class="aviso-texto">Todos los datos y registros actuales se conservarán intactos.</p>
-            <button type="button" id="avisoAceptarBtn" class="aviso-btn">Entendido</button>
-        </div>
-    </div>
-
     <main>
         <div id="homeContent">
             <div id="dynamicContent">
@@ -1601,8 +1533,11 @@
 
             <div class="top-image-container">
                 <div class="image-wrapper" id="imageWrapper">
-                    <div class="image-large">
-                        <img src="https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true" alt="Ministerio Público" />
+                    <div class="sello">
+                        <span class="sello-anillo" aria-hidden="true"></span>
+                        <div class="image-large">
+                            <img src="https://github.com/sistemadigital/iconos/blob/main/2.png?raw=true" alt="Ministerio Público" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1875,7 +1810,7 @@
         landStartProgress();
         landWait(landStartTyping, LAND_TYPING_DELAY);
 
-// ─── AL INGRESAR: fade del inicio → aviso → index desde el centro ───
+// ─── AL INGRESAR: fade del inicio → index desde el centro ───
         function revealAppFromIcon() {
             if (introRevealed) return;
             introRevealed = true;
@@ -1888,32 +1823,10 @@
 
             setTimeout(() => {
                 landing.style.display = 'none';
-                mostrarAviso();
+                document.body.classList.remove('pre-reveal');
+                imageWrapper.classList.add('visible');
             }, 800);
         }
-
-        // ─── MODAL DE ADVERTENCIA ───
-        const avisoOverlay = document.getElementById('avisoOverlay');
-        const avisoAceptarBtn = document.getElementById('avisoAceptarBtn');
-
-        function mostrarAviso() {
-            avisoOverlay.classList.add('active');
-            avisoAceptarBtn.focus();
-        }
-
-        function continuarTrasAviso() {
-            avisoOverlay.classList.remove('active');
-            document.body.classList.remove('pre-reveal');
-            imageWrapper.classList.add('visible');
-        }
-
-        avisoAceptarBtn.addEventListener('click', continuarTrasAviso);
-        avisoOverlay.addEventListener('keydown', (e) => {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                avisoAceptarBtn.focus();
-            }
-        });
 
         // Un toque en la pantalla de inicio también permite saltar la animación
         landing.addEventListener('click', revealAppFromIcon);
