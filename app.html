@@ -1993,9 +1993,25 @@
             messagingSenderId: "438237217533",
             appId: "1:438237217533:web:6603123e43a12da00c7494"
         };
-        const app = initializeApp(firebaseConfigPerfil);
+        // ========== CONFIG AUTENTICACIÓN (la misma que usa index.html para el login) ==========
+        // La sesión se inicia en index.html contra el proyecto "sistemadefensoria6".
+        // Para que Firebase reconozca esa sesión aquí, esta página debe usar EXACTAMENTE
+        // la misma configuración (apiKey) y la app por defecto.
+        const firebaseConfigAuth = {
+            apiKey: "AIzaSyBDXZYAxWsvMiMGCrPRp3EBVuU0dzuWF4M",
+            authDomain: "sistemadefensoria6.firebaseapp.com",
+            projectId: "sistemadefensoria6",
+            storageBucket: "sistemadefensoria6.firebasestorage.app",
+            messagingSenderId: "1024631392849",
+            appId: "1:1024631392849:web:1dc13292e690e2ed100670"
+        };
+        const app = initializeApp(firebaseConfigAuth);
         const auth = getAuth(app);
-        const dbPerfil = getFirestore(app);
+
+        // Los datos de perfil (colección "usuarios") siguen en el proyecto defensoria-empleados
+        const appPerfil = initializeApp(firebaseConfigPerfil, "perfil");
+        const dbPerfil = getFirestore(appPerfil);
+        signInAnonymously(getAuth(appPerfil)).catch(e => console.warn("Auth anónima perfil:", e));
 
         // ============================================================
         // CONTROL DE VERSIÓN: CIERRE DE SESIÓN FORZADO (UNA SOLA VEZ)
@@ -2005,7 +2021,7 @@
         // ============================================================
         const VERSION_PLATAFORMA = '2026.10.30-migracion';
         const FECHA_CIERRE_FORZADO = new Date('2026-10-30T00:00:00-03:00');
-        const CLAVE_VERSION_VISTA = 'defensoria_empleados_version_vista';
+        const CLAVE_VERSION_VISTA = 'defensoria6_version_vista'; // misma clave que usa index.html
         let cierreForzadoEnCurso = false;
 
         function cierreHabilitado() {
