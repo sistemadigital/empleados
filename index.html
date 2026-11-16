@@ -1349,11 +1349,73 @@
         }
         @keyframes landCaret{ 50%{ border-right-color:transparent; } }
 
+        /* ===== INDICADORES DEL INTRO: debajo de la línea de carga, aparecen de izquierda a derecha ===== */
+        .land-stats{
+            width:min(100%, 540px);
+            display:grid;
+            grid-template-columns:repeat(3, minmax(0, 1fr));
+            justify-items:center;
+            text-align:center;
+        }
+        .land-stat{
+            width:100%;
+            padding:0 clamp(.35rem, 2vw, 1.1rem);
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            opacity:0;
+            transform:translateY(10px);
+            animation:landStatIn .8s cubic-bezier(.16,.9,.28,1) forwards;
+        }
+        .land-stat + .land-stat{ border-left:1px solid rgba(0,191,255,.28); }
+        .land-stat:nth-child(1){ animation-delay:2s; }
+        .land-stat:nth-child(2){ animation-delay:2.9s; }
+        .land-stat:nth-child(3){ animation-delay:3.8s; }
+        @keyframes landStatIn{ to{ opacity:1; transform:translateY(0); } }
+
+        .land-stat strong{
+            display:block;
+            width:max-content;
+            min-width:3ch;
+            font-family:'Inter', sans-serif;
+            font-weight:600;
+            font-size:clamp(1.5rem, 6.4vw, 2.4rem);
+            letter-spacing:-.03em;
+            line-height:1;
+            color:var(--l-cyan);
+            font-variant-numeric:tabular-nums;
+        }
+        .land-stat strong.loading-num{
+            color:transparent;
+            border-radius:8px;
+            background:linear-gradient(90deg, rgba(0,191,255,.12) 25%, rgba(0,191,255,.3) 50%, rgba(0,191,255,.12) 75%) 0 0/200% 100%;
+            animation:landShimmer 1.4s linear infinite;
+        }
+        @keyframes landShimmer{ to{ background-position:-200% 0; } }
+        .land-stat span{
+            display:block;
+            margin-top:.65rem;
+            font-family:'Inter', sans-serif;
+            font-weight:500;
+            font-size:clamp(.66rem, 2.7vw, .8rem);
+            line-height:1.3;
+            color:#0b5f86;
+            text-wrap:balance;
+        }
+        .land-stat small{
+            display:block;
+            margin-top:.2rem;
+            font-family:'Inter', sans-serif;
+            font-weight:400;
+            font-size:clamp(.6rem, 2.4vw, .72rem);
+            line-height:1.3;
+            color:#3a7594;
+            text-wrap:balance;
+        }
+
         /* ===== REVEAL DEL INDEX: desde el centro hacia adelante ===== */
         body.pre-reveal main,
         body.pre-reveal footer,
-        body.pre-reveal #manualLinkContainer,
-        body.pre-reveal #defensoriaLinkContainer,
         body.pre-reveal #versionInfoContainer{
             opacity:0;
             pointer-events:none;
@@ -1371,7 +1433,7 @@
             transform-origin:center center;
         }
 
-        footer, #manualLinkContainer, #defensoriaLinkContainer, #versionInfoContainer{
+        footer{
             transition:opacity 1.2s ease 0.2s;
         }
 
@@ -1379,6 +1441,8 @@
             .intro-blob{ animation:none; }
             .land-logo-entrance{ animation:none; opacity:1; transform:none; filter:none; }
             .land-logo-idle{ animation:none; }
+            .land-stat{ animation:none; opacity:1; transform:none; }
+            .land-stat strong.loading-num{ animation:none; }
             .sello-anillo{ animation:none; }
             body.pre-reveal main{ transform:none; filter:none; }
         }
@@ -1488,6 +1552,24 @@
                 <span class="land-progress-pct" id="landProgressPct">0%</span>
             </div>
         </div>
+
+        <div class="land-stats" role="group" aria-label="Indicadores de expedientes">
+            <div class="land-stat">
+                <strong id="landKpiHistoricos" class="loading-num">—</strong>
+                <span>Expedientes históricos</span>
+                <small>Causas finalizadas o archivadas</small>
+            </div>
+            <div class="land-stat">
+                <strong id="landKpiActivos" class="loading-num">—</strong>
+                <span>Expedientes activos</span>
+                <small>En trámite actualmente</small>
+            </div>
+            <div class="land-stat">
+                <strong id="landKpiTotal" class="loading-num">—</strong>
+                <span>Total de expedientes</span>
+                <small>Base activa + histórica</small>
+            </div>
+        </div>
     </div>
 
     <main>
@@ -1563,7 +1645,7 @@
                 <button class="btn-credenciales" id="btnFooterCredenciales">Haz clic para ingresar</button>
             </div>
             <div class="footer-right">
-                <span class="version-text" id="versionText">Versión 9.2026</span>
+                <span class="version-text" id="versionText">Versión 11.2026</span>
             </div>
         </div>
     </footer>
@@ -1647,15 +1729,121 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <script>
+        // ─── INDICADORES DEL INTRO · lectura en vivo de las dos bases (misma lógica que informativa) ───
+        (function initIndicadoresIntro() {
+            const elHist  = document.getElementById('landKpiHistoricos');
+            const elAct   = document.getElementById('landKpiActivos');
+            const elTotal = document.getElementById('landKpiTotal');
+            if (!elHist || !elAct || !elTotal) return;
+
+            // Instantes (ms) en que cada indicador se hace visible: coinciden con los animation-delay del CSS
+            const REVEAL_MS = { hist: 2000, act: 2900, total: 3800 };
+            const t0 = performance.now();
+
+            function animarNumero(el, destino, delayMs, duracion) {
+                duracion = duracion || 900;
+                const espera = Math.max(0, delayMs - (performance.now() - t0));
+                setTimeout(() => {
+                    const ini = performance.now();
+                    el.classList.remove('loading-num');
+                    (function paso(t) {
+                        const p = Math.min(1, (t - ini) / duracion);
+                        const suave = 1 - Math.pow(1 - p, 3);
+                        el.textContent = Math.round(destino * suave).toLocaleString('es-AR');
+                        if (p < 1) requestAnimationFrame(paso);
+                    })(ini);
+                }, espera);
+            }
+
+            function mostrarError() {
+                [elHist, elAct, elTotal].forEach(el => {
+                    el.classList.remove('loading-num');
+                    el.textContent = '—';
+                });
+            }
+
+            function errorEn(el) {
+                el.classList.remove('loading-num');
+                el.textContent = '—';
+            }
+
+            // Evita que el indicador quede en carga indefinida si una base no responde
+            function conTiempoLimite(promesa, ms) {
+                return Promise.race([
+                    promesa,
+                    new Promise((_, rechazar) => setTimeout(() => rechazar(new Error('Tiempo de espera agotado')), ms))
+                ]);
+            }
+
+            try {
+                // Base activa de causas (la misma que usa index (1))
+                const appNueva = firebase.apps.find(a => a.name === 'nueva')
+                    || firebase.initializeApp({
+                        apiKey: "AIzaSyBevCwkh4iOWVqhp3gG2ae1eCUMkFpnr6I",
+                        authDomain: "causas-2defensoria.firebaseapp.com",
+                        projectId: "causas-2defensoria",
+                        storageBucket: "causas-2defensoria.firebasestorage.app",
+                        messagingSenderId: "663905632804",
+                        appId: "1:663905632804:web:4f686a88004dc642ad0eb1"
+                    }, 'nueva');
+                const appHistorica = firebase.apps.find(a => a.name === 'historica')
+                    || firebase.initializeApp({
+                        apiKey: "AIzaSyBt6X0u0BpiNPcV2SNPrN-spCmjl2AhZaA",
+                        authDomain: "causas-defensoria.firebaseapp.com",
+                        projectId: "causas-defensoria",
+                        storageBucket: "causas-defensoria.appspot.com",
+                        messagingSenderId: "186064671470",
+                        appId: "1:186064671470:web:b58bae5eadbe6e469f19ff"
+                    }, 'historica');
+
+                // API empleados: se mantiene únicamente en este index (no interviene en los indicadores)
+                if (!firebase.apps.find(a => a.name === 'empleados')) {
+                    firebase.initializeApp({
+                        apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
+                        authDomain: "defensoria-empleados.firebaseapp.com",
+                        databaseURL: "https://defensoria-empleados-default-rtdb.firebaseio.com",
+                        projectId: "defensoria-empleados",
+                        storageBucket: "defensoria-empleados.firebasestorage.app",
+                        messagingSenderId: "438237217533",
+                        appId: "1:438237217533:web:6603123e43a12da00c7494"
+                    }, 'empleados');
+                }
+
+                // Cada indicador se resuelve por separado: si una base falla, las otras igual se muestran
+                Promise.allSettled([
+                    conTiempoLimite(appHistorica.firestore().collection('causas').get(), 10000),
+                    conTiempoLimite(appNueva.firestore().collection('causas').get(), 10000)
+                ])
+                .then(([rHist, rAct]) => {
+                    const okHist = rHist.status === 'fulfilled';
+                    const okAct  = rAct.status === 'fulfilled';
+                    if (!okHist) console.error('Indicadores del intro · base histórica:', rHist.reason);
+                    if (!okAct)  console.error('Indicadores del intro · base activa:', rAct.reason);
+
+                    if (okHist) animarNumero(elHist, rHist.value.size, REVEAL_MS.hist); else errorEn(elHist);
+                    if (okAct)  animarNumero(elAct,  rAct.value.size,  REVEAL_MS.act);  else errorEn(elAct);
+                    if (okHist && okAct) {
+                        animarNumero(elTotal, rHist.value.size + rAct.value.size, REVEAL_MS.total);
+                    } else {
+                        errorEn(elTotal);
+                    }
+                });
+            } catch (e) {
+                console.error('Firebase (indicadores del intro):', e);
+                mostrarError();
+            }
+        })();
+    </script>
+
+    <script>
         // ─── CONFIGURACIÓN DE FIREBASE ───
         const firebaseConfig = {
-            apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
-            authDomain: "defensoria-empleados.firebaseapp.com",
-            databaseURL: "https://defensoria-empleados-default-rtdb.firebaseio.com",
-            projectId: "defensoria-empleados",
-            storageBucket: "defensoria-empleados.firebasestorage.app",
-            messagingSenderId: "438237217533",
-            appId: "1:438237217533:web:6603123e43a12da00c7494"
+            apiKey: "AIzaSyBDXZYAxWsvMiMGCrPRp3EBVuU0dzuWF4M",
+            authDomain: "sistemadefensoria6.firebaseapp.com",
+            projectId: "sistemadefensoria6",
+            storageBucket: "sistemadefensoria6.firebasestorage.app",
+            messagingSenderId: "1024631392849",
+            appId: "1:1024631392849:web:1dc13292e690e2ed100670"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -1669,7 +1857,7 @@
         // (en este archivo y en app.html, con los mismos valores).
         const VERSION_PLATAFORMA = '2026.10.30-migracion';
         const FECHA_CIERRE_FORZADO = new Date('2026-10-30T00:00:00-03:00');
-        const CLAVE_VERSION_VISTA = 'defensoria_empleados_version_vista';
+        const CLAVE_VERSION_VISTA = 'defensoria6_version_vista';
         let versionVistaEnMemoria = false;
         let cierreForzadoEnCurso = false;
 
@@ -1709,7 +1897,6 @@
 
         const versionContainer = document.getElementById('versionInfoContainer');
 
-        // ─── IMAGEN ───
         const imageWrapper = document.getElementById('imageWrapper');
 
         // ─── INICIO: ICONO + TEXTOS CON ESCRITURA ───
