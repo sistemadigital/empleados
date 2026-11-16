@@ -2053,6 +2053,25 @@
             startTyping(newText);
         }
 
+        // Sesión en defensoria-empleados (donde está la colección "usuarios" con los cumpleaños).
+        // app.html la reutiliza por compartir el nombre de app "perfil". Si falla, app.html usa sesión anónima.
+        function iniciarSesionPerfil(email, password) {
+            try {
+                const appP = firebase.apps.find(a => a.name === 'perfil') || firebase.initializeApp({
+                    apiKey: "AIzaSyAu08lySjqmZrj5JOGAc16y1Soak66EiTE",
+                    authDomain: "defensoria-empleados.firebaseapp.com",
+                    projectId: "defensoria-empleados",
+                    storageBucket: "defensoria-empleados.firebasestorage.app",
+                    messagingSenderId: "438237217533",
+                    appId: "1:438237217533:web:6603123e43a12da00c7494"
+                }, 'perfil');
+                return Promise.race([
+                    appP.auth().signInWithEmailAndPassword(email, password),
+                    new Promise(resolve => setTimeout(resolve, 6000))
+                ]).catch(e => console.warn('Sesión de perfil (defensoria-empleados):', e.code || e.message));
+            } catch (e) { return Promise.resolve(); }
+        }
+
         function normalizeEmail(input) {
             input = input.trim();
             if (!input) return null;
@@ -2148,7 +2167,8 @@
 
             mostrarSpinnerConContador();
 
-            auth.signInWithEmailAndPassword(email, password)
+            iniciarSesionPerfil(email, password)
+                .then(() => auth.signInWithEmailAndPassword(email, password))
                 .then(() => {
                     showMessage('✅ Inicio de sesión exitoso', 'success');
                     resetToInitial();

@@ -2011,7 +2011,40 @@
         // Los datos de perfil (colección "usuarios") siguen en el proyecto defensoria-empleados
         const appPerfil = initializeApp(firebaseConfigPerfil, "perfil");
         const dbPerfil = getFirestore(appPerfil);
-        signInAnonymously(getAuth(appPerfil)).catch(e => console.warn("Auth anónima perfil:", e));
+        const authPerfil = getAuth(appPerfil);
+        // Todo acceso a la colección "usuarios" (cumpleaños, nombre, color) usa SIEMPRE este proyecto
+        // (defensoria-empleados) y espera a que su sesión anónima esté lista antes de leer/escribir.
+        let perfilAuthError = null;
+        const perfilListo = (async () => {
+            try {
+                if (typeof authPerfil.authStateReady === 'function') await authPerfil.authStateReady();
+                if (!authPerfil.currentUser) await signInAnonymously(authPerfil);
+            } catch (e) {
+                perfilAuthError = e;
+                console.error("Auth anónima perfil FALLÓ (" + (e.code || e.message) + "). Sin esta sesión Firestore rechaza leer/escribir.", e);
+            }
+        })();
+        // Espera la sesión del perfil, con tope de 6 s para no bloquear la pantalla si hay mala conexión
+        const esperarPerfil = () => Promise.race([perfilListo, new Promise(resolve => setTimeout(resolve, 6000))]);
+
+        // ID real del documento en "usuarios" (se reutiliza al guardar para no crear duplicados)
+        let perfilDocId = null;
+        const idPerfil = (email) => perfilDocId || email || 'anonimo';
+        // Busca el perfil por ID tal cual, por ID en minúsculas y, de respaldo, por el campo "email".
+        // Lanza error si Firestore rechaza la lectura (permisos/red); devuelve null si de verdad no existe.
+        async function leerPerfil(email) {
+            await esperarPerfil();
+            const candidatos = [...new Set([email, email.toLowerCase()])];
+            for (const id of candidatos) {
+                const snap = await getDoc(doc(dbPerfil, "usuarios", id));
+                if (snap.exists()) { perfilDocId = id; return snap.data(); }
+            }
+            try {
+                const res = await getDocs(query(collection(dbPerfil, "usuarios"), where("email", "==", email.toLowerCase())));
+                if (!res.empty) { perfilDocId = res.docs[0].id; return res.docs[0].data(); }
+            } catch (e) { console.warn("Búsqueda de perfil por campo email:", e.code || e.message); }
+            return null;
+        }
 
         // ============================================================
         // CONTROL DE VERSIÓN: CIERRE DE SESIÓN FORZADO (UNA SOLA VEZ)
@@ -2377,9 +2410,10 @@
         async function updateDisplayName(newName) {
             if (!currentUser || !newName.trim()) return;
             try {
+                await esperarPerfil();
                 const safeEmail = currentUser.email || 'anonimo';
                 await updateProfile(currentUser, { displayName: newName.trim() });
-                await setDoc(doc(dbPerfil, "usuarios", safeEmail), { nombreCompleto: newName.trim() }, { merge: true });
+                await setDoc(doc(dbPerfil, "usuarios", idPerfil(safeEmail)), { nombreCompleto: newName.trim() }, { merge: true });
                 userDataCache.displayName = newName.trim();
                 showWelcomeMessage(currentUser, true);
             } catch (error) { console.error('Error al actualizar nombre:', error); }
@@ -2388,18 +2422,33 @@
         async function updateFechaNacimiento(newFecha) {
             if (!currentUser) return;
             try {
+                await esperarPerfil();
                 const safeEmail = currentUser.email || 'anonimo';
-                await setDoc(doc(dbPerfil, "usuarios", safeEmail), { fechaNacimiento: newFecha }, { merge: true });
+                const docRef = doc(dbPerfil, "usuarios", idPerfil(safeEmail));
+                // Se guarda también el email (para excluirse a uno mismo en el modal) y, si el documento
+                // todavía no tiene nombre, se completa para que el modal de cumpleaños pueda mostrarlo.
+                const datos = { fechaNacimiento: newFecha, email: safeEmail };
+                let tieneNombre = false;
+                try {
+                    const snap = await getDoc(docRef);
+                    tieneNombre = snap.exists() && !!snap.data().nombreCompleto;
+                } catch (e) { console.warn('No se pudo leer el perfil antes de guardar la fecha:', e); }
+                if (!tieneNombre) datos.nombreCompleto = currentUser.displayName || safeEmail.split('@')[0];
+                await setDoc(docRef, datos, { merge: true });
                 userDataCache.fechaNacimiento = newFecha;
                 showWelcomeMessage(currentUser, true);
-            } catch (error) { console.error('Error al actualizar fecha:', error); }
+            } catch (error) {
+                console.error('Error al actualizar fecha:', error);
+                alert('No se pudo guardar la fecha de nacimiento (' + (error.code || error.message) + '). Intenta nuevamente.');
+            }
         }
 
         async function updateColorPersonalizado(newColor) {
             if (!currentUser) return;
             try {
+                await esperarPerfil();
                 const safeEmail = currentUser.email || 'anonimo';
-                await setDoc(doc(dbPerfil, "usuarios", safeEmail), { colorPersonalizado: newColor }, { merge: true });
+                await setDoc(doc(dbPerfil, "usuarios", idPerfil(safeEmail)), { colorPersonalizado: newColor }, { merge: true });
                 userDataCache.colorPersonalizado = newColor;
             } catch (error) { console.error('Error al actualizar color personalizado:', error); }
         }
@@ -2489,10 +2538,17 @@
             const today = new Date();
             const hoy = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}`;
             try {
+                await esperarPerfil();
                 const q = query(collection(dbPerfil, "usuarios"), where("fechaNacimiento", "==", hoy));
                 const querySnapshot = await getDocs(q);
+                const miEmail = (currentUser?.email || '').toLowerCase();
                 const birthdayUsers = [];
-                querySnapshot.forEach(doc => { if (doc.data().email !== (currentUser?.email || '')) birthdayUsers.push(doc.data().nombreCompleto); });
+                querySnapshot.forEach(d => {
+                    const data = d.data();
+                    // El ID del documento es el email: sirve de respaldo si el campo "email" o "nombreCompleto" faltan
+                    const emailDoc = (data.email || d.id || '').toLowerCase();
+                    if (emailDoc !== miEmail) birthdayUsers.push(data.nombreCompleto || emailDoc.split('@')[0]);
+                });
                 if (birthdayUsers.length > 0 && !birthdayModalShown) {
                     const list = document.getElementById('birthdayList');
                     list.innerHTML = '';
@@ -2520,17 +2576,25 @@
             let esCumpleanos = false;
             let mensajeBienvenida = `¡Hola ${displayName}!`;
 
+            let lecturaFallida = !!userDataCache.lecturaFallida;
             if (!useCache && !userDataCache.fechaNacimiento && email) {
                 try {
-                    const docRef = doc(dbPerfil, "usuarios", email);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        fechaNacimiento = docSnap.data().fechaNacimiento || '';
+                    const datos = await leerPerfil(email);
+                    lecturaFallida = false;
+                    if (datos) {
+                        fechaNacimiento = datos.fechaNacimiento || '';
                         userDataCache.fechaNacimiento = fechaNacimiento;
-                        colorPersonalizado = docSnap.data().colorPersonalizado || '#001f3f';
+                        colorPersonalizado = datos.colorPersonalizado || '#001f3f';
                         userDataCache.colorPersonalizado = colorPersonalizado;
+                    } else {
+                        console.warn("No existe un perfil en 'usuarios' para", email);
                     }
-                } catch (error) { console.warn("No se pudo obtener el perfil de usuario:", error); }
+                } catch (error) {
+                    lecturaFallida = true;
+                    console.error("No se pudo LEER el perfil (" + (error.code || error.message) + ")" +
+                        (perfilAuthError ? " | Auth anónima: " + (perfilAuthError.code || perfilAuthError.message) : ""), error);
+                }
+                userDataCache.lecturaFallida = lecturaFallida;
             }
 
             aplicarColorPersonalizado(colorPersonalizado);
@@ -2542,7 +2606,7 @@
                     mensajeBienvenida = `¡Feliz Cumpleaños, ${displayName}! 🎉`;
                     esCumpleanos = true;
                 }
-            } else { faltaFecha = true; }
+            } else if (!lecturaFallida) { faltaFecha = true; }
 
             const creationTime = user.metadata?.creationTime ? new Date(user.metadata.creationTime) : null;
             const lastLoginAt = user.metadata?.lastLoginAt ? new Date(parseInt(user.metadata.lastLoginAt)) : null;
@@ -2589,7 +2653,7 @@
                         ${avatarOptionsHtml}
                         <div class="info-item" id="nameDisplayRow"><strong>Nombre:</strong> <span id="displayNameSpan">${displayName}</span><i class="fas fa-pencil-alt edit-icon" id="editNameIcon"></i></div>
                         <div class="info-item edit-row" id="nameEditRow" style="display:none;"><strong>Nombre:</strong> <input type="text" id="nameInput" value="${displayName}" placeholder="Nombre y apellido"><button id="saveNameBtn" class="save-btn"><i class="fas fa-check"></i></button><button id="cancelNameBtn" class="cancel-btn"><i class="fas fa-times"></i></button></div>
-                        <div class="info-item" id="fechaDisplayRow"><strong>F. Nacimiento:</strong> <span id="fechaSpan">${fechaNacimiento || 'No registrada'}</span><i class="fas fa-pencil-alt edit-icon" id="editFechaIcon"></i></div>
+                        <div class="info-item" id="fechaDisplayRow"><strong>F. Nacimiento:</strong> <span id="fechaSpan">${fechaNacimiento || (lecturaFallida ? 'No se pudo cargar' : 'No registrada')}</span><i class="fas fa-pencil-alt edit-icon" id="editFechaIcon"></i></div>
                         <div class="info-item edit-row" id="fechaEditRow" style="display:none;"><strong>F. Nacimiento:</strong> <input type="text" id="fechaInput" value="${fechaNacimiento}" placeholder="DD/MM" maxlength="5"><button id="saveFechaBtn" class="save-btn"><i class="fas fa-check"></i></button><button id="cancelFechaBtn" class="cancel-btn"><i class="fas fa-times"></i></button></div>
                         <div class="info-item"><strong>Color Personal:</strong> <input type="color" id="colorPicker" value="${colorPersonalizado}" style="cursor: pointer; border: none; width: 40px; height: 30px; border-radius: 4px; padding: 0; background: transparent;"></div>
                         <div class="info-item"><strong>Correo:</strong> ${email || 'No asignado'}</div>
@@ -2717,7 +2781,7 @@
 
         document.getElementById('confirmarSalida').addEventListener('click', async () => {
             document.getElementById('modalSalida').classList.remove('active');
-            try { await signOut(auth); } catch (error) { console.error('Error al salir:', error); }
+            try { await signOut(authPerfil).catch(() => {}); await signOut(auth); } catch (error) { console.error('Error al salir:', error); }
         });
 
         setInterval(() => { window.actualizarNovedades?.(); }, 30 * 60 * 1000);
