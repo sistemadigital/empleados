@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚖️Sistema Empleados</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* ===== RESET Y BASE ===== */
@@ -12,7 +14,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font);
         }
 
         body {
@@ -660,7 +662,7 @@
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -718,7 +720,7 @@
             color: #fff;
             border: none;
             border-radius: 999px;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font);
             font-weight: 700;
             font-size: 0.85rem;
             cursor: pointer;
@@ -1249,7 +1251,7 @@
             gap: 6px;
             box-shadow: 0 0 12px rgba(255, 140, 0, 0.5), 0 0 24px rgba(255, 140, 0, 0.2);
             transition: transform 0.2s, box-shadow 0.2s;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font);
             white-space: nowrap;
             margin-right: 8px;
             cursor: pointer;
@@ -1525,6 +1527,555 @@
             .novedades-modal .item-lista {
                 font-size: 0.7rem;
             }
+        }
+    
+        /* ============================================================
+           CAPA VISUAL · TEMA "EXPEDIENTES" (blanco, índigo y arcos de luz)
+           Solo presentación: paleta, tipografía, radios, sombras, pastillas,
+           arcos orbitantes, transiciones y fondos desenfocados.
+           No cambia estructura, textos ni lógica; se apoya en las reglas
+           anteriores y las ajusta al final de la cascada.
+           ============================================================ */
+        @property --giro { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+        @property --arco { syntax: '<angle>'; initial-value: 70deg; inherits: false; }
+
+        :root {
+            --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            --tinta: #0b1f3a;
+            --gris: #64748b;
+            --borde: #e2e8f0;
+            --fondo: #eef1f6;
+            --escena: #f5f7fb;
+            --tarjeta: #ffffff;
+            --azul: #2563eb;
+            --indigo: #4f46e5;
+            --rojo-fondo: #fee2e2;
+            --rojo-texto: #991b1b;
+            --info-fondo: #e9eef9;
+            --info-texto: #1e3a8a;
+            --sombra: 0 1px 2px rgba(15,23,42,.04), 0 20px 40px -24px rgba(15,23,42,.14);
+            --sombra-flota: 0 16px 36px -12px rgba(15,23,42,.28);
+            --sombra-alta: 0 30px 70px -20px rgba(0,0,0,.5);
+            --suave: cubic-bezier(.16, 1, .3, 1);
+        }
+
+        body {
+            color: var(--tinta);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        @keyframes orbitar { to { --giro: 360deg; } }
+        @keyframes emerger { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        @keyframes subirEntrar { from { opacity: 0; transform: translateY(30px) scale(.95); } to { opacity: 1; transform: none; } }
+
+        /* ----- Fondo: gris azulado con manchas muy tenues ----- */
+        .intro-fluid-bg {
+            background:
+                radial-gradient(circle at 30% 20%, #f7f9fd 0%, transparent 60%),
+                radial-gradient(circle at 70% 80%, #e4e9f5 0%, transparent 60%),
+                var(--fondo);
+        }
+        .intro-blob { opacity: .2; }
+        .intro-blob--1 { background: #c7d2fe; }
+        .intro-blob--2 { background: #bfdbfe; }
+        .intro-blob--3 { background: #a5b4fc; }
+        .intro-blob--4 { background: #cffafe; }
+        .intro-blob--5 { background: #93c5fd; opacity: .14; }
+
+        /* ----- Barra de bienvenida: tarjeta blanca de sombra suave ----- */
+        .welcome-bar {
+            background: var(--tarjeta);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            border: 1px solid var(--borde);
+            border-radius: 24px;
+            box-shadow: var(--sombra);
+            transition: transform .35s var(--suave), box-shadow .35s;
+        }
+        .welcome-bar:hover {
+            background: var(--tarjeta);
+            transform: translateY(-2px);
+            box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 26px 46px -22px color-mix(in srgb, var(--azul) 32%, transparent);
+        }
+        .welcome-message,
+        .sistema-digital-text {
+            color: var(--tinta);
+            font-weight: 800;
+            letter-spacing: -.03em;
+            text-shadow: none;
+        }
+        .sistema-movil { color: var(--tinta); letter-spacing: -.03em; }
+
+        /* Avatar: aro de luz que crece y se inclina al pasar el puntero por la barra */
+        .avatar-medium,
+        .avatar-placeholder-medium {
+            border: 2px solid var(--tarjeta);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--azul) 16%, transparent), 0 6px 14px -6px rgba(37,99,235,.55);
+            transition: box-shadow .35s var(--suave), transform .35s var(--suave);
+        }
+        .avatar-placeholder-medium {
+            background: linear-gradient(135deg, var(--azul), var(--indigo));
+            color: #fff;
+        }
+        .welcome-bar:hover .avatar-medium,
+        .welcome-bar:hover .avatar-placeholder-medium {
+            transform: rotate(-4deg) scale(1.05);
+            box-shadow: 0 0 0 7px color-mix(in srgb, var(--azul) 18%, transparent), 0 8px 16px -6px rgba(37,99,235,.6);
+        }
+
+        /* ----- Módulos: borde fino con un arco de luz que gira sin parar ----- */
+        .module-item {
+            --tono: #4f46e5;
+            --c1: #06b6d4;
+            --c2: #818cf8;
+            --c3: #4338ca;
+            --linea: color-mix(in srgb, var(--tono) 14%, var(--borde));
+            --brillo: color-mix(in srgb, var(--tono) 32%, transparent);
+            --giro: 0deg;
+            --arco: 70deg;
+            color: var(--tinta);
+            font-weight: 700;
+            border: 1.5px solid transparent;
+            border-radius: 20px;
+            margin: 1px; /* el borde pasa de 2.5px a 1.5px: este margen conserva el tamaño exterior */
+            background:
+                linear-gradient(var(--tarjeta), var(--tarjeta)) padding-box,
+                conic-gradient(from var(--giro), transparent 0deg, transparent calc(360deg - var(--arco)),
+                    var(--c1) calc(360deg - var(--arco) * .65),
+                    var(--c2) calc(360deg - var(--arco) * .3),
+                    var(--c3) calc(360deg - 4deg), transparent 360deg) border-box,
+                linear-gradient(var(--linea), var(--linea)) border-box;
+            box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 12px 28px -16px rgba(15,23,42,.14);
+            animation: orbitar 9s linear infinite;
+            transition: transform .35s var(--suave), box-shadow .35s, color .3s, --arco .5s;
+        }
+        /* Desfase entre módulos para que los arcos no giren al unísono */
+        .module-item:nth-child(2) { animation-delay: -1.5s; }
+        .module-item:nth-child(3) { animation-delay: -3s; }
+        .module-item:nth-child(4) { animation-delay: -4.5s; }
+        .module-item:nth-child(5) { animation-delay: -6s; }
+        .module-item:nth-child(6) { animation-delay: -7.5s; }
+        .module-item:hover {
+            --arco: 150deg;
+            color: var(--c3);
+            transform: translateY(-4px);
+            box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 26px 46px -20px var(--brillo);
+        }
+        .module-novedades  { --tono: #10b981; --c1: #06b6d4; --c2: #10b981; --c3: #065f46; }
+        .module-caja       { --tono: #2563eb; --c1: #3b82f6; --c2: #2563eb; --c3: #1e3a8a; }
+        .module-cejume     { --tono: #f59e0b; --c1: #fbbf24; --c2: #f59e0b; --c3: #b45309; }
+        .module-pase       { --tono: #8b5cf6; --c1: #a78bfa; --c2: #8b5cf6; --c3: #5b21b6; }
+        .module-protocolo  { --tono: #dc2626; --c1: #f87171; --c2: #ef4444; --c3: #991b1b; }
+        .module-capacitacion { --tono: #14b8a6; --c1: #22d3ee; --c2: #14b8a6; --c3: #0f766e; }
+        /* Novedades con datos: mantiene su halo verde indicador */
+        .module-novedades.hay-datos {
+            box-shadow: 0 0 0 5px color-mix(in srgb, var(--tono) 14%, transparent), 0 10px 26px -8px color-mix(in srgb, var(--tono) 55%, transparent);
+        }
+        .module-novedades.hay-datos:hover {
+            box-shadow: 0 0 0 8px color-mix(in srgb, var(--tono) 16%, transparent), 0 22px 40px -14px color-mix(in srgb, var(--tono) 60%, transparent);
+        }
+
+        /* ----- Imagen central: fondo blanco y leve zoom al pasar el puntero ----- */
+        .image-large {
+            background: var(--tarjeta);
+            transition: transform .35s var(--suave), border-color .3s, box-shadow .35s;
+        }
+        .top-image-container:hover .image-large { transform: scale(1.02); }
+
+        /* ----- Pie de página: franja superior de degradado fijo ----- */
+        footer {
+            position: relative;
+            border-top: 3px solid transparent;
+            box-shadow: 0 -10px 30px -18px rgba(15,23,42,.45);
+        }
+        footer::before {
+            content: "";
+            position: absolute;
+            top: -3px; left: 0; right: 0;
+            height: 3px;
+            pointer-events: none;
+            background: linear-gradient(90deg, #06b6d4, var(--azul), var(--indigo));
+        }
+        .footer-defensoria strong { color: #60a5fa; }
+        .sistema-info-text:hover { color: #60a5fa; }
+        .dtw-content { border-radius: 999px; }
+
+        .logout-button {
+            border-radius: 999px;
+            font-weight: 600;
+            transition: background-color .2s, border-color .2s, box-shadow .2s, transform .2s;
+        }
+        .logout-button:hover {
+            background-color: color-mix(in srgb, var(--azul) 28%, transparent);
+            border-color: #60a5fa;
+            box-shadow: 0 8px 18px -10px var(--azul);
+            transform: translateY(-1px);
+        }
+
+        .event-banner {
+            border-radius: 999px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--azul), var(--indigo));
+            box-shadow: 0 8px 18px -10px var(--azul);
+            transition: box-shadow .2s, transform .2s;
+        }
+        .event-banner:hover { transform: translateY(-1px); box-shadow: 0 12px 22px -10px var(--azul); }
+        .event-banner.hay-eventos {
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            box-shadow: 0 8px 18px -8px rgba(234,88,12,.75);
+        }
+        .event-banner.hay-eventos:hover { box-shadow: 0 12px 22px -8px rgba(234,88,12,.85); }
+
+        /* Ayudante IA: misma pastilla con degradado, conserva su identidad naranja */
+        .btn-asistente-ia {
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            border: 1px solid transparent;
+            border-radius: 999px;
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 8px 18px -10px #ea580c;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .btn-asistente-ia:hover { transform: translateY(-1px); box-shadow: 0 12px 22px -10px #ea580c; }
+
+        /* ----- Globos del pie y perfil: tarjeta blanca con aparición suave ----- */
+        .menu-popup,
+        .calendar-popup,
+        .sistema-info-modal,
+        .user-dropdown {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 18px;
+            box-shadow: var(--sombra-flota);
+        }
+        .menu-popup.show,
+        .calendar-popup.show,
+        .sistema-info-modal.show,
+        .user-dropdown.show { animation: emerger .25s var(--suave); }
+
+        .menu-popup { padding: 8px; }
+        .menu-popup li a {
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: var(--tinta);
+            transition: background-color .2s, color .2s;
+        }
+        .menu-popup li a:hover { background-color: var(--info-fondo); color: var(--azul); }
+        .menu-popup li a[style] { color: var(--azul) !important; }
+
+        .calendar-popup { color: var(--tinta); }
+        .calendar-header { color: var(--tinta); }
+        .calendar-header button {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 999px;
+            color: var(--tinta);
+            transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
+        }
+        .calendar-header button:hover {
+            background: var(--azul);
+            border-color: var(--azul);
+            color: #fff;
+            box-shadow: 0 8px 18px -10px var(--azul);
+        }
+        .calendar-days-header { color: var(--gris); }
+        .calendar-day { border-radius: 12px; transition: background-color .2s; }
+        .calendar-day:hover:not(.empty) { background-color: var(--escena); }
+        .calendar-day.current {
+            background: linear-gradient(135deg, var(--azul), var(--indigo));
+            color: #fff;
+            box-shadow: 0 8px 18px -10px var(--azul);
+        }
+
+        .sistema-info-modal p { color: var(--gris); }
+        .sistema-info-modal p strong { color: var(--tinta); }
+
+        /* ----- Novedades ----- */
+        .novedades-modal {
+            background: var(--tarjeta);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            border: 1px solid color-mix(in srgb, var(--azul) 35%, var(--borde));
+            border-radius: 18px;
+            box-shadow: var(--sombra-flota);
+        }
+        .novedades-modal.visible { animation: emerger .25s var(--suave); }
+        .novedades-modal .modal-header { border-bottom: 1px solid var(--borde); }
+        .novedades-modal .modal-titulo { color: var(--tinta); font-weight: 800; letter-spacing: -.03em; }
+        .novedades-modal .modal-titulo i,
+        .novedades-modal .seccion-titulo i { color: var(--azul); }
+        .novedades-modal .seccion-titulo { color: var(--tinta); }
+        .novedades-modal .item-lista { color: var(--tinta); border-bottom: 1px solid var(--borde); }
+        .novedades-modal .item-lista .fecha,
+        .novedades-modal .sin-datos { color: var(--gris); }
+        .novedades-modal .cerrar-modal-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 999px;
+            color: var(--tinta);
+            font-size: 1.2rem;
+            transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
+        }
+        .novedades-modal .cerrar-modal-btn:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #fff;
+            box-shadow: 0 8px 18px -10px #dc2626;
+        }
+
+        /* ----- Diálogos: fondo desenfocado y entrada suave ----- */
+        .modal-overlay,
+        .birthday-modal {
+            background: rgba(11,31,58,.7);
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+        }
+        .modal-overlay { transition: opacity .25s, visibility .25s; }
+
+        .modal-alerta {
+            background: var(--tarjeta);
+            color: var(--tinta);
+            border: 1px solid var(--borde);
+            border-radius: 24px;
+            box-shadow: var(--sombra-alta);
+            transform: translateY(30px) scale(.95);
+            transition: transform .4s var(--suave);
+        }
+        .modal-overlay.active .modal-alerta { transform: none; }
+        .modal-alerta h3 { color: var(--rojo-texto); font-weight: 800; letter-spacing: -.03em; }
+        .modal-alerta p { color: var(--tinta); font-weight: 600; }
+
+        .btn-modal {
+            min-height: 44px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: -.005em;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 8px 18px -10px #dc2626;
+            transition: background-color .2s, border-color .2s, color .2s, box-shadow .2s, transform .2s;
+        }
+        .btn-modal:hover {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 12px 22px -10px #dc2626;
+            transform: translateY(-1px);
+        }
+        .btn-modal.cancelar {
+            color: var(--tinta);
+            background: var(--tarjeta);
+            border-color: var(--borde);
+            box-shadow: none;
+        }
+        .btn-modal.cancelar:hover {
+            background: var(--azul);
+            border-color: var(--azul);
+            color: #fff;
+            box-shadow: 0 8px 18px -10px var(--azul);
+            transform: none;
+        }
+
+        /* ----- Cumpleaños ----- */
+        .birthday-modal-content {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 24px;
+            box-shadow: var(--sombra-alta);
+            animation: subirEntrar .3s ease;
+        }
+        .birthday-modal-content i {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 84px;
+            height: 84px;
+            margin-bottom: 1rem;
+            border-radius: 26px;
+            font-size: 2.3rem;
+            color: #fff;
+            background: linear-gradient(135deg, var(--azul), var(--indigo));
+            box-shadow: 0 0 0 8px color-mix(in srgb, var(--azul) 9%, transparent), 0 12px 24px -10px rgba(37,99,235,.55);
+        }
+        .birthday-modal-content h3 { color: var(--tinta); font-weight: 800; letter-spacing: -.03em; }
+        .birthday-modal-content .close-birthday {
+            top: 14px;
+            right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 999px;
+            color: var(--tinta);
+            font-size: 1.4rem;
+            line-height: 1;
+            transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
+        }
+        .birthday-modal-content .close-birthday:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #fff;
+            box-shadow: 0 8px 18px -10px #dc2626;
+        }
+        #birthdayList { color: var(--tinta); }
+        #birthdayList li { border-bottom: 1px solid var(--borde); }
+        .btn-cerrar {
+            min-height: 44px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--azul), var(--indigo));
+            box-shadow: 0 8px 18px -10px var(--azul);
+            transition: box-shadow .2s, transform .2s;
+        }
+        .btn-cerrar:hover {
+            background: linear-gradient(135deg, var(--azul), var(--indigo));
+            box-shadow: 0 12px 22px -10px var(--azul);
+            transform: translateY(-1px);
+        }
+
+        /* ----- Festividades ----- */
+        .modal-festividad-overlay {
+            background: rgba(11,31,58,.7);
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+        }
+        .modal-festividad-contenido {
+            background: var(--tarjeta);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            border: 1px solid var(--borde);
+            border-radius: 28px;
+            box-shadow: var(--sombra-alta);
+        }
+        .modal-festividad-contenido::before {
+            background: radial-gradient(circle, rgba(79,70,229,.1) 0%, transparent 60%);
+        }
+        .modal-festividad-titulo {
+            background: linear-gradient(135deg, var(--tinta) 0%, var(--azul) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -.03em;
+        }
+        .modal-festividad-imagen { box-shadow: 0 15px 35px -10px rgba(0,0,0,.2), 0 0 0 4px var(--tarjeta); }
+        @keyframes pulseImgFest {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 35px -10px rgba(0,0,0,.2), 0 0 0 4px var(--tarjeta); }
+            50% { transform: scale(1.05); box-shadow: 0 25px 45px -12px rgba(37,99,235,.35), 0 0 0 8px color-mix(in srgb, var(--azul) 14%, transparent); }
+        }
+        .modal-festividad-fecha {
+            background: var(--info-fondo);
+            color: var(--info-texto);
+            border: 0;
+            box-shadow: none;
+            font-weight: 700;
+        }
+
+        /* ----- Detalle de usuario ----- */
+        .dropdown-avatar-placeholder {
+            background: linear-gradient(135deg, var(--azul), var(--indigo));
+            border: 2px solid var(--tarjeta);
+            box-shadow: 0 0 0 5px color-mix(in srgb, var(--azul) 14%, transparent), 0 6px 14px -6px rgba(37,99,235,.55);
+        }
+        .avatar-option {
+            box-shadow: 0 0 0 0 transparent;
+            transition: border-color .2s, transform .35s var(--suave), box-shadow .35s var(--suave);
+        }
+        .avatar-option:hover {
+            border-color: var(--azul);
+            box-shadow: 0 0 0 5px color-mix(in srgb, var(--azul) 14%, transparent);
+        }
+        .info-item { color: var(--tinta); border-bottom: 1px solid var(--borde); }
+        .info-item strong { color: var(--gris); font-weight: 600; }
+        .version-badge {
+            background: var(--info-fondo);
+            color: var(--info-texto);
+            font-weight: 700;
+            border-radius: 999px;
+        }
+        .edit-row input {
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            background: var(--escena);
+            color: var(--tinta);
+            transition: border-color .2s, box-shadow .2s, background-color .2s;
+        }
+        .edit-row input:focus {
+            outline: 0;
+            border-color: var(--azul);
+            background: var(--tarjeta);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--azul) 14%, transparent);
+        }
+        .edit-row button { border-radius: 999px; }
+        .save-btn:hover { background: #d1fae5; }
+        .cancel-btn:hover { background: var(--rojo-fondo); }
+        .edit-icon:hover { color: var(--azul); }
+        /* "Volver al Inicio" trae estilos en línea: solo lo visual se impone con !important */
+        .user-dropdown > button {
+            min-height: 44px;
+            background: linear-gradient(135deg, var(--azul), var(--indigo)) !important;
+            border-radius: 999px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 8px 18px -10px var(--azul);
+            transition: box-shadow .2s, transform .2s;
+        }
+        .user-dropdown > button:hover { box-shadow: 0 12px 22px -10px var(--azul); transform: translateY(-1px); }
+
+        /* ----- Botón "Cerrar" de Capacitación Jurídica ----- */
+        #btnCerrarCapacitacion {
+            background: color-mix(in srgb, var(--tinta) 94%, transparent);
+            font-weight: 600;
+            box-shadow: 0 16px 36px -12px rgba(15,23,42,.35);
+            transition: background-color .2s, box-shadow .2s, transform .2s;
+        }
+        #btnCerrarCapacitacion:hover {
+            background: #dc2626;
+            box-shadow: 0 12px 22px -10px #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* ----- Foco visible con teclado ----- */
+        .btn-modal:focus-visible,
+        .btn-cerrar:focus-visible,
+        #btnCerrarCapacitacion:focus-visible,
+        .btn-asistente-ia:focus-visible,
+        .cerrar-modal-btn:focus-visible,
+        .calendar-header button:focus-visible,
+        .user-dropdown button:focus-visible,
+        .edit-row button:focus-visible { outline: 2px solid var(--azul); outline-offset: 3px; }
+
+        /* ----- Móvil ----- */
+        @media (max-width: 768px) {
+            .module-item { border-radius: 16px; }
+        }
+
+        /* ----- Movimiento reducido ----- */
+        @media (prefers-reduced-motion: reduce) {
+            .module-item {
+                animation: none;
+                background:
+                    linear-gradient(var(--tarjeta), var(--tarjeta)) padding-box,
+                    linear-gradient(135deg, var(--c1), var(--c3)) border-box;
+                transition: box-shadow .2s, color .2s;
+            }
+            .module-item:hover, .welcome-bar:hover, .logout-button:hover, .event-banner:hover,
+            .btn-asistente-ia:hover, .btn-modal:hover, .btn-cerrar:hover, .user-dropdown > button:hover,
+            #btnCerrarCapacitacion:hover, .top-image-container:hover .image-large,
+            .welcome-bar:hover .avatar-medium, .welcome-bar:hover .avatar-placeholder-medium,
+            .avatar-option:hover { transform: none; }
+            .intro-blob, .modal-festividad-contenido::before, .modal-festividad-imagen { animation: none; }
+            .menu-popup.show, .calendar-popup.show, .sistema-info-modal.show, .user-dropdown.show,
+            .novedades-modal.visible, .birthday-modal-content { animation: none; }
+            .modal-alerta { transform: none; transition: none; }
         }
     </style>
 </head>
